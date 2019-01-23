@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:ucm.map="http:///ucm/map.ecore" xmlns:urn="http:///urn.ecore" name="WaitingPlaceTest" created="June 25, 2018 9:17:06 PM EDT" modified="June 25, 2018 9:20:10 PM EDT" specVersion="2" urnVersion="1.27" nextGlobalID="181">
+  <ucmspec/>
+  <grlspec/>
+  <urndef>
+    <responsibilities name="r1" id="1" respRefs="2 3 4 5"/>
+    <specDiagrams xsi:type="grl:GRLGraph" name="GRLGraph42" id="172"/>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestEndPoint" id="89">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="42" x="108" y="-16" succ="//@urndef/@specDiagrams.1/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="6" x="255" y="-16" succ="//@urndef/@specDiagrams.1/@connections.1" pred="//@urndef/@specDiagrams.1/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="88" x="402" y="-16" pred="//@urndef/@specDiagrams.1/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="42" target="6"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="6" target="88"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestEndPointAgain" id="91">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="43" x="108" y="-67" succ="//@urndef/@specDiagrams.2/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="44" x="108" y="-16" succ="//@urndef/@specDiagrams.2/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="7" x="255" y="-67" succ="//@urndef/@specDiagrams.2/@connections.2" pred="//@urndef/@specDiagrams.2/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="8" x="255" y="-16" succ="//@urndef/@specDiagrams.2/@connections.3" pred="//@urndef/@specDiagrams.2/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="90" x="564" y="-41" pred="//@urndef/@specDiagrams.2/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin168" id="168" x="407" y="-41" succ="//@urndef/@specDiagrams.2/@connections.4" pred="//@urndef/@specDiagrams.2/@connections.2 //@urndef/@specDiagrams.2/@connections.3"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="43" target="7"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="44" target="8"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="7" target="168"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="8" target="168"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="168" target="90"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestResponsibility" id="93">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="45" x="108" y="-16" succ="//@urndef/@specDiagrams.3/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef2" id="2" x="397" y="-16" succ="//@urndef/@specDiagrams.3/@connections.1" pred="//@urndef/@specDiagrams.3/@connections.2" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="9" x="255" y="-16" succ="//@urndef/@specDiagrams.3/@connections.2" pred="//@urndef/@specDiagrams.3/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="92" x="544" y="-16" pred="//@urndef/@specDiagrams.3/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="45" target="9"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="2" target="92"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="9" target="2"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestResponsibilityAgain" id="96">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="46" x="108" y="-16" succ="//@urndef/@specDiagrams.4/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="47" x="108" y="-67" succ="//@urndef/@specDiagrams.4/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef3" id="3" x="407" y="-16" succ="//@urndef/@specDiagrams.4/@connections.2" pred="//@urndef/@specDiagrams.4/@connections.4" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef4" id="4" x="407" y="-67" succ="//@urndef/@specDiagrams.4/@connections.3" pred="//@urndef/@specDiagrams.4/@connections.5" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="10" x="260" y="-16" succ="//@urndef/@specDiagrams.4/@connections.4" pred="//@urndef/@specDiagrams.4/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="11" x="260" y="-67" succ="//@urndef/@specDiagrams.4/@connections.5" pred="//@urndef/@specDiagrams.4/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="94" x="554" y="-16" pred="//@urndef/@specDiagrams.4/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="95" x="554" y="-67" pred="//@urndef/@specDiagrams.4/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="46" target="10"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="47" target="11"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="3" target="94"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="4" target="95"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="10" target="3"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="11" target="4"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestOrFork" id="100">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="48" x="108" y="-41" succ="//@urndef/@specDiagrams.5/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="12" x="260" y="-41" succ="//@urndef/@specDiagrams.5/@connections.1" pred="//@urndef/@specDiagrams.5/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork97" id="97" x="412" y="-41" succ="//@urndef/@specDiagrams.5/@connections.2 //@urndef/@specDiagrams.5/@connections.3" pred="//@urndef/@specDiagrams.5/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint98" id="98" x="564" y="-67" pred="//@urndef/@specDiagrams.5/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="99" x="564" y="-16" pred="//@urndef/@specDiagrams.5/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="48" target="12"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="12" target="97"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="97" target="99">
+        <condition deltaX="64" deltaY="-18" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="97" target="98">
+        <condition deltaX="79" deltaY="40" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestOrJoin" id="102">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="49" x="108" y="-67" succ="//@urndef/@specDiagrams.6/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="50" x="260" y="-16" succ="//@urndef/@specDiagrams.6/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="j" id="84" x="412" y="-41" succ="//@urndef/@specDiagrams.6/@connections.2" pred="//@urndef/@specDiagrams.6/@connections.3 //@urndef/@specDiagrams.6/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="13" x="260" y="-67" succ="//@urndef/@specDiagrams.6/@connections.3" pred="//@urndef/@specDiagrams.6/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="101" x="569" y="-41" pred="//@urndef/@specDiagrams.6/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="49" target="13"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="50" target="84"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="84" target="101"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="13" target="84"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestAndFork" id="106">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="51" x="108" y="-16" succ="//@urndef/@specDiagrams.7/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="14" x="260" y="-16" succ="//@urndef/@specDiagrams.7/@connections.1" pred="//@urndef/@specDiagrams.7/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndFork" name="AndFork103" id="103" x="417" y="-16" succ="//@urndef/@specDiagrams.7/@connections.2 //@urndef/@specDiagrams.7/@connections.3" pred="//@urndef/@specDiagrams.7/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="104" x="741" y="-16" pred="//@urndef/@specDiagrams.7/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndJoin" name="AndJoin105" id="105" x="579" y="-16" succ="//@urndef/@specDiagrams.7/@connections.4" pred="//@urndef/@specDiagrams.7/@connections.2 //@urndef/@specDiagrams.7/@connections.5"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint181" id="181" x="498" y="-36" succ="//@urndef/@specDiagrams.7/@connections.5" pred="//@urndef/@specDiagrams.7/@connections.3"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="51" target="14"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="14" target="103"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="103" target="105"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="103" target="181"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="105" target="104"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="181" target="105"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestAndJoin" id="108">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="52" x="108" y="-67" succ="//@urndef/@specDiagrams.8/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="53" x="260" y="-16" succ="//@urndef/@specDiagrams.8/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndJoin" name="sy" id="86" x="412" y="-41" succ="//@urndef/@specDiagrams.8/@connections.2" pred="//@urndef/@specDiagrams.8/@connections.3 //@urndef/@specDiagrams.8/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="15" x="260" y="-67" succ="//@urndef/@specDiagrams.8/@connections.3" pred="//@urndef/@specDiagrams.8/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="107" x="569" y="-41" pred="//@urndef/@specDiagrams.8/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="52" target="15"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="53" target="86"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="86" target="107"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="15" target="86"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestWaitingPlace" id="110">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="54" x="108" y="-16" succ="//@urndef/@specDiagrams.9/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="16" x="260" y="-16" succ="//@urndef/@specDiagrams.9/@connections.1" pred="//@urndef/@specDiagrams.9/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="17" x="412" y="-16" succ="//@urndef/@specDiagrams.9/@connections.2" pred="//@urndef/@specDiagrams.9/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="109" x="569" y="-16" pred="//@urndef/@specDiagrams.9/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="54" target="16"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="16" target="17"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="17" target="109"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestWaitingPlaceWithWaitKind" id="112">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="55" x="108" y="-16" succ="//@urndef/@specDiagrams.10/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="18" x="260" y="-16" succ="//@urndef/@specDiagrams.10/@connections.1" pred="//@urndef/@specDiagrams.10/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="19" x="412" y="-16" succ="//@urndef/@specDiagrams.10/@connections.2" pred="//@urndef/@specDiagrams.10/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="111" x="569" y="-16" pred="//@urndef/@specDiagrams.10/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="55" target="18"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="18" target="19"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="19" target="111"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestTimer" id="115">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="56" x="108" y="-16" succ="//@urndef/@specDiagrams.11/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="20" x="260" y="-16" succ="//@urndef/@specDiagrams.11/@connections.1" pred="//@urndef/@specDiagrams.11/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="113" x="579" y="-16" pred="//@urndef/@specDiagrams.11/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Timer" name="" id="114" x="417" y="-16" succ="//@urndef/@specDiagrams.11/@connections.2" pred="//@urndef/@specDiagrams.11/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="56" target="20"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="20" target="114"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="114" target="113"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestTimerWithWaitKind" id="118">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="57" x="108" y="-16" succ="//@urndef/@specDiagrams.12/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="21" x="260" y="-16" succ="//@urndef/@specDiagrams.12/@connections.1" pred="//@urndef/@specDiagrams.12/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="116" x="579" y="-16" pred="//@urndef/@specDiagrams.12/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Timer" name="" id="117" x="417" y="-16" succ="//@urndef/@specDiagrams.12/@connections.2" pred="//@urndef/@specDiagrams.12/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="57" target="21"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="21" target="117"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="117" target="116"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestFailurePoint" id="120">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="58" x="108" y="-16" succ="//@urndef/@specDiagrams.13/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="22" x="260" y="-16" succ="//@urndef/@specDiagrams.13/@connections.1" pred="//@urndef/@specDiagrams.13/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:FailurePoint" name="" id="40" x="412" y="-16" succ="//@urndef/@specDiagrams.13/@connections.2" pred="//@urndef/@specDiagrams.13/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="119" x="569" y="-16" pred="//@urndef/@specDiagrams.13/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="58" target="22"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="22" target="40"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="40" target="119"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestStub" id="123">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="59" x="108" y="-16" succ="//@urndef/@specDiagrams.14/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="23" x="260" y="-16" succ="//@urndef/@specDiagrams.14/@connections.1" pred="//@urndef/@specDiagrams.14/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="" id="121" x="417" y="-16" succ="//@urndef/@specDiagrams.14/@connections.2" pred="//@urndef/@specDiagrams.14/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="122" x="579" y="-16" pred="//@urndef/@specDiagrams.14/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="59" target="23"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="23" target="121"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="121" target="122"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestStubWithStubType" id="126">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="60" x="108" y="-16" succ="//@urndef/@specDiagrams.15/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="24" x="260" y="-16" succ="//@urndef/@specDiagrams.15/@connections.1" pred="//@urndef/@specDiagrams.15/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="" id="124" x="417" y="-16" succ="//@urndef/@specDiagrams.15/@connections.2" pred="//@urndef/@specDiagrams.15/@connections.1" dynamic="true" synchronization="true" blocking="true">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="125" x="579" y="-16" pred="//@urndef/@specDiagrams.15/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="60" target="24"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="24" target="124"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="124" target="125"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestAsynchronousConnectStartPoint" id="131">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="61" x="108" y="-67" succ="//@urndef/@specDiagrams.16/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="62" x="569" y="-23" succ="//@urndef/@specDiagrams.16/@connections.1 //@urndef/@specDiagrams.16/@connections.2" pred="//@urndef/@specDiagrams.16/@connections.3 //@urndef/@specDiagrams.16/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="25" x="260" y="-67" succ="//@urndef/@specDiagrams.16/@connections.3" pred="//@urndef/@specDiagrams.16/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="127" x="569" y="-111" pred="//@urndef/@specDiagrams.16/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Connect" name="Connect128" id="128" x="731" y="-67" succ="//@urndef/@specDiagrams.16/@connections.4" pred="//@urndef/@specDiagrams.16/@connections.5"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint129" id="129" x="569" y="-23" succ="//@urndef/@specDiagrams.16/@connections.5 //@urndef/@specDiagrams.16/@connections.6" pred="//@urndef/@specDiagrams.16/@connections.2"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="130" x="731" y="-16" pred="//@urndef/@specDiagrams.16/@connections.6">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="61" target="25"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="62" target="127"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="62" target="129"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="25" target="62"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="128" target="62"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="129" target="128"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="129" target="130"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestAsynchronousConnectWaitingPlace" id="136">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="63" x="265" y="-118" succ="//@urndef/@specDiagrams.17/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="64" x="108" y="-41" succ="//@urndef/@specDiagrams.17/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="26" x="427" y="-118" succ="//@urndef/@specDiagrams.17/@connections.2" pred="//@urndef/@specDiagrams.17/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="wp" id="27" x="584" y="-92" succ="//@urndef/@specDiagrams.17/@connections.3" pred="//@urndef/@specDiagrams.17/@connections.2 //@urndef/@specDiagrams.17/@connections.4" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="132" x="741" y="-92" pred="//@urndef/@specDiagrams.17/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Connect" name="Connect133" id="133" x="427" y="-67" succ="//@urndef/@specDiagrams.17/@connections.4" pred="//@urndef/@specDiagrams.17/@connections.5"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint134" id="134" x="584" y="-92" succ="//@urndef/@specDiagrams.17/@connections.5 //@urndef/@specDiagrams.17/@connections.6" pred="//@urndef/@specDiagrams.17/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="135" x="427" y="-16" pred="//@urndef/@specDiagrams.17/@connections.6">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="63" target="26"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="64" target="134"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="26" target="27"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="27" target="132"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="133" target="27"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="134" target="133"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="134" target="135"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestAsynchronousConnectTimer" id="142">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="65" x="265" y="-118" succ="//@urndef/@specDiagrams.18/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="66" x="108" y="-41" succ="//@urndef/@specDiagrams.18/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="28" x="427" y="-118" succ="//@urndef/@specDiagrams.18/@connections.2" pred="//@urndef/@specDiagrams.18/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="137" x="750" y="-92" pred="//@urndef/@specDiagrams.18/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Connect" name="Connect138" id="138" x="427" y="-67" succ="//@urndef/@specDiagrams.18/@connections.6" pred="//@urndef/@specDiagrams.18/@connections.4"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="AsynchConnectTimer#t" id="139" x="589" y="-92" succ="//@urndef/@specDiagrams.18/@connections.4 //@urndef/@specDiagrams.18/@connections.5" pred="//@urndef/@specDiagrams.18/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="140" x="427" y="-16" pred="//@urndef/@specDiagrams.18/@connections.5">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Timer" name="t" id="141" x="589" y="-92" succ="//@urndef/@specDiagrams.18/@connections.3" pred="//@urndef/@specDiagrams.18/@connections.2 //@urndef/@specDiagrams.18/@connections.6" waitType="Persistent">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="65" target="28"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="66" target="139"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="28" target="141"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="141" target="137"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="139" target="138"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="139" target="140"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="138" target="141"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestReferencedResponsibility" id="144">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="67" x="260" y="-67" succ="//@urndef/@specDiagrams.19/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="68" x="108" y="-16" succ="//@urndef/@specDiagrams.19/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef5" id="5" x="569" y="-41" succ="//@urndef/@specDiagrams.19/@connections.2" pred="//@urndef/@specDiagrams.19/@connections.4" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin169" id="169" x="417" y="-41" succ="//@urndef/@specDiagrams.19/@connections.4" pred="//@urndef/@specDiagrams.19/@connections.0 //@urndef/@specDiagrams.19/@connections.3"/>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="29" x="260" y="-16" succ="//@urndef/@specDiagrams.19/@connections.3" pred="//@urndef/@specDiagrams.19/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="143" x="721" y="-41" pred="//@urndef/@specDiagrams.19/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="67" target="169"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="68" target="29"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="5" target="143"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="29" target="169"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="169" target="5"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestReferencedOrJoin" id="146">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="69" x="260" y="-67" succ="//@urndef/@specDiagrams.20/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="70" x="108" y="-16" succ="//@urndef/@specDiagrams.20/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="j" id="85" x="412" y="-41" succ="//@urndef/@specDiagrams.20/@connections.2" pred="//@urndef/@specDiagrams.20/@connections.0 //@urndef/@specDiagrams.20/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="30" x="260" y="-16" succ="//@urndef/@specDiagrams.20/@connections.3" pred="//@urndef/@specDiagrams.20/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="145" x="569" y="-41" pred="//@urndef/@specDiagrams.20/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="69" target="85"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="70" target="30"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="85" target="145"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="30" target="85"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestReferencedAndJoin" id="148">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="71" x="260" y="-67" succ="//@urndef/@specDiagrams.21/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="72" x="108" y="-16" succ="//@urndef/@specDiagrams.21/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndJoin" name="sy" id="87" x="412" y="-41" succ="//@urndef/@specDiagrams.21/@connections.2" pred="//@urndef/@specDiagrams.21/@connections.0 //@urndef/@specDiagrams.21/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="31" x="260" y="-16" succ="//@urndef/@specDiagrams.21/@connections.3" pred="//@urndef/@specDiagrams.21/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="147" x="569" y="-41" pred="//@urndef/@specDiagrams.21/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="71" target="87"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="72" target="31"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="87" target="147"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="31" target="87"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestReferencedFailurePoint" id="150">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="73" x="260" y="-67" succ="//@urndef/@specDiagrams.22/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="74" x="108" y="-16" succ="//@urndef/@specDiagrams.22/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="32" x="260" y="-16" succ="//@urndef/@specDiagrams.22/@connections.2" pred="//@urndef/@specDiagrams.22/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:FailurePoint" name="f" id="41" x="574" y="-41" succ="//@urndef/@specDiagrams.22/@connections.3" pred="//@urndef/@specDiagrams.22/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin170" id="170" x="417" y="-41" succ="//@urndef/@specDiagrams.22/@connections.4" pred="//@urndef/@specDiagrams.22/@connections.0 //@urndef/@specDiagrams.22/@connections.2"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="149" x="731" y="-41" pred="//@urndef/@specDiagrams.22/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="73" target="170"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="74" target="32"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="32" target="170"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="41" target="149"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="170" target="41"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestReferencedStub" id="154">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="75" x="260" y="-67" succ="//@urndef/@specDiagrams.23/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="76" x="108" y="-16" succ="//@urndef/@specDiagrams.23/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="33" x="260" y="-16" succ="//@urndef/@specDiagrams.23/@connections.2" pred="//@urndef/@specDiagrams.23/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="st" id="151" x="579" y="-41" succ="//@urndef/@specDiagrams.23/@connections.3" pred="//@urndef/@specDiagrams.23/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="152" x="741" y="-41" pred="//@urndef/@specDiagrams.23/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin153" id="153" x="417" y="-41" succ="//@urndef/@specDiagrams.23/@connections.4" pred="//@urndef/@specDiagrams.23/@connections.2 //@urndef/@specDiagrams.23/@connections.0"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="75" target="153"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="76" target="33"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="33" target="153"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="151" target="152"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="153" target="151"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestReferencedStubInpath2" id="157">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="77" x="260" y="-67" succ="//@urndef/@specDiagrams.24/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="78" x="108" y="-16" succ="//@urndef/@specDiagrams.24/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="34" x="260" y="-16" succ="//@urndef/@specDiagrams.24/@connections.2" pred="//@urndef/@specDiagrams.24/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="st" id="155" x="417" y="-41" succ="//@urndef/@specDiagrams.24/@connections.3" pred="//@urndef/@specDiagrams.24/@connections.0 //@urndef/@specDiagrams.24/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="156" x="579" y="-41" pred="//@urndef/@specDiagrams.24/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="77" target="155"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="78" target="34"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="34" target="155"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="155" target="156"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestFull" id="159">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="79" x="108" y="-16" succ="//@urndef/@specDiagrams.25/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="WaitingPlace One" id="35" x="260" y="-16" succ="//@urndef/@specDiagrams.25/@connections.1" pred="//@urndef/@specDiagrams.25/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="158" x="417" y="-16" pred="//@urndef/@specDiagrams.25/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="79" target="35"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="35" target="158"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestPersistent" id="161">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="80" x="108" y="-16" succ="//@urndef/@specDiagrams.26/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="WaitingPlace One" id="36" x="260" y="-16" succ="//@urndef/@specDiagrams.26/@connections.1" pred="//@urndef/@specDiagrams.26/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="160" x="417" y="-16" pred="//@urndef/@specDiagrams.26/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="80" target="36"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="36" target="160"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestTransient" id="163">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="81" x="108" y="-16" succ="//@urndef/@specDiagrams.27/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="WaitingPlace One" id="37" x="260" y="-16" succ="//@urndef/@specDiagrams.27/@connections.1" pred="//@urndef/@specDiagrams.27/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="162" x="417" y="-16" pred="//@urndef/@specDiagrams.27/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="81" target="37"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="37" target="162"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestCondition" id="165">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="82" x="108" y="-16" succ="//@urndef/@specDiagrams.28/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="WaitingPlace One" id="38" x="260" y="-16" succ="//@urndef/@specDiagrams.28/@connections.1" pred="//@urndef/@specDiagrams.28/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="164" x="417" y="-16" pred="//@urndef/@specDiagrams.28/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="82" target="38"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="38" target="164">
+        <condition label="condition" expression="condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="WaitingPlaceTestJustCondition" id="167">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="83" x="108" y="-16" succ="//@urndef/@specDiagrams.29/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="39" x="260" y="-16" succ="//@urndef/@specDiagrams.29/@connections.1" pred="//@urndef/@specDiagrams.29/@connections.0" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="166" x="417" y="-16" pred="//@urndef/@specDiagrams.29/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="83" target="39"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="39" target="166">
+        <condition label="condition" expression="condition"/>
+      </connections>
+    </specDiagrams>
+  </urndef>
+</urn:URNspec>

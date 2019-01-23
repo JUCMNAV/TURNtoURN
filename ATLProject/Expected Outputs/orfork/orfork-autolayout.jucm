@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:ucm.map="http:///ucm/map.ecore" xmlns:urn="http:///urn.ecore" name="OrForkTest" created="June 23, 2018 4:16:26 PM EDT" modified="June 23, 2018 4:26:56 PM EDT" specVersion="3" urnVersion="1.27" nextGlobalID="246">
+  <ucmspec/>
+  <grlspec/>
+  <urndef>
+    <responsibilities name="r1" id="1" respRefs="2 3 4 5"/>
+    <specDiagrams xsi:type="grl:GRLGraph" name="GRLGraph11" id="214"/>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestEndPoint" id="62">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="11" x="108" y="-41" succ="//@urndef/@specDiagrams.1/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork59" id="59" x="260" y="-41" succ="//@urndef/@specDiagrams.1/@connections.1 //@urndef/@specDiagrams.1/@connections.2" pred="//@urndef/@specDiagrams.1/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint60" id="60" x="412" y="-67" pred="//@urndef/@specDiagrams.1/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="61" x="412" y="-16" pred="//@urndef/@specDiagrams.1/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="11" target="59"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="59" target="61">
+        <condition deltaX="56" deltaY="-22" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="59" target="60">
+        <condition deltaX="85" deltaY="39" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestEndPointAgain" id="68">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="12" x="108" y="-105" succ="//@urndef/@specDiagrams.2/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="13" x="108" y="-29" succ="//@urndef/@specDiagrams.2/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork63" id="63" x="260" y="-105" succ="//@urndef/@specDiagrams.2/@connections.2 //@urndef/@specDiagrams.2/@connections.3" pred="//@urndef/@specDiagrams.2/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint64" id="64" x="417" y="-118" pred="//@urndef/@specDiagrams.2/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="65" x="574" y="-67" pred="//@urndef/@specDiagrams.2/@connections.6">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin206" id="206" x="417" y="-67" succ="//@urndef/@specDiagrams.2/@connections.6" pred="//@urndef/@specDiagrams.2/@connections.2 //@urndef/@specDiagrams.2/@connections.4"/>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork66" id="66" x="260" y="-29" succ="//@urndef/@specDiagrams.2/@connections.4 //@urndef/@specDiagrams.2/@connections.5" pred="//@urndef/@specDiagrams.2/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint67" id="67" x="417" y="-16" pred="//@urndef/@specDiagrams.2/@connections.5">
+        <label deltaX="-69" deltaY="-21"/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="12" target="63"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="13" target="66"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="63" target="206">
+        <condition deltaX="-48" deltaY="14" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="63" target="64">
+        <condition deltaX="91" deltaY="44" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="66" target="206">
+        <condition deltaX="121" deltaY="24" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="66" target="67">
+        <condition deltaX="97" deltaY="-21" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="206" target="65"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestResponsibility" id="72">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="14" x="108" y="-41" succ="//@urndef/@specDiagrams.3/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork69" id="69" x="260" y="-41" succ="//@urndef/@specDiagrams.3/@connections.1 //@urndef/@specDiagrams.3/@connections.2" pred="//@urndef/@specDiagrams.3/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint70" id="70" x="412" y="-67" pred="//@urndef/@specDiagrams.3/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef2" id="2" x="412" y="-16" succ="//@urndef/@specDiagrams.3/@connections.3" pred="//@urndef/@specDiagrams.3/@connections.1" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="71" x="564" y="-16" pred="//@urndef/@specDiagrams.3/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="14" target="69"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="69" target="2">
+        <condition deltaX="49" deltaY="-4" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="69" target="70">
+        <condition deltaX="66" deltaY="31" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="2" target="71"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestResponsibilityAgain" id="79">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="15" x="108" y="-42" succ="//@urndef/@specDiagrams.4/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="16" x="108" y="-143" succ="//@urndef/@specDiagrams.4/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork73" id="73" x="260" y="-42" succ="//@urndef/@specDiagrams.4/@connections.2 //@urndef/@specDiagrams.4/@connections.3" pred="//@urndef/@specDiagrams.4/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint74" id="74" x="412" y="-67" pred="//@urndef/@specDiagrams.4/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef3" id="3" x="412" y="-16" succ="//@urndef/@specDiagrams.4/@connections.4" pred="//@urndef/@specDiagrams.4/@connections.2" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="75" x="564" y="-16" pred="//@urndef/@specDiagrams.4/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork76" id="76" x="260" y="-143" succ="//@urndef/@specDiagrams.4/@connections.5 //@urndef/@specDiagrams.4/@connections.6" pred="//@urndef/@specDiagrams.4/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint77" id="77" x="412" y="-169" pred="//@urndef/@specDiagrams.4/@connections.6">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef4" id="4" x="412" y="-118" succ="//@urndef/@specDiagrams.4/@connections.7" pred="//@urndef/@specDiagrams.4/@connections.5" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="78" x="564" y="-118" pred="//@urndef/@specDiagrams.4/@connections.7">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="15" target="73"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="16" target="76"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="73" target="3">
+        <condition deltaX="53" deltaY="-30" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="73" target="74">
+        <condition label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="3" target="75"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="76" target="4">
+        <condition deltaX="91" deltaY="-10" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="76" target="77">
+        <condition deltaX="87" deltaY="33" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="4" target="78"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestOrFork" id="85">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="17" x="108" y="-66" succ="//@urndef/@specDiagrams.5/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork80" id="80" x="260" y="-66" succ="//@urndef/@specDiagrams.5/@connections.1 //@urndef/@specDiagrams.5/@connections.2" pred="//@urndef/@specDiagrams.5/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint81" id="81" x="412" y="-92" pred="//@urndef/@specDiagrams.5/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork82" id="82" x="412" y="-41" succ="//@urndef/@specDiagrams.5/@connections.3 //@urndef/@specDiagrams.5/@connections.4" pred="//@urndef/@specDiagrams.5/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint83" id="83" x="564" y="-67" pred="//@urndef/@specDiagrams.5/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="84" x="564" y="-16" pred="//@urndef/@specDiagrams.5/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="17" target="80"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="80" target="82">
+        <condition deltaX="78" deltaY="-11" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="80" target="81">
+        <condition deltaX="79" deltaY="32" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="82" target="84">
+        <condition deltaX="58" deltaY="-10" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="82" target="83">
+        <condition deltaX="57" deltaY="38" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestOrJoin" id="89">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="18" x="108" y="-67" succ="//@urndef/@specDiagrams.6/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="19" x="260" y="-16" succ="//@urndef/@specDiagrams.6/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork86" id="86" x="260" y="-67" succ="//@urndef/@specDiagrams.6/@connections.2 //@urndef/@specDiagrams.6/@connections.3" pred="//@urndef/@specDiagrams.6/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint87" id="87" x="412" y="-67" pred="//@urndef/@specDiagrams.6/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="j" id="55" x="412" y="-16" succ="//@urndef/@specDiagrams.6/@connections.4" pred="//@urndef/@specDiagrams.6/@connections.2 //@urndef/@specDiagrams.6/@connections.1">
+        <label deltaX="6" deltaY="-44"/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="88" x="564" y="-16" pred="//@urndef/@specDiagrams.6/@connections.4">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="18" target="86"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="19" target="55"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="86" target="55">
+        <condition deltaX="-41" deltaY="15" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="86" target="87">
+        <condition deltaX="83" deltaY="34" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="55" target="88"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestAndFork" id="94">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="20" x="108" y="-41" succ="//@urndef/@specDiagrams.7/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork90" id="90" x="260" y="-41" succ="//@urndef/@specDiagrams.7/@connections.1 //@urndef/@specDiagrams.7/@connections.2" pred="//@urndef/@specDiagrams.7/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint91" id="91" x="412" y="-67" pred="//@urndef/@specDiagrams.7/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndFork" name="AndFork92" id="92" x="412" y="-16" succ="//@urndef/@specDiagrams.7/@connections.3 //@urndef/@specDiagrams.7/@connections.4" pred="//@urndef/@specDiagrams.7/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="93" x="726" y="-16" pred="//@urndef/@specDiagrams.7/@connections.5">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndJoin" name="AndJoin207" id="207" x="569" y="-16" succ="//@urndef/@specDiagrams.7/@connections.5" pred="//@urndef/@specDiagrams.7/@connections.3 //@urndef/@specDiagrams.7/@connections.6"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint223" id="223" x="487" y="-32" succ="//@urndef/@specDiagrams.7/@connections.6" pred="//@urndef/@specDiagrams.7/@connections.4"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="20" target="90"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="90" target="92">
+        <condition deltaX="55" deltaY="-15" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="90" target="91">
+        <condition deltaX="86" deltaY="34" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="92" target="207"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="92" target="223"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="207" target="93"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="223" target="207"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestAndJoin" id="98">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="21" x="108" y="-67" succ="//@urndef/@specDiagrams.8/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="22" x="260" y="-16" succ="//@urndef/@specDiagrams.8/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork95" id="95" x="260" y="-67" succ="//@urndef/@specDiagrams.8/@connections.2 //@urndef/@specDiagrams.8/@connections.3" pred="//@urndef/@specDiagrams.8/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint96" id="96" x="412" y="-67" pred="//@urndef/@specDiagrams.8/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndJoin" name="sy" id="57" x="412" y="-16" succ="//@urndef/@specDiagrams.8/@connections.4" pred="//@urndef/@specDiagrams.8/@connections.2 //@urndef/@specDiagrams.8/@connections.1">
+        <label deltaX="1" deltaY="-53"/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="97" x="564" y="-16" pred="//@urndef/@specDiagrams.8/@connections.4">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="21" target="95"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="22" target="57"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="95" target="57">
+        <condition deltaX="-84" deltaY="6" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="95" target="96">
+        <condition deltaX="110" deltaY="31" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="57" target="97"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestWaitingPlace" id="102">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="23" x="108" y="-41" succ="//@urndef/@specDiagrams.9/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork99" id="99" x="260" y="-41" succ="//@urndef/@specDiagrams.9/@connections.1 //@urndef/@specDiagrams.9/@connections.2" pred="//@urndef/@specDiagrams.9/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint100" id="100" x="417" y="-67" pred="//@urndef/@specDiagrams.9/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="6" x="417" y="-16" succ="//@urndef/@specDiagrams.9/@connections.3" pred="//@urndef/@specDiagrams.9/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="101" x="579" y="-16" pred="//@urndef/@specDiagrams.9/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="23" target="99"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="99" target="6">
+        <condition deltaX="29" deltaY="-15" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="99" target="100">
+        <condition deltaX="91" deltaY="29" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="6" target="101"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestWaitingPlaceWithWaitKind" id="106">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="24" x="108" y="-41" succ="//@urndef/@specDiagrams.10/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork103" id="103" x="265" y="-41" succ="//@urndef/@specDiagrams.10/@connections.1 //@urndef/@specDiagrams.10/@connections.2" pred="//@urndef/@specDiagrams.10/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint104" id="104" x="427" y="-67" pred="//@urndef/@specDiagrams.10/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="" id="7" x="427" y="-16" succ="//@urndef/@specDiagrams.10/@connections.3" pred="//@urndef/@specDiagrams.10/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="105" x="589" y="-16" pred="//@urndef/@specDiagrams.10/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="24" target="103"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="103" target="7">
+        <condition deltaX="50" deltaY="-14" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="103" target="104">
+        <condition deltaX="71" deltaY="29" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="7" target="105"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestTimer" id="111">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="25" x="108" y="-41" succ="//@urndef/@specDiagrams.11/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork107" id="107" x="265" y="-41" succ="//@urndef/@specDiagrams.11/@connections.1 //@urndef/@specDiagrams.11/@connections.2" pred="//@urndef/@specDiagrams.11/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint108" id="108" x="427" y="-67" pred="//@urndef/@specDiagrams.11/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="109" x="589" y="-16" pred="//@urndef/@specDiagrams.11/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Timer" name="" id="110" x="427" y="-16" succ="//@urndef/@specDiagrams.11/@connections.3" pred="//@urndef/@specDiagrams.11/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="25" target="107"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="107" target="110">
+        <condition deltaX="89" deltaY="-9" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="107" target="108">
+        <condition deltaX="79" deltaY="34" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="110" target="109"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestTimerWithWaitKind" id="116">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="26" x="108" y="-41" succ="//@urndef/@specDiagrams.12/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork112" id="112" x="265" y="-41" succ="//@urndef/@specDiagrams.12/@connections.1 //@urndef/@specDiagrams.12/@connections.2" pred="//@urndef/@specDiagrams.12/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint113" id="113" x="427" y="-67" pred="//@urndef/@specDiagrams.12/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="114" x="589" y="-16" pred="//@urndef/@specDiagrams.12/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Timer" name="" id="115" x="427" y="-16" succ="//@urndef/@specDiagrams.12/@connections.3" pred="//@urndef/@specDiagrams.12/@connections.1" waitType="Persistent">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="26" target="112"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="112" target="115">
+        <condition deltaX="64" deltaY="-20" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="112" target="113">
+        <condition deltaX="92" deltaY="30" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="115" target="114"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestFailurePoint" id="120">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="27" x="108" y="-41" succ="//@urndef/@specDiagrams.13/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork117" id="117" x="265" y="-41" succ="//@urndef/@specDiagrams.13/@connections.1 //@urndef/@specDiagrams.13/@connections.2" pred="//@urndef/@specDiagrams.13/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint118" id="118" x="427" y="-67" pred="//@urndef/@specDiagrams.13/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:FailurePoint" name="" id="9" x="427" y="-16" succ="//@urndef/@specDiagrams.13/@connections.3" pred="//@urndef/@specDiagrams.13/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="119" x="589" y="-16" pred="//@urndef/@specDiagrams.13/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="27" target="117"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="117" target="9">
+        <condition deltaX="40" deltaY="-10" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="117" target="118">
+        <condition deltaX="89" deltaY="40" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="9" target="119"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestStub" id="125">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="28" x="108" y="-41" succ="//@urndef/@specDiagrams.14/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork121" id="121" x="265" y="-41" succ="//@urndef/@specDiagrams.14/@connections.1 //@urndef/@specDiagrams.14/@connections.2" pred="//@urndef/@specDiagrams.14/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint122" id="122" x="427" y="-67" pred="//@urndef/@specDiagrams.14/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="" id="123" x="427" y="-16" succ="//@urndef/@specDiagrams.14/@connections.3" pred="//@urndef/@specDiagrams.14/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="124" x="589" y="-16" pred="//@urndef/@specDiagrams.14/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="28" target="121"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="121" target="123">
+        <condition deltaX="79" deltaY="-12" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="121" target="122">
+        <condition deltaX="86" deltaY="31" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="123" target="124"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestStubWithStubType" id="130">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="29" x="108" y="-41" succ="//@urndef/@specDiagrams.15/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork126" id="126" x="265" y="-41" succ="//@urndef/@specDiagrams.15/@connections.1 //@urndef/@specDiagrams.15/@connections.2" pred="//@urndef/@specDiagrams.15/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint127" id="127" x="427" y="-67" pred="//@urndef/@specDiagrams.15/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="" id="128" x="427" y="-16" succ="//@urndef/@specDiagrams.15/@connections.3" pred="//@urndef/@specDiagrams.15/@connections.1" dynamic="true" synchronization="true" blocking="true">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="129" x="589" y="-16" pred="//@urndef/@specDiagrams.15/@connections.3">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="29" target="126"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="126" target="128">
+        <condition deltaX="80" deltaY="-17" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="126" target="127">
+        <condition deltaX="84" deltaY="41" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="128" target="129"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestAsynchronousConnectStartPoint" id="137">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="30" x="108" y="-41" succ="//@urndef/@specDiagrams.16/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="31" x="589" y="-23" succ="//@urndef/@specDiagrams.16/@connections.1 //@urndef/@specDiagrams.16/@connections.2" pred="//@urndef/@specDiagrams.16/@connections.5 //@urndef/@specDiagrams.16/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork131" id="131" x="265" y="-41" succ="//@urndef/@specDiagrams.16/@connections.3 //@urndef/@specDiagrams.16/@connections.4" pred="//@urndef/@specDiagrams.16/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint132" id="132" x="427" y="-16" pred="//@urndef/@specDiagrams.16/@connections.4">
+        <label deltaX="-74" deltaY="-49"/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="133" x="589" y="-111" pred="//@urndef/@specDiagrams.16/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Connect" name="Connect134" id="134" x="750" y="-67" succ="//@urndef/@specDiagrams.16/@connections.5" pred="//@urndef/@specDiagrams.16/@connections.6"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint135" id="135" x="589" y="-23" succ="//@urndef/@specDiagrams.16/@connections.6 //@urndef/@specDiagrams.16/@connections.7" pred="//@urndef/@specDiagrams.16/@connections.2"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="136" x="750" y="-16" pred="//@urndef/@specDiagrams.16/@connections.7">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="30" target="131"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="31" target="133"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="31" target="135"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="131" target="31">
+        <condition deltaX="135" deltaY="51" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="131" target="132">
+        <condition deltaX="61" deltaY="-25" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="134" target="31"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="135" target="134"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="135" target="136"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestAsynchronousConnectWaitingPlace" id="144">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="32" x="265" y="-118" succ="//@urndef/@specDiagrams.17/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="33" x="108" y="-41" succ="//@urndef/@specDiagrams.17/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:WaitingPlace" name="wp" id="8" x="589" y="-67" succ="//@urndef/@specDiagrams.17/@connections.2" pred="//@urndef/@specDiagrams.17/@connections.5 //@urndef/@specDiagrams.17/@connections.3" waitType="Persistent">
+        <label deltaX="-5" deltaY="-52"/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork138" id="138" x="427" y="-118" succ="//@urndef/@specDiagrams.17/@connections.3 //@urndef/@specDiagrams.17/@connections.4" pred="//@urndef/@specDiagrams.17/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint139" id="139" x="589" y="-118" pred="//@urndef/@specDiagrams.17/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="140" x="750" y="-67" pred="//@urndef/@specDiagrams.17/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Connect" name="Connect141" id="141" x="427" y="-67" succ="//@urndef/@specDiagrams.17/@connections.5" pred="//@urndef/@specDiagrams.17/@connections.6"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint142" id="142" x="589" y="-67" succ="//@urndef/@specDiagrams.17/@connections.6 //@urndef/@specDiagrams.17/@connections.7" pred="//@urndef/@specDiagrams.17/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="143" x="427" y="-16" pred="//@urndef/@specDiagrams.17/@connections.7">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="32" target="138"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="33" target="142"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="8" target="140"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="138" target="8">
+        <condition deltaX="-99" deltaY="3" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="138" target="139">
+        <condition deltaX="101" deltaY="38" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="141" target="8"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="142" target="141"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="142" target="143"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestAsynchronousConnectTimer" id="152">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="34" x="265" y="-118" succ="//@urndef/@specDiagrams.18/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="35" x="108" y="-41" succ="//@urndef/@specDiagrams.18/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork145" id="145" x="427" y="-118" succ="//@urndef/@specDiagrams.18/@connections.2 //@urndef/@specDiagrams.18/@connections.3" pred="//@urndef/@specDiagrams.18/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint146" id="146" x="589" y="-118" pred="//@urndef/@specDiagrams.18/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="147" x="750" y="-67" pred="//@urndef/@specDiagrams.18/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Connect" name="Connect148" id="148" x="427" y="-67" succ="//@urndef/@specDiagrams.18/@connections.7" pred="//@urndef/@specDiagrams.18/@connections.5"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="AsynchConnectTimer#t" id="149" x="589" y="-67" succ="//@urndef/@specDiagrams.18/@connections.5 //@urndef/@specDiagrams.18/@connections.6" pred="//@urndef/@specDiagrams.18/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="150" x="427" y="-16" pred="//@urndef/@specDiagrams.18/@connections.6">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Timer" name="t" id="151" x="589" y="-67" succ="//@urndef/@specDiagrams.18/@connections.4" pred="//@urndef/@specDiagrams.18/@connections.2 //@urndef/@specDiagrams.18/@connections.7" waitType="Persistent">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="34" target="145"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="35" target="149"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="145" target="151">
+        <condition deltaX="142" deltaY="4" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="145" target="146">
+        <condition deltaX="101" deltaY="34" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="151" target="147"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="149" target="148"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="149" target="150"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="148" target="151"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestReferencedResponsibility" id="156">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="36" x="265" y="-67" succ="//@urndef/@specDiagrams.19/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="37" x="108" y="-16" succ="//@urndef/@specDiagrams.19/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef5" id="5" x="579" y="-67" succ="//@urndef/@specDiagrams.19/@connections.2" pred="//@urndef/@specDiagrams.19/@connections.5" respDef="1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin208" id="208" x="427" y="-67" succ="//@urndef/@specDiagrams.19/@connections.5" pred="//@urndef/@specDiagrams.19/@connections.0 //@urndef/@specDiagrams.19/@connections.3"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="153" x="731" y="-67" pred="//@urndef/@specDiagrams.19/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork154" id="154" x="265" y="-16" succ="//@urndef/@specDiagrams.19/@connections.3 //@urndef/@specDiagrams.19/@connections.4" pred="//@urndef/@specDiagrams.19/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint155" id="155" x="427" y="-16" pred="//@urndef/@specDiagrams.19/@connections.4">
+        <label deltaX="-74" deltaY="-18"/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="36" target="208"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="37" target="154"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="5" target="153"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="154" target="208">
+        <condition deltaX="144" deltaY="19" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="154" target="155">
+        <condition deltaX="42" deltaY="-23" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="208" target="5"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestReferencedOrJoin" id="160">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="38" x="265" y="-67" succ="//@urndef/@specDiagrams.20/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="39" x="108" y="-16" succ="//@urndef/@specDiagrams.20/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="j" id="56" x="427" y="-67" succ="//@urndef/@specDiagrams.20/@connections.2" pred="//@urndef/@specDiagrams.20/@connections.0 //@urndef/@specDiagrams.20/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="157" x="589" y="-67" pred="//@urndef/@specDiagrams.20/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork158" id="158" x="265" y="-16" succ="//@urndef/@specDiagrams.20/@connections.3 //@urndef/@specDiagrams.20/@connections.4" pred="//@urndef/@specDiagrams.20/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint159" id="159" x="427" y="-16" pred="//@urndef/@specDiagrams.20/@connections.4">
+        <label deltaX="-67" deltaY="-20"/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="38" target="56"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="39" target="158"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="56" target="157"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="158" target="56">
+        <condition deltaX="-49" deltaY="18" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="158" target="159">
+        <condition deltaX="62" deltaY="-10" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestReferencedAndJoin" id="164">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="40" x="265" y="-67" succ="//@urndef/@specDiagrams.21/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="41" x="108" y="-16" succ="//@urndef/@specDiagrams.21/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:AndJoin" name="sy" id="58" x="427" y="-67" succ="//@urndef/@specDiagrams.21/@connections.2" pred="//@urndef/@specDiagrams.21/@connections.0 //@urndef/@specDiagrams.21/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="161" x="589" y="-67" pred="//@urndef/@specDiagrams.21/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork162" id="162" x="265" y="-16" succ="//@urndef/@specDiagrams.21/@connections.3 //@urndef/@specDiagrams.21/@connections.4" pred="//@urndef/@specDiagrams.21/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint163" id="163" x="427" y="-16" pred="//@urndef/@specDiagrams.21/@connections.4">
+        <label deltaX="-81" deltaY="-17"/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="40" target="58"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="41" target="162"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="58" target="161"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="162" target="58">
+        <condition deltaX="148" deltaY="13" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="162" target="163">
+        <condition deltaX="46" deltaY="-9" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestReferencedFailurePoint" id="168">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="42" x="265" y="-67" succ="//@urndef/@specDiagrams.22/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="43" x="108" y="-16" succ="//@urndef/@specDiagrams.22/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:FailurePoint" name="f" id="10" x="584" y="-67" succ="//@urndef/@specDiagrams.22/@connections.2" pred="//@urndef/@specDiagrams.22/@connections.5">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin209" id="209" x="427" y="-67" succ="//@urndef/@specDiagrams.22/@connections.5" pred="//@urndef/@specDiagrams.22/@connections.0 //@urndef/@specDiagrams.22/@connections.3"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="165" x="741" y="-67" pred="//@urndef/@specDiagrams.22/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork166" id="166" x="265" y="-16" succ="//@urndef/@specDiagrams.22/@connections.3 //@urndef/@specDiagrams.22/@connections.4" pred="//@urndef/@specDiagrams.22/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint167" id="167" x="427" y="-16" pred="//@urndef/@specDiagrams.22/@connections.4">
+        <label deltaX="-85" deltaY="-19"/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="42" target="209"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="43" target="166"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="10" target="165"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="166" target="209">
+        <condition deltaX="132" deltaY="17" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="166" target="167">
+        <condition deltaX="42" deltaY="-10" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="209" target="10"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestReferencedStub" id="174">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="44" x="265" y="-67" succ="//@urndef/@specDiagrams.23/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="45" x="108" y="-16" succ="//@urndef/@specDiagrams.23/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="st" id="169" x="589" y="-67" succ="//@urndef/@specDiagrams.23/@connections.2" pred="//@urndef/@specDiagrams.23/@connections.5">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="170" x="750" y="-67" pred="//@urndef/@specDiagrams.23/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork171" id="171" x="265" y="-16" succ="//@urndef/@specDiagrams.23/@connections.3 //@urndef/@specDiagrams.23/@connections.4" pred="//@urndef/@specDiagrams.23/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint172" id="172" x="427" y="-16" pred="//@urndef/@specDiagrams.23/@connections.4">
+        <label deltaX="-77" deltaY="-18"/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin173" id="173" x="427" y="-67" succ="//@urndef/@specDiagrams.23/@connections.5" pred="//@urndef/@specDiagrams.23/@connections.3 //@urndef/@specDiagrams.23/@connections.0"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="44" target="173"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="45" target="171"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="169" target="170"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="171" target="173">
+        <condition deltaX="-37" deltaY="12" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="171" target="172">
+        <condition deltaX="46" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="173" target="169"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestReferencedStubInpath2" id="179">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="46" x="265" y="-67" succ="//@urndef/@specDiagrams.24/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:StartPoint" name="s2" id="47" x="108" y="-16" succ="//@urndef/@specDiagrams.24/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="st" id="175" x="427" y="-67" succ="//@urndef/@specDiagrams.24/@connections.2" pred="//@urndef/@specDiagrams.24/@connections.0 //@urndef/@specDiagrams.24/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="176" x="589" y="-67" pred="//@urndef/@specDiagrams.24/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork177" id="177" x="265" y="-16" succ="//@urndef/@specDiagrams.24/@connections.3 //@urndef/@specDiagrams.24/@connections.4" pred="//@urndef/@specDiagrams.24/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint178" id="178" x="427" y="-16" pred="//@urndef/@specDiagrams.24/@connections.4">
+        <label deltaX="-61" deltaY="-35"/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="46" target="175"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="47" target="177"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="175" target="176"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="177" target="175">
+        <condition deltaX="125" deltaY="17" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="177" target="178">
+        <condition deltaX="63" deltaY="-12" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestFull" id="183">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="48" x="108" y="-41" succ="//@urndef/@specDiagrams.25/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork One" id="180" x="265" y="-41" succ="//@urndef/@specDiagrams.25/@connections.1 //@urndef/@specDiagrams.25/@connections.2" pred="//@urndef/@specDiagrams.25/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint181" id="181" x="427" y="-67" pred="//@urndef/@specDiagrams.25/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="182" x="427" y="-16" pred="//@urndef/@specDiagrams.25/@connections.1">
+        <label deltaX="1" deltaY="-48"/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="48" target="180"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="180" target="182">
+        <condition deltaX="45" deltaY="-13" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="180" target="181">
+        <condition deltaX="-25" deltaY="3" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestTwoBranches" id="186">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="49" x="108" y="-16" succ="//@urndef/@specDiagrams.26/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork One" id="184" x="265" y="-16" succ="//@urndef/@specDiagrams.26/@connections.1 //@urndef/@specDiagrams.26/@connections.2" pred="//@urndef/@specDiagrams.26/@connections.0">
+        <label deltaX="50" deltaY="8"/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="185" x="589" y="-16" pred="//@urndef/@specDiagrams.26/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin210" id="210" x="427" y="-16" succ="//@urndef/@specDiagrams.26/@connections.3" pred="//@urndef/@specDiagrams.26/@connections.1 //@urndef/@specDiagrams.26/@connections.4"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint232" id="232" x="343" y="-93" succ="//@urndef/@specDiagrams.26/@connections.4" pred="//@urndef/@specDiagrams.26/@connections.2"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="49" target="184"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="184" target="210">
+        <condition deltaX="69" deltaY="-11" label="condition1" expression="condition1"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="184" target="232">
+        <condition deltaX="17" deltaY="-10" label="condition2" expression="condition2"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="210" target="185"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="232" target="210"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestElseBranch" id="189">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="50" x="108" y="-16" succ="//@urndef/@specDiagrams.27/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork One" id="187" x="265" y="-16" succ="//@urndef/@specDiagrams.27/@connections.1 //@urndef/@specDiagrams.27/@connections.2" pred="//@urndef/@specDiagrams.27/@connections.0">
+        <label deltaX="49" deltaY="8"/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="188" x="589" y="-16" pred="//@urndef/@specDiagrams.27/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin211" id="211" x="427" y="-16" succ="//@urndef/@specDiagrams.27/@connections.3" pred="//@urndef/@specDiagrams.27/@connections.4 //@urndef/@specDiagrams.27/@connections.1"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint241" id="241" x="357" y="-57" succ="//@urndef/@specDiagrams.27/@connections.4" pred="//@urndef/@specDiagrams.27/@connections.2"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="50" target="187"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="187" target="211">
+        <condition deltaX="30" deltaY="-6" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="187" target="241">
+        <condition deltaX="12" deltaY="3" label="!condition" expression="!condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="211" target="188"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="241" target="211"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestNoConnectingBody" id="193">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="51" x="108" y="-41" succ="//@urndef/@specDiagrams.28/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork One" id="190" x="265" y="-41" succ="//@urndef/@specDiagrams.28/@connections.1 //@urndef/@specDiagrams.28/@connections.2" pred="//@urndef/@specDiagrams.28/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e1" id="191" x="427" y="-67" pred="//@urndef/@specDiagrams.28/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="192" x="427" y="-16" pred="//@urndef/@specDiagrams.28/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="51" target="190"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="190" target="191">
+        <condition deltaX="44" deltaY="58" label="condition1" expression="condition1"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="190" target="192">
+        <condition deltaX="51" deltaY="-13" label="condition2" expression="condition2"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestRegularBranchAndConnectingBranch" id="197">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="52" x="108" y="-41" succ="//@urndef/@specDiagrams.29/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork One" id="194" x="265" y="-41" succ="//@urndef/@specDiagrams.29/@connections.1 //@urndef/@specDiagrams.29/@connections.2" pred="//@urndef/@specDiagrams.29/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e1" id="195" x="427" y="-67" pred="//@urndef/@specDiagrams.29/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="196" x="427" y="-16" pred="//@urndef/@specDiagrams.29/@connections.2">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="52" target="194"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="194" target="195">
+        <condition deltaX="26" deltaY="50" label="condition1" expression="condition1"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="194" target="196">
+        <condition deltaX="43" deltaY="-9" label="condition2" expression="condition2"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestRegularBranchAndTwoConnectingBranches" id="201">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="53" x="108" y="-16" succ="//@urndef/@specDiagrams.30/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork One" id="198" x="265" y="-16" succ="//@urndef/@specDiagrams.30/@connections.1 //@urndef/@specDiagrams.30/@connections.2 //@urndef/@specDiagrams.30/@connections.3" pred="//@urndef/@specDiagrams.30/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e1" id="199" x="427" y="-67" pred="//@urndef/@specDiagrams.30/@connections.1">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e2" id="200" x="589" y="-16" pred="//@urndef/@specDiagrams.30/@connections.4">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin212" id="212" x="427" y="-16" succ="//@urndef/@specDiagrams.30/@connections.4" pred="//@urndef/@specDiagrams.30/@connections.2 //@urndef/@specDiagrams.30/@connections.5"/>
+      <nodes xsi:type="ucm.map:EmptyPoint" name="EmptyPoint246" id="246" x="343" y="18" succ="//@urndef/@specDiagrams.30/@connections.5" pred="//@urndef/@specDiagrams.30/@connections.3"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="53" target="198"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="198" target="199">
+        <condition deltaX="51" deltaY="59" label="condition1" expression="condition1"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="198" target="212">
+        <condition deltaX="-10" deltaY="35" label="condition2" expression="condition2"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="198" target="246">
+        <condition deltaX="10" deltaY="-26" label="condition3" expression="condition3"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="212" target="200"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="246" target="212"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestJustCondition" id="205">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="54" x="108" y="-41" succ="//@urndef/@specDiagrams.31/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork202" id="202" x="265" y="-41" succ="//@urndef/@specDiagrams.31/@connections.1 //@urndef/@specDiagrams.31/@connections.2" pred="//@urndef/@specDiagrams.31/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint203" id="203" x="427" y="-67" pred="//@urndef/@specDiagrams.31/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="204" x="427" y="-16" pred="//@urndef/@specDiagrams.31/@connections.1">
+        <label/>
+      </nodes>
+      <connections xsi:type="ucm.map:NodeConnection" source="54" target="202"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="202" target="204">
+        <condition deltaX="58" deltaY="-15" label="condition" expression="condition"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="202" target="203">
+        <condition deltaX="87" deltaY="40" label="!condition" expression="!condition"/>
+      </connections>
+    </specDiagrams>
+  </urndef>
+</urn:URNspec>

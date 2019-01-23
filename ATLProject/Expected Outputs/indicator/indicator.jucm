@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:urn="http:///urn.ecore" name="IndicatorTest" nextGlobalID="28">
+  <ucmspec/>
+  <grlspec>
+    <intElements name="iSource" id="2" linksSrc="35 36 37 38 39 40 41 42 43 44 45 46" type="Indicator" importance="High" refs="1">
+      <metadata name="TURN-URN-NAME" value="iSource"/>
+    </intElements>
+    <intElements name="sg1" id="4" linksDest="35" importance="High" refs="3">
+      <metadata name="TURN-URN-NAME" value="sg1"/>
+    </intElements>
+    <intElements name="sg2" id="6" linksDest="38" importance="High" refs="5">
+      <metadata name="TURN-URN-NAME" value="sg2"/>
+    </intElements>
+    <intElements name="g1" id="8" linksDest="36" type="Goal" importance="High" refs="7">
+      <metadata name="TURN-URN-NAME" value="g1"/>
+    </intElements>
+    <intElements name="g2" id="10" linksDest="39" type="Goal" decompositionType="Or" importance="High" refs="9">
+      <metadata name="TURN-URN-NAME" value="g2"/>
+    </intElements>
+    <intElements name="t1" id="12" linksDest="37" type="Task" importance="High" refs="11">
+      <metadata name="TURN-URN-NAME" value="t1"/>
+    </intElements>
+    <intElements name="t2" id="14" linksDest="40" type="Task" decompositionType="Xor" importance="High" refs="13">
+      <metadata name="TURN-URN-NAME" value="t2"/>
+    </intElements>
+    <intElements name="r2" id="16" linksDest="41" type="Ressource" importance="High" refs="15">
+      <metadata name="TURN-URN-NAME" value="r2"/>
+    </intElements>
+    <intElements name="sg3" id="18" linksDest="42" importance="High" refs="17">
+      <metadata name="TURN-URN-NAME" value="sg3"/>
+    </intElements>
+    <intElements name="g3" id="20" linksDest="43" type="Goal" importance="High" refs="19">
+      <metadata name="TURN-URN-NAME" value="g3"/>
+    </intElements>
+    <intElements name="t3" id="22" linksDest="44" type="Task" importance="High" refs="21">
+      <metadata name="TURN-URN-NAME" value="t3"/>
+    </intElements>
+    <intElements name="r3" id="24" linksDest="45" type="Ressource" importance="High" refs="23">
+      <metadata name="TURN-URN-NAME" value="r3"/>
+    </intElements>
+    <intElements name="i3" id="26" linksDest="46" type="Indicator" importance="High" refs="25">
+      <metadata name="TURN-URN-NAME" value="i3"/>
+    </intElements>
+    <intElements name="Indicator" id="28" type="Indicator" importanceQuantitative="100" refs="27">
+      <metadata name="TURN-URN-NAME" value="iSource2"/>
+    </intElements>
+    <actors name="Indicator Test for ElementLinks" id="29" contRefs="30"/>
+    <actors name="Other" id="31" contRefs="32"/>
+    <actors name="Indicator Test for Optional Elements" id="33" contRefs="34"/>
+    <links xsi:type="grl:Contribution" id="35" refs="//@urndef/@specDiagrams.0/@connections.0" dest="4" src="2" contribution="Make" quantitativeContribution="100"/>
+    <links xsi:type="grl:Contribution" id="36" refs="//@urndef/@specDiagrams.0/@connections.1" dest="8" src="2" contribution="Make" quantitativeContribution="100"/>
+    <links xsi:type="grl:Contribution" id="37" refs="//@urndef/@specDiagrams.0/@connections.2" dest="12" src="2" contribution="Break" quantitativeContribution="-100" correlation="true"/>
+    <links xsi:type="grl:Decomposition" id="38" refs="//@urndef/@specDiagrams.0/@connections.3" dest="6" src="2"/>
+    <links xsi:type="grl:Decomposition" id="39" refs="//@urndef/@specDiagrams.0/@connections.4" dest="10" src="2"/>
+    <links xsi:type="grl:Decomposition" id="40" refs="//@urndef/@specDiagrams.0/@connections.5" dest="14" src="2"/>
+    <links xsi:type="grl:Decomposition" id="41" refs="//@urndef/@specDiagrams.0/@connections.6" dest="16" src="2"/>
+    <links xsi:type="grl:Dependency" id="42" refs="//@urndef/@specDiagrams.0/@connections.7" dest="18" src="2"/>
+    <links xsi:type="grl:Dependency" id="43" refs="//@urndef/@specDiagrams.0/@connections.8" dest="20" src="2"/>
+    <links xsi:type="grl:Dependency" id="44" refs="//@urndef/@specDiagrams.0/@connections.9" dest="22" src="2"/>
+    <links xsi:type="grl:Dependency" id="45" refs="//@urndef/@specDiagrams.0/@connections.10" dest="24" src="2"/>
+    <links xsi:type="grl:Dependency" id="46" refs="//@urndef/@specDiagrams.0/@connections.11" dest="26" src="2"/>
+  </grlspec>
+  <urndef>
+    <specDiagrams xsi:type="grl:GRLGraph">
+      <nodes xsi:type="grl:IntentionalElementRef" name="iSource" id="1" contRef="30" succ="//@urndef/@specDiagrams.0/@connections.0 //@urndef/@specDiagrams.0/@connections.1 //@urndef/@specDiagrams.0/@connections.2 //@urndef/@specDiagrams.0/@connections.3 //@urndef/@specDiagrams.0/@connections.4 //@urndef/@specDiagrams.0/@connections.5 //@urndef/@specDiagrams.0/@connections.6 //@urndef/@specDiagrams.0/@connections.7 //@urndef/@specDiagrams.0/@connections.8 //@urndef/@specDiagrams.0/@connections.9 //@urndef/@specDiagrams.0/@connections.10 //@urndef/@specDiagrams.0/@connections.11" def="2"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="sg1" id="3" contRef="30" pred="//@urndef/@specDiagrams.0/@connections.0" def="4"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="sg2" id="5" contRef="30" pred="//@urndef/@specDiagrams.0/@connections.3" def="6"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="g1" id="7" contRef="30" pred="//@urndef/@specDiagrams.0/@connections.1" def="8"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="g2" id="9" contRef="30" pred="//@urndef/@specDiagrams.0/@connections.4" def="10"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="t1" id="11" contRef="30" pred="//@urndef/@specDiagrams.0/@connections.2" def="12"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="t2" id="13" contRef="30" pred="//@urndef/@specDiagrams.0/@connections.5" def="14"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="r2" id="15" contRef="30" pred="//@urndef/@specDiagrams.0/@connections.6" def="16"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="sg3" id="17" contRef="32" pred="//@urndef/@specDiagrams.0/@connections.7" def="18"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="g3" id="19" contRef="32" pred="//@urndef/@specDiagrams.0/@connections.8" def="20"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="t3" id="21" contRef="32" pred="//@urndef/@specDiagrams.0/@connections.9" def="22"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="r3" id="23" contRef="32" pred="//@urndef/@specDiagrams.0/@connections.10" def="24"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="i3" id="25" contRef="32" pred="//@urndef/@specDiagrams.0/@connections.11" def="26"/>
+      <nodes xsi:type="grl:IntentionalElementRef" name="Indicator" id="27" contRef="34" def="28"/>
+      <contRefs xsi:type="grl:ActorRef" name="ActorRef30" id="30" contDef="29" nodes="1 3 5 7 9 11 13 15">
+        <label/>
+      </contRefs>
+      <contRefs xsi:type="grl:ActorRef" name="ActorRef32" id="32" contDef="31" nodes="17 19 21 23 25">
+        <label/>
+      </contRefs>
+      <contRefs xsi:type="grl:ActorRef" name="ActorRef34" id="34" contDef="33" nodes="27">
+        <label/>
+      </contRefs>
+      <connections xsi:type="grl:LinkRef" source="1" target="3" link="35"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="7" link="36"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="11" link="37"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="5" link="38"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="9" link="39"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="13" link="40"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="15" link="41"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="17" link="42"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="19" link="43"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="21" link="44"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="23" link="45"/>
+      <connections xsi:type="grl:LinkRef" source="1" target="25" link="46"/>
+    </specDiagrams>
+  </urndef>
+</urn:URNspec>
