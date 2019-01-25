@@ -49,6 +49,19 @@ helper def: andForkNodeConnCounter : Integer = 1;
 helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) = 
 	self.actors -> collect(actor|actor.elems) -> flatten();
 
+-- called rules
+rule createMetadata(name: String, value: String) {
+   to 
+     targetMetadata: Urn!Metadata (
+     	name <- name,
+     	value <- value    
+     )
+	 do{
+	 	targetMetadata;
+	 }
+}
+
+--regular rules
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
@@ -150,7 +163,7 @@ rule IntElements2IntElements{
 	 	 	
 		 	thisModule.id <- thisModule.id.inc();
 		 	tIntElem.id <- thisModule.id.toString();
-		 	tIntElem.metadata <- thisModule.addMetadata(s.name);
+		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
 	}
 }
 
@@ -183,4 +196,35 @@ rule Actor2Actor{
 	 }	
 }
 
+rule Metadata2Metadata{
+	from 
+		sourceMetadata: Turn!Metadata
+	to 
+		targetMetadata: Urn!Metadata (
+			name <- sourceMetadata.name
+		)
+}
+
+rule createCondition(sourceExpression: String){
+	to
+	 	targetCondition: Urn!Condition(
+	 		expression <- sourceExpression,
+			label <- sourceExpression
+	 	)
+	do{
+		targetCondition;
+	}		
+}
+
+--TODO: replace "conns" for "connections"
+rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
+	to
+	 	targetNodeConn: Urn!NodeConnection()
+	do{
+		if(ref <> OclAny){
+			targetNodeConn.condition <- thisModule.resolveTemp(ref.condition,'tCondition');
+		}
+		targetNodeConn;	
+	}	
+}
 
