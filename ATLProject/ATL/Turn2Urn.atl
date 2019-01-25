@@ -45,6 +45,65 @@ helper def: stubMap : Map(Turn!Stub, Urn!Stub) = Map{};
 
 helper def: andForkNodeConnCounter : Integer = 1;
 
+rule URNspec2URNspec{
+	from 
+		s: Turn!URNspec
+	to 
+		tURNspec: Urn!URNspec (
+			name <- s.name,
+			metadata <- s.metadata,
+			grlspec <- tGRLSpec,
+			ucmspec <- tUcmspec,
+			urnLinks <- s.urnlinks,
+			urndef <- tURNdef
+		),
+		tURNdef: Urn!URNdefinition (
+			specDiagrams <- tGRLSpecDiag,
+			specDiagrams <- s.ucmMaps ->  collect(m|thisModule.resolveTemp(m,'tUCMmap')),
+			concerns <- s.concerns
+		),
+		tGRLSpec: Urn!GRLspec (
+			actors <- s.actors,
+			intElements <- s.actors-> collect(a|a.elems) -> flatten() -> select(e|e.type.toString() <> 'belief'),
+			links <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tCont')),
+			links <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDecomp')),
+			links <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDep')),
+			groups <- s.stratGroups,
+			strategies <- s.strategies,
+			contributionGroups <- s.contribContextGroups,
+			contributionContexts <- s.contribContexts,
+			KPIConversion <- s.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings))
+		),
+		tGRLSpecDiag: Urn!GRLGraph (
+		  	nodes <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')),
+			nodes <- Urn!Belief.allInstances(),
+			contRefs <- s.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
+		    connections <- s.actors -> collect(a|a.elems) -> flatten() ->  collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')),  
+	    	connections <- s.actors -> collect(a|a.elems) -> flatten() ->   collect(m| thisModule.resolveTemp(m,'tBeliefLink')) 
+		),
+		tUcmspec: Urn!UCMspec (
+			)
+	do{
+		if(s.metadata -> select(m| m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
+	 		if (s.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty())
+	 			thisModule.id <- s.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
+		}
+		
+		tURNdef.components <- Urn!Component.allInstances();
+		tURNdef.responsibilities <- Urn!Responsibility.allInstances();
+		
+		if (not s.info.oclIsUndefined()){
+			tURNspec.description <- s.info.description;
+			tURNspec.author <- s.info.author;
+			tURNspec.created <- s.info.created;
+			tURNspec.modified <- s.info.modified;
+			tURNspec.specVersion <- s.info.specVersion;
+			tURNspec.urnVersion <- s.info.urnVersion; }
+		
+		tURNspec.nextGlobalID <- thisModule.id.toString();
+	}
+}
+
 rule IntElements2IntElements{
 	from 
 		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
@@ -90,5 +149,6 @@ rule IntElements2IntElements{
 		 
 	}
 }
+
 
 
