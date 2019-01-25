@@ -61,6 +61,15 @@ rule createMetadata(name: String, value: String) {
 	 }
 }
 
+--TODO: replace "conns" for "connections"
+rule createNodeConns(){
+	to
+	 	targetNodeConn: Urn!NodeConnection()
+	do{
+		targetNodeConn;	
+	}		
+}
+
 --regular rules
 rule URNspec2URNspec{
 	from 
@@ -123,79 +132,6 @@ rule URNspec2URNspec{
 	}
 }
 
-rule IntElements2IntElements{
-	from 
-		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
-	to 
-		tIntElem: Urn!IntentionalElement (
-		   linksSrc <- s.linksSrc
-		),
-		tIntElemRef: Urn!IntentionalElementRef (
-			def <- tIntElem,
-			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
-			
-		)
-	 do{
-		 thisModule.id <- thisModule.id.inc();
-		 tIntElemRef.id <- thisModule.id.toString();
-		 tIntElemRef.name <- 'IntentionalElementRef'+tIntElemRef.id;
-		 
-		 if(not s.longName.longname.oclIsUndefined())
-			tIntElemRef.name <- s.longName.longname;
-		 else
-			tIntElemRef.name <- s.name;
-		 
-		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
-		 	tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
-		 
-		 tIntElem.type <- s.type.toString().substring(1,1).toUpper()+s.type.toString().substring(2,s.type.toString().size());
-		 
-		 --Added because the default value in enum is considered always.
-		 if(s.importance.toString().equals('none'))
-			tIntElem.importanceQuantitative <- s.importanceQuantitative;
-		else
-			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
-		
-	 	 	if(not s.longName.longname.oclIsUndefined())
-				tIntElem.name <- s.longName.longname;
-			else
-				tIntElem.name <- s.name;
-	 	 	
-		 	thisModule.id <- thisModule.id.inc();
-		 	tIntElem.id <- thisModule.id.toString();
-		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
-	}
-}
-
-rule Actor2Actor{
-	from 
-		s: Turn!Actor
-	to 
-		tActor: Urn!Actor (
-			importanceQuantitative <- s.importanceQuantitative
-		),
-		tActorRef: Urn!ActorRef (
-			contDef <- tActor,
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
-			label <- tCompLabel
-		),
-		tCompLabel: Urn!ComponentLabel()
-	 do{
-	 	if(not s.longName.longname.oclIsUndefined())
-			tActor.name <- s.longName.longname;
-		else
-			tActor.name <- s.name;
-	 	
-	 	thisModule.id <- thisModule.id.inc();
-	    tActor.id <- thisModule.id.toString();
-	    
-	 	thisModule.id <- thisModule.id.inc();
-	    tActorRef.id <- thisModule.id.toString();
-	    tActorRef.name <- 'ActorRef'+tActorRef.id;
-	 }	
-}
-
 rule Metadata2Metadata{
 	from 
 		sourceMetadata: Turn!Metadata
@@ -228,3 +164,12 @@ rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
 	}	
 }
 
+--TODO: replace "conns" for "connections"
+rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
+	to
+	 	targetNodeConn: Urn!NodeConnection(
+	 	)
+	do{
+		targetNodeConn;	
+	}	
+}

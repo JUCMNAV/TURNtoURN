@@ -1,3 +1,76 @@
+rule IntElements2IntElements{
+	from 
+		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
+	to 
+		tIntElem: Urn!IntentionalElement (
+		   linksSrc <- s.linksSrc
+		),
+		tIntElemRef: Urn!IntentionalElementRef (
+			def <- tIntElem,
+			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
+			
+		)
+	 do{
+		 thisModule.id <- thisModule.id.inc();
+		 tIntElemRef.id <- thisModule.id.toString();
+		 tIntElemRef.name <- 'IntentionalElementRef'+tIntElemRef.id;
+		 
+		 if(not s.longName.longname.oclIsUndefined())
+			tIntElemRef.name <- s.longName.longname;
+		 else
+			tIntElemRef.name <- s.name;
+		 
+		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
+		 	tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
+		 
+		 tIntElem.type <- s.type.toString().substring(1,1).toUpper()+s.type.toString().substring(2,s.type.toString().size());
+		 
+		 --Added because the default value in enum is considered always.
+		 if(s.importance.toString().equals('none'))
+			tIntElem.importanceQuantitative <- s.importanceQuantitative;
+		else
+			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
+		
+	 	 	if(not s.longName.longname.oclIsUndefined())
+				tIntElem.name <- s.longName.longname;
+			else
+				tIntElem.name <- s.name;
+	 	 	
+		 	thisModule.id <- thisModule.id.inc();
+		 	tIntElem.id <- thisModule.id.toString();
+		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
+	}
+}
+
+rule Actor2Actor{
+	from 
+		s: Turn!Actor
+	to 
+		tActor: Urn!Actor (
+			importanceQuantitative <- s.importanceQuantitative
+		),
+		tActorRef: Urn!ActorRef (
+			contDef <- tActor,
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
+			label <- tCompLabel
+		),
+		tCompLabel: Urn!ComponentLabel()
+	 do{
+	 	if(not s.longName.longname.oclIsUndefined())
+			tActor.name <- s.longName.longname;
+		else
+			tActor.name <- s.name;
+	 	
+	 	thisModule.id <- thisModule.id.inc();
+	    tActor.id <- thisModule.id.toString();
+	    
+	 	thisModule.id <- thisModule.id.inc();
+	    tActorRef.id <- thisModule.id.toString();
+	    tActorRef.name <- 'ActorRef'+tActorRef.id;
+	 }	
+}
+
 rule Belief2Belief {
 	from
 		s: Turn!IntentionalElement (s.type.toString() = 'belief')
@@ -378,15 +451,7 @@ rule createComponent(s: Turn!ComponentRef){
 		}
 }
 
-rule createMetadata(name: String, value: String) {
-   to 
-     t : Urn!Metadata (
-     	name <- name,
-     	value <- value    
-     )
-	 do{
-	 	t; }
-}
+
 rule Responsibility2Responsibility{
 	from
 		s: Turn!RespRef 
@@ -504,48 +569,6 @@ rule FailurePoint2FailurePoint{
 		 if(not s.failLabel.oclIsUndefined())
 		 	tFailPt.expression <- s.failLabel.failure;
 	}
-}
-
-rule Metadata2Metadata{
-	from 
-		s: Turn!Metadata
-	to 
-		t: Urn!Metadata (
-			name <- s.name
-			--value <- s.value
-		)
-}
-
-rule addMetadata(value: String) {
-   to 
-     t : Urn!Metadata (
-     	name <- 'TURN-URN-NAME',
-     	value <- value    
-     )
-	 do{
-	 	t; }
-}
-
-rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
-	to
-	 	tNodeConn: Urn!NodeConnection()
-	do{
-		if(ref <> OclAny)
-			tNodeConn.condition <- thisModule.resolveTemp(ref.condition,'tCondition');
-		tNodeConn;	
-	}	
-}
-
-rule createCondition(exp: String){
-	to
-	 	tCond: Urn!Condition(
-	 		expression <- exp,
-			label <- exp
-	 	)
-	do{
-		tCond;	
-	}	
-		
 }
 
 rule StartPoint2StartPoint{
@@ -980,15 +1003,6 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 	}
 }
 
-rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
-	to
-	 	tNodeConn: Urn!NodeConnection(
-	 	)
-	do{
-		tNodeConn;	
-	}	
-}
-
 rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 	to
 		tAndFork: Urn!AndFork (
@@ -1368,15 +1382,6 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		}
 		thisModule.nodeCollector;
 	}
-}
-
-rule createNodeConns(){
-	to
-	 	tNodeConn: Urn!NodeConnection()
-	do{
-		tNodeConn;	
-	}	
-		
 }
 
 rule Condition2Condition{
