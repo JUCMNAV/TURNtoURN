@@ -61,7 +61,6 @@ rule createMetadata(name: String, value: String) {
 	 }
 }
 
---TODO: replace "conns" for "connections"
 rule createNodeConns(){
 	to
 	 	targetNodeConn: Urn!NodeConnection()
@@ -152,7 +151,6 @@ rule createCondition(sourceExpression: String){
 	}		
 }
 
---TODO: replace "conns" for "connections"
 rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
 	to
 	 	targetNodeConn: Urn!NodeConnection()
@@ -164,7 +162,6 @@ rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
 	}	
 }
 
---TODO: replace "conns" for "connections"
 rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
 	to
 	 	targetNodeConn: Urn!NodeConnection(

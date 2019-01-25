@@ -1,5 +1,6 @@
 # TURNtoURN
-**_Transformation from TURN to URN using ATL_**
+
+## Transformation from TURN to URN using ATL
   
 **ATL -** Phase 1 of transformation. Turn2Urn.atl is the primary transformation file and **uses** ConnectNodes.atl using Module Superimposition  
   
@@ -12,3 +13,16 @@
 **Expected Outputs -** expected output .jucm files for all test cases  
   
 **Turn2UrnPhase2.java -** Phase 2 of transformation 
+
+## TODO
+* Replace "conns" for "connections" where relevant (if conns does indeed stand for connections)
+* Helpers:
+		* orForkNodeConnCounter
+		* andForkNodeConnCounter
+	* Rules:
+		* createNodeConns
+		* createOrForkNodeConns
+		* createAndForkNodeConns
+* Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
+* Continue returning code from Turn2UrnTemporarilyRemovedCode.txt to Turn2URN.atl. Refactor it and improve its efficiency as you go.
+* Start returning code from ConnectNodesTemporarilyRemovedCode to ConnectNodes.atl. Refactor it and improve its efficiency as you go.
