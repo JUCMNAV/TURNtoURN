@@ -21,7 +21,8 @@ helper context Integer def : inc() : Integer = self + 1;
 -- This helper checks if metadata already exists for a given parameter
 -- CONTEXT: Turn!URNmodelElement
 -- RETURN: Boolean
-helper context Turn!URNmodelElement def: metadataExists(param : String) : Boolean = self.metadata -> select(m| m.name.indexOf(param) <> -1 ) -> notEmpty();
+helper context Turn!URNmodelElement def: metadataExists(param : String) : Boolean = 
+	self.metadata -> select(m| m.name.indexOf(param) <> -1 ) -> notEmpty();
 
 helper def: nodeCollector : Sequence(OclAny) = Sequence(OclAny) ;
 
@@ -45,60 +46,65 @@ helper def: stubMap : Map(Turn!Stub, Urn!Stub) = Map{};
 
 helper def: andForkNodeConnCounter : Integer = 1;
 
+helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) = 
+	self.actors -> collect(actor|actor.elems) -> flatten();
+
 rule URNspec2URNspec{
 	from 
-		s: Turn!URNspec
-	to 
+		sURNspec: Turn!URNspec
+	to
 		tURNspec: Urn!URNspec (
-			name <- s.name,
-			metadata <- s.metadata,
+			name <- sURNspec.name,
+			metadata <- sURNspec.metadata,
 			grlspec <- tGRLSpec,
 			ucmspec <- tUcmspec,
-			urnLinks <- s.urnlinks,
+			urnLinks <- sURNspec.urnlinks,
 			urndef <- tURNdef
 		),
 		tURNdef: Urn!URNdefinition (
 			specDiagrams <- tGRLSpecDiag,
-			specDiagrams <- s.ucmMaps ->  collect(m|thisModule.resolveTemp(m,'tUCMmap')),
-			concerns <- s.concerns
+			specDiagrams <- sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap')),
+			concerns <- sURNspec.concerns
 		),
 		tGRLSpec: Urn!GRLspec (
-			actors <- s.actors,
-			intElements <- s.actors-> collect(a|a.elems) -> flatten() -> select(e|e.type.toString() <> 'belief'),
-			links <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tCont')),
-			links <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDecomp')),
-			links <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDep')),
-			groups <- s.stratGroups,
-			strategies <- s.strategies,
-			contributionGroups <- s.contribContextGroups,
-			contributionContexts <- s.contribContexts,
-			KPIConversion <- s.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings))
+			actors <- sURNspec.actors,
+			intElements <- sURNspec.getActorElements() -> select(e|e.type.toString() <> 'belief'),
+			links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tCont')),
+			links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDecomp')),
+			links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDep')),
+			groups <- sURNspec.stratGroups,
+			strategies <- sURNspec.strategies,
+			contributionGroups <- sURNspec.contribContextGroups,
+			contributionContexts <- sURNspec.contribContexts,
+			KPIConversion <- sURNspec.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings))
 		),
 		tGRLSpecDiag: Urn!GRLGraph (
-		  	nodes <- s.actors -> collect(a|a.elems) -> flatten() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')),
+		  	nodes <- sURNspec.getActorElements() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')),
 			nodes <- Urn!Belief.allInstances(),
-			contRefs <- s.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
-		    connections <- s.actors -> collect(a|a.elems) -> flatten() ->  collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')),  
-	    	connections <- s.actors -> collect(a|a.elems) -> flatten() ->   collect(m| thisModule.resolveTemp(m,'tBeliefLink')) 
+			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
+		    connections <- sURNspec.getActorElements() ->  collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')),  
+	    	connections <- sURNspec.getActorElements() ->  collect(m| thisModule.resolveTemp(m,'tBeliefLink')) 
 		),
 		tUcmspec: Urn!UCMspec (
-			)
+		
+		)
 	do{
-		if(s.metadata -> select(m| m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
-	 		if (s.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty())
-	 			thisModule.id <- s.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
+		if(sURNspec.metadata -> select(m| (m.name.indexOf('TURN-URN') <> -1 and m.name.indexOf('nextGlobalID') <> -1)) -> notEmpty()){
+	 		thisModule.id <- sURNspec.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
 		}
+		
 		
 		tURNdef.components <- Urn!Component.allInstances();
 		tURNdef.responsibilities <- Urn!Responsibility.allInstances();
 		
-		if (not s.info.oclIsUndefined()){
-			tURNspec.description <- s.info.description;
-			tURNspec.author <- s.info.author;
-			tURNspec.created <- s.info.created;
-			tURNspec.modified <- s.info.modified;
-			tURNspec.specVersion <- s.info.specVersion;
-			tURNspec.urnVersion <- s.info.urnVersion; }
+		if (not sURNspec.info.oclIsUndefined()){
+			tURNspec.description <- sURNspec.info.description;
+			tURNspec.author <- sURNspec.info.author;
+			tURNspec.created <- sURNspec.info.created;
+			tURNspec.modified <- sURNspec.info.modified;
+			tURNspec.specVersion <- sURNspec.info.specVersion;
+			tURNspec.urnVersion <- sURNspec.info.urnVersion; 
+		}
 		
 		tURNspec.nextGlobalID <- thisModule.id.toString();
 	}
@@ -145,10 +151,7 @@ rule IntElements2IntElements{
 		 	thisModule.id <- thisModule.id.inc();
 		 	tIntElem.id <- thisModule.id.toString();
 		 	tIntElem.metadata <- thisModule.addMetadata(s.name);
-	 	
-		 
 	}
-	 
 }
 
 rule Actor2Actor{
