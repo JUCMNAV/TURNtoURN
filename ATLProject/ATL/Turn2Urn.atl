@@ -148,7 +148,36 @@ rule IntElements2IntElements{
 	 	
 		 
 	}
+	 
 }
 
+rule Actor2Actor{
+	from 
+		s: Turn!Actor
+	to 
+		tActor: Urn!Actor (
+			importanceQuantitative <- s.importanceQuantitative
+		),
+		tActorRef: Urn!ActorRef (
+			contDef <- tActor,
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
+			label <- tCompLabel
+		),
+		tCompLabel: Urn!ComponentLabel()
+	 do{
+	 	if(not s.longName.longname.oclIsUndefined())
+			tActor.name <- s.longName.longname;
+		else
+			tActor.name <- s.name;
+	 	
+	 	thisModule.id <- thisModule.id.inc();
+	    tActor.id <- thisModule.id.toString();
+	    
+	 	thisModule.id <- thisModule.id.inc();
+	    tActorRef.id <- thisModule.id.toString();
+	    tActorRef.name <- 'ActorRef'+tActorRef.id;
+	 }	
+}
 
 
