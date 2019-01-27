@@ -71,6 +71,24 @@ rule initNextObjectWithName(obj: OclAny, name: String){
 	}
 }
 
+rule initObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
+	do{
+		-- personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
+		-- note: ATL does not support short-circuit evalaution of conditions so this had to be implemented in an ugly manner
+		if(not sourceObject.longname.oclIsUndefined() and not sourceObject.longname.oclIsTypeOf(String)){
+			if(not sourceObject.longname.longname.oclIsUndefined()){
+				targetObject.name <- sourceObject.longname.longname;
+			}
+			else{
+				targetObject.name <- sourceObject.name;	
+			}
+		}
+		else{
+			targetObject.name <- sourceObject.name;	
+		}
+	}
+}
+
 -- called rules below
 
 rule createMetadata(name: String, value: String) {
@@ -90,18 +108,6 @@ rule createNodeConns(){
 	do{
 		targetNodeConn;	
 	}		
-}
-
-rule initObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
-	do{
-		--personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
-		if(not sourceObject.longname.longname.oclIsUndefined()){
-			targetObject.name <- sourceObject.longname.longname;
-		}
-		else{
-			targetObject.name <- sourceObject.name;	
-		}
-	}
 }
 
 rule createComponent(s: Turn!ComponentRef){
@@ -318,12 +324,46 @@ rule Actor2Actor{
 	 }	
 }
 
+rule Decomposition2Decomposition{
+	from 
+		s: Turn!Decomposition (not (s.link.type.toString() = 'belief'))
+	to 
+		tDecomp: Urn!Decomposition (
+		    dest <- s.dest,
+			refs <- tLinkRef
+		),
+		tLinkRef: Urn!LinkRef (
+			link <- tDecomp,
+			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+		)
+	do{
+		thisModule.initObjectNameFromObject(tDecomp, s);
+		thisModule.initNextObject(tDecomp);
+	}
+}
+
+rule Dependency2Dependency{
+	from 
+		s: Turn!Dependency (not (s.link.type.toString() = 'belief'))
+	to 
+		tDep: Urn!Dependency (
+		    dest <- s.dest,
+			refs <- tLinkRef
+		),
+		tLinkRef: Urn!LinkRef (
+			link <- tDep,
+			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+		)
+	do{
+		thisModule.initObjectNameFromObject(tDep, s);
+		thisModule.initNextObject(tDep);
+	}
+}
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule IntElements2IntElements
 --rule Contribution2Contribution
---rule Decomposition2Decomposition
---rule Dependency2Dependency
 --rule Strategies2Strategies
 --rule StrategiesGroup2StrategiesGroup
 --rule Evaluation2Evaluation
