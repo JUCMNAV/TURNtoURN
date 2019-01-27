@@ -360,6 +360,64 @@ rule Dependency2Dependency{
 	}
 }
 
+rule Strategies2Strategies{
+	from
+		s: Turn!EvaluationStrategy
+	to
+		tStrategies: Urn!EvaluationStrategy (
+			author <- s.info.author,
+			evaluations <- s.evaluations,
+			includedStrategies <- s.includedStrategies
+		)
+	do{
+		thisModule.initObjectNameFromObject(tStrategies, s);
+		thisModule.initNextObject(tStrategies);
+	}
+}
+
+rule ContributionContext2ContributionContext{
+	from
+		s: Turn!ContributionContext
+	to
+		tContContext: Urn!ContributionContext (
+			changes <- s.changes,
+			includedContexts <- s.includedContexts
+		)
+	do{
+		thisModule.initObjectNameFromObject(tContContext, s);
+		thisModule.initNextObject(tContContext);
+	}
+}
+
+rule ContributionContextGroup2ContributionContextGroup{
+	from
+		s: Turn!ContributionContextGroup
+	to
+		tContribGroups: Urn!ContributionContextGroup (
+			contribs <- s.contrib,
+			contribs <- s.contribs
+		)
+	do{
+		thisModule.initObjectNameFromObject(tContribGroups, s);
+		thisModule.initNextObject(tContribGroups);
+	}
+}
+
+rule QMappings2QMappings {
+	from
+		s: Turn!QualToQMappings
+	to
+		tQMappings: Urn!QualitativeMappings (
+			mapping <- s.mappings
+			--kpiEvalValueSet <- tQMapkpiEvalValueSet
+		)
+		
+	do{
+		thisModule.initObjectNameFromObject(tQMappings, s);
+		thisModule.initNExtObject(tQMappings);
+	}
+}
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule IntElements2IntElements

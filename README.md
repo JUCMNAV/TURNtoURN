@@ -48,6 +48,10 @@
 		* Actor2Actor
 		* Decomposition2Decomposition
 		* Dependency2Dependency
+		* Strategies2Strategies
+		* ContributionContext2ContributionContext
+		* ContributionContextGroup2ContributionContextGroup
+		* QMappings2QMappings
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
 	* if(not s.longName.longname.oclIsUndefined())... else...
