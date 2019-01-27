@@ -35,31 +35,11 @@
 		* Belief2Belief
 		* FailurePoint2FailurePoint
 		* StartPoint2StartPoint
-	* Do blocks processed:
-		* createMetadata(name: String, value: String)
-		* createNodeConns()
-		* createComponent(s: Turn!ComponentRef)
-		* createKpiEvalValueSet(s: Turn!LinearConversion)
-		* createQMapKpiEvalValueSet(conv: Turn!QualToQMappings)
-		* createOrJoin(tUCMmap: Urn!UCMmap)
-		* createAndJoin(tUCMmap: Urn!UCMmap)
-		* createConnect(tUCMmap: Urn!UCMmap)
-		* createCondition(sourceExpression: String)
-		* Metadata2Metadata
-		* createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap)
-		* Actor2Actor
-		* Decomposition2Decomposition
-		* Dependency2Dependency
-		* Strategies2Strategies
-		* ContributionContext2ContributionContext
-		* ContributionContextGroup2ContributionContextGroup
-		* QMappings2QMappings
-		* Concern2Concern
-		* createResponsibility(s: Turn!RespRef)
-		* WaitingPlace2WaitingPlace
+		* AndJoin2AndJoin
+		* OrJoin2OrJoin
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
-	* if(not s.longName.longname.oclIsUndefined())... else...
+	* is it possible to use the called rules created as methods directly in the "to" block? That would remove the need for a lot of the do blocks.
 * Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
 * Rearrange methods so that their order feels more natural.
 * Note that this is not like an OOP language where initNextItem instantiates the object before it can be assigned a name; the object is initialized in the "for" block; the choice of calling id first is merely for familiarity

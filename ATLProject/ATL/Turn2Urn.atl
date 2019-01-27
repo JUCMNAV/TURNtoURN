@@ -491,8 +491,8 @@ rule StartPoint2StartPoint{
 			diagram <- s.path.map,
 			precondition <- s.precondition
 		),
-		tNodeConn: Urn!NodeConnection(),
-		tNodeLabel: Urn!NodeLabel()
+		tNodeConn: Urn!NodeConnection,
+		tNodeLabel: Urn!NodeLabel
 	do{
 		thisModule.initNext(tStartPoint);
 		thisModule.initObjectNameFromObject(tStartPoint, s);
@@ -506,6 +506,53 @@ rule StartPoint2StartPoint{
 		
 		if(not s.failKind.oclIsUndefined())
 			tStartPoint.failureKind <- s.failKind.toString().substring(1,1).toUpper()+s.failKind.toString().substring(2,s.failKind.toString().size());
+	}
+}
+
+rule AndJoin2AndJoin{
+	from 	
+		s: Turn!AndJoin
+	to
+		tAndJoin: Urn!AndJoin(
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		),
+		tNodeConn: Urn!NodeConnection,
+		tNodeLabel: Urn!NodeLabel
+	do{
+		thisModule.initNextItem(tAndJoin);
+		thisModule.initObjectNameFromObject(tAndJoin, s);
+		
+		if(not s.boundTo.oclIsUndefined()){
+				if(not s.boundTo.comp.oclIsUndefined())
+					tAndJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tAndJoin.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+	}
+}
+
+rule OrJoin2OrJoin{
+	from 	
+		s: Turn!OrJoin
+	to
+		tOrJoin: Urn!OrJoin(
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		),
+		tNodeConn: Urn!NodeConnection,
+		tNodeLabel: Urn!NodeLabel
+	do{
+		thisModule.initNextObject(s);
+		thisModule.initObjectNameFromObject(tOrJoin, s);
+		
+		if(not s.boundTo.oclIsUndefined()){
+				if(not s.boundTo.comp.oclIsUndefined())
+					tOrJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tOrJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+		
 	}
 }
 

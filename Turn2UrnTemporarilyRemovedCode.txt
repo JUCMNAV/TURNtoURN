@@ -1126,68 +1126,6 @@ rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
 	}
 }
 
-rule OrJoin2OrJoin{
-	from 	
-		s: Turn!OrJoin
-	to
-		tOrJoin: Urn!OrJoin(
-			succ <- tNodeConn,
-			label <- tNodeLabel
-		),
-		tNodeConn: Urn!NodeConnection (
-		),
-		tNodeLabel: Urn!NodeLabel (
-		)
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tOrJoin.name <- s.longName.longname;
-		else
-			tOrJoin.name <- s.name;
-		
-		if(not s.boundTo.oclIsUndefined()){
-				if(not s.boundTo.comp.oclIsUndefined())
-					tOrJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tOrJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
-		}
-		
-		thisModule.id <- thisModule.id.inc();
-		tOrJoin.id <- thisModule.id.toString();
-		
-	}
-}
-
-rule AndJoin2AndJoin{
-	from 	
-		s: Turn!AndJoin
-	to
-		tAndJoin: Urn!AndJoin(
-			succ <- tNodeConn,
-			label <- tNodeLabel
-		),
-		tNodeConn: Urn!NodeConnection (
-		),
-		tNodeLabel: Urn!NodeLabel (
-		)
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tAndJoin.name <- s.longName.longname;
-		else
-			tAndJoin.name <- s.name;
-		
-		if(not s.boundTo.oclIsUndefined()){
-				if(not s.boundTo.comp.oclIsUndefined())
-					tAndJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tAndJoin.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
-		}
-		
-		thisModule.id <- thisModule.id.inc();
-		tAndJoin.id <- thisModule.id.toString();
-				
-	}
-}
-
 rule UCMmap2UCMmap{
 	from
 		sUCMmap: Turn!UCMmap
