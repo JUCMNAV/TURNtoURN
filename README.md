@@ -28,11 +28,12 @@
 * Continue returning code from Turn2UrnTemporarilyRemovedCode.txt to Turn2URN.atl. Refactor it and improve its efficiency as you go.
 	* Remaining rules to add are shown in Turn2Urn.atl
 	* To revisit:
-		* all helper rules created
+		* From/to blocks of all rules
+		* All helper rules created
 		* createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap)
 		* URNspec2URNspec
 		* Belief2Belief
-	* Complete:
+	* Do blocks processed:
 		* createMetadata(name: String, value: String)
 		* createNodeConns()
 		* createComponent(s: Turn!ComponentRef)
@@ -45,6 +46,8 @@
 		* Metadata2Metadata
 		* createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap)
 		* Actor2Actor
+		* Decomposition2Decomposition
+		* Dependency2Dependency
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
 	* if(not s.longName.longname.oclIsUndefined())... else...
