@@ -92,80 +92,6 @@ rule Contribution2Contribution{
 	}
 }
 
-rule Decomposition2Decomposition{
-	from 
-		s: Turn!Decomposition  (not (s.link.type.toString() = 'belief'))
-	to 
-		tDecomp: Urn!Decomposition (
-		    dest <- s.dest,
-			refs <- tLinkRef
-		),
-		tLinkRef: Urn!LinkRef (
-			link <- tDecomp,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
-		)
-	do{
-		 thisModule.name <- '';
-		 if(not s.longName.oclIsUndefined()){
-		 	if(not s.longName.longname.oclIsUndefined())
-				thisModule.name <- s.longName.longname; 
-		 }
-		 if(thisModule.name = '')
-			thisModule.name <- s.name;
-		 
-		tDecomp.name <- thisModule.name;
-		thisModule.id <- thisModule.id.inc();
-		tDecomp.id <- thisModule.id.toString();	
-	}
-}
-
-rule Dependency2Dependency{
-	from 
-		s: Turn!Dependency  (not (s.link.type.toString() = 'belief'))
-	to 
-		tDep: Urn!Dependency (
-		    dest <- s.dest,
-			refs <- tLinkRef
-		),
-		tLinkRef: Urn!LinkRef (
-			link <- tDep,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
-		)
-	do{
-		 thisModule.name <- '';
-		 if(not s.longName.oclIsUndefined()){
-		 	if(not s.longName.longname.oclIsUndefined())
-				thisModule.name <- s.longName.longname; 
-		 }
-		 if(thisModule.name = '')
-			thisModule.name <- s.name;
-		 
-		tDep.name <- thisModule.name;
-		
-		thisModule.id <- thisModule.id.inc();
-		tDep.id <- thisModule.id.toString();	
-	}
-}
-
-rule Strategies2Strategies{
-	from
-		s: Turn!EvaluationStrategy
-	to
-		tStrategies: Urn!EvaluationStrategy (
-			author <- s.info.author,
-			evaluations <- s.evaluations,
-			includedStrategies <- s.includedStrategies
-		)
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tStrategies.name <- s.longName.longname;
-		else
-			tStrategies.name <- s.name;
-	 	thisModule.id <- thisModule.id.inc();
-	    tStrategies.id <- thisModule.id.toString();
-	}
-}
-
 rule StrategiesGroup2StrategiesGroup{
 	from
 		s: Turn!StrategiesGroup
@@ -204,24 +130,6 @@ rule Evaluation2Evaluation {
 	}
 }
 
-rule ContributionContext2ContributionContext{
-	from
-		s: Turn!ContributionContext
-	to
-		tContContext: Urn!ContributionContext (
-			changes <- s.changes,
-			includedContexts <- s.includedContexts
-		)
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tContContext.name <- s.longName.longname;
-		else
-			tContContext.name <- s.name;
-	 	thisModule.id <- thisModule.id.inc();
-	    tContContext.id <- thisModule.id.toString();
-	}
-}
-
 rule ContributionChange2ContributionChange{
 	from
 		s: Turn!ContributionChange
@@ -233,43 +141,6 @@ rule ContributionChange2ContributionChange{
 	do{
 		if(not s.newContribution.toString().equals('undefined'))
 			t.newContribution <- s.newContribution.toString().substring(1,1).toUpper()+s.newContribution.toString().substring(2,s.newContribution.toString().size());
-	}
-}
-
-rule ContributionContextGroup2ContributionContextGroup{
-	from
-		s: Turn!ContributionContextGroup
-	to
-		tContribGroups: Urn!ContributionContextGroup (
-			contribs <- s.contrib,
-			contribs <- s.contribs
-		)
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tContribGroups.name <- s.longName.longname;
-		else
-			tContribGroups.name <- s.name;
-	 	thisModule.id <- thisModule.id.inc();
-	    tContribGroups.id <- thisModule.id.toString();
-	}
-}
-
-rule QMappings2QMappings {
-	from
-		s: Turn!QualToQMappings
-	to
-		tQMappings: Urn!QualitativeMappings (
-			mapping <- s.mappings
-			--kpiEvalValueSet <- tQMapkpiEvalValueSet
-		)
-		
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tQMappings.name <- s.longName.longname;
-		else
-			tQMappings.name <- s.name;
- 		thisModule.id <- thisModule.id.inc();
-    	tQMappings.id <- thisModule.id.toString();
 	}
 }
 
