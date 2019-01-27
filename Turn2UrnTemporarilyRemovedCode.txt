@@ -42,54 +42,6 @@ rule IntElements2IntElements{
 	}
 }
 
-rule Actor2Actor{
-	from 
-		s: Turn!Actor
-	to 
-		tActor: Urn!Actor (
-			importanceQuantitative <- s.importanceQuantitative
-		),
-		tActorRef: Urn!ActorRef (
-			contDef <- tActor,
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
-			label <- tCompLabel
-		),
-		tCompLabel: Urn!ComponentLabel()
-	 do{
-	 	if(not s.longName.longname.oclIsUndefined())
-			tActor.name <- s.longName.longname;
-		else
-			tActor.name <- s.name;
-	 	
-	 	thisModule.id <- thisModule.id.inc();
-	    tActor.id <- thisModule.id.toString();
-	    
-	 	thisModule.id <- thisModule.id.inc();
-	    tActorRef.id <- thisModule.id.toString();
-	    tActorRef.name <- 'ActorRef'+tActorRef.id;
-	 }	
-}
-
-rule Belief2Belief {
-	from
-		s: Turn!IntentionalElement (s.type.toString() = 'belief')
-    to 
-     	tBelief: Urn!Belief (
-     		name <- s.name,
-			description <- s.name,
-			succ <- tBeliefLink
-     	),
-		tBeliefLink: Urn!BeliefLink (
-			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
-		)
-	 do{
-	 	thisModule.id <- thisModule.id.inc();
-	    tBelief.id <- thisModule.id.toString();
-	 	tBelief;
-	 }
-}
-
 rule Contribution2Contribution{
 	from 
 		s: Turn!Contribution (not (s.link.type.toString() = 'belief'))

@@ -53,21 +53,21 @@ helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) =
 -- (sorry, spirit of declarative programming)
 
 -- method used to initialize an item and assign it a unique id
-rule initNextItem(item: OclAny){
+rule initNextObject(obj: OclAny){
 	do{
 		thisModule.id <- thisModule.id.inc();
-		item.id <- thisModule.id.toString();
-		item;
+		obj.id <- thisModule.id.toString();
+		obj;
 	}
 }
 
 -- method used to initialize an item and assign it a unique id
 -- and then to prepend a 'name' to this id
-rule initNextItemWithName(item: OclAny, name: String){
+rule initNextObjectWithName(obj: OclAny, name: String){
 	do{
-		thisModule.initNextItem(item);
-		item.name <- name+item.id;
-		item;
+		thisModule.initNextObject(obj);
+		obj.name <- name+obj.id;
+		obj;
 	}
 }
 
@@ -92,18 +92,24 @@ rule createNodeConns(){
 	}		
 }
 
+rule initObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
+	do{
+		--personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
+		if(not sourceObject.longname.longname.oclIsUndefined()){
+			targetObject.name <- sourceObject.longname.longname;
+		}
+		else{
+			targetObject.name <- sourceObject.name;	
+		}
+	}
+}
+
 rule createComponent(s: Turn!ComponentRef){
 	to
 		tComp: Urn!Component
 	do{
-		--personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
-		if(not s.longName.longname.oclIsUndefined()){
-			tComp.name <- s.longName.longname;
-		}
-		else{
-			tComp.name <- s.name;
-		}
-		thisModule.initNextItem(tComp);
+		thisModule.initNextObject(tComp);
+		thisModule.initObjectNameFromObject(tComp, s);
 		tComp;	
 	}
 }
@@ -139,7 +145,7 @@ rule createOrJoin(tUCMmap: Urn!UCMmap){
 		),
 		tConn: Urn!NodeConnection
 	do{
-		thisModule.initNextItemWithName(tOrJoin, 'OrJoin');
+		thisModule.initNextObjectWithName(tOrJoin, 'OrJoin');
 		tOrJoin;
 	}
 }
@@ -152,7 +158,7 @@ rule createAndJoin(tUCMmap: Urn!UCMmap){
 		),
 		tConn: Urn!NodeConnection
 	do{
-		thisModule.initNextItemWithName(tAndJoin, 'AndJoin');
+		thisModule.initNextObjectWithName(tAndJoin, 'AndJoin');
 		tAndJoin;
 	}
 }
@@ -165,7 +171,7 @@ rule createConnect(tUCMmap: Urn!UCMmap){
 		),
 		tConn: Urn!NodeConnection
 	do{
-		thisModule.initNextItemWithName(tConnect, 'Connect');
+		thisModule.initNextObjectWithName(tConnect, 'Connect');
 		tConnect;	
 	}
 }
@@ -285,15 +291,36 @@ rule Belief2Belief {
 			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
 		)
 	 do{
-	 	thisModule.initNextItem(tBelief);
+	 	thisModule.initNextObject(tBelief);
 	 	tBelief;
 	 }
+}
+
+rule Actor2Actor{
+	from 
+		s: Turn!Actor
+	to 
+		tActor: Urn!Actor (
+			importanceQuantitative <- s.importanceQuantitative
+		),
+		tActorRef: Urn!ActorRef (
+			contDef <- tActor,
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
+			label <- tCompLabel
+		),
+		tCompLabel: Urn!ComponentLabel()
+	 do{
+	 	thisModule.initNextObject(tActor);
+	 	thisModule.initObjectNameFromObject(tActor, s);
+	 	
+	 	thisModule.initNextObjectWithName(tActorRef, 'ActorRef');
+	 }	
 }
 
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule IntElements2IntElements
---rule Actor2Actor
 --rule Contribution2Contribution
 --rule Decomposition2Decomposition
 --rule Dependency2Dependency
