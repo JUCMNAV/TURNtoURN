@@ -252,16 +252,6 @@ rule Evaluation2Evaluation {
 	}
 }
 
-rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
-	to		
-		tkpiEvalValueSet: Urn!KPIEvalValueSet (
-			kpiConv <- conv	
-		)
-	do{ 
-		tkpiEvalValueSet;
-	}
-}
-
 rule ContributionContext2ContributionContext{
 	from
 		s: Turn!ContributionContext
@@ -309,19 +299,6 @@ rule ContributionContextGroup2ContributionContextGroup{
 			tContribGroups.name <- s.name;
 	 	thisModule.id <- thisModule.id.inc();
 	    tContribGroups.id <- thisModule.id.toString();
-	}
-}
-
-rule createKpiEvalValueSet(s: Turn!LinearConversion) {
-	to
-		tkpiEvalValueSet: Urn! KPIEvalValueSet (
-			unit <- s.unit,
-			targetValue <- s.targetValue,
-			thresholdValue <- s.thresholdValue,
-			worstValue <- s.worstValue
-		)
-	do{ 
-		tkpiEvalValueSet;
 	}
 }
 
@@ -434,23 +411,6 @@ rule Component2Component{
 		tCompRef.name <-'ComponentRef'+tCompRef.id;
 	}
 }
-
-rule createComponent(s: Turn!ComponentRef){
-	to
-		tComp: Urn!Component(
-			--kind <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size())
-		)
-		do{
-			if(not s.longName.longname.oclIsUndefined())
-				tComp.name <- s.longName.longname;
-			else
-				tComp.name <- s.name;
-			thisModule.id <- thisModule.id.inc();
-			tComp.id <- thisModule.id.toString();
-			tComp;	
-		}
-}
-
 
 rule Responsibility2Responsibility{
 	from
@@ -1731,21 +1691,6 @@ rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	}
 }
 
-rule createConnect(tUCMmap: Urn!UCMmap){
-	to
-		tConnect: Urn!Connect(
-			succ <- tConn,
-			diagram <- tUCMmap
-		),
-		tConn: Urn!NodeConnection()
-	do{
-		thisModule.id <- thisModule.id.inc();
-		tConnect.id <- thisModule.id.toString();
-		tConnect.name <- 'Connect'+tConnect.id;
-		tConnect;	
-	}
-}
-
 rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean){
 	to
 		tEmptyPt: Urn!EmptyPoint(
@@ -1771,40 +1716,6 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 		tEmptyPt;	
 	}
 }
-
-rule createOrJoin(tUCMmap: Urn!UCMmap){
-	to
-		tOrJoin: Urn!OrJoin(
-			succ <- tConn,
-			diagram <- tUCMmap
-		),
-		tConn: Urn!NodeConnection()
-	do{
-		thisModule.id <- thisModule.id.inc();
-		tOrJoin.id <- thisModule.id.toString();
-		
-		tOrJoin.name <- 'OrJoin'+tOrJoin.id;
-		tOrJoin;	
-	}
-}
-
-rule createAndJoin(tUCMmap: Urn!UCMmap){
-	to
-		tAndJoin: Urn!AndJoin(
-			succ <- tConn,
-			diagram <- tUCMmap
-		),
-		tConn: Urn!NodeConnection()
-	do{
-		thisModule.id <- thisModule.id.inc();
-		tAndJoin.id <- thisModule.id.toString();
-		
-		tAndJoin.name <- 'AndJoin'+tAndJoin.id;
-		tAndJoin;	
-	}
-}
-
-
 
 rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
 	do{

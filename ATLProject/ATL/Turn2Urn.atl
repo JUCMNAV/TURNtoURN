@@ -49,16 +49,39 @@ helper def: andForkNodeConnCounter : Integer = 1;
 helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) = 
 	self.actors -> collect(actor|actor.elems) -> flatten();
 
--- called rules
+-- imperative-method-like rules below
+-- (sorry, spirit of declarative programming)
+
+-- method used to initialize an item and assign it a unique id
+rule initNextItem(item: OclAny){
+	do{
+		thisModule.id <- thisModule.id.inc();
+		item.id <- thisModule.id.toString();
+		item;
+	}
+}
+
+-- method used to initialize an item and assign it a unique id
+-- and then to prepend a 'name' to this id
+rule initNextItemWithName(item: OclAny, name: String){
+	do{
+		thisModule.initNextItem(item);
+		item.name <- name+item.id;
+		item;
+	}
+}
+
+-- called rules below
+
 rule createMetadata(name: String, value: String) {
-   to 
+	to 
      targetMetadata: Urn!Metadata (
      	name <- name,
      	value <- value    
      )
-	 do{
+	do{
 	 	targetMetadata;
-	 }
+	}
 }
 
 rule createNodeConns(){
@@ -66,6 +89,92 @@ rule createNodeConns(){
 	 	targetNodeConn: Urn!NodeConnection()
 	do{
 		targetNodeConn;	
+	}		
+}
+
+rule createComponent(s: Turn!ComponentRef){
+	to
+		tComp: Urn!Component()
+	do{
+		if(not s.longName.longname.oclIsUndefined())
+			tComp.name <- s.longName.longname;
+		else
+			tComp.name <- s.name;
+		thisModule.initNextItem(tComp);
+		tComp;	
+	}
+}
+
+rule createKpiEvalValueSet(s: Turn!LinearConversion) {
+	to
+		tkpiEvalValueSet: Urn! KPIEvalValueSet (
+			unit <- s.unit,
+			targetValue <- s.targetValue,
+			thresholdValue <- s.thresholdValue,
+			worstValue <- s.worstValue
+		)
+	do{ 
+		tkpiEvalValueSet;
+	}
+}
+
+rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
+	to		
+		tkpiEvalValueSet: Urn!KPIEvalValueSet (
+			kpiConv <- conv	
+		)
+	do{ 
+		tkpiEvalValueSet;
+	}
+}
+
+rule createOrJoin(tUCMmap: Urn!UCMmap){
+	to
+		tOrJoin: Urn!OrJoin(
+			succ <- tConn,
+			diagram <- tUCMmap
+		),
+		tConn: Urn!NodeConnection()
+	do{
+		thisModule.initNextItemWithName(tOrJoin, 'OrJoin');
+		tOrJoin;
+	}
+}
+
+rule createAndJoin(tUCMmap: Urn!UCMmap){
+	to
+		tAndJoin: Urn!AndJoin(
+			succ <- tConn,
+			diagram <- tUCMmap
+		),
+		tConn: Urn!NodeConnection()
+	do{
+		thisModule.initNextItemWithName(tAndJoin, 'AndJoin');
+		tAndJoin;
+	}
+}
+
+rule createConnect(tUCMmap: Urn!UCMmap){
+	to
+		tConnect: Urn!Connect(
+			succ <- tConn,
+			diagram <- tUCMmap
+		),
+		tConn: Urn!NodeConnection()
+	do{
+		thisModule.initNextItemWithName(tConnect, 'Connect');
+		tConnect;	
+	}
+}
+
+rule createCondition(sourceExpression: String){
+	to
+	 	targetCondition: Urn!Condition(
+	 		expression <- sourceExpression,
+			label <- sourceExpression
+	 	)
+	do{
+		targetCondition;
 	}		
 }
 
@@ -138,17 +247,6 @@ rule Metadata2Metadata{
 		targetMetadata: Urn!Metadata (
 			name <- sourceMetadata.name
 		)
-}
-
-rule createCondition(sourceExpression: String){
-	to
-	 	targetCondition: Urn!Condition(
-	 		expression <- sourceExpression,
-			label <- sourceExpression
-	 	)
-	do{
-		targetCondition;
-	}		
 }
 
 rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
