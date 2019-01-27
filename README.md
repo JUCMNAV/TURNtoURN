@@ -26,16 +26,24 @@
 * Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
 * Start returning code from ConnectNodesTemporarilyRemovedCode to ConnectNodes.atl. Refactor it and improve its efficiency as you go.
 * Continue returning code from Turn2UrnTemporarilyRemovedCode.txt to Turn2URN.atl. Refactor it and improve its efficiency as you go.
-	* Remaining rules to validate are shown in Turn2Urn.atl
-	* To validate:
+	* Remaining rules to add are shown in Turn2Urn.atl
+	* To revisit:
 		* createComponent(s: Turn!ComponentRef)
 		* createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap)
-		* createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap)
+		* URNspec2URNspec
+		* Belief2Belief
 	* Complete:
 		* createMetadata(name: String, value: String)
 		* createNodeConns()
 		* createKpiEvalValueSet(s: Turn!LinearConversion)
 		* createQMapKpiEvalValueSet(conv: Turn!QualToQMappings)
 		* createOrJoin(tUCMmap: Urn!UCMmap)
-		* createCondition
+		* createAndJoin(tUCMmap: Urn!UCMmap)
+		* createConnect(tUCMmap: Urn!UCMmap)
+		* createCondition(sourceExpression: String)
 		* Metadata2Metadata
+		* createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap)
+		
+## Design:
+* Potential patterns to generalize into methods:
+	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
