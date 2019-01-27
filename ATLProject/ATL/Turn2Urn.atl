@@ -268,3 +268,48 @@ rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
 		targetNodeConn;	
 	}	
 }
+
+--Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
+
+--rule IntElements2IntElements
+--rule Actor2Actor
+--rule Belief2Belief
+--rule Contribution2Contribution
+--rule Decomposition2Decomposition
+--rule Dependency2Dependency
+--rule Strategies2Strategies
+--rule StrategiesGroup2StrategiesGroup
+--rule Evaluation2Evaluation
+--rule ContributionContext2ContributionContext
+--rule ContributionChange2ContributionChange
+--rule ContributionContextGroup2ContributionContextGroup
+--rule QMappings2QMappings
+--rule QMapping2QMapping
+--rule Concern2Concern
+--rule URNlink2URNlink
+--rule Component2Component
+--rule Responsibility2Responsibility
+--rule createResponsibility(s: Turn!RespRef)
+--rule WaitingPlace2WaitingPlace
+--rule FailurePoint2FailurePoint
+--rule StartPoint2StartPoint
+--rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap)
+--rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String)
+--rule createLabel()
+--rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap)
+--rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap)
+--rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
+--rule Condition2Condition
+--rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap)
+--rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint)
+--rule OrJoin2OrJoin
+--rule AndJoin2AndJoin
+--rule UCMmap2UCMmap
+--rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
+--rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
+--rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean)
+--rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap)
+--rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap)
+--rule PluginBinding2PluginBinding
+--rule InBinding2InBinding
+--rule OutBinding2OutBinding

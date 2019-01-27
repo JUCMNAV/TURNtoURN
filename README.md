@@ -24,5 +24,18 @@
 		* createOrForkNodeConns
 		* createAndForkNodeConns
 * Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
-* Continue returning code from Turn2UrnTemporarilyRemovedCode.txt to Turn2URN.atl. Refactor it and improve its efficiency as you go.
 * Start returning code from ConnectNodesTemporarilyRemovedCode to ConnectNodes.atl. Refactor it and improve its efficiency as you go.
+* Continue returning code from Turn2UrnTemporarilyRemovedCode.txt to Turn2URN.atl. Refactor it and improve its efficiency as you go.
+	* Remaining rules to validate are shown in Turn2Urn.atl
+	* To validate:
+		* createComponent(s: Turn!ComponentRef)
+		* createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap)
+		* createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap)
+	* Complete:
+		* createMetadata(name: String, value: String)
+		* createNodeConns()
+		* createKpiEvalValueSet(s: Turn!LinearConversion)
+		* createQMapKpiEvalValueSet(conv: Turn!QualToQMappings)
+		* createOrJoin(tUCMmap: Urn!UCMmap)
+		* createCondition
+		* Metadata2Metadata
