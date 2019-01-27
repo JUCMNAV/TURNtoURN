@@ -156,26 +156,6 @@ rule QMapping2QMapping {
 		)
 }
 
-rule Concern2Concern{
-	from 
-		s: Turn!Concern
-	to 
-		tConcern: Urn!Concern (
-		    elements <- s.elements,
-			condition <- s.condition,
-			metadata <- s.metadata
-		)
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tConcern.name <- s.longName.longname;
-		else
-			tConcern.name <- s.name;
-		
-		thisModule.id <- thisModule.id.inc();
-		tConcern.id <- thisModule.id.toString();	
-	}
-}
-
 rule URNlink2URNlink{
 	from 
 		s: Turn!URNlink

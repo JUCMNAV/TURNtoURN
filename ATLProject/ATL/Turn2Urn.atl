@@ -414,7 +414,22 @@ rule QMappings2QMappings {
 		
 	do{
 		thisModule.initObjectNameFromObject(tQMappings, s);
-		thisModule.initNExtObject(tQMappings);
+		thisModule.initNextObject(tQMappings);
+	}
+}
+
+rule Concern2Concern{
+	from 
+		s: Turn!Concern
+	to 
+		tConcern: Urn!Concern (
+		    elements <- s.elements,
+			condition <- s.condition,
+			metadata <- s.metadata
+		)
+	do{
+		thisModule.initObjectNameFromObject(tConcern, s);
+		thisModule.initNextObject(tConcern);
 	}
 }
 
