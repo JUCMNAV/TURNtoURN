@@ -75,7 +75,7 @@ rule initNextItemWithName(item: OclAny, name: String){
 
 rule createMetadata(name: String, value: String) {
 	to 
-     targetMetadata: Urn!Metadata (
+     targetMetadata: Urn!Metadata(
      	name <- name,
      	value <- value    
      )
@@ -86,7 +86,7 @@ rule createMetadata(name: String, value: String) {
 
 rule createNodeConns(){
 	to
-	 	targetNodeConn: Urn!NodeConnection()
+	 	targetNodeConn: Urn!NodeConnection
 	do{
 		targetNodeConn;	
 	}		
@@ -94,12 +94,15 @@ rule createNodeConns(){
 
 rule createComponent(s: Turn!ComponentRef){
 	to
-		tComp: Urn!Component()
+		tComp: Urn!Component
 	do{
-		if(not s.longName.longname.oclIsUndefined())
+		--personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
+		if(not s.longName.longname.oclIsUndefined()){
 			tComp.name <- s.longName.longname;
-		else
+		}
+		else{
 			tComp.name <- s.name;
+		}
 		thisModule.initNextItem(tComp);
 		tComp;	
 	}
@@ -107,7 +110,7 @@ rule createComponent(s: Turn!ComponentRef){
 
 rule createKpiEvalValueSet(s: Turn!LinearConversion) {
 	to
-		tkpiEvalValueSet: Urn! KPIEvalValueSet (
+		tkpiEvalValueSet: Urn! KPIEvalValueSet(
 			unit <- s.unit,
 			targetValue <- s.targetValue,
 			thresholdValue <- s.thresholdValue,
@@ -120,7 +123,7 @@ rule createKpiEvalValueSet(s: Turn!LinearConversion) {
 
 rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
 	to		
-		tkpiEvalValueSet: Urn!KPIEvalValueSet (
+		tkpiEvalValueSet: Urn!KPIEvalValueSet(
 			kpiConv <- conv	
 		)
 	do{ 
@@ -134,7 +137,7 @@ rule createOrJoin(tUCMmap: Urn!UCMmap){
 			succ <- tConn,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection()
+		tConn: Urn!NodeConnection
 	do{
 		thisModule.initNextItemWithName(tOrJoin, 'OrJoin');
 		tOrJoin;
@@ -147,7 +150,7 @@ rule createAndJoin(tUCMmap: Urn!UCMmap){
 			succ <- tConn,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection()
+		tConn: Urn!NodeConnection
 	do{
 		thisModule.initNextItemWithName(tAndJoin, 'AndJoin');
 		tAndJoin;
@@ -160,7 +163,7 @@ rule createConnect(tUCMmap: Urn!UCMmap){
 			succ <- tConn,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection()
+		tConn: Urn!NodeConnection
 	do{
 		thisModule.initNextItemWithName(tConnect, 'Connect');
 		tConnect;	
@@ -178,12 +181,32 @@ rule createCondition(sourceExpression: String){
 	}		
 }
 
+rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
+	to
+	 	targetNodeConn: Urn!NodeConnection
+	do{
+		--personal TODO: determine the purpose of this line
+		if(ref <> OclAny){
+			targetNodeConn.condition <- thisModule.resolveTemp(ref.condition,'tCondition');
+		}
+		targetNodeConn;	
+	}	
+}
+
+rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
+	to
+	 	targetNodeConn: Urn!NodeConnection
+	do{
+		targetNodeConn;	
+	}	
+}
+
 --regular rules
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
 	to
-		tURNspec: Urn!URNspec (
+		tURNspec: Urn!URNspec(
 			name <- sURNspec.name,
 			metadata <- sURNspec.metadata,
 			grlspec <- tGRLSpec,
@@ -191,12 +214,12 @@ rule URNspec2URNspec{
 			urnLinks <- sURNspec.urnlinks,
 			urndef <- tURNdef
 		),
-		tURNdef: Urn!URNdefinition (
+		tURNdef: Urn!URNdefinition(
 			specDiagrams <- tGRLSpecDiag,
 			specDiagrams <- sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap')),
 			concerns <- sURNspec.concerns
 		),
-		tGRLSpec: Urn!GRLspec (
+		tGRLSpec: Urn!GRLspec(
 			actors <- sURNspec.actors,
 			intElements <- sURNspec.getActorElements() -> select(e|e.type.toString() <> 'belief'),
 			links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tCont')),
@@ -208,16 +231,14 @@ rule URNspec2URNspec{
 			contributionContexts <- sURNspec.contribContexts,
 			KPIConversion <- sURNspec.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings))
 		),
-		tGRLSpecDiag: Urn!GRLGraph (
+		tGRLSpecDiag: Urn!GRLGraph(
 		  	nodes <- sURNspec.getActorElements() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')),
 			nodes <- Urn!Belief.allInstances(),
 			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
 		    connections <- sURNspec.getActorElements() ->  collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')),  
 	    	connections <- sURNspec.getActorElements() ->  collect(m| thisModule.resolveTemp(m,'tBeliefLink')) 
 		),
-		tUcmspec: Urn!UCMspec (
-		
-		)
+		tUcmspec: Urn!UCMspec
 	do{
 		if(sURNspec.metadata -> select(m| (m.name.indexOf('TURN-URN') <> -1 and m.name.indexOf('nextGlobalID') <> -1)) -> notEmpty()){
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
@@ -244,36 +265,35 @@ rule Metadata2Metadata{
 	from 
 		sourceMetadata: Turn!Metadata
 	to 
-		targetMetadata: Urn!Metadata (
+		targetMetadata: Urn!Metadata(
 			name <- sourceMetadata.name
 		)
 }
 
-rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
-	to
-	 	targetNodeConn: Urn!NodeConnection()
-	do{
-		if(ref <> OclAny){
-			targetNodeConn.condition <- thisModule.resolveTemp(ref.condition,'tCondition');
-		}
-		targetNodeConn;	
-	}	
-}
-
-rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
-	to
-	 	targetNodeConn: Urn!NodeConnection(
-	 	)
-	do{
-		targetNodeConn;	
-	}	
+rule Belief2Belief {
+	from
+		s: Turn!IntentionalElement(
+			s.type.toString() = 'belief'
+		)
+    to 
+     	tBelief: Urn!Belief(
+     		name <- s.name,
+			description <- s.name,
+			succ <- tBeliefLink
+     	),
+		tBeliefLink: Urn!BeliefLink(
+			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
+		)
+	 do{
+	 	thisModule.initNextItem(tBelief);
+	 	tBelief;
+	 }
 }
 
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule IntElements2IntElements
 --rule Actor2Actor
---rule Belief2Belief
 --rule Contribution2Contribution
 --rule Decomposition2Decomposition
 --rule Dependency2Dependency
