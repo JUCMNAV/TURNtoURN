@@ -28,13 +28,14 @@
 * Continue returning code from Turn2UrnTemporarilyRemovedCode.txt to Turn2URN.atl. Refactor it and improve its efficiency as you go.
 	* Remaining rules to add are shown in Turn2Urn.atl
 	* To revisit:
-		* createComponent(s: Turn!ComponentRef)
+		* all helper rules created
 		* createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap)
 		* URNspec2URNspec
 		* Belief2Belief
 	* Complete:
 		* createMetadata(name: String, value: String)
 		* createNodeConns()
+		* createComponent(s: Turn!ComponentRef)
 		* createKpiEvalValueSet(s: Turn!LinearConversion)
 		* createQMapKpiEvalValueSet(conv: Turn!QualToQMappings)
 		* createOrJoin(tUCMmap: Urn!UCMmap)
@@ -43,7 +44,9 @@
 		* createCondition(sourceExpression: String)
 		* Metadata2Metadata
 		* createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap)
-		
-## Design:
+		* Actor2Actor
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
+	* if(not s.longName.longname.oclIsUndefined())... else...
+* Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
+* Rearrange methods so that their order feels more natural.
