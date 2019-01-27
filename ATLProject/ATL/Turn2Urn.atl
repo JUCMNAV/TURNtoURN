@@ -52,7 +52,7 @@ helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) =
 -- imperative-method-like rules below
 -- (sorry, spirit of declarative programming)
 
--- method used to initialize an item and assign it a unique id
+-- method used to initialize an object and assign it a unique id
 rule initNextObject(obj: OclAny){
 	do{
 		thisModule.id <- thisModule.id.inc();
@@ -61,7 +61,7 @@ rule initNextObject(obj: OclAny){
 	}
 }
 
--- method used to initialize an item and assign it a unique id
+-- method used to initialize an object and assign it a unique id
 -- and then to prepend a 'name' to this id
 rule initNextObjectWithName(obj: OclAny, name: String){
 	do{
@@ -197,7 +197,6 @@ rule createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap){
 	to
 	 	targetNodeConn: Urn!NodeConnection
 	do{
-		--personal TODO: determine the purpose of this line
 		if(ref <> OclAny){
 			targetNodeConn.condition <- thisModule.resolveTemp(ref.condition,'tCondition');
 		}
@@ -211,6 +210,16 @@ rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
 	do{
 		targetNodeConn;	
 	}	
+}
+
+rule createResponsibility(s: Turn!RespRef){
+	to
+		tResp: Urn!Responsibility()
+	do{
+		thisModule.initObjectNameFromObject(tResp, s);
+		thisModule.initNextItem(tResp);
+		tResp;
+	}
 }
 
 --regular rules
@@ -255,7 +264,6 @@ rule URNspec2URNspec{
 		if(sURNspec.metadata -> select(m| (m.name.indexOf('TURN-URN') <> -1 and m.name.indexOf('nextGlobalID') <> -1)) -> notEmpty()){
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
 		}
-		
 		
 		tURNdef.components <- Urn!Component.allInstances();
 		tURNdef.responsibilities <- Urn!Responsibility.allInstances();
@@ -337,8 +345,8 @@ rule Decomposition2Decomposition{
 			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
 		)
 	do{
-		thisModule.initObjectNameFromObject(tDecomp, s);
 		thisModule.initNextObject(tDecomp);
+		thisModule.initObjectNameFromObject(tDecomp, s);
 	}
 }
 
@@ -355,8 +363,8 @@ rule Dependency2Dependency{
 			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
 		)
 	do{
-		thisModule.initObjectNameFromObject(tDep, s);
 		thisModule.initNextObject(tDep);
+		thisModule.initObjectNameFromObject(tDep, s);
 	}
 }
 
@@ -370,8 +378,8 @@ rule Strategies2Strategies{
 			includedStrategies <- s.includedStrategies
 		)
 	do{
-		thisModule.initObjectNameFromObject(tStrategies, s);
 		thisModule.initNextObject(tStrategies);
+		thisModule.initObjectNameFromObject(tStrategies, s);
 	}
 }
 
@@ -384,8 +392,8 @@ rule ContributionContext2ContributionContext{
 			includedContexts <- s.includedContexts
 		)
 	do{
-		thisModule.initObjectNameFromObject(tContContext, s);
 		thisModule.initNextObject(tContContext);
+		thisModule.initObjectNameFromObject(tContContext, s);
 	}
 }
 
@@ -398,8 +406,8 @@ rule ContributionContextGroup2ContributionContextGroup{
 			contribs <- s.contribs
 		)
 	do{
-		thisModule.initObjectNameFromObject(tContribGroups, s);
 		thisModule.initNextObject(tContribGroups);
+		thisModule.initObjectNameFromObject(tContribGroups, s);
 	}
 }
 
@@ -413,8 +421,8 @@ rule QMappings2QMappings {
 		)
 		
 	do{
-		thisModule.initObjectNameFromObject(tQMappings, s);
 		thisModule.initNextObject(tQMappings);
+		thisModule.initObjectNameFromObject(tQMappings, s);
 	}
 }
 
@@ -428,8 +436,76 @@ rule Concern2Concern{
 			metadata <- s.metadata
 		)
 	do{
-		thisModule.initObjectNameFromObject(tConcern, s);
 		thisModule.initNextObject(tConcern);
+		thisModule.initObjectNameFromObject(tConcern, s);
+	}
+}
+
+rule WaitingPlace2WaitingPlace{
+	from		
+		s: Turn!WaitingPlace
+	to
+		tWtPlace: Urn!WaitingPlace (
+			succ <- tNodeConn,
+			label <- tNodeLabel,
+			waitType <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size())
+		),
+		tNodeConn: Urn!NodeConnection (
+			condition <- s.condition
+		),
+		tNodeLabel: Urn!NodeLabel()
+	do{
+		thisModule.initNextObject(tWtPlace);
+		thisModule.initObjectNameFromObject(tWtPlace, s);
+	}
+}
+
+rule FailurePoint2FailurePoint{
+	from		
+		s: Turn!FailurePoint
+	to
+		tFailPt: Urn!FailurePoint (
+			succ <- tNodeConn,
+			label <- tNodeLabel
+			),
+		tNodeConn: Urn!NodeConnection (
+			condition <- s.condition
+		),
+		tNodeLabel: Urn!NodeLabel()
+	do{
+		thisModule.initNextObject(tFailPt);
+		thisModule.initObjectNameFromObject(tFailPt, s);
+
+		if(not s.failLabel.oclIsUndefined())
+			tFailPt.expression <- s.failLabel.failure;
+	}
+}
+
+rule StartPoint2StartPoint{
+	from
+		s: Turn!StartPoint
+	to
+		tStartPoint: Urn!StartPoint (
+			succ <- tNodeConn,
+			label <- tNodeLabel,
+			diagram <- s.path.map,
+			precondition <- s.precondition
+		),
+		tNodeConn: Urn!NodeConnection(),
+		tNodeLabel: Urn!NodeLabel()
+	do{
+		thisModule.initNext(tStartPoint);
+		thisModule.initObjectNameFromObject(tStartPoint, s);
+		
+		if(not s.boundTo.oclIsUndefined()){
+				if (not s.boundTo.comp.oclIsUndefined())
+					tStartPoint.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tStartPoint.contRef <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+		
+		if(not s.failKind.oclIsUndefined())
+			tStartPoint.failureKind <- s.failKind.toString().substring(1,1).toUpper()+s.failKind.toString().substring(2,s.failKind.toString().size());
 	}
 }
 

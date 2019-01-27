@@ -33,6 +33,8 @@
 		* createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap)
 		* URNspec2URNspec
 		* Belief2Belief
+		* FailurePoint2FailurePoint
+		* StartPoint2StartPoint
 	* Do blocks processed:
 		* createMetadata(name: String, value: String)
 		* createNodeConns()
@@ -53,8 +55,11 @@
 		* ContributionContextGroup2ContributionContextGroup
 		* QMappings2QMappings
 		* Concern2Concern
+		* createResponsibility(s: Turn!RespRef)
+		* WaitingPlace2WaitingPlace
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
 	* if(not s.longName.longname.oclIsUndefined())... else...
 * Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
 * Rearrange methods so that their order feels more natural.
+* Note that this is not like an OOP language where initNextItem instantiates the object before it can be assigned a name; the object is initialized in the "for" block; the choice of calling id first is merely for familiarity
