@@ -222,7 +222,28 @@ rule createResponsibility(s: Turn!RespRef){
 	}
 }
 
+rule createLabel(){
+	to
+		tNodeLabel: Urn!NodeLabel(
+		)
+	do{
+		tNodeLabel;
+	}
+}
+
 --regular rules
+
+rule addMetadata(value: String) {
+   to 
+     t : Urn!Metadata (
+     	name <- 'TURN-URN-NAME',
+     	value <- value    
+     )
+	 do{
+	 	t; 
+	}
+}
+
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
@@ -261,8 +282,9 @@ rule URNspec2URNspec{
 		),
 		tUcmspec: Urn!UCMspec
 	do{
-		if(sURNspec.metadata -> select(m| (m.name.indexOf('TURN-URN') <> -1 and m.name.indexOf('nextGlobalID') <> -1)) -> notEmpty()){
-	 		thisModule.id <- sURNspec.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
+		if(sURNspec.metadata -> select(m| m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
+	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty())
+	 			thisModule.id <- sURNspec.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
 		}
 		
 		tURNdef.components <- Urn!Component.allInstances();
@@ -467,7 +489,7 @@ rule FailurePoint2FailurePoint{
 		tFailPt: Urn!FailurePoint (
 			succ <- tNodeConn,
 			label <- tNodeLabel
-			),
+		),
 		tNodeConn: Urn!NodeConnection (
 			condition <- s.condition
 		),
@@ -498,14 +520,17 @@ rule StartPoint2StartPoint{
 		thisModule.initObjectNameFromObject(tStartPoint, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
-				if (not s.boundTo.comp.oclIsUndefined())
+				if (not s.boundTo.comp.oclIsUndefined()){
 					tStartPoint.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
+				}
+				else{
 					tStartPoint.contRef <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+				}
 		}
 		
-		if(not s.failKind.oclIsUndefined())
+		if(not s.failKind.oclIsUndefined()){
 			tStartPoint.failureKind <- s.failKind.toString().substring(1,1).toUpper()+s.failKind.toString().substring(2,s.failKind.toString().size());
+		}
 	}
 }
 
@@ -709,39 +734,60 @@ rule ContributionChange2ContributionChange{
 	}
 }
 
+rule QMapping2QMapping {
+	from 
+		s: Turn!QualToQMapping
+	to
+		tQMapping: Urn!QualitativeMapping (
+			realWorldLabel <- s.realWorldLabel,
+			exceeds	<- s.exceeds,
+			evaluation <- s.evaluation,
+			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
+		)
+}
+
+rule URNlink2URNlink{
+	from 
+		s: Turn!URNlink
+	to 
+		tCon: Urn!URNlink (
+			type <- s.type,
+		    fromElem <- s.fromElem,
+			toElem <- s.toElem
+		)
+}
+
+rule Condition2Condition{
+	from 
+		s: Turn!Condition
+	to 
+		tCondition: Urn!Condition
+	do{
+		thisModule.condExpression <- '';
+		for(exp in s.expression.content){
+			thisModule.condExpression <- thisModule.condExpression + exp;	
+		}
+		tCondition.expression <- thisModule.condExpression; 
+	}
+}
+
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
---rule Evaluation2Evaluation
---rule ContributionContext2ContributionContext
---rule ContributionChange2ContributionChange
---rule ContributionContextGroup2ContributionContextGroup
---rule QMappings2QMappings
---rule QMapping2QMapping
---rule Concern2Concern
---rule URNlink2URNlink
+--rule StrategiesGroup2StrategiesGroup
 --rule Component2Component
 --rule Responsibility2Responsibility
---rule createResponsibility(s: Turn!RespRef)
---rule WaitingPlace2WaitingPlace
---rule FailurePoint2FailurePoint
---rule StartPoint2StartPoint
 --rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap)
 --rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String)
---rule createLabel()
 --rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap)
 --rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap)
 --rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
---rule Condition2Condition
 --rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap)
 --rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint)
 --rule OrJoin2OrJoin
---rule AndJoin2AndJoin
---rule UCMmap2UCMmap
 --rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
 --rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
 --rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean)
 --rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap)
 --rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap)
 --rule PluginBinding2PluginBinding
---rule InBinding2InBinding
---rule OutBinding2OutBinding

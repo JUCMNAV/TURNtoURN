@@ -1,24 +1,19 @@
-rule QMapping2QMapping {
-	from 
-		s: Turn!QualToQMapping
+rule StrategiesGroup2StrategiesGroup{
+	from
+		s: Turn!StrategiesGroup
 	to
-		tQMapping: Urn!QualitativeMapping (
-			realWorldLabel <- s.realWorldLabel,
-			exceeds	<- s.exceeds,
-			evaluation <- s.evaluation,
-			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
+		tStrategiesGroup: Urn!StrategiesGroup (
+			strategies <- s.evalStrategy,
+			strategies <- s.evalStrategies
 		)
-}
-
-rule URNlink2URNlink{
-	from 
-		s: Turn!URNlink
-	to 
-		tCon: Urn!URNlink (
-			type <- s.type,
-		    fromElem <- s.fromElem,
-			toElem <- s.toElem
-		)
+	do{
+		if(not s.longName.longname.oclIsUndefined())
+			tStrategiesGroup.name <- s.longName.longname;
+		else
+			tStrategiesGroup.name <- s.name;
+	 	thisModule.id <- thisModule.id.inc();
+	    tStrategiesGroup.id <- thisModule.id.toString();
+	}
 }
 
 rule Component2Component{
@@ -386,15 +381,6 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 			else
 				tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedStub.name=n.name).pred <-  thisModule.nextNodeSucc;
 		}
-	}
-}
-
-rule createLabel(){
-	to
-		tNodeLabel: Urn!NodeLabel(
-		)
-	do{
-		tNodeLabel;
 	}
 }
 
@@ -888,22 +874,6 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	}
 }
 
-rule Condition2Condition{
-	from 
-		s: Turn!Condition
-	to 
-		tCondition: Urn!Condition (
-			--expression <- s.expression.content 
-		)
-	do{
-		thisModule.condExpression <- '';
-		for(exp in s.expression.content){
-			thisModule.condExpression <- thisModule.condExpression + exp;	
-		}
-		tCondition.expression <- thisModule.condExpression; 
-	}
-}
-
 rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 	to
 		tEndPoint: Urn!EndPoint (
@@ -977,6 +947,37 @@ rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
 				tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
 			}
 		}
+	}
+}
+
+rule OrJoin2OrJoin{
+	from 	
+		s: Turn!OrJoin
+	to
+		tOrJoin: Urn!OrJoin(
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		),
+		tNodeConn: Urn!NodeConnection (
+		),
+		tNodeLabel: Urn!NodeLabel (
+		)
+	do{
+		if(not s.longName.longname.oclIsUndefined())
+			tOrJoin.name <- s.longName.longname;
+		else
+			tOrJoin.name <- s.name;
+		
+		if(not s.boundTo.oclIsUndefined()){
+				if(not s.boundTo.comp.oclIsUndefined())
+					tOrJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tOrJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+		
+		thisModule.id <- thisModule.id.inc();
+		tOrJoin.id <- thisModule.id.toString();
+		
 	}
 }
 

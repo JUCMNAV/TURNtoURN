@@ -41,6 +41,8 @@
 		* OutBinding2OutBinding
 		* IntElements2IntElements
 		* Contribution2Contribution
+		* Evaluation2Evaluation
+		* ContributionChange2ContributionChange
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
 	* is it possible to use the called rules created as methods directly in the "to" block? That would remove the need for a lot of the do blocks.
