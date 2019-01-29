@@ -675,25 +675,42 @@ rule Contribution2Contribution{
 	}
 }
 
-rule StrategiesGroup2StrategiesGroup{
+rule Evaluation2Evaluation {
 	from
-		s: Turn!StrategiesGroup
+		s: Turn!Evaluation
+   	to 
+	    tEval : Urn!Evaluation (
+	     	exceeds <- s.exceeds,
+	     	intElement <- s.intElement,
+			evaluation <- s.evaluation,
+			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
+	    )
+	do	{
+		if(not s.conversion.oclIsUndefined()){
+			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings))
+				tEval.kpiEvalValueSet <- thisModule.createQMapKpiEvalValueSet(s.conversion);
+			else{
+				tEval.kpiEvalValueSet <- thisModule.createKpiEvalValueSet(s.conversion);}
+		}
+	}
+}
+
+rule ContributionChange2ContributionChange{
+	from
+		s: Turn!ContributionChange
 	to
-		tStrategiesGroup: Urn!StrategiesGroup (
-			strategies <- s.evalStrategy,
-			strategies <- s.evalStrategies
+		t: Urn!ContributionChange (
+			contribution <- s.contribution,
+			newQuantitativeContribution <- s.newQuantitativeContribution
 		)
 	do{
-		thisModule.initNextObject(tStrategiesGroup);
-		thisModule.setObjectNameFromObject(tStrategiesGroup, s);
+		if(not s.newContribution.toString().equals('undefined'))
+			t.newContribution <- s.newContribution.toString().substring(1,1).toUpper()+s.newContribution.toString().substring(2,s.newContribution.toString().size());
 	}
 }
 
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
---rule Contribution2Contribution
---rule Strategies2Strategies
---rule StrategiesGroup2StrategiesGroup
 --rule Evaluation2Evaluation
 --rule ContributionContext2ContributionContext
 --rule ContributionChange2ContributionChange
