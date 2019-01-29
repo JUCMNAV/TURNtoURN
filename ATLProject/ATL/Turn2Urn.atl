@@ -217,7 +217,7 @@ rule createResponsibility(s: Turn!RespRef){
 		tResp: Urn!Responsibility()
 	do{
 		thisModule.initObjectNameFromObject(tResp, s);
-		thisModule.initNextItem(tResp);
+		thisModule.initNextObject(tResp);
 		tResp;
 	}
 }
@@ -520,7 +520,7 @@ rule AndJoin2AndJoin{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		thisModule.initNextItem(tAndJoin);
+		thisModule.initNextObject(tAndJoin);
 		thisModule.initObjectNameFromObject(tAndJoin, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
@@ -556,7 +556,6 @@ rule OrJoin2OrJoin{
 	}
 }
 
---TODO: determine if the ordering of the conditional statements matters; if not then this code can be modularized
 rule InBinding2InBinding{
 	from
 		s:Turn!InBinding
@@ -580,7 +579,6 @@ rule InBinding2InBinding{
 	}
 }
 
---TODO: determine if the ordering of the conditional statements matters; if not then this code can be modularized
 rule OutBinding2OutBinding{
 	from
 		s:Turn!OutBinding
@@ -604,9 +602,95 @@ rule OutBinding2OutBinding{
 	}
 }
 
+rule IntElements2IntElements{
+	from 
+		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
+	to 
+		tIntElem: Urn!IntentionalElement (
+		   linksSrc <- s.linksSrc
+		),
+		tIntElemRef: Urn!IntentionalElementRef (
+			def <- tIntElem,
+			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
+			
+		)
+	 do{
+		 thisModule.initNextObjectWithName(tIntElemRef, 'IntentionalElementRef');
+		 thisModule.initObjectNameFromObject(tIntElemRef, s); 
+		 --TODO: determine if this is redundant - we init with name then set the name
+		 
+		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
+		 	tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
+		 
+		 tIntElem.type <- s.type.toString().substring(1,1).toUpper()+s.type.toString().substring(2,s.type.toString().size());
+		 
+		 --Added because the default value in enum is considered always.
+		if(s.importance.toString().equals('none'))
+			tIntElem.importanceQuantitative <- s.importanceQuantitative;
+		else
+			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
+	 	 	thisModule.initNextObject(tIntElem);
+		 	thisModule.initObjectNameFromObject(tIntElem, s);	
+		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
+	}
+}
+
+rule Contribution2Contribution{
+	from 
+		s: Turn!Contribution (not (s.link.type.toString() = 'belief'))
+	to 
+		tCont: Urn!Contribution (
+		    dest <- s.dest,
+			refs <- tLinkRef,
+	        correlation <- s.correlation
+		),
+		tLinkRef: Urn!LinkRef (
+			link <- tCont,
+			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+		)
+		do{
+			thisModule.initNextObject(tCont);
+			thisModule.initObjectNameFromObject(tCont, s);
+	
+			--Added because the default value in enum is considered always.
+			if(s.contribution.toString().equals('undefined')){
+				tCont.quantitativeContribution <- s.quantitativeContribution;
+				if(s.quantitativeContribution <= -1)
+					tCont.contribution <- 'Hurt';
+				else if(s.quantitativeContribution < -49)
+					tCont.contribution <- 'SomeNegative';
+				else if(s.quantitativeContribution = -100)
+					tCont.contribution <- 'Break';
+				else if(s.quantitativeContribution = 0)
+					tCont.contribution <- 'Unknown';
+				else if(s.quantitativeContribution < 50)
+					tCont.contribution <- 'Help';
+				else if (s.quantitativeContribution <= 99)
+					tCont.contribution <- 'SomePositive';
+				else if (s.quantitativeContribution = 100)
+					tCont.contribution <- 'Make';
+			}
+			else
+				tCont.contribution <- s.contribution.toString().substring(1,1).toUpper()+s.contribution.toString().substring(2,s.contribution.toString().size());
+	}
+}
+
+rule StrategiesGroup2StrategiesGroup{
+	from
+		s: Turn!StrategiesGroup
+	to
+		tStrategiesGroup: Urn!StrategiesGroup (
+			strategies <- s.evalStrategy,
+			strategies <- s.evalStrategies
+		)
+	do{
+		thisModule.initNextObject(tStrategiesGroup);
+		thisModule.setObjectNameFromObject(tStrategiesGroup, s);
+	}
+}
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
---rule IntElements2IntElements
 --rule Contribution2Contribution
 --rule Strategies2Strategies
 --rule StrategiesGroup2StrategiesGroup
