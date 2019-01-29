@@ -27,26 +27,11 @@
 * Start returning code from ConnectNodesTemporarilyRemovedCode to ConnectNodes.atl. Refactor it and improve its efficiency as you go.
 * Continue returning code from Turn2UrnTemporarilyRemovedCode.txt to Turn2URN.atl. Refactor it and improve its efficiency as you go.
 	* Remaining rules to add are shown in Turn2Urn.atl
-	* To revisit:
-		* From/to blocks of all rules
-		* All helper rules created
-		* createOrForkNodeConns(ref: Turn!RegularOrFork,  tUCMmap: Urn!UCMmap)
-		* URNspec2URNspec
-		* Belief2Belief
-		* FailurePoint2FailurePoint
-		* StartPoint2StartPoint
-		* AndJoin2AndJoin
-		* OrJoin2OrJoin
-		* InBinding2InBinding
-		* OutBinding2OutBinding
-		* IntElements2IntElements
-		* Contribution2Contribution
-		* Evaluation2Evaluation
-		* ContributionChange2ContributionChange
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
 	* is it possible to use the called rules created as methods directly in the "to" block? That would remove the need for a lot of the do blocks.
 	* determine if the ordering of the conditional statements in InBinding2InBinding and OutBinding2OutBinding matters; if not then they can be modularized
+	* the code in Condition2Condition essentially just joins a bunch of strings; is there any way to do this more cleanly?
 * Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
 * Rearrange methods so that their order feels more natural.
 * Note that this is not like an OOP language where initNextItem instantiates the object before it can be assigned a name; the object is initialized in the "for" block; the choice of calling id first is merely for familiarity

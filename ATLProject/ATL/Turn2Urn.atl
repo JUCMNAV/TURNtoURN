@@ -75,6 +75,9 @@ rule initObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
 	do{
 		-- personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
 		-- note: ATL does not support short-circuit evalaution of conditions so this had to be implemented in an ugly manner
+
+		--may need to split this into two methods if there is no way to test if a property exists in some model element beforehand.
+		--alternative is to hard code in the list of methods that should go directly to the "else"
 		if(not sourceObject.longname.oclIsUndefined() and not sourceObject.longname.oclIsTypeOf(String)){
 			if(not sourceObject.longname.longname.oclIsUndefined()){
 				targetObject.name <- sourceObject.longname.longname;
@@ -771,15 +774,108 @@ rule Condition2Condition{
 	}
 }
 
+rule StrategiesGroup2StrategiesGroup{
+	from
+		s: Turn!StrategiesGroup
+	to
+		tStrategiesGroup: Urn!StrategiesGroup (
+			strategies <- s.evalStrategy,
+			strategies <- s.evalStrategies
+		)
+	do{
+		thisModule.initNextObject(tStrategiesGroup);
+		thisModule.initObjectNameFromObject(tStrategiesGroup, s);
+	}
+}
+
+rule Component2Component{
+	from 
+		s:Turn!ComponentRef 
+	to
+		tCompRef: Urn!ComponentRef(
+			label <- tCompLabel,
+			diagram <- s.map
+		),
+		tCompLabel: Urn!ComponentLabel
+	do{
+		thisModule.initNextObjectWithName(tCompRef, 'ComponentRef');
+		
+		if(Urn!Component.allInstances() -> any(c|c.name = s.name).oclIsUndefined()){
+			thisModule.comp <- thisModule.createComponent(s);
+			tCompRef.contDef <- thisModule.comp;	
+		}
+		else 
+			tCompRef.contDef <- Urn!Component.allInstances() -> any(c|c.name = s.name);	
+
+		if(not s.kind.oclIsUndefined() and s.kind.toString() <> 'parent')
+			tCompRef.contDef.kind <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size());
+		else if(s.kind <> 'parent')
+			tCompRef.contDef.kind <- 'Team';
+		
+		tCompRef.contDef.protected <- s.protected;
+		if(not s.boundTo.oclIsUndefined()){
+				if(not s.boundTo.comp.oclIsUndefined())
+					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+		
+		if(s.element.oclIsTypeOf(Turn!LongBoundElement)){
+			tCompRef.metadata <- thisModule.createMetadata('from',s.element.from);
+			tCompRef.metadata <- thisModule.createMetadata('to',s.element.to);
+		}
+		if(s.elements -> size() <> 0){
+			for(elem in s.elements){
+				if(elem.oclIsTypeOf(Turn!LongBoundElement)){
+					tCompRef.metadata <- thisModule.createMetadata('from',elem.from);
+					tCompRef.metadata <- thisModule.createMetadata('to',elem.to);
+				}
+			}
+		}
+	}
+}
+
+rule Responsibility2Responsibility{
+	from
+		s: Turn!RespRef 
+	to
+		tRespRef: Urn!RespRef (
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		),
+		tNodeConn: Urn!NodeConnection,
+		tNodeLabel: Urn!NodeLabel
+	do{
+		
+		if(not s.longName.longname.oclIsUndefined())
+			thisModule.respName <- s.longName.longname;
+		else
+			thisModule.respName <- s.name;
+		
+		if(Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName).oclIsUndefined()){
+			thisModule.resp <- thisModule.createResponsibility(s);
+			tRespRef.respDef <- thisModule.resp;
+		}
+		else{
+			tRespRef.respDef  <- Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName);
+		}
+		
+		--component bindings added
+		if (not s.boundTo.oclIsUndefined()){
+				if (not s.boundTo.comp.oclIsUndefined())
+					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+		
+		thisModule.initNextObjectWithName(tRespRef);
+	}
+}
 
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
---rule StrategiesGroup2StrategiesGroup
---rule Component2Component
---rule Responsibility2Responsibility
 --rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap)
 --rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String)
---rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap)
 --rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap)
 --rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
 --rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap)

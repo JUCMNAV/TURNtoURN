@@ -1,21 +1,3 @@
-rule StrategiesGroup2StrategiesGroup{
-	from
-		s: Turn!StrategiesGroup
-	to
-		tStrategiesGroup: Urn!StrategiesGroup (
-			strategies <- s.evalStrategy,
-			strategies <- s.evalStrategies
-		)
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			tStrategiesGroup.name <- s.longName.longname;
-		else
-			tStrategiesGroup.name <- s.name;
-	 	thisModule.id <- thisModule.id.inc();
-	    tStrategiesGroup.id <- thisModule.id.toString();
-	}
-}
-
 rule Component2Component{
 	from 
 		s:Turn!ComponentRef 
