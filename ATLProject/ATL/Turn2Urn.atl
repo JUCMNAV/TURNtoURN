@@ -556,6 +556,54 @@ rule OrJoin2OrJoin{
 	}
 }
 
+--TODO: determine if the ordering of the conditional statements matters; if not then this code can be modularized
+rule InBinding2InBinding{
+	from
+		s:Turn!InBinding
+	to
+		tInBinding: Urn!InBinding(
+			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
+		)
+	do{
+		if(not s.binding.oclIsUndefined()){
+			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+		}
+		else if(not s.bindings.oclIsUndefined()){
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);	
+		}
+	}
+}
+
+--TODO: determine if the ordering of the conditional statements matters; if not then this code can be modularized
+rule OutBinding2OutBinding{
+	from
+		s:Turn!OutBinding
+	to
+		tOutBinding: Urn!OutBinding(
+			endPoint <- thisModule.endPointMap.get(s.mapEnd)
+		)
+	do{ 
+		if(not s.bindings.oclIsUndefined()){
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
+		}
+		else if(not s.binding.oclIsUndefined()){
+			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+			else 
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);	
+		}
+	}
+}
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule IntElements2IntElements
