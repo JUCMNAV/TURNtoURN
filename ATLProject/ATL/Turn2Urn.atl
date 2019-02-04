@@ -71,7 +71,7 @@ rule initNextObjectWithName(obj: OclAny, name: String){
 	}
 }
 
-rule initObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
+rule setObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
 	do{
 		-- personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
 		-- note: ATL does not support short-circuit evalaution of conditions so this had to be implemented in an ugly manner
@@ -115,7 +115,7 @@ rule createComponent(s: Turn!ComponentRef){
 		tComp: Urn!Component
 	do{
 		thisModule.initNextObject(tComp);
-		thisModule.initObjectNameFromObject(tComp, s);
+		thisModule.setObjectNameFromObject(tComp, s);
 		tComp;	
 	}
 }
@@ -216,7 +216,7 @@ rule createResponsibility(s: Turn!RespRef){
 	to
 		tResp: Urn!Responsibility()
 	do{
-		thisModule.initObjectNameFromObject(tResp, s);
+		thisModule.setObjectNameFromObject(tResp, s);
 		thisModule.initNextObject(tResp);
 		tResp;
 	}
@@ -348,7 +348,7 @@ rule Actor2Actor{
 		tCompLabel: Urn!ComponentLabel()
 	 do{
 	 	thisModule.initNextObject(tActor);
-	 	thisModule.initObjectNameFromObject(tActor, s);
+	 	thisModule.setObjectNameFromObject(tActor, s);
 	 	
 	 	thisModule.initNextObjectWithName(tActorRef, 'ActorRef');
 	 }	
@@ -368,7 +368,7 @@ rule Decomposition2Decomposition{
 		)
 	do{
 		thisModule.initNextObject(tDecomp);
-		thisModule.initObjectNameFromObject(tDecomp, s);
+		thisModule.setObjectNameFromObject(tDecomp, s);
 	}
 }
 
@@ -386,7 +386,7 @@ rule Dependency2Dependency{
 		)
 	do{
 		thisModule.initNextObject(tDep);
-		thisModule.initObjectNameFromObject(tDep, s);
+		thisModule.setObjectNameFromObject(tDep, s);
 	}
 }
 
@@ -401,7 +401,7 @@ rule Strategies2Strategies{
 		)
 	do{
 		thisModule.initNextObject(tStrategies);
-		thisModule.initObjectNameFromObject(tStrategies, s);
+		thisModule.setObjectNameFromObject(tStrategies, s);
 	}
 }
 
@@ -415,7 +415,7 @@ rule ContributionContext2ContributionContext{
 		)
 	do{
 		thisModule.initNextObject(tContContext);
-		thisModule.initObjectNameFromObject(tContContext, s);
+		thisModule.setObjectNameFromObject(tContContext, s);
 	}
 }
 
@@ -429,7 +429,7 @@ rule ContributionContextGroup2ContributionContextGroup{
 		)
 	do{
 		thisModule.initNextObject(tContribGroups);
-		thisModule.initObjectNameFromObject(tContribGroups, s);
+		thisModule.setObjectNameFromObject(tContribGroups, s);
 	}
 }
 
@@ -444,7 +444,7 @@ rule QMappings2QMappings {
 		
 	do{
 		thisModule.initNextObject(tQMappings);
-		thisModule.initObjectNameFromObject(tQMappings, s);
+		thisModule.setObjectNameFromObject(tQMappings, s);
 	}
 }
 
@@ -459,7 +459,7 @@ rule Concern2Concern{
 		)
 	do{
 		thisModule.initNextObject(tConcern);
-		thisModule.initObjectNameFromObject(tConcern, s);
+		thisModule.setObjectNameFromObject(tConcern, s);
 	}
 }
 
@@ -478,7 +478,7 @@ rule WaitingPlace2WaitingPlace{
 		tNodeLabel: Urn!NodeLabel()
 	do{
 		thisModule.initNextObject(tWtPlace);
-		thisModule.initObjectNameFromObject(tWtPlace, s);
+		thisModule.setObjectNameFromObject(tWtPlace, s);
 	}
 }
 
@@ -496,7 +496,7 @@ rule FailurePoint2FailurePoint{
 		tNodeLabel: Urn!NodeLabel()
 	do{
 		thisModule.initNextObject(tFailPt);
-		thisModule.initObjectNameFromObject(tFailPt, s);
+		thisModule.setObjectNameFromObject(tFailPt, s);
 
 		if(not s.failLabel.oclIsUndefined())
 			tFailPt.expression <- s.failLabel.failure;
@@ -517,7 +517,7 @@ rule StartPoint2StartPoint{
 		tNodeLabel: Urn!NodeLabel
 	do{
 		thisModule.initNextObject(tStartPoint);
-		thisModule.initObjectNameFromObject(tStartPoint, s);
+		thisModule.setObjectNameFromObject(tStartPoint, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
 				if (not s.boundTo.comp.oclIsUndefined()){
@@ -546,7 +546,7 @@ rule AndJoin2AndJoin{
 		tNodeLabel: Urn!NodeLabel
 	do{
 		thisModule.initNextObject(tAndJoin);
-		thisModule.initObjectNameFromObject(tAndJoin, s);
+		thisModule.setObjectNameFromObject(tAndJoin, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
 				if(not s.boundTo.comp.oclIsUndefined())
@@ -569,7 +569,7 @@ rule OrJoin2OrJoin{
 		tNodeLabel: Urn!NodeLabel
 	do{
 		thisModule.initNextObject(tOrJoin);
-		thisModule.initObjectNameFromObject(tOrJoin, s);
+		thisModule.setObjectNameFromObject(tOrJoin, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
 				if(not s.boundTo.comp.oclIsUndefined())
@@ -641,7 +641,7 @@ rule IntElements2IntElements{
 		)
 	 do{
 		 thisModule.initNextObjectWithName(tIntElemRef, 'IntentionalElementRef');
-		 thisModule.initObjectNameFromObject(tIntElemRef, s); 
+		 thisModule.setObjectNameFromObject(tIntElemRef, s); 
 		 --TODO: determine if this is redundant - we init with name then set the name
 		 
 		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
@@ -655,7 +655,7 @@ rule IntElements2IntElements{
 		else
 			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
 	 	 	thisModule.initNextObject(tIntElem);
-		 	thisModule.initObjectNameFromObject(tIntElem, s);	
+		 	thisModule.setObjectNameFromObject(tIntElem, s);	
 		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
 	}
 }
@@ -675,7 +675,7 @@ rule Contribution2Contribution{
 		)
 		do{
 			thisModule.initNextObject(tCont);
-			thisModule.initObjectNameFromObject(tCont, s);
+			thisModule.setObjectNameFromObject(tCont, s);
 	
 			--Added because the default value in enum is considered always.
 			if(s.contribution.toString().equals('undefined')){
@@ -781,7 +781,7 @@ rule StrategiesGroup2StrategiesGroup{
 		)
 	do{
 		thisModule.initNextObject(tStrategiesGroup);
-		thisModule.initObjectNameFromObject(tStrategiesGroup, s);
+		thisModule.setObjectNameFromObject(tStrategiesGroup, s);
 	}
 }
 
@@ -883,6 +883,55 @@ rule PluginBinding2PluginBinding{
 			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
 			replicationFactor <- s.replication
 		)
+}
+
+rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
+	to
+		tEndPoint: Urn!EndPoint (
+			diagram <- tUCMmap	
+		)
+	do{
+		thisModule.initNextObjectWithName(tEndPoint, 'EndPoint');
+		tEndPoint.label <- thisModule.createLabel();
+		
+		if(ep.oclIsTypeOf(Turn!EndPoint))
+			tEndPoint.postcondition <- ep.condition;
+		
+		if(not(ep <> OclAny)){
+			tEndPoint.succ <- thisModule.createNodeConns();
+		}
+		else{
+			-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we set it to something else)
+			thisModule.setObjectNameFromObject(tEndPoint, ep);
+			
+			thisModule.endPointMap <- thisModule.endPointMap.including(ep,tEndPoint);
+			--component bindings
+			if(not ep.boundTo.oclIsUndefined()){
+					if(not ep.boundTo.comp.oclIsUndefined())
+						tEndPoint.contRef <-  thisModule.resolveTemp(ep.boundTo.comp, 'tCompRef');
+					else
+						tEndPoint.contRef <-  thisModule.resolveTemp(ep.boundTo.comp2, 'tCompRef');
+			}
+			
+			--Using backlinks to connect orFork
+			if(ep.epConnect.pbody.pathNodes -> size() = 0){
+				if(not ep.epConnect.pbody.orFork.oclIsUndefined()){
+					thisModule.condExpression <- '';
+					for(exp in ep.epConnect.pbody.orFork.condition.expression.content){
+						thisModule.condExpression <- thisModule.condExpression + exp;	
+					}
+					tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
+				}
+				--Using backlinks to connect andFork
+				if(not ep.epConnect.pbody.andFork.oclIsUndefined()){
+					tEndPoint.pred <- thisModule.andForkMap.get(ep.epConnect.pbody.andFork).succ -> any(s|s.target = OclUndefined);
+				}
+			}
+		}
+		
+		thisModule.epNodeCollector <- Sequence{tEndPoint};
+		thisModule.epNodeCollector;
+	}
 }
 
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)

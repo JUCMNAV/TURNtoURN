@@ -660,68 +660,6 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	}
 }
 
-rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
-	to
-		tEndPoint: Urn!EndPoint (
-			diagram <- tUCMmap	
-		)
-	do{
-		thisModule.id <- thisModule.id.inc();
-		tEndPoint.id <- thisModule.id.toString();
-		
-		if(ep.oclIsTypeOf(Turn!EndPoint))
-			tEndPoint.postcondition <- ep.condition;
-		
-		 if (ep.oclIsTypeOf(Turn!OrFork)){
-			tEndPoint.name <- 'EndPoint'+tEndPoint.id; 
-			tEndPoint.label <- thisModule.createLabel();
-		}
-		else if(ep <> OclAny){
-			 thisModule.name <- '';
-		 	if(not ep.longName.oclIsUndefined()){
-		 		if(not ep.longName.longname.oclIsUndefined())
-					thisModule.name <- ep.longName.longname; 
-		 	}
-		 	if(thisModule.name = '')
-				thisModule.name <- ep.name;
-		 	
-			tEndPoint.name <- thisModule.name;
-			
-			tEndPoint.label <- thisModule.createLabel();
-			thisModule.endPointMap <- thisModule.endPointMap.including(ep,tEndPoint);
-			--component bindings
-			if(not ep.boundTo.oclIsUndefined()){
-					if(not ep.boundTo.comp.oclIsUndefined())
-						tEndPoint.contRef <-  thisModule.resolveTemp(ep.boundTo.comp, 'tCompRef');
-					else
-						tEndPoint.contRef <-  thisModule.resolveTemp(ep.boundTo.comp2, 'tCompRef');
-			}
-			
-			--Using backlinks to connect orFork
-			if(ep.epConnect.pbody.pathNodes -> size() = 0){
-				if(not ep.epConnect.pbody.orFork.oclIsUndefined()){
-					thisModule.condExpression <- '';
-					for(exp in ep.epConnect.pbody.orFork.condition.expression.content){
-						thisModule.condExpression <- thisModule.condExpression + exp;	
-					}
-					tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
-				}
-				--Using backlinks to connect andFork
-				if(not ep.epConnect.pbody.andFork.oclIsUndefined()){
-					tEndPoint.pred <- thisModule.andForkMap.get(ep.epConnect.pbody.andFork).succ -> any(s|s.target = OclUndefined);
-				}
-			}
-		}
-		else{
-			tEndPoint.succ <- thisModule.createNodeConns();
-			tEndPoint.name <- 'EndPoint'+tEndPoint.id; 
-			tEndPoint.label <- thisModule.createLabel();
-		}
-		thisModule.epNodeCollector <- Sequence{tEndPoint};
-		thisModule.epNodeCollector;
-	}
-}
-
 rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
 	do{
 		if(ep.epConnect.pbody.pathNodes -> size() = 0){
