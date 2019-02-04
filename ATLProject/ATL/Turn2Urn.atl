@@ -75,12 +75,9 @@ rule initObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
 	do{
 		-- personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
 		-- note: ATL does not support short-circuit evalaution of conditions so this had to be implemented in an ugly manner
-
-		--may need to split this into two methods if there is no way to test if a property exists in some model element beforehand.
-		--alternative is to hard code in the list of methods that should go directly to the "else"
-		if(not sourceObject.longname.oclIsUndefined() and not sourceObject.longname.oclIsTypeOf(String)){
-			if(not sourceObject.longname.longname.oclIsUndefined()){
-				targetObject.name <- sourceObject.longname.longname;
+		if(not sourceObject.longName.oclIsUndefined() and not sourceObject.longName.oclIsTypeOf(String)){
+			if(not sourceObject.longName.longname.oclIsUndefined()){
+				targetObject.name <- sourceObject.longName.longname;
 			}
 			else{
 				targetObject.name <- sourceObject.name;	
@@ -519,7 +516,7 @@ rule StartPoint2StartPoint{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		thisModule.initNext(tStartPoint);
+		thisModule.initNextObject(tStartPoint);
 		thisModule.initObjectNameFromObject(tStartPoint, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
@@ -571,7 +568,7 @@ rule OrJoin2OrJoin{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		thisModule.initNextObject(s);
+		thisModule.initNextObject(tOrJoin);
 		thisModule.initObjectNameFromObject(tOrJoin, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
@@ -868,7 +865,7 @@ rule Responsibility2Responsibility{
 					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
 		}
 		
-		thisModule.initNextObjectWithName(tRespRef);
+		thisModule.initNextObjectWithName(tRespRef, 'RespRef');
 	}
 }
 
