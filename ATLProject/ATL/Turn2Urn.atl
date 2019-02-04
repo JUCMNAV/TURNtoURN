@@ -49,6 +49,9 @@ helper def: andForkNodeConnCounter : Integer = 1;
 helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) = 
 	self.actors -> collect(actor|actor.elems) -> flatten();
 
+helper context Turn!UCMmap def: getPathNodes() : Sequence(OclAny) =
+	self.paths -> flatten() -> collect(p|p.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten();
+
 -- imperative-method-like rules below
 -- (sorry, spirit of declarative programming)
 
@@ -71,20 +74,20 @@ rule initNextObjectWithName(obj: OclAny, name: String){
 	}
 }
 
-rule setObjectNameFromObject(targetObject: OclAny, sourceObject: OclAny){
+rule setPropertyFromObjectLongName(nameDest: OclAny, sourceObject: OclAny){
 	do{
 		-- personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
 		-- note: ATL does not support short-circuit evalaution of conditions so this had to be implemented in an ugly manner
 		if(not sourceObject.longName.oclIsUndefined() and not sourceObject.longName.oclIsTypeOf(String)){
 			if(not sourceObject.longName.longname.oclIsUndefined()){
-				targetObject.name <- sourceObject.longName.longname;
+				nameDest <- sourceObject.longName.longname;
 			}
 			else{
-				targetObject.name <- sourceObject.name;	
+				nameDest <- sourceObject.name;	
 			}
 		}
 		else{
-			targetObject.name <- sourceObject.name;	
+			nameDest <- sourceObject.name;	
 		}
 	}
 }
@@ -115,7 +118,7 @@ rule createComponent(s: Turn!ComponentRef){
 		tComp: Urn!Component
 	do{
 		thisModule.initNextObject(tComp);
-		thisModule.setObjectNameFromObject(tComp, s);
+		thisModule.setPropertyFromObjectLongName(tComp.name, s);
 		tComp;	
 	}
 }
@@ -216,7 +219,7 @@ rule createResponsibility(s: Turn!RespRef){
 	to
 		tResp: Urn!Responsibility()
 	do{
-		thisModule.setObjectNameFromObject(tResp, s);
+		thisModule.setPropertyFromObjectLongName(tResp.name, s);
 		thisModule.initNextObject(tResp);
 		tResp;
 	}
@@ -348,7 +351,7 @@ rule Actor2Actor{
 		tCompLabel: Urn!ComponentLabel()
 	 do{
 	 	thisModule.initNextObject(tActor);
-	 	thisModule.setObjectNameFromObject(tActor, s);
+	 	thisModule.setPropertyFromObjectLongName(tActor.name, s);
 	 	
 	 	thisModule.initNextObjectWithName(tActorRef, 'ActorRef');
 	 }	
@@ -368,7 +371,7 @@ rule Decomposition2Decomposition{
 		)
 	do{
 		thisModule.initNextObject(tDecomp);
-		thisModule.setObjectNameFromObject(tDecomp, s);
+		thisModule.setPropertyFromObjectLongName(tDecomp.name, s);
 	}
 }
 
@@ -386,7 +389,7 @@ rule Dependency2Dependency{
 		)
 	do{
 		thisModule.initNextObject(tDep);
-		thisModule.setObjectNameFromObject(tDep, s);
+		thisModule.setPropertyFromObjectLongName(tDep.name, s);
 	}
 }
 
@@ -401,7 +404,7 @@ rule Strategies2Strategies{
 		)
 	do{
 		thisModule.initNextObject(tStrategies);
-		thisModule.setObjectNameFromObject(tStrategies, s);
+		thisModule.setPropertyFromObjectLongName(tStrategies.name, s);
 	}
 }
 
@@ -415,7 +418,7 @@ rule ContributionContext2ContributionContext{
 		)
 	do{
 		thisModule.initNextObject(tContContext);
-		thisModule.setObjectNameFromObject(tContContext, s);
+		thisModule.setPropertyFromObjectLongName(tContContext.name, s);
 	}
 }
 
@@ -429,7 +432,7 @@ rule ContributionContextGroup2ContributionContextGroup{
 		)
 	do{
 		thisModule.initNextObject(tContribGroups);
-		thisModule.setObjectNameFromObject(tContribGroups, s);
+		thisModule.setPropertyFromObjectLongName(tContribGroups.name, s);
 	}
 }
 
@@ -444,7 +447,7 @@ rule QMappings2QMappings {
 		
 	do{
 		thisModule.initNextObject(tQMappings);
-		thisModule.setObjectNameFromObject(tQMappings, s);
+		thisModule.setPropertyFromObjectLongName(tQMappings.name, s);
 	}
 }
 
@@ -459,7 +462,7 @@ rule Concern2Concern{
 		)
 	do{
 		thisModule.initNextObject(tConcern);
-		thisModule.setObjectNameFromObject(tConcern, s);
+		thisModule.setPropertyFromObjectLongName(tConcern.name, s);
 	}
 }
 
@@ -478,7 +481,7 @@ rule WaitingPlace2WaitingPlace{
 		tNodeLabel: Urn!NodeLabel()
 	do{
 		thisModule.initNextObject(tWtPlace);
-		thisModule.setObjectNameFromObject(tWtPlace, s);
+		thisModule.setPropertyFromObjectLongName(tWtPlace.name, s);
 	}
 }
 
@@ -496,7 +499,7 @@ rule FailurePoint2FailurePoint{
 		tNodeLabel: Urn!NodeLabel()
 	do{
 		thisModule.initNextObject(tFailPt);
-		thisModule.setObjectNameFromObject(tFailPt, s);
+		thisModule.setPropertyFromObjectLongName(tFailPt.name, s);
 
 		if(not s.failLabel.oclIsUndefined())
 			tFailPt.expression <- s.failLabel.failure;
@@ -517,7 +520,7 @@ rule StartPoint2StartPoint{
 		tNodeLabel: Urn!NodeLabel
 	do{
 		thisModule.initNextObject(tStartPoint);
-		thisModule.setObjectNameFromObject(tStartPoint, s);
+		thisModule.setPropertyFromObjectLongName(tStartPoint.name, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
 				if (not s.boundTo.comp.oclIsUndefined()){
@@ -546,7 +549,7 @@ rule AndJoin2AndJoin{
 		tNodeLabel: Urn!NodeLabel
 	do{
 		thisModule.initNextObject(tAndJoin);
-		thisModule.setObjectNameFromObject(tAndJoin, s);
+		thisModule.setPropertyFromObjectLongName(tAndJoin.name, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
 				if(not s.boundTo.comp.oclIsUndefined())
@@ -569,7 +572,7 @@ rule OrJoin2OrJoin{
 		tNodeLabel: Urn!NodeLabel
 	do{
 		thisModule.initNextObject(tOrJoin);
-		thisModule.setObjectNameFromObject(tOrJoin, s);
+		thisModule.setPropertyFromObjectLongName(tOrJoin.name, s);
 		
 		if(not s.boundTo.oclIsUndefined()){
 				if(not s.boundTo.comp.oclIsUndefined())
@@ -641,7 +644,7 @@ rule IntElements2IntElements{
 		)
 	 do{
 		 thisModule.initNextObjectWithName(tIntElemRef, 'IntentionalElementRef');
-		 thisModule.setObjectNameFromObject(tIntElemRef, s); 
+		 thisModule.setPropertyFromObjectLongName(tIntElemRef.name, s); 
 		 --TODO: determine if this is redundant - we init with name then set the name
 		 
 		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
@@ -655,7 +658,7 @@ rule IntElements2IntElements{
 		else
 			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
 	 	 	thisModule.initNextObject(tIntElem);
-		 	thisModule.setObjectNameFromObject(tIntElem, s);	
+		 	thisModule.setPropertyFromObjectLongName(tIntElem.name, s);	
 		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
 	}
 }
@@ -675,7 +678,7 @@ rule Contribution2Contribution{
 		)
 		do{
 			thisModule.initNextObject(tCont);
-			thisModule.setObjectNameFromObject(tCont, s);
+			thisModule.setPropertyFromObjectLongName(tCont.name, s);
 	
 			--Added because the default value in enum is considered always.
 			if(s.contribution.toString().equals('undefined')){
@@ -781,7 +784,7 @@ rule StrategiesGroup2StrategiesGroup{
 		)
 	do{
 		thisModule.initNextObject(tStrategiesGroup);
-		thisModule.setObjectNameFromObject(tStrategiesGroup, s);
+		thisModule.setPropertyFromObjectLongName(tStrategiesGroup.name, s);
 	}
 }
 
@@ -843,11 +846,7 @@ rule Responsibility2Responsibility{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		
-		if(not s.longName.longname.oclIsUndefined())
-			thisModule.respName <- s.longName.longname;
-		else
-			thisModule.respName <- s.name;
+		thisModule.setPropertyFromObjectLongName(thisModule.respName, s);
 		
 		if(Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName).oclIsUndefined()){
 			thisModule.resp <- thisModule.createResponsibility(s);
@@ -902,7 +901,7 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 		}
 		else{
 			-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we set it to something else)
-			thisModule.setObjectNameFromObject(tEndPoint, ep);
+			thisModule.setPropertyFromObjectLongName(tEndPoint.name, ep);
 			
 			thisModule.endPointMap <- thisModule.endPointMap.including(ep,tEndPoint);
 			--component bindings
@@ -948,6 +947,33 @@ rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
 	}
 }
 
+rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean){
+	to
+		tEmptyPt: Urn!EmptyPoint(
+			diagram <- tUCMmap
+		)
+	do{
+		thisModule.initNextObject(tEmptyPt);
+		
+		if (node <> OclAny){
+			if(asynch){
+				tEmptyPt.name <- 'AsynchConnectTimer#'+node.name;
+				tEmptyPt.succ <- thisModule.createNodeConns();
+			}
+			else
+				tEmptyPt.name <- 'SynchConnectTimer#'+node.name;
+		}
+		else{
+			tEmptyPt.name <- 'EmptyPoint'+tEmptyPt.id;
+			tEmptyPt.succ <- thisModule.createNodeConns();
+			-- TODO: determine why this is called twice; is it intentional?
+			tEmptyPt.succ <- thisModule.createNodeConns();
+		}
+		tEmptyPt;	
+	}
+}
+
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap)
@@ -956,6 +982,9 @@ rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
 --rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
 --rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
 --rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
---rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean)
 --rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap)
 --rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap)
+
+--will do last as leads to compiler errors otherwise:
+	
+--rule UCMmap2UCMmap
