@@ -869,6 +869,22 @@ rule Responsibility2Responsibility{
 	}
 }
 
+rule PluginBinding2PluginBinding{
+	from 
+		s:Turn!PluginBinding	
+	to
+		tPluginBinding: Urn!PluginBinding (
+			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
+			--This could be other way round, binding could be inBinding or OutBinding and vice-versa.
+			in <- thisModule.resolveTemp(s.binding,'tInBinding'),
+			in <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')),
+			out <- thisModule.resolveTemp(s.binding,'tOutBinding'),
+			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')),
+			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
+			replicationFactor <- s.replication
+		)
+}
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap)
@@ -877,10 +893,8 @@ rule Responsibility2Responsibility{
 --rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
 --rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap)
 --rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint)
---rule OrJoin2OrJoin
 --rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
 --rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
 --rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean)
 --rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap)
 --rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap)
---rule PluginBinding2PluginBinding
