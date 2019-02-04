@@ -1258,9 +1258,175 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 				thisModule.oj.pred <- thisModule.firstPred.succ;
 				tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedStub.name=n.name).pred <- thisModule.oj.succ;
 			}
-			else
+			else{
 				tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedStub.name=n.name).pred <-  thisModule.nextNodeSucc;
+			}
 		}
+	}
+}
+
+rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
+	do{
+		if(node.oclIsTypeOf(Turn!Timer)){
+			thisModule.connectTimerNodes(node, tUCMmap);
+		}
+		else if(node.oclIsTypeOf(Turn!AndFork)){
+			thisModule.connectAndForkNodes(node, tUCMmap);
+		}
+		else if(node.oclIsTypeOf(Turn!OrFork)){
+			thisModule.connectOrForkNodes(node, tUCMmap);
+		}
+		else if(node.oclIsTypeOf(Turn!Stub)){
+			thisModule.createStubOutNodes(node, tUCMmap);
+		}
+	}
+}
+
+rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
+	do{
+		thisModule.counter <- 1;
+		if(not pathend.body.oclIsUndefined()){
+			for(regularbody in pathend.body.regularBody -> flatten()){
+				if(not regularbody.pathBody.referencedEnd.oclIsUndefined()){
+					tUCMmap.nodes -> any(n|n.name=regularbody.pathBody.referencedEnd.name).pred <- tUCMmap.nodes -> any(n|n.name=pathend.name).succ -> at(thisModule.counter);
+				}
+				else{
+					--if pathNodes exist
+					if(regularbody.pathBody.oclIsTypeOf(Turn!PathBodyNodes)){
+						if(regularbody.pathBody.pathNodes -> size() > 0){
+							thisModule.connectNodes(regularbody.pathBody, pathend, tUCMmap, thisModule.orForkMap.get(pathend));
+						}	
+					}
+
+					if(regularbody.pathBody.pathEnd.oclIsTypeOf(Turn!Stub)){
+						thisModule.createStubOutNodes(pathend, tUCMmap);
+					}
+					else{
+						thisModule.processPathNode(regularbody.pathBody.pathEnd, tUCMmap);
+					}
+				}
+			}		
+			thisModule.counter <- thisModule.counter.inc();
+		}
+	}
+}
+
+rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
+	do{
+		thisModule.counter <- 1;
+		for(pathbody in pathend.pathbody -> flatten()){
+			if(not pathbody.referencedEnd.oclIsUndefined()){
+				tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
+			}
+			else{
+				--if pathNodes exist
+				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
+					if(pathbody.pathNodes -> size() > 0){
+						thisModule.connectNodes(pathbody, pathend, tUCMmap);
+					}	
+					--if no pathNodes exist
+					else { 
+						if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+							tUCMmap.nodes -> any(n|pathbody.pathEnd.regularEnd.name=n.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
+						}
+					}
+				}
+				thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
+			}
+			thisModule.counter <- thisModule.counter.inc();
+		}
+	}
+}
+
+rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
+	do{
+		--if pathNodes exist  NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
+		if(timerObj.timeoutPath.pathNodes -> size() > 0){
+			--THIS WILL ALWAYS BE AT(2)
+			tUCMmap.nodes -> any(n|timerObj.timeoutPath.pathNodes -> first().name=n.name).pred <- tUCMmap.nodes -> any(n|timerObj.name=n.name).succ -> at(2);
+			thisModule.connectNodes(timerObj.timeoutPath, timerObj, tUCMmap, OclAny);
+		}
+		
+		if(not timerObj.timeoutPath.referencedEnd.oclIsUndefined()){
+			if(timerObj.timeoutPath.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+				--THIS WILL ALWAYS BE AT(2)
+				Urn!Responsibility.allInstances() -> any(n|timerObj.timeoutPath.referencedEnd.name = n.name).respRefs -> first().pred <- tUCMmap.nodes -> any(n|timerObj.name=n.name).succ -> at(2);
+			}
+			--ADD MORE CODE
+		}
+		
+		thisModule.processPathNode(timerObj.timeoutPath.pathEnd, tUCMmap);
+	}
+}
+
+rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
+	do{
+		--create stubInPathCounter also...
+		thisModule.stubOutPathCounter <- 1;
+		for(outPath in stubObj.outPaths -> flatten()){
+			--if no pathNodes exist
+			if(stubObj.outPaths -> flatten() -> at(thisModule.stubOutPathCounter).path.pathNodes -> size() = 0){
+				if(not outPath.path.pathEnd.oclIsUndefined()){
+					if(outPath.path.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+						tUCMmap.nodes -> any(n|n.name = outPath.path.pathEnd.regularEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					}
+					else if(outPath.path.pathEnd.oclIsTypeOf(Turn!OrFork)){
+						thisModule.connectOrForkNodes(outPath.path.pathEnd, tUCMmap);
+						thisModule.orForkMap.get(outPath.path.pathEnd).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					}
+					else if(outPath.path.pathEnd.oclIsTypeOf(Turn!AndFork)){
+						thisModule.createAndForkNodes(outPath.path.pathEnd, tUCMmap);
+						thisModule.andForkMap.get(outPath.path.pathEnd).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					}
+					-- ADD MORE CODE BELOW
+					else if (not outPath.path.referencedEnd.oclIsUndefined()){
+						tUCMmap.nodes -> any(n|n.name = outPath.path.referencedEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					}
+					else { 
+						tUCMmap.nodes -> any(n|n.name = outPath.path.pathEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					}
+				}
+			}
+			--if pathNodes exist
+			else{
+				thisModule.nodeCounter <- 1;
+				for(node in outPath.path.pathNodes){
+					if(thisModule.nodeCounter = 1){
+						if(node.oclIsTypeOf(Turn!RespRef)){
+							Urn!Responsibility.allInstances() -> any(n|n.name = node.name).respRefs -> select(r|r.diagram.name = tUCMmap.name) -> flatten() -> any(ref|ref.pred -> size() = 0).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+						}
+						else{	
+							tUCMmap.nodes -> any(n|n.name = outPath.path.pathNodes -> first().name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+						}
+					}
+					else if(node.oclIsTypeOf(Turn!RespRef)){
+						if(outPath.path.pathNodes -> at(thisModule.nodeCounter-1).oclIsTypeOf(Turn!RespRef)){
+							thisModule.resolveTemp(node, 'tRespRef').pred  <- thisModule.resolveTemp(outPath.path.pathNodes -> at(thisModule.nodeCounter-1), 'tRespRef').succ -> any(s|s.target.oclIsUndefined());	
+						}
+						else{
+							thisModule.resolveTemp(node, 'tRespRef').pred <- tUCMmap.nodes -> any(n|outPath.path.pathNodes -> at(thisModule.nodeCounter-1).name=n.name).succ;
+						}
+					}
+					else if(outPath.path.pathNodes -> at(thisModule.nodeCounter-1).oclIsTypeOf(Turn!RespRef)){
+						tUCMmap.nodes -> any(n|n.name=node.name).pred <- thisModule.resolveTemp(outPath.path.pathNodes -> at(thisModule.nodeCounter-1), 'tRespRef').succ -> any(s|s.target.oclIsUndefined());
+					}
+					else{
+						tUCMmap.nodes -> any(n|n.name=node.name).pred <- tUCMmap.nodes -> any(n|outPath.path.pathNodes -> at(thisModule.nodeCounter-1).name=n.name).succ;
+					}
+					
+					if(thisModule.nodeCounter = outPath.path.pathNodes -> size()){
+						if(outPath.path.pathNodes  -> at(thisModule.nodeCounter).oclIsTypeOf(Turn!RespRef)){
+							tUCMmap.nodes  -> any(n|outPath.path.pathEnd.regularEnd.name=n.name).pred <- thisModule.resolveTemp(outPath.path.pathNodes -> at(thisModule.nodeCounter), 'tRespRef').succ -> any(s|s.target.oclIsUndefined());
+						}
+						else{
+							tUCMmap.nodes -> any(n|outPath.path.pathEnd.name=n.name).pred <- tUCMmap.nodes -> any(n|n.name=outPath.path.pathNodes  -> at(thisModule.nodeCounter).name).succ;
+						}
+					}
+					thisModule.nodeCounter <- thisModule.nodeCounter.inc();
+				}
+			}
+		    thisModule.stubOutPathCounter <- thisModule.stubOutPathCounter.inc();
+		}	
 	}
 }
 
@@ -1268,9 +1434,6 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 
 --rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap)
 --rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
---rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
---rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
---rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap)
 --rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap)
 
 --will do last as leads to compiler errors otherwise:
