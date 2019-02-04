@@ -1209,10 +1209,63 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 	}
 }
 
+rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String){
+	do{
+		thisModule.nextNodeSucc <- '';
+		
+		if(nextNode.oclIsTypeOf(Urn!OrFork)){
+			thisModule.nextNodeSucc <- nextNode.succ -> any(s|s.condition.expression = expression);
+		}
+		else{
+			thisModule.nextNodeSucc <- nextNode.succ -> any(s|s.target.oclIsUndefined());
+		}
+		
+		if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+	 		tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathEnd.regularEnd.name).pred <- thisModule.nextNodeSucc;
+		}
+		else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!Stub)){
+			tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathEnd.name).pred <- thisModule.nextNodeSucc;
+		}
+		else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!OrFork)){
+			thisModule.orForkMap.get(obj.connectingOrBody.pathEnd).pred <- thisModule.nextNodeSucc;
+		}
+		else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
+			thisModule.andForkMap.get(obj.connectingOrBody.pathEnd).pred <- thisModule.nextNodeSucc;
+		}
+	
+		if(not obj.connectingOrBody.referencedEnd.oclIsUndefined()){
+			--added now
+			if(obj.connectingOrBody.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				if(not obj.connectingOrBody.pathNodes -> at(thisModule.nodeCounter).oclIsTypeOf(Turn!Connect)){
+					if(tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedEnd.name=n.name).pred -> collect(s|s.source) -> size() = 0){
+						tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedEnd.name=n.name).pred <- thisModule.nextNodeSucc;
+					}
+				}
+			}
+			else if(obj.connectingOrBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+				Urn!Responsibility.allInstances() -> any(n|obj.connectingOrBody.referencedEnd.name=n.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).pred  <- thisModule.nextNodeSucc; 
+			}
+			else {
+				tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedEnd.name=n.name).pred <- thisModule.nextNodeSucc;
+			}
+				
+		}--here ends
+		else if(not obj.connectingOrBody.referencedStub.oclIsUndefined()){
+			if(tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedStub.name=n.name).pred -> size() >= obj.connectingOrBody.index){
+				thisModule.firstPred <-  tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedStub.name=n.name).pred -> first().source;
+				thisModule.oj <- thisModule.createOrJoin(tUCMmap);
+				thisModule.oj.pred <- thisModule.nextNodeSucc;
+				thisModule.oj.pred <- thisModule.firstPred.succ;
+				tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedStub.name=n.name).pred <- thisModule.oj.succ;
+			}
+			else
+				tUCMmap.nodes -> any(n|obj.connectingOrBody.referencedStub.name=n.name).pred <-  thisModule.nextNodeSucc;
+		}
+	}
+}
 
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
---rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String)
 --rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap)
 --rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
 --rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
