@@ -7,11 +7,10 @@ helper def : performNodeLogic(node: OclAny) : OclAny = node;
 
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: Urn!UCMmap, nextNode: Urn!PathNode){
 	do{ 
-					thisModule.nodeCounter <- 1;
-					for (node in pathbody.pathNodes){
-						node;
-					}
-					
+		thisModule.nodeCounter <- 1;
+		for (node in pathbody.pathNodes){
+			node;
+		}			
 	}
 		
 }
