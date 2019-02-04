@@ -660,20 +660,6 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	}
 }
 
-rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
-	do{
-		if(ep.epConnect.pbody.pathNodes -> size() = 0){
-			if(not ep.epConnect.pbody.orFork.oclIsUndefined()){
-				thisModule.condExpression <- '';
-				for(exp in ep.epConnect.pbody.orFork.condition.expression.content){
-					thisModule.condExpression <- thisModule.condExpression + exp;	
-				}
-				tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
-			}
-		}
-	}
-}
-
 rule UCMmap2UCMmap{
 	from
 		sUCMmap: Turn!UCMmap

@@ -934,14 +934,26 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 	}
 }
 
+rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
+	do{
+		if(ep.epConnect.pbody.pathNodes -> size() = 0){
+			if(not ep.epConnect.pbody.orFork.oclIsUndefined()){
+				thisModule.condExpression <- '';
+				for(exp in ep.epConnect.pbody.orFork.condition.expression.content){
+					thisModule.condExpression <- thisModule.condExpression + exp;	
+				}
+				tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
+			}
+		}
+	}
+}
+
 --Remaining rules: (found in Turn2UrnTemporarilyRemovedCode.txt)
 
 --rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap)
 --rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String)
 --rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap)
 --rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap)
---rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap)
---rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint)
 --rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
 --rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap)
 --rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean)
