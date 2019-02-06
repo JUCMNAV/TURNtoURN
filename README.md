@@ -19,6 +19,7 @@
 * Determine if "conns" stands for "connections"; if so then replace where relevant
 * Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
 * Start returning code from ConnectNodesTemporarilyRemovedCode to ConnectNodes.atl. Refactor it and improve its efficiency as you go.
+	* I've realized that this task requires a strong understanding of Turn2Urn.atl before it can be performed. Consequently, I will hold off on it until I perform more refactoring iterations on Turn2Urn, whereupon I expect to understand functionality better.
 * Potential patterns to generalize into methods:
 	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
 		* getting referenced points; resolveTemp('tSomething'...); need to determine if resolveTemp works with correct containment in a called method
