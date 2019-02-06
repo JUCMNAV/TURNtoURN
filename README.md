@@ -15,14 +15,8 @@
 **Turn2UrnPhase2.java -** Phase 2 of transformation 
 
 ## TODO
-* Replace "conns" for "connections" where relevant (if conns does indeed stand for connections)
-	* Helpers:
-		* orForkNodeConnCounter
-		* andForkNodeConnCounter
-	* Rules:
-		* createNodeConns
-		* createOrForkNodeConns
-		* createAndForkNodeConns
+* Verify functionality of Turn2Urn.atl is equivalent to original before proceeding
+* Determine if "conns" stands for "connections"; if so then replace where relevant
 * Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
 * Start returning code from ConnectNodesTemporarilyRemovedCode to ConnectNodes.atl. Refactor it and improve its efficiency as you go.
 * Potential patterns to generalize into methods:
@@ -35,4 +29,6 @@
 * Refactor for increased consistency
 	* All if and else loops, including single line ones, should have braces
 * Rearrange methods so that their order feels more natural.
+
+## Design choices
 * Note that this is not like an OOP language where initNextItem instantiates the object before it can be assigned a name; the object is initialized in the "for" block; the choice of calling id first is merely for familiarity
