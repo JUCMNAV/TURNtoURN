@@ -632,6 +632,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		thisModule.nodeCollector;
 	}
 }
+
 rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	to
 		tStub: Urn!Stub (

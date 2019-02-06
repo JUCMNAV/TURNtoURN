@@ -1,0 +1,8 @@
+					if(node.oclIsTypeOf(Turn!RespRef)){
+						if(Urn!Responsibility.allInstances() -> any(n|node.name=n.name).respRefs -> select(r|r.diagram.name = tUCMmap.name) -> size() = 0){
+							Urn!Responsibility.allInstances() -> any(n|node.name=n.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).pred <-  	tUCMmap.nodes -> any(n|path.name=n.name).succ ;
+						}
+						
+					}else{
+						tUCMmap.nodes -> any(n|n.name=node.name).pred <- tUCMmap.nodes -> any(n|path.name=n.name).succ -> at(1);
+					}

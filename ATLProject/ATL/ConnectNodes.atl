@@ -2,15 +2,63 @@ module ConnectNodes;
 
 create OUT : Urn from IN : Turn;
 
-helper def : performNodeLogic(node: OclAny) : OclAny = node;
--- I added this as a placeholder at present.
-
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: Urn!UCMmap, nextNode: Urn!PathNode){
 	do{ 
 		thisModule.nodeCounter <- 1;
 		for (node in pathbody.pathNodes){
-			node;
-		}			
+			if(thisModule.nodeCounter = 1){
+				if(path.oclIsTypeOf(Turn!Path)){
+					node;
+				}
+				else if(path.oclIsTypeOf(Turn!OrFork)){
+					node;
+				}
+				else if (path.oclIsTypeOf(Urn!OrJoin)){
+					node;
+				}
+				--else if(path.oclIsTypeOf(Turn!AndFork)){
+				--	node;
+				--}
+				--else if(node.oclIsTypeOf(Turn!RespRef)){
+				--	thisModule.resolveTemp(node, 'tRespRef').pred <- thisModule.stubMap.get(path).succ -> at(1);
+				--} 
+				--else if(node.oclIsTypeOf(Turn!Timer)){
+				--	tUCMmap.nodes <- thisModule.createTimer(node, tUCMmap);
+				--	thisModule.timerMap.get(node).pred <- tUCMmap.nodes -> any(n|path.name=n.name).succ -> at(1); 
+				--}
+				else if(node.oclIsTypeOf(Turn!Connect)){
+					-- look for asynchronous connect
+					thisModule.connect <- thisModule.createConnect(tUCMmap);
+			
+					if(not pathbody.pathNodes -> first().connectsTo.oclIsTypeOf(Turn!Timer)){
+						thisModule.emptyPt <- thisModule.createEmptyPt(tUCMmap, OclAny, true);
+						thisModule.connect.pred <- thisModule.emptyPt.succ -> at(1);
+						
+						tUCMmap.nodes -> any(n|n.name = pathbody.pathNodes -> first().connectsTo.name).pred <- thisModule.connect.succ;
+						tUCMmap.nodes -> any(n|n.name = pathbody.pathNodes -> first().connectsTo.name).pred <- thisModule.stubMap.get(path).succ -> any(s|s.target.oclIsUndefined());
+					}
+					else{
+						thisModule.emptyPtTimer <- thisModule.createEmptyPt(tUCMmap, pathbody.pathNodes -> first().connectsTo, true);
+						thisModule.connect.pred <- thisModule.emptyPtTimer.succ -> at(1);
+						thisModule.timerMap.get(pathbody.pathNodes -> first().connectsTo).pred <- thisModule.connect.succ;
+						thisModule.emptyPtTimer.pred <- thisModule.stubMap.get(path).succ -> any(s|s.target.oclIsUndefined());
+					}
+					
+					thisModule.connectMap <-  thisModule.connectMap.including(node,thisModule.connect);
+				 }
+				--else if(node.oclIsTypeOf(Turn!WaitingPlace))
+				--	thisModule.resolveTemp(node, 'tWtPlace').pred <- thisModule.stubMap.get(path).succ -> any(s|s.target.oclIsUndefined());
+				--else if(node.oclIsTypeOf(Turn!FailurePoint))
+				--	thisModule.resolveTemp(node, 'tFailPt').pred <- thisModule.stubMap.get(path).succ -> any(s|s.target.oclIsUndefined());
+				--else{
+				--	tUCMmap.nodes -> any(n|n.name=node.name).pred <- tUCMmap.nodes -> any(n|path.name=n.name).succ -> at(1);
+				--}
+			}
+			else{ 
+				node;
+			}
+			thisModule.nodeCounter <- thisModule.nodeCounter.inc();
+		}
 	}
 		
 }
