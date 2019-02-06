@@ -1287,6 +1287,423 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 
 ---------------------final mapping rules------------------------------------
 
+rule IntElements2IntElements{
+	from 
+		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
+	to 
+		tIntElem: Urn!IntentionalElement (
+		   linksSrc <- s.linksSrc
+		),
+		tIntElemRef: Urn!IntentionalElementRef (
+			def <- tIntElem,
+			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
+			
+		)
+	 do{
+		 thisModule.initNextObjectWithName(tIntElemRef, 'IntentionalElementRef');
+		 thisModule.setNameFromObjectLongName(tIntElemRef, s); 
+		 --TODO: determine if this is redundant - we init with name then set the name
+		 
+		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
+		 	tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
+		 
+		 tIntElem.type <- s.type.toString().substring(1,1).toUpper()+s.type.toString().substring(2,s.type.toString().size());
+		 
+		 --Added because the default value in enum is considered always.
+		if(s.importance.toString().equals('none'))
+			tIntElem.importanceQuantitative <- s.importanceQuantitative;
+		else
+			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
+	 	 	thisModule.initNextObject(tIntElem);
+		 	thisModule.setNameFromObjectLongName(tIntElem, s);	
+		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
+	}
+}
+
+rule Actor2Actor{
+	from 
+		s: Turn!Actor
+	to 
+		tActor: Urn!Actor (
+			importanceQuantitative <- s.importanceQuantitative
+		),
+		tActorRef: Urn!ActorRef (
+			contDef <- tActor,
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
+			label <- tCompLabel
+		),
+		tCompLabel: Urn!ComponentLabel()
+	 do{
+	 	thisModule.initNextObject(tActor);
+	 	thisModule.setNameFromObjectLongName(tActor, s);
+	 	
+	 	thisModule.initNextObjectWithName(tActorRef, 'ActorRef');
+	 }	
+}
+
+rule Belief2Belief {
+	from
+		s: Turn!IntentionalElement(
+			s.type.toString() = 'belief'
+		)
+    to 
+     	tBelief: Urn!Belief(
+     		name <- s.name,
+			description <- s.name,
+			succ <- tBeliefLink
+     	),
+		tBeliefLink: Urn!BeliefLink(
+			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
+		)
+	 do{
+	 	thisModule.initNextObject(tBelief);
+	 	tBelief;
+	 }
+}
+
+rule Contribution2Contribution{
+	from 
+		s: Turn!Contribution (not (s.link.type.toString() = 'belief'))
+	to 
+		tCont: Urn!Contribution (
+		    dest <- s.dest,
+			refs <- tLinkRef,
+	        correlation <- s.correlation
+		),
+		tLinkRef: Urn!LinkRef (
+			link <- tCont,
+			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+		)
+		do{
+			thisModule.initNextObject(tCont);
+			thisModule.setNameFromObjectLongName(tCont, s);
+	
+			--Added because the default value in enum is considered always.
+			if(s.contribution.toString().equals('undefined')){
+				tCont.quantitativeContribution <- s.quantitativeContribution;
+				if(s.quantitativeContribution <= -1)
+					tCont.contribution <- 'Hurt';
+				else if(s.quantitativeContribution < -49)
+					tCont.contribution <- 'SomeNegative';
+				else if(s.quantitativeContribution = -100)
+					tCont.contribution <- 'Break';
+				else if(s.quantitativeContribution = 0)
+					tCont.contribution <- 'Unknown';
+				else if(s.quantitativeContribution < 50)
+					tCont.contribution <- 'Help';
+				else if (s.quantitativeContribution <= 99)
+					tCont.contribution <- 'SomePositive';
+				else if (s.quantitativeContribution = 100)
+					tCont.contribution <- 'Make';
+			}
+			else
+				tCont.contribution <- s.contribution.toString().substring(1,1).toUpper()+s.contribution.toString().substring(2,s.contribution.toString().size());
+	}
+}
+
+rule Decomposition2Decomposition{
+	from 
+		s: Turn!Decomposition (not (s.link.type.toString() = 'belief'))
+	to 
+		tDecomp: Urn!Decomposition (
+		    dest <- s.dest,
+			refs <- tLinkRef
+		),
+		tLinkRef: Urn!LinkRef (
+			link <- tDecomp,
+			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+		)
+	do{
+		thisModule.initNextObject(tDecomp);
+		thisModule.setNameFromObjectLongName(tDecomp, s);
+	}
+}
+
+rule Dependency2Dependency{
+	from 
+		s: Turn!Dependency (not (s.link.type.toString() = 'belief'))
+	to 
+		tDep: Urn!Dependency (
+		    dest <- s.dest,
+			refs <- tLinkRef
+		),
+		tLinkRef: Urn!LinkRef (
+			link <- tDep,
+			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+		)
+	do{
+		thisModule.initNextObject(tDep);
+		thisModule.setNameFromObjectLongName(tDep, s);
+	}
+}
+
+rule Strategies2Strategies{
+	from
+		s: Turn!EvaluationStrategy
+	to
+		tStrategies: Urn!EvaluationStrategy (
+			author <- s.info.author,
+			evaluations <- s.evaluations,
+			includedStrategies <- s.includedStrategies
+		)
+	do{
+		thisModule.initNextObject(tStrategies);
+		thisModule.setNameFromObjectLongName(tStrategies, s);
+	}
+}
+
+rule StrategiesGroup2StrategiesGroup{
+	from
+		s: Turn!StrategiesGroup
+	to
+		tStrategiesGroup: Urn!StrategiesGroup (
+			strategies <- s.evalStrategy,
+			strategies <- s.evalStrategies
+		)
+	do{
+		thisModule.initNextObject(tStrategiesGroup);
+		thisModule.setNameFromObjectLongName(tStrategiesGroup, s);
+	}
+}
+
+rule Evaluation2Evaluation {
+	from
+		s: Turn!Evaluation
+   	to 
+	    tEval : Urn!Evaluation (
+	     	exceeds <- s.exceeds,
+	     	intElement <- s.intElement,
+			evaluation <- s.evaluation,
+			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
+	    )
+	do	{
+		if(not s.conversion.oclIsUndefined()){
+			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings))
+				tEval.kpiEvalValueSet <- thisModule.createQMapKpiEvalValueSet(s.conversion);
+			else{
+				tEval.kpiEvalValueSet <- thisModule.createKpiEvalValueSet(s.conversion);}
+		}
+	}
+}
+
+rule ContributionContext2ContributionContext{
+	from
+		s: Turn!ContributionContext
+	to
+		tContContext: Urn!ContributionContext (
+			changes <- s.changes,
+			includedContexts <- s.includedContexts
+		)
+	do{
+		thisModule.initNextObject(tContContext);
+		thisModule.setNameFromObjectLongName(tContContext, s);
+	}
+}
+
+rule ContributionChange2ContributionChange{
+	from
+		s: Turn!ContributionChange
+	to
+		t: Urn!ContributionChange (
+			contribution <- s.contribution,
+			newQuantitativeContribution <- s.newQuantitativeContribution
+		)
+	do{
+		if(not s.newContribution.toString().equals('undefined'))
+			t.newContribution <- s.newContribution.toString().substring(1,1).toUpper()+s.newContribution.toString().substring(2,s.newContribution.toString().size());
+	}
+}
+
+rule ContributionContextGroup2ContributionContextGroup{
+	from
+		s: Turn!ContributionContextGroup
+	to
+		tContribGroups: Urn!ContributionContextGroup (
+			contribs <- s.contrib,
+			contribs <- s.contribs
+		)
+	do{
+		thisModule.initNextObject(tContribGroups);
+		thisModule.setNameFromObjectLongName(tContribGroups, s);
+	}
+}
+
+rule QMapping2QMapping {
+	from 
+		s: Turn!QualToQMapping
+	to
+		tQMapping: Urn!QualitativeMapping (
+			realWorldLabel <- s.realWorldLabel,
+			exceeds	<- s.exceeds,
+			evaluation <- s.evaluation,
+			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
+		)
+}
+
+rule QMappings2QMappings {
+	from
+		s: Turn!QualToQMappings
+	to
+		tQMappings: Urn!QualitativeMappings (
+			mapping <- s.mappings
+			--kpiEvalValueSet <- tQMapkpiEvalValueSet
+		)
+		
+	do{
+		thisModule.initNextObject(tQMappings);
+		thisModule.setNameFromObjectLongName(tQMappings, s);
+	}
+}
+
+rule Concern2Concern{
+	from 
+		s: Turn!Concern
+	to 
+		tConcern: Urn!Concern (
+		    elements <- s.elements,
+			condition <- s.condition,
+			metadata <- s.metadata
+		)
+	do{
+		thisModule.initNextObject(tConcern);
+		thisModule.setNameFromObjectLongName(tConcern, s);
+	}
+}
+
+rule URNlink2URNlink{
+	from 
+		s: Turn!URNlink
+	to 
+		tCon: Urn!URNlink (
+			type <- s.type,
+		    fromElem <- s.fromElem,
+			toElem <- s.toElem
+		)
+}
+
+rule Component2Component{
+	from 
+		s:Turn!ComponentRef 
+	to
+		tCompRef: Urn!ComponentRef(
+			label <- tCompLabel,
+			diagram <- s.map
+		),
+		tCompLabel: Urn!ComponentLabel
+	do{
+		thisModule.initNextObjectWithName(tCompRef, 'ComponentRef');
+		
+		if(Urn!Component.allInstances() -> any(c|c.name = s.name).oclIsUndefined()){
+			thisModule.comp <- thisModule.createComponent(s);
+			tCompRef.contDef <- thisModule.comp;	
+		}
+		else 
+			tCompRef.contDef <- Urn!Component.allInstances() -> any(c|c.name = s.name);	
+
+		if(not s.kind.oclIsUndefined() and s.kind.toString() <> 'parent')
+			tCompRef.contDef.kind <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size());
+		else if(s.kind <> 'parent')
+			tCompRef.contDef.kind <- 'Team';
+		
+		tCompRef.contDef.protected <- s.protected;
+		if(not s.boundTo.oclIsUndefined()){
+				if(not s.boundTo.comp.oclIsUndefined())
+					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+		
+		if(s.element.oclIsTypeOf(Turn!LongBoundElement)){
+			tCompRef.metadata <- thisModule.createMetadata('from',s.element.from);
+			tCompRef.metadata <- thisModule.createMetadata('to',s.element.to);
+		}
+		if(s.elements -> size() <> 0){
+			for(elem in s.elements){
+				if(elem.oclIsTypeOf(Turn!LongBoundElement)){
+					tCompRef.metadata <- thisModule.createMetadata('from',elem.from);
+					tCompRef.metadata <- thisModule.createMetadata('to',elem.to);
+				}
+			}
+		}
+	}
+}
+
+rule Responsibility2Responsibility{
+	from
+		s: Turn!RespRef 
+	to
+		tRespRef: Urn!RespRef (
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		),
+		tNodeConn: Urn!NodeConnection,
+		tNodeLabel: Urn!NodeLabel
+	do{
+		if(not s.longName.longname.oclIsUndefined())
+			thisModule.respName <- s.longName.longname;
+		else
+			thisModule.respName <- s.name;
+		if(Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName).oclIsUndefined()){
+			thisModule.resp <- thisModule.createResponsibility(s);
+			tRespRef.respDef <- thisModule.resp;
+		}
+		else{
+			tRespRef.respDef  <- Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName);
+		}
+		
+		--component bindings added
+		if (not s.boundTo.oclIsUndefined()){
+				if (not s.boundTo.comp.oclIsUndefined())
+					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
+		
+		thisModule.initNextObjectWithName(tRespRef, 'RespRef');
+	}
+}
+
+rule WaitingPlace2WaitingPlace{
+	from		
+		s: Turn!WaitingPlace
+	to
+		tWtPlace: Urn!WaitingPlace (
+			succ <- tNodeConn,
+			label <- tNodeLabel,
+			waitType <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size())
+		),
+		tNodeConn: Urn!NodeConnection (
+			condition <- s.condition
+		),
+		tNodeLabel: Urn!NodeLabel()
+	do{
+		thisModule.initNextObject(tWtPlace);
+		thisModule.setNameFromObjectLongName(tWtPlace, s);
+	}
+}
+
+rule FailurePoint2FailurePoint{
+	from		
+		s: Turn!FailurePoint
+	to
+		tFailPt: Urn!FailurePoint (
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		),
+		tNodeConn: Urn!NodeConnection (
+			condition <- s.condition
+		),
+		tNodeLabel: Urn!NodeLabel()
+	do{
+		thisModule.initNextObject(tFailPt);
+		thisModule.setNameFromObjectLongName(tFailPt, s);
+
+		if(not s.failLabel.oclIsUndefined())
+			tFailPt.expression <- s.failLabel.failure;
+	}
+}
+
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
@@ -1355,499 +1772,6 @@ rule Metadata2Metadata{
 		)
 }
 
-rule Belief2Belief {
-	from
-		s: Turn!IntentionalElement(
-			s.type.toString() = 'belief'
-		)
-    to 
-     	tBelief: Urn!Belief(
-     		name <- s.name,
-			description <- s.name,
-			succ <- tBeliefLink
-     	),
-		tBeliefLink: Urn!BeliefLink(
-			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
-		)
-	 do{
-	 	thisModule.initNextObject(tBelief);
-	 	tBelief;
-	 }
-}
-
-rule Actor2Actor{
-	from 
-		s: Turn!Actor
-	to 
-		tActor: Urn!Actor (
-			importanceQuantitative <- s.importanceQuantitative
-		),
-		tActorRef: Urn!ActorRef (
-			contDef <- tActor,
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
-			label <- tCompLabel
-		),
-		tCompLabel: Urn!ComponentLabel()
-	 do{
-	 	thisModule.initNextObject(tActor);
-	 	thisModule.setNameFromObjectLongName(tActor, s);
-	 	
-	 	thisModule.initNextObjectWithName(tActorRef, 'ActorRef');
-	 }	
-}
-
-rule Decomposition2Decomposition{
-	from 
-		s: Turn!Decomposition (not (s.link.type.toString() = 'belief'))
-	to 
-		tDecomp: Urn!Decomposition (
-		    dest <- s.dest,
-			refs <- tLinkRef
-		),
-		tLinkRef: Urn!LinkRef (
-			link <- tDecomp,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
-		)
-	do{
-		thisModule.initNextObject(tDecomp);
-		thisModule.setNameFromObjectLongName(tDecomp, s);
-	}
-}
-
-rule Dependency2Dependency{
-	from 
-		s: Turn!Dependency (not (s.link.type.toString() = 'belief'))
-	to 
-		tDep: Urn!Dependency (
-		    dest <- s.dest,
-			refs <- tLinkRef
-		),
-		tLinkRef: Urn!LinkRef (
-			link <- tDep,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
-		)
-	do{
-		thisModule.initNextObject(tDep);
-		thisModule.setNameFromObjectLongName(tDep, s);
-	}
-}
-
-rule InBinding2InBinding{
-	from
-		s:Turn!InBinding
-	to
-		tInBinding: Urn!InBinding(
-			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
-		)
-	do{
-		if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined())
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-			else
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
-		}
-		else if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-			else
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);	
-		}
-	}
-}
-
-rule OutBinding2OutBinding{
-	from
-		s:Turn!OutBinding
-	to
-		tOutBinding: Urn!OutBinding(
-			endPoint <- thisModule.endPointMap.get(s.mapEnd)
-		)
-	do{ 
-		if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-			else
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
-		}
-		else if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined())
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-			else 
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);	
-		}
-	}
-}
-
-rule IntElements2IntElements{
-	from 
-		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
-	to 
-		tIntElem: Urn!IntentionalElement (
-		   linksSrc <- s.linksSrc
-		),
-		tIntElemRef: Urn!IntentionalElementRef (
-			def <- tIntElem,
-			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
-			
-		)
-	 do{
-		 thisModule.initNextObjectWithName(tIntElemRef, 'IntentionalElementRef');
-		 thisModule.setNameFromObjectLongName(tIntElemRef, s); 
-		 --TODO: determine if this is redundant - we init with name then set the name
-		 
-		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
-		 	tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
-		 
-		 tIntElem.type <- s.type.toString().substring(1,1).toUpper()+s.type.toString().substring(2,s.type.toString().size());
-		 
-		 --Added because the default value in enum is considered always.
-		if(s.importance.toString().equals('none'))
-			tIntElem.importanceQuantitative <- s.importanceQuantitative;
-		else
-			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
-	 	 	thisModule.initNextObject(tIntElem);
-		 	thisModule.setNameFromObjectLongName(tIntElem, s);	
-		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
-	}
-}
-
-rule Contribution2Contribution{
-	from 
-		s: Turn!Contribution (not (s.link.type.toString() = 'belief'))
-	to 
-		tCont: Urn!Contribution (
-		    dest <- s.dest,
-			refs <- tLinkRef,
-	        correlation <- s.correlation
-		),
-		tLinkRef: Urn!LinkRef (
-			link <- tCont,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
-		)
-		do{
-			thisModule.initNextObject(tCont);
-			thisModule.setNameFromObjectLongName(tCont, s);
-	
-			--Added because the default value in enum is considered always.
-			if(s.contribution.toString().equals('undefined')){
-				tCont.quantitativeContribution <- s.quantitativeContribution;
-				if(s.quantitativeContribution <= -1)
-					tCont.contribution <- 'Hurt';
-				else if(s.quantitativeContribution < -49)
-					tCont.contribution <- 'SomeNegative';
-				else if(s.quantitativeContribution = -100)
-					tCont.contribution <- 'Break';
-				else if(s.quantitativeContribution = 0)
-					tCont.contribution <- 'Unknown';
-				else if(s.quantitativeContribution < 50)
-					tCont.contribution <- 'Help';
-				else if (s.quantitativeContribution <= 99)
-					tCont.contribution <- 'SomePositive';
-				else if (s.quantitativeContribution = 100)
-					tCont.contribution <- 'Make';
-			}
-			else
-				tCont.contribution <- s.contribution.toString().substring(1,1).toUpper()+s.contribution.toString().substring(2,s.contribution.toString().size());
-	}
-}
-
-rule Evaluation2Evaluation {
-	from
-		s: Turn!Evaluation
-   	to 
-	    tEval : Urn!Evaluation (
-	     	exceeds <- s.exceeds,
-	     	intElement <- s.intElement,
-			evaluation <- s.evaluation,
-			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
-	    )
-	do	{
-		if(not s.conversion.oclIsUndefined()){
-			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings))
-				tEval.kpiEvalValueSet <- thisModule.createQMapKpiEvalValueSet(s.conversion);
-			else{
-				tEval.kpiEvalValueSet <- thisModule.createKpiEvalValueSet(s.conversion);}
-		}
-	}
-}
-
-rule Responsibility2Responsibility{
-	from
-		s: Turn!RespRef 
-	to
-		tRespRef: Urn!RespRef (
-			succ <- tNodeConn,
-			label <- tNodeLabel
-		),
-		tNodeConn: Urn!NodeConnection,
-		tNodeLabel: Urn!NodeLabel
-	do{
-		if(not s.longName.longname.oclIsUndefined())
-			thisModule.respName <- s.longName.longname;
-		else
-			thisModule.respName <- s.name;
-		if(Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName).oclIsUndefined()){
-			thisModule.resp <- thisModule.createResponsibility(s);
-			tRespRef.respDef <- thisModule.resp;
-		}
-		else{
-			tRespRef.respDef  <- Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName);
-		}
-		
-		--component bindings added
-		if (not s.boundTo.oclIsUndefined()){
-				if (not s.boundTo.comp.oclIsUndefined())
-					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
-		}
-		
-		thisModule.initNextObjectWithName(tRespRef, 'RespRef');
-	}
-}
-
-rule PluginBinding2PluginBinding{
-	from 
-		s:Turn!PluginBinding	
-	to
-		tPluginBinding: Urn!PluginBinding (
-			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
-			--This could be other way round, binding could be inBinding or OutBinding and vice-versa.
-			in <- thisModule.resolveTemp(s.binding,'tInBinding'),
-			in <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')),
-			out <- thisModule.resolveTemp(s.binding,'tOutBinding'),
-			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')),
-			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
-			replicationFactor <- s.replication
-		)
-}
-
-rule Condition2Condition{
-	from 
-		s: Turn!Condition
-	to 
-		tCondition: Urn!Condition
-	do{
-		thisModule.condExpression <- '';
-		for(exp in s.expression.content){
-			thisModule.condExpression <- thisModule.condExpression + exp;	
-		}
-		tCondition.expression <- thisModule.condExpression; 
-	}
-}
-
-rule StrategiesGroup2StrategiesGroup{
-	from
-		s: Turn!StrategiesGroup
-	to
-		tStrategiesGroup: Urn!StrategiesGroup (
-			strategies <- s.evalStrategy,
-			strategies <- s.evalStrategies
-		)
-	do{
-		thisModule.initNextObject(tStrategiesGroup);
-		thisModule.setNameFromObjectLongName(tStrategiesGroup, s);
-	}
-}
-
-rule Component2Component{
-	from 
-		s:Turn!ComponentRef 
-	to
-		tCompRef: Urn!ComponentRef(
-			label <- tCompLabel,
-			diagram <- s.map
-		),
-		tCompLabel: Urn!ComponentLabel
-	do{
-		thisModule.initNextObjectWithName(tCompRef, 'ComponentRef');
-		
-		if(Urn!Component.allInstances() -> any(c|c.name = s.name).oclIsUndefined()){
-			thisModule.comp <- thisModule.createComponent(s);
-			tCompRef.contDef <- thisModule.comp;	
-		}
-		else 
-			tCompRef.contDef <- Urn!Component.allInstances() -> any(c|c.name = s.name);	
-
-		if(not s.kind.oclIsUndefined() and s.kind.toString() <> 'parent')
-			tCompRef.contDef.kind <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size());
-		else if(s.kind <> 'parent')
-			tCompRef.contDef.kind <- 'Team';
-		
-		tCompRef.contDef.protected <- s.protected;
-		if(not s.boundTo.oclIsUndefined()){
-				if(not s.boundTo.comp.oclIsUndefined())
-					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
-		}
-		
-		if(s.element.oclIsTypeOf(Turn!LongBoundElement)){
-			tCompRef.metadata <- thisModule.createMetadata('from',s.element.from);
-			tCompRef.metadata <- thisModule.createMetadata('to',s.element.to);
-		}
-		if(s.elements -> size() <> 0){
-			for(elem in s.elements){
-				if(elem.oclIsTypeOf(Turn!LongBoundElement)){
-					tCompRef.metadata <- thisModule.createMetadata('from',elem.from);
-					tCompRef.metadata <- thisModule.createMetadata('to',elem.to);
-				}
-			}
-		}
-	}
-}
-
-rule ContributionChange2ContributionChange{
-	from
-		s: Turn!ContributionChange
-	to
-		t: Urn!ContributionChange (
-			contribution <- s.contribution,
-			newQuantitativeContribution <- s.newQuantitativeContribution
-		)
-	do{
-		if(not s.newContribution.toString().equals('undefined'))
-			t.newContribution <- s.newContribution.toString().substring(1,1).toUpper()+s.newContribution.toString().substring(2,s.newContribution.toString().size());
-	}
-}
-
-rule QMapping2QMapping {
-	from 
-		s: Turn!QualToQMapping
-	to
-		tQMapping: Urn!QualitativeMapping (
-			realWorldLabel <- s.realWorldLabel,
-			exceeds	<- s.exceeds,
-			evaluation <- s.evaluation,
-			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
-		)
-}
-
-rule URNlink2URNlink{
-	from 
-		s: Turn!URNlink
-	to 
-		tCon: Urn!URNlink (
-			type <- s.type,
-		    fromElem <- s.fromElem,
-			toElem <- s.toElem
-		)
-}
-
-rule FailurePoint2FailurePoint{
-	from		
-		s: Turn!FailurePoint
-	to
-		tFailPt: Urn!FailurePoint (
-			succ <- tNodeConn,
-			label <- tNodeLabel
-		),
-		tNodeConn: Urn!NodeConnection (
-			condition <- s.condition
-		),
-		tNodeLabel: Urn!NodeLabel()
-	do{
-		thisModule.initNextObject(tFailPt);
-		thisModule.setNameFromObjectLongName(tFailPt, s);
-
-		if(not s.failLabel.oclIsUndefined())
-			tFailPt.expression <- s.failLabel.failure;
-	}
-}
-
-rule QMappings2QMappings {
-	from
-		s: Turn!QualToQMappings
-	to
-		tQMappings: Urn!QualitativeMappings (
-			mapping <- s.mappings
-			--kpiEvalValueSet <- tQMapkpiEvalValueSet
-		)
-		
-	do{
-		thisModule.initNextObject(tQMappings);
-		thisModule.setNameFromObjectLongName(tQMappings, s);
-	}
-}
-
-rule Concern2Concern{
-	from 
-		s: Turn!Concern
-	to 
-		tConcern: Urn!Concern (
-		    elements <- s.elements,
-			condition <- s.condition,
-			metadata <- s.metadata
-		)
-	do{
-		thisModule.initNextObject(tConcern);
-		thisModule.setNameFromObjectLongName(tConcern, s);
-	}
-}
-
-rule Strategies2Strategies{
-	from
-		s: Turn!EvaluationStrategy
-	to
-		tStrategies: Urn!EvaluationStrategy (
-			author <- s.info.author,
-			evaluations <- s.evaluations,
-			includedStrategies <- s.includedStrategies
-		)
-	do{
-		thisModule.initNextObject(tStrategies);
-		thisModule.setNameFromObjectLongName(tStrategies, s);
-	}
-}
-
-rule ContributionContext2ContributionContext{
-	from
-		s: Turn!ContributionContext
-	to
-		tContContext: Urn!ContributionContext (
-			changes <- s.changes,
-			includedContexts <- s.includedContexts
-		)
-	do{
-		thisModule.initNextObject(tContContext);
-		thisModule.setNameFromObjectLongName(tContContext, s);
-	}
-}
-
-rule ContributionContextGroup2ContributionContextGroup{
-	from
-		s: Turn!ContributionContextGroup
-	to
-		tContribGroups: Urn!ContributionContextGroup (
-			contribs <- s.contrib,
-			contribs <- s.contribs
-		)
-	do{
-		thisModule.initNextObject(tContribGroups);
-		thisModule.setNameFromObjectLongName(tContribGroups, s);
-	}
-}
-
-rule WaitingPlace2WaitingPlace{
-	from		
-		s: Turn!WaitingPlace
-	to
-		tWtPlace: Urn!WaitingPlace (
-			succ <- tNodeConn,
-			label <- tNodeLabel,
-			waitType <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size())
-		),
-		tNodeConn: Urn!NodeConnection (
-			condition <- s.condition
-		),
-		tNodeLabel: Urn!NodeLabel()
-	do{
-		thisModule.initNextObject(tWtPlace);
-		thisModule.setNameFromObjectLongName(tWtPlace, s);
-	}
-}
-
 rule StartPoint2StartPoint{
 	from
 		s: Turn!StartPoint
@@ -1880,26 +1804,17 @@ rule StartPoint2StartPoint{
 	}
 }
 
-rule AndJoin2AndJoin{
-	from 	
-		s: Turn!AndJoin
-	to
-		tAndJoin: Urn!AndJoin(
-			succ <- tNodeConn,
-			label <- tNodeLabel
-		),
-		tNodeConn: Urn!NodeConnection,
-		tNodeLabel: Urn!NodeLabel
+rule Condition2Condition{
+	from 
+		s: Turn!Condition
+	to 
+		tCondition: Urn!Condition
 	do{
-		thisModule.initNextObject(tAndJoin);
-		thisModule.setNameFromObjectLongName(tAndJoin, s);
-		
-		if(not s.boundTo.oclIsUndefined()){
-				if(not s.boundTo.comp.oclIsUndefined())
-					tAndJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tAndJoin.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		thisModule.condExpression <- '';
+		for(exp in s.expression.content){
+			thisModule.condExpression <- thisModule.condExpression + exp;	
 		}
+		tCondition.expression <- thisModule.condExpression; 
 	}
 }
 
@@ -1926,6 +1841,29 @@ rule OrJoin2OrJoin{
 			}
 		}
 		
+	}
+}
+
+rule AndJoin2AndJoin{
+	from 	
+		s: Turn!AndJoin
+	to
+		tAndJoin: Urn!AndJoin(
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		),
+		tNodeConn: Urn!NodeConnection,
+		tNodeLabel: Urn!NodeLabel
+	do{
+		thisModule.initNextObject(tAndJoin);
+		thisModule.setNameFromObjectLongName(tAndJoin, s);
+		
+		if(not s.boundTo.oclIsUndefined()){
+				if(not s.boundTo.comp.oclIsUndefined())
+					tAndJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+				else
+					tAndJoin.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+		}
 	}
 }
 
@@ -2052,5 +1990,67 @@ rule UCMmap2UCMmap{
 		}
 		--Node connections
 		tUCMmap.connections <- tUCMmap.nodes ->   flatten() -> collect(of|of.succ) -> flatten();
+	}
+}
+
+rule PluginBinding2PluginBinding{
+	from 
+		s:Turn!PluginBinding	
+	to
+		tPluginBinding: Urn!PluginBinding (
+			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
+			--This could be other way round, binding could be inBinding or OutBinding and vice-versa.
+			in <- thisModule.resolveTemp(s.binding,'tInBinding'),
+			in <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')),
+			out <- thisModule.resolveTemp(s.binding,'tOutBinding'),
+			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')),
+			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
+			replicationFactor <- s.replication
+		)
+}
+
+rule InBinding2InBinding{
+	from
+		s:Turn!InBinding
+	to
+		tInBinding: Urn!InBinding(
+			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
+		)
+	do{
+		if(not s.binding.oclIsUndefined()){
+			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+		}
+		else if(not s.bindings.oclIsUndefined()){
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);	
+		}
+	}
+}
+
+rule OutBinding2OutBinding{
+	from
+		s:Turn!OutBinding
+	to
+		tOutBinding: Urn!OutBinding(
+			endPoint <- thisModule.endPointMap.get(s.mapEnd)
+		)
+	do{ 
+		if(not s.bindings.oclIsUndefined()){
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
+		}
+		else if(not s.binding.oclIsUndefined()){
+			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+			else 
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);	
+		}
 	}
 }
