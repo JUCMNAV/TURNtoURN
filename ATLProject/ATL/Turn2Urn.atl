@@ -94,6 +94,23 @@ rule setNameFromObjectLongName(nameDest: OclAny, sourceObject: OclAny){
 	}
 }
 
+rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
+	do{
+		if(node.oclIsTypeOf(Turn!Timer)){
+			thisModule.connectTimerNodes(node, tUCMmap);
+		}
+		else if(node.oclIsTypeOf(Turn!AndFork)){
+			thisModule.connectAndForkNodes(node, tUCMmap);
+		}
+		else if(node.oclIsTypeOf(Turn!OrFork)){
+			thisModule.connectOrForkNodes(node, tUCMmap);
+		}
+		else if(node.oclIsTypeOf(Turn!Stub)){
+			thisModule.createStubOutNodes(node, tUCMmap);
+		}
+	}
+}
+
 rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	do{
 		thisModule.counter <- 1;
@@ -237,23 +254,6 @@ rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
 				}
 				tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
 			}
-		}
-	}
-}
-
-rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
-	do{
-		if(node.oclIsTypeOf(Turn!Timer)){
-			thisModule.connectTimerNodes(node, tUCMmap);
-		}
-		else if(node.oclIsTypeOf(Turn!AndFork)){
-			thisModule.connectAndForkNodes(node, tUCMmap);
-		}
-		else if(node.oclIsTypeOf(Turn!OrFork)){
-			thisModule.connectOrForkNodes(node, tUCMmap);
-		}
-		else if(node.oclIsTypeOf(Turn!Stub)){
-			thisModule.createStubOutNodes(node, tUCMmap);
 		}
 	}
 }
@@ -632,7 +632,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		thisModule.nodeCollector;
 	}
 }
-
 rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	to
 		tStub: Urn!Stub (
@@ -1867,6 +1866,68 @@ rule AndJoin2AndJoin{
 	}
 }
 
+rule PluginBinding2PluginBinding{
+	from 
+		s:Turn!PluginBinding	
+	to
+		tPluginBinding: Urn!PluginBinding (
+			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
+			--This could be other way round, binding could be inBinding or OutBinding and vice-versa.
+			in <- thisModule.resolveTemp(s.binding,'tInBinding'),
+			in <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')),
+			out <- thisModule.resolveTemp(s.binding,'tOutBinding'),
+			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')),
+			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
+			replicationFactor <- s.replication
+		)
+}
+
+rule InBinding2InBinding{
+	from
+		s:Turn!InBinding
+	to
+		tInBinding: Urn!InBinding(
+			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
+		)
+	do{
+		if(not s.binding.oclIsUndefined()){
+			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+		}
+		else if(not s.bindings.oclIsUndefined()){
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);	
+		}
+	}
+}
+
+rule OutBinding2OutBinding{
+	from
+		s:Turn!OutBinding
+	to
+		tOutBinding: Urn!OutBinding(
+			endPoint <- thisModule.endPointMap.get(s.mapEnd)
+		)
+	do{ 
+		if(not s.bindings.oclIsUndefined()){
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+			else
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
+		}
+		else if(not s.binding.oclIsUndefined()){
+			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+			else 
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);	
+		}
+	}
+}
+
 rule UCMmap2UCMmap{
 	from
 		sUCMmap: Turn!UCMmap
@@ -1877,9 +1938,6 @@ rule UCMmap2UCMmap{
 			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p,'tNodeConn'))
 		)
 	do{
-		thisModule.initNextObject(tUCMmap);
-		thisModule.setNameFromObjectLongName(tUCMmap, sUCMmap);
-		
 		--Referenced ends
 		tUCMmap.nodes <- sUCMmap.getPathNodes() ->  collect(r|thisModule.resolveTemp(r,'tRespRef'));
 		tUCMmap.nodes <- sUCMmap.getPathNodes() ->  collect(r|thisModule.resolveTemp(r,'tAndJoin'));
@@ -1990,67 +2048,9 @@ rule UCMmap2UCMmap{
 		}
 		--Node connections
 		tUCMmap.connections <- tUCMmap.nodes ->   flatten() -> collect(of|of.succ) -> flatten();
-	}
-}
-
-rule PluginBinding2PluginBinding{
-	from 
-		s:Turn!PluginBinding	
-	to
-		tPluginBinding: Urn!PluginBinding (
-			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
-			--This could be other way round, binding could be inBinding or OutBinding and vice-versa.
-			in <- thisModule.resolveTemp(s.binding,'tInBinding'),
-			in <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')),
-			out <- thisModule.resolveTemp(s.binding,'tOutBinding'),
-			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')),
-			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
-			replicationFactor <- s.replication
-		)
-}
-
-rule InBinding2InBinding{
-	from
-		s:Turn!InBinding
-	to
-		tInBinding: Urn!InBinding(
-			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
-		)
-	do{
-		if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined())
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-			else
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
-		}
-		else if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-			else
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);	
-		}
-	}
-}
-
-rule OutBinding2OutBinding{
-	from
-		s:Turn!OutBinding
-	to
-		tOutBinding: Urn!OutBinding(
-			endPoint <- thisModule.endPointMap.get(s.mapEnd)
-		)
-	do{ 
-		if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-			else
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
-		}
-		else if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined())
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-			else 
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);	
-		}
+		
+		
+		thisModule.initNextObject(tUCMmap);
+		thisModule.setNameFromObjectLongName(tUCMmap, sUCMmap);
 	}
 }
