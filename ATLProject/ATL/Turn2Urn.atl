@@ -58,30 +58,26 @@ helper context Turn!UCMmap def: getPathNodes() : Sequence(OclAny) =
 
 helper context String def : capitalize(): String = self.substring(1,1).toUpper() + self.substring(2, self.size());
 
+--This should only be called on TURN objects; I haven't been able to determine how to express that restriction using OCL, though.
+helper context OclAny def : turnGetLongestName() : String = 
+	if(not self.longName.oclIsUndefined())
+	then
+		if(not self.longName.longname.oclIsUndefined())
+		then
+			self.longName.longname
+		else
+			self.name	
+		endif
+	else
+			self.name	
+	endif;
+
 ---------------imperative-method-like rules (sorry, spirit of declarative programming)-------------
 
 rule nextId(){
 	do{
 		thisModule.id <- thisModule.id.inc();
 		thisModule.id;
-	}
-}
-
-rule setNameFromObjectLongName(nameDest: OclAny, sourceObject: OclAny){
-	do{
-		-- personal TODO: determine why this is "s.longname.longname" rather than merely "s.longname"
-		-- note: ATL does not support short-circuit evalaution of conditions so this had to be implemented in an ugly manner
-		if(not sourceObject.longName.oclIsUndefined()){
-			if(not sourceObject.longName.longname.oclIsUndefined()){
-				nameDest.name <- sourceObject.longName.longname;
-			}
-			else{
-				nameDest.name <- sourceObject.name;	
-			}
-		}
-		else{
-			nameDest.name <- sourceObject.name;	
-		}
 	}
 }
 
@@ -99,6 +95,30 @@ rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 		else if(node.oclIsTypeOf(Turn!Stub)){
 			thisModule.createStubOutNodes(node, tUCMmap);
 		}
+	}
+}
+
+--Dictionary. Had to use called rule as elseif is not supporter in helpers
+rule contributionNumberToKeyword(quantitativeContribution: Integer){
+	do{
+		thisModule.contribution <- 'Invalid';
+		
+		if (quantitativeContribution <= -1)
+			thisModule.contribution <- 'Hurt';
+		else if (quantitativeContribution < -49)
+			thisModule.contribution <- 'SomeNegative';
+		else if (quantitativeContribution = -100)
+			thisModule.contribution <- 'Break';
+		else if (quantitativeContribution = 0)
+			thisModule.contribution <- 'Unknown';
+		else if (quantitativeContribution < 50)
+			thisModule.contribution <- 'Help';
+		else if (quantitativeContribution <= 99)
+			thisModule.contribution <- 'SomePositive';
+		else if (quantitativeContribution = 100)
+			thisModule.contribution <- 'Make';
+		
+		thisModule.contribution;
 	}
 }
 
@@ -271,10 +291,10 @@ rule createNodeConns(){
 rule createComponent(s: Turn!ComponentRef){
 	to
 		tComp: Urn!Component(
-			id <- thisModule.nextId().toString()	
+			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName()
 		)
 	do{
-		thisModule.setNameFromObjectLongName(tComp, s);
 		tComp;	
 	}
 }
@@ -377,10 +397,10 @@ rule createAndForkNodeConns(ref: Turn!PathBodyNodes,  tUCMmap: Urn!UCMmap){
 rule createResponsibility(s: Turn!RespRef){
 	to
 		tResp: Urn!Responsibility(
-			id <- thisModule.nextId().toString()	
+			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName()
 		)
 	do{
-		thisModule.setNameFromObjectLongName(tResp, s);
 		tResp;
 	}
 }
@@ -397,11 +417,10 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 	to
 		tOrFork: Urn!OrFork (
 			id <- thisModule.nextId().toString(),
+			name <- obj.turnGetLongestName(),
 			diagram <- tUCMmap
 		)
 	do{
-		thisModule.setNameFromObjectLongName(tOrFork, obj);
-		
 		if(tOrFork.name.oclIsUndefined()){
 			tOrFork.name <- 'OrFork'+tOrFork.id;
 		}
@@ -633,13 +652,12 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	to
 		tStub: Urn!Stub (
 			id <- thisModule.nextId().toString(),
+			name <- stubObj.turnGetLongestName(),
 			diagram <- tUCMmap,
 			label <- tNodeLabel
 		),
 		tNodeLabel: Urn!NodeLabel()
 	do{
-		thisModule.setNameFromObjectLongName(tStub, stubObj);
-		
 		if(not stubObj.params.oclIsUndefined()){
 			tStub.dynamic <- stubObj.params.plugin ->  flatten() -> size() >= 2;
 			tStub.bindings <- stubObj.params.plugin -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
@@ -911,11 +929,10 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 	to
 		tAndFork: Urn!AndFork (
 			id <- thisModule.nextId().toString(),
+			name <- obj.turnGetLongestName(),
 			diagram <- tUCMmap
 		)
 	do{
-		thisModule.setNameFromObjectLongName(tAndFork, obj);
-		
 		if(not tAndFork.name.oclIsUndefined()){
 			--TODO: I'm not sure this was actually ever entered in the original code. 
 			--Name was always set to '' if no valid value was found; would that enter here?
@@ -1116,8 +1133,8 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 			tEndPoint.succ <- thisModule.createNodeConns();
 		}
 		else if(not ep.oclIsTypeOf(Turn!OrFork)){
-			-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we set it to something else)
-			thisModule.setNameFromObjectLongName(tEndPoint, ep);
+			-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we change it)
+			tEndPoint.name <- ep.turnGetLongestName();
 			
 			thisModule.endPointMap <- thisModule.endPointMap.including(ep,tEndPoint);
 			--component bindings
@@ -1155,6 +1172,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 	to
 		tTimer: Urn!Timer (
 			id <- thisModule.nextId().toString(),
+			name <- timerObj.turnGetLongestName(),
 			succ <- tNodeConn,
 			diagram <- tUCMmap,
 			label <- tNodeLabel,
@@ -1165,8 +1183,6 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 		),
 		tNodeLabel: Urn!NodeLabel()
 	do{
-		thisModule.setNameFromObjectLongName(tTimer, timerObj);
-		
 		if(not timerObj.boundTo.oclIsUndefined()){
 				if(not timerObj.boundTo.comp.oclIsUndefined()){
 					tTimer.contRef <-  thisModule.resolveTemp(timerObj.boundTo.comp, 'tCompRef');
@@ -1291,20 +1307,18 @@ rule IntElements2IntElements{
 	to 
 		tIntElemRef: Urn!IntentionalElementRef (
 			id <- thisModule.nextId().toString(),
-			name <- 'IntentionalElementRef' + tIntElemRef.id,
+			name <- s.turnGetLongestName(),
 			def <- tIntElem,
 			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
 		),
 		tIntElem: Urn!IntentionalElement (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			linksSrc <- s.linksSrc
 		)
 		
 	 do{
-	 	thisModule.setNameFromObjectLongName(tIntElemRef, s); --TODO: determine if this is redundant - we init with name then set the name 
-	 	thisModule.setNameFromObjectLongName(tIntElem, s);
-		 
-		if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0){
+	 	if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0){
 			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().capitalize())-> first();
 		}
 		
@@ -1328,6 +1342,7 @@ rule Actor2Actor{
 	to 
 		tActor: Urn!Actor (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			importanceQuantitative <- s.importanceQuantitative
 		),
 		tActorRef: Urn!ActorRef (
@@ -1339,9 +1354,6 @@ rule Actor2Actor{
 			label <- tCompLabel
 		),
 		tCompLabel: Urn!ComponentLabel()
-	 do{
-	 	thisModule.setNameFromObjectLongName(tActor, s);
-	 }	
 }
 
 rule Belief2Belief {
@@ -1365,6 +1377,7 @@ rule Contribution2Contribution{
 	to 
 		tCont: Urn!Contribution (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 		    dest <- s.dest,
 			refs <- tLinkRef,
 	        correlation <- s.correlation
@@ -1373,38 +1386,24 @@ rule Contribution2Contribution{
 			link <- tCont,
 			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
 		)
-		do{
-			thisModule.setNameFromObjectLongName(tCont, s);
-	
-			--Added because the default value in enum is considered always.
-			if(s.contribution.toString().equals('undefined')){
-				tCont.quantitativeContribution <- s.quantitativeContribution;
-				if(s.quantitativeContribution <= -1)
-					tCont.contribution <- 'Hurt';
-				else if(s.quantitativeContribution < -49)
-					tCont.contribution <- 'SomeNegative';
-				else if(s.quantitativeContribution = -100)
-					tCont.contribution <- 'Break';
-				else if(s.quantitativeContribution = 0)
-					tCont.contribution <- 'Unknown';
-				else if(s.quantitativeContribution < 50)
-					tCont.contribution <- 'Help';
-				else if (s.quantitativeContribution <= 99)
-					tCont.contribution <- 'SomePositive';
-				else if (s.quantitativeContribution = 100)
-					tCont.contribution <- 'Make';
-			}
-			else
-				tCont.contribution <- s.contribution.toString().capitalize();
+	do{
+		--Added because the default value in enum is considered always.
+		if(s.contribution.toString().equals('undefined')){
+			tCont.quantitativeContribution <- s.quantitativeContribution;
+			tCont.contribution <- thisModule.contributionNumberToKeyword(s.quantitativeContribution);
+		}
+		else
+			tCont.contribution <- s.contribution.toString().capitalize();
 	}
 }
-
+	
 rule Decomposition2Decomposition{
 	from 
 		s: Turn!Decomposition (not (s.link.type.toString() = 'belief'))
 	to 
 		tDecomp: Urn!Decomposition (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 		    dest <- s.dest,
 			refs <- tLinkRef
 		),
@@ -1412,9 +1411,6 @@ rule Decomposition2Decomposition{
 			link <- tDecomp,
 			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
 		)
-	do{
-		thisModule.setNameFromObjectLongName(tDecomp, s);
-	}
 }
 
 rule Dependency2Dependency{
@@ -1423,6 +1419,7 @@ rule Dependency2Dependency{
 	to 
 		tDep: Urn!Dependency (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 		    dest <- s.dest,
 			refs <- tLinkRef
 		),
@@ -1430,9 +1427,6 @@ rule Dependency2Dependency{
 			link <- tDep,
 			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
 		)
-	do{
-		thisModule.setNameFromObjectLongName(tDep, s);
-	}
 }
 
 rule Strategies2Strategies{
@@ -1441,13 +1435,11 @@ rule Strategies2Strategies{
 	to
 		tStrategies: Urn!EvaluationStrategy (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			author <- s.info.author,
 			evaluations <- s.evaluations,
 			includedStrategies <- s.includedStrategies
 		)
-	do{
-		thisModule.setNameFromObjectLongName(tStrategies, s);
-	}
 }
 
 rule StrategiesGroup2StrategiesGroup{
@@ -1456,12 +1448,10 @@ rule StrategiesGroup2StrategiesGroup{
 	to
 		tStrategiesGroup: Urn!StrategiesGroup (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			strategies <- s.evalStrategy,
 			strategies <- s.evalStrategies
 		)
-	do{
-		thisModule.setNameFromObjectLongName(tStrategiesGroup, s);
-	}
 }
 
 rule Evaluation2Evaluation {
@@ -1490,12 +1480,10 @@ rule ContributionContext2ContributionContext{
 	to
 		tContContext: Urn!ContributionContext (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			changes <- s.changes,
 			includedContexts <- s.includedContexts
 		)
-	do{
-		thisModule.setNameFromObjectLongName(tContContext, s);
-	}
 }
 
 rule ContributionChange2ContributionChange{
@@ -1518,12 +1506,10 @@ rule ContributionContextGroup2ContributionContextGroup{
 	to
 		tContribGroups: Urn!ContributionContextGroup (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			contribs <- s.contrib,
 			contribs <- s.contribs
 		)
-	do{
-		thisModule.setNameFromObjectLongName(tContribGroups, s);
-	}
 }
 
 rule QMapping2QMapping {
@@ -1544,12 +1530,9 @@ rule QMappings2QMappings {
 	to
 		tQMappings: Urn!QualitativeMappings (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			mapping <- s.mappings
 		)
-		
-	do{
-		thisModule.setNameFromObjectLongName(tQMappings, s);
-	}
 }
 
 rule Concern2Concern{
@@ -1558,13 +1541,11 @@ rule Concern2Concern{
 	to 
 		tConcern: Urn!Concern (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 		    elements <- s.elements,
 			condition <- s.condition,
 			metadata <- s.metadata
 		)
-	do{
-		thisModule.setNameFromObjectLongName(tConcern, s);
-	}
 }
 
 rule URNlink2URNlink{
@@ -1636,10 +1617,8 @@ rule Responsibility2Responsibility{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		if(not s.longName.longname.oclIsUndefined())
-			thisModule.respName <- s.longName.longname;
-		else
-			thisModule.respName <- s.name;
+		thisModule.respName <- s.turnGetLongestName();
+		
 		if(Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName).oclIsUndefined()){
 			thisModule.resp <- thisModule.createResponsibility(s);
 			tRespRef.respDef <- thisModule.resp;
@@ -1667,6 +1646,7 @@ rule WaitingPlace2WaitingPlace{
 	to
 		tWtPlace: Urn!WaitingPlace (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel,
 			waitType <- s.kind.toString().capitalize()
@@ -1675,9 +1655,6 @@ rule WaitingPlace2WaitingPlace{
 			condition <- s.condition
 		),
 		tNodeLabel: Urn!NodeLabel()
-	do{
-		thisModule.setNameFromObjectLongName(tWtPlace, s);
-	}
 }
 
 rule FailurePoint2FailurePoint{
@@ -1686,6 +1663,7 @@ rule FailurePoint2FailurePoint{
 	to
 		tFailPt: Urn!FailurePoint (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel
 		),
@@ -1694,8 +1672,6 @@ rule FailurePoint2FailurePoint{
 		),
 		tNodeLabel: Urn!NodeLabel()
 	do{
-		thisModule.setNameFromObjectLongName(tFailPt, s);
-
 		if(not s.failLabel.oclIsUndefined())
 			tFailPt.expression <- s.failLabel.failure;
 	}
@@ -1775,6 +1751,7 @@ rule StartPoint2StartPoint{
 	to
 		tStartPoint: Urn!StartPoint (
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel,
 			diagram <- s.path.map,
@@ -1783,8 +1760,6 @@ rule StartPoint2StartPoint{
 		tNodeConn: Urn!NodeConnection(),
 		tNodeLabel: Urn!NodeLabel()
 	do{
-		thisModule.setNameFromObjectLongName(tStartPoint, s);
-		
 		if(not s.boundTo.oclIsUndefined()){
 			if (not s.boundTo.comp.oclIsUndefined()){
 				tStartPoint.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
@@ -1820,14 +1795,13 @@ rule OrJoin2OrJoin{
 	to
 		tOrJoin: Urn!OrJoin(
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel
 		),
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		thisModule.setNameFromObjectLongName(tOrJoin, s);
-		
 		if(not s.boundTo.oclIsUndefined()){
 			if(not s.boundTo.comp.oclIsUndefined()){
 				tOrJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
@@ -1846,14 +1820,13 @@ rule AndJoin2AndJoin{
 	to
 		tAndJoin: Urn!AndJoin(
 			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel
 		),
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		thisModule.setNameFromObjectLongName(tAndJoin, s);
-		
 		if(not s.boundTo.oclIsUndefined()){
 				if(not s.boundTo.comp.oclIsUndefined())
 					tAndJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
@@ -1964,19 +1937,13 @@ rule UCMmap2UCMmap{
 			}
 		
 			--connect nodes in a map
-			if(not path.startPoint.longName.longname.oclIsUndefined())
-				thisModule.startPointName <- path.startPoint.longName.longname;
-			else 
-				thisModule.startPointName <- path.startPoint.name;
+			thisModule.startPointName <- path.startPoint.turnGetLongestName();
 			
 			if(not path.startPoint.connect.oclIsUndefined() and tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> size() <> 0){
 				tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(path.startPoint.connect).pred -> first())).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ -> any(s|s.target.oclIsUndefined());
 			}--if no pathnodes exist
 			if(not path.pathBody.pathEnd.oclIsUndefined() and  path.pathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and path.pathBody.pathNodes -> size() = 0){
-				if(not path.pathBody.pathEnd.regularEnd.longName.longname.oclIsUndefined())
-					thisModule.endPointName <- path.pathBody.pathEnd.regularEnd.longName.longname;
-				else 
-					thisModule.endPointName <- path.pathBody.pathEnd.regularEnd.name;
+				thisModule.endPointName <- path.pathBody.pathEnd.regularEnd.turnGetLongestName();
 				
 				if(not path.pathBody.pathEnd.connect.oclIsUndefined()){
 					--create succ for the connecting endpoint
@@ -2019,14 +1986,7 @@ rule UCMmap2UCMmap{
 					thisModule.resolveTemp(path.pathBody.referencedEnd,'tRespRef').pred  <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ; 
 				}
 				else{
-					thisModule.nodeName <- '';
-					if(not path.pathBody.referencedEnd.longName.oclIsUndefined()){
-						if(not path.pathBody.referencedEnd.longName.longname.oclIsUndefined())
-							thisModule.nodeName <- path.pathBody.referencedEnd.longName.longname;
-					}
-					if(thisModule.nodeName = ''){
-						thisModule.nodeName <- path.pathBody.referencedEnd.name;
-					}
+					thisModule.nodeName <- path.pathBody.referencedEnd.turnGetLongestName();
 					tUCMmap.nodes -> any(n|n.name=thisModule.nodeName).pred <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ; 
 				}
 			}
@@ -2047,6 +2007,6 @@ rule UCMmap2UCMmap{
 		tUCMmap.connections <- tUCMmap.nodes ->   flatten() -> collect(of|of.succ) -> flatten();
 		
 		tUCMmap.id <- thisModule.nextId().toString();
-		thisModule.setNameFromObjectLongName(tUCMmap, sUCMmap);
+		tUCMmap.name <- sUCMmap.turnGetLongestName();
 	}
 }
