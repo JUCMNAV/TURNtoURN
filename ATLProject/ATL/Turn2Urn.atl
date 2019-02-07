@@ -1392,8 +1392,9 @@ rule Contribution2Contribution{
 			tCont.quantitativeContribution <- s.quantitativeContribution;
 			tCont.contribution <- thisModule.contributionNumberToKeyword(s.quantitativeContribution);
 		}
-		else
+		else{
 			tCont.contribution <- s.contribution.toString().capitalize();
+		}
 	}
 }
 	
@@ -1464,7 +1465,7 @@ rule Evaluation2Evaluation {
 			evaluation <- s.evaluation,
 			qualitativeEvaluation <- s.qualitativeEvaluation.toString().capitalize()
 	    )
-	do	{
+	do {
 		if(not s.conversion.oclIsUndefined()){
 			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings))
 				tEval.kpiEvalValueSet <- thisModule.createQMapKpiEvalValueSet(s.conversion);
@@ -1495,8 +1496,9 @@ rule ContributionChange2ContributionChange{
 			newQuantitativeContribution <- s.newQuantitativeContribution
 		)
 	do{
-		if(not s.newContribution.toString().equals('undefined'))
+		if(not s.newContribution.toString().equals('undefined')){
 			t.newContribution <- s.newContribution.toString().capitalize();
+		}
 	}
 }
 
@@ -1575,27 +1577,36 @@ rule Component2Component{
 			thisModule.comp <- thisModule.createComponent(s);
 			tCompRef.contDef <- thisModule.comp;	
 		}
-		else 
+		else {
 			tCompRef.contDef <- Urn!Component.allInstances() -> any(c|c.name = s.name);	
+		}
 
-		if(not s.kind.oclIsUndefined() and s.kind.toString() <> 'parent')
-			tCompRef.contDef.kind <- s.kind.toString().capitalize();
-		else if(s.kind <> 'parent')
-			tCompRef.contDef.kind <- 'Team';
+		if(s.kind.toString() <> 'parent'){
+			if(not s.kind.oclIsUndefined()){
+				tCompRef.contDef.kind <- s.kind.toString().capitalize();
+			}
+			else{
+				tCompRef.contDef.kind <- 'Team';
+			}
+		}
 		
 		tCompRef.contDef.protected <- s.protected;
+		
 		if(not s.boundTo.oclIsUndefined()){
-				if(not s.boundTo.comp.oclIsUndefined())
-					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+			if(not s.boundTo.comp.oclIsUndefined()){
+				tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+			}
+			else{
+				tCompRef.parent <-  thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+			}
 		}
 		
 		if(s.element.oclIsTypeOf(Turn!LongBoundElement)){
 			tCompRef.metadata <- thisModule.createMetadata('from',s.element.from);
 			tCompRef.metadata <- thisModule.createMetadata('to',s.element.to);
 		}
-		if(s.elements -> size() <> 0){
+		
+		if(not (s.elements -> isEmpty())){
 			for(elem in s.elements){
 				if(elem.oclIsTypeOf(Turn!LongBoundElement)){
 					tCompRef.metadata <- thisModule.createMetadata('from',elem.from);
@@ -1617,22 +1628,22 @@ rule Responsibility2Responsibility{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		thisModule.respName <- s.turnGetLongestName();
+		--TODO: Should this be called "existingResponsibilities" instead? i.e., can we have multiple retrieved by this in any case?
+		thisModule.existingResponsibility <- Urn!Responsibility.allInstances() -> any(r|r.name = s.turnGetLongestName());
 		
-		if(Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName).oclIsUndefined()){
-			thisModule.resp <- thisModule.createResponsibility(s);
-			tRespRef.respDef <- thisModule.resp;
+		if(thisModule.existingResponsibility.oclIsUndefined()){
+			tRespRef.respDef <- thisModule.createResponsibility(s);
 		}
 		else{
-			tRespRef.respDef  <- Urn!Responsibility.allInstances() -> any(r|r.name = thisModule.respName);
+			tRespRef.respDef  <- thisModule.existingResponsibility;
 		}
 		
 		--component bindings added
 		if (not s.boundTo.oclIsUndefined()){
-				if (not s.boundTo.comp.oclIsUndefined())
-					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+			if (not s.boundTo.comp.oclIsUndefined())
+				tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+			else
+				tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
 		}
 		
 		tRespRef.id <- thisModule.nextId().toString();
@@ -1672,8 +1683,9 @@ rule FailurePoint2FailurePoint{
 		),
 		tNodeLabel: Urn!NodeLabel()
 	do{
-		if(not s.failLabel.oclIsUndefined())
+		if(not s.failLabel.oclIsUndefined()){
 			tFailPt.expression <- s.failLabel.failure;
+		}
 	}
 }
 
@@ -1779,13 +1791,18 @@ rule Condition2Condition{
 	from 
 		s: Turn!Condition
 	to 
-		tCondition: Urn!Condition
+		tCondition: Urn!Condition(
+			expression <- thisModule.joinStringSequence(s.expression, '')
+		)
+}
+
+rule joinStringSequence(s: String, delim: String){
 	do{
-		thisModule.condExpression <- '';
-		for(exp in s.expression.content){
-			thisModule.condExpression <- thisModule.condExpression + exp;	
+		thisModule.joinedString <-'';
+		for(currentString in s.content){
+			thisModule.joinedString <- thisModule.joinedString + currentString + delim;	
 		}
-		tCondition.expression <- thisModule.condExpression; 
+		thisModule.joinedString;
 	}
 }
 
