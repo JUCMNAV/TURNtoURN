@@ -27,6 +27,7 @@
 	* determine if the ordering of the conditional statements in InBinding2InBinding and OutBinding2OutBinding matters; if not then they can be modularized
 	* the code in Condition2Condition essentially just joins a bunch of strings; is there any way to do this more cleanly?
 	* else { if { } } to else if { }
+* Need consistency with whether empty from / to items have () or not
 * Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
 * Refactor for increased consistency
 	* All if and else loops, including single line ones, should have braces

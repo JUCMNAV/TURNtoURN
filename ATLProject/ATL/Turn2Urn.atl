@@ -122,6 +122,16 @@ rule contributionNumberToKeyword(quantitativeContribution: Integer){
 	}
 }
 
+rule joinStringSequence(s: String, delim: String){
+	do{
+		thisModule.joinedString <-'';
+		for(currentString in s.content){
+			thisModule.joinedString <- thisModule.joinedString + currentString + delim;	
+		}
+		thisModule.joinedString;
+	}
+}
+
 rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	do{
 		thisModule.counter <- 1;
@@ -1704,7 +1714,9 @@ rule URNspec2URNspec{
 		tURNdef: Urn!URNdefinition(
 			specDiagrams <- tGRLSpecDiag,
 			specDiagrams <- sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap')),
-			concerns <- sURNspec.concerns
+			concerns <- sURNspec.concerns,
+			components <- Urn!Component.allInstances(),
+			responsibilities <- Urn!Responsibility.allInstances()
 		),
 		tGRLSpec: Urn!GRLspec(
 			actors <- sURNspec.actors,
@@ -1728,12 +1740,10 @@ rule URNspec2URNspec{
 		tUcmspec: Urn!UCMspec
 	do{
 		if(sURNspec.metadata -> select(m| m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
-	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty())
+	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty()){
 	 			thisModule.id <- sURNspec.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
+	 		}
 		}
-		
-		tURNdef.components <- Urn!Component.allInstances();
-		tURNdef.responsibilities <- Urn!Responsibility.allInstances();
 		
 		if (not sURNspec.info.oclIsUndefined()){
 			tURNspec.description <- sURNspec.info.description;
@@ -1796,16 +1806,6 @@ rule Condition2Condition{
 		)
 }
 
-rule joinStringSequence(s: String, delim: String){
-	do{
-		thisModule.joinedString <-'';
-		for(currentString in s.content){
-			thisModule.joinedString <- thisModule.joinedString + currentString + delim;	
-		}
-		thisModule.joinedString;
-	}
-}
-
 rule OrJoin2OrJoin{
 	from 	
 		s: Turn!OrJoin
@@ -1845,10 +1845,10 @@ rule AndJoin2AndJoin{
 		tNodeLabel: Urn!NodeLabel
 	do{
 		if(not s.boundTo.oclIsUndefined()){
-				if(not s.boundTo.comp.oclIsUndefined())
-					tAndJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
-				else
-					tAndJoin.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
+			if(not s.boundTo.comp.oclIsUndefined())
+				tAndJoin.contRef <-  thisModule.resolveTemp(s.boundTo.comp, 'tCompRef');
+			else
+				tAndJoin.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
 		}
 	}
 }
@@ -1878,16 +1878,20 @@ rule InBinding2InBinding{
 		)
 	do{
 		if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
 				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-			else
+			}
+			else{
 				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+			}
 		}
 		else if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
 				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-			else
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);	
+			}
+			else{
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
+			}
 		}
 	}
 }
@@ -1901,16 +1905,20 @@ rule OutBinding2OutBinding{
 		)
 	do{ 
 		if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined())
+			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
 				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-			else
+			}
+			else{
 				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
+			}
 		}
 		else if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined())
+			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
 				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-			else 
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);	
+			}
+			else {
+				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);
+			}
 		}
 	}
 }
