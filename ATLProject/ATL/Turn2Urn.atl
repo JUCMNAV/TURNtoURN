@@ -60,28 +60,10 @@ helper context String def : capitalize(): String = self.substring(1,1).toUpper()
 
 ---------------imperative-method-like rules (sorry, spirit of declarative programming)-------------
 
--- method used to initialize an object and assign it a unique id
-rule initNextObject(obj: OclAny){
-	do{
-		thisModule.id <- thisModule.id.inc();
-		obj.id <- thisModule.id.toString();
-		obj;
-	}
-}
-
 rule nextId(){
 	do{
 		thisModule.id <- thisModule.id.inc();
 		thisModule.id;
-	}
-}
-
--- method used to initialize an object and assign it a unique id and then to prepend a 'name' to this id
-rule initNextObjectWithName(obj: OclAny, name: String){
-	do{
-		thisModule.initNextObject(obj);
-		obj.name <- name+obj.id;
-		obj;
 	}
 }
 
@@ -323,12 +305,13 @@ rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
 rule createOrJoin(tUCMmap: Urn!UCMmap){
 	to
 		tOrJoin: Urn!OrJoin(
+			id <- thisModule.nextId().toString(),
+			name <- 'OrJoin' + tOrJoin.id,
 			succ <- tConn,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection
+		tConn: Urn!NodeConnection()
 	do{
-		thisModule.initNextObjectWithName(tOrJoin, 'OrJoin');
 		tOrJoin;
 	}
 }
@@ -336,12 +319,13 @@ rule createOrJoin(tUCMmap: Urn!UCMmap){
 rule createAndJoin(tUCMmap: Urn!UCMmap){
 	to
 		tAndJoin: Urn!AndJoin(
+			id <- thisModule.nextId().toString(),
+			name <- 'AndJoin' + tAndJoin.id,
 			succ <- tConn,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection
+		tConn: Urn!NodeConnection()
 	do{
-		thisModule.initNextObjectWithName(tAndJoin, 'AndJoin');
 		tAndJoin;
 	}
 }
@@ -349,12 +333,13 @@ rule createAndJoin(tUCMmap: Urn!UCMmap){
 rule createConnect(tUCMmap: Urn!UCMmap){
 	to
 		tConnect: Urn!Connect(
+			id <- thisModule.nextId().toString(),
+			name <- 'Connect' + tConnect.id,
 			succ <- tConn,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection
+		tConn: Urn!NodeConnection()
 	do{
-		thisModule.initNextObjectWithName(tConnect, 'Connect');
 		tConnect;	
 	}
 }
@@ -925,6 +910,7 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 	to
 		tAndFork: Urn!AndFork (
+			id <- thisModule.nextId().toString(),
 			diagram <- tUCMmap
 		)
 	do{
@@ -933,11 +919,10 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		if(not tAndFork.name.oclIsUndefined()){
 			--TODO: I'm not sure this was actually ever entered in the original code. 
 			--Name was always set to '' if no valid value was found; would that enter here?
-			thisModule.initNextObject(tAndFork);
 			tAndFork.label <- thisModule.createLabel();
 		}
 		else{
-			thisModule.initNextObjectWithName(tAndFork, 'AndFork');
+			tAndFork.name <- 'AndFork' + tAndFork.id;
 		}
 		
 		thisModule.andForkMap <-  thisModule.andForkMap.including(obj,tAndFork);
@@ -1114,10 +1099,13 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 	to
 		tEndPoint: Urn!EndPoint (
-			diagram <- tUCMmap	
+			id <- thisModule.nextId().toString(),
+			name <- 'EndPoint' + tEndPoint.id,
+			diagram <- tUCMmap
 		)
 	do{
-		thisModule.initNextObjectWithName(tEndPoint, 'EndPoint');
+		--TODO: determine why this needs to be created here (as in the original) to match the original output
+		-- i.e., why can't it be moved to the "to" block?
 		tEndPoint.label <- thisModule.createLabel();
 		
 		if(ep.oclIsTypeOf(Turn!EndPoint)){
@@ -1301,20 +1289,19 @@ rule IntElements2IntElements{
 	from 
 		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
 	to 
-		tIntElem: Urn!IntentionalElement (
-		   linksSrc <- s.linksSrc
-		),
 		tIntElemRef: Urn!IntentionalElementRef (
+			id <- thisModule.nextId().toString(),
+			name <- 'IntentionalElementRef' + tIntElemRef.id,
 			def <- tIntElem,
 			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
+		),
+		tIntElem: Urn!IntentionalElement (
+			id <- thisModule.nextId().toString(),
+			linksSrc <- s.linksSrc
 		)
 		
 	 do{
-		thisModule.initNextObjectWithName(tIntElemRef, 'IntentionalElementRef');
-		thisModule.setNameFromObjectLongName(tIntElemRef, s); 
-		--TODO: determine if this is redundant - we init with name then set the name 
-		 
-	 	thisModule.initNextObject(tIntElem);
+	 	thisModule.setNameFromObjectLongName(tIntElemRef, s); --TODO: determine if this is redundant - we init with name then set the name 
 	 	thisModule.setNameFromObjectLongName(tIntElem, s);
 		 
 		if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0){
@@ -1344,6 +1331,8 @@ rule Actor2Actor{
 			importanceQuantitative <- s.importanceQuantitative
 		),
 		tActorRef: Urn!ActorRef (
+			id <- thisModule.nextId().toString(),
+			name <- 'ActorRef' + tActorRef.id,
 			contDef <- tActor,
 			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
 			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
@@ -1352,8 +1341,6 @@ rule Actor2Actor{
 		tCompLabel: Urn!ComponentLabel()
 	 do{
 	 	thisModule.setNameFromObjectLongName(tActor, s);
-	 	
-	 	thisModule.initNextObjectWithName(tActorRef, 'ActorRef');
 	 }	
 }
 
@@ -1596,13 +1583,13 @@ rule Component2Component{
 		s:Turn!ComponentRef 
 	to
 		tCompRef: Urn!ComponentRef(
+			id <- thisModule.nextId().toString(),
+			name <- 'ComponentRef' + tCompRef.id,
 			label <- tCompLabel,
 			diagram <- s.map
 		),
 		tCompLabel: Urn!ComponentLabel
 	do{
-		thisModule.initNextObjectWithName(tCompRef, 'ComponentRef');
-		
 		if(Urn!Component.allInstances() -> any(c|c.name = s.name).oclIsUndefined()){
 			thisModule.comp <- thisModule.createComponent(s);
 			tCompRef.contDef <- thisModule.comp;	
@@ -1669,7 +1656,8 @@ rule Responsibility2Responsibility{
 					tRespRef.contRef <- thisModule.resolveTemp(s.boundTo.comp2, 'tCompRef');
 		}
 		
-		thisModule.initNextObjectWithName(tRespRef, 'RespRef');
+		tRespRef.id <- thisModule.nextId().toString();
+		tRespRef.name <- 'RespRef' + tRespRef.id;
 	}
 }
 
@@ -2058,7 +2046,7 @@ rule UCMmap2UCMmap{
 		--Node connections
 		tUCMmap.connections <- tUCMmap.nodes ->   flatten() -> collect(of|of.succ) -> flatten();
 		
-		thisModule.initNextObject(tUCMmap);
+		tUCMmap.id <- thisModule.nextId().toString();
 		thisModule.setNameFromObjectLongName(tUCMmap, sUCMmap);
 	}
 }
