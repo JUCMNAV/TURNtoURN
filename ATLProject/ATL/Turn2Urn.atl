@@ -56,6 +56,8 @@ helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) =
 helper context Turn!UCMmap def: getPathNodes() : Sequence(OclAny) =
 	self.paths -> flatten() -> collect(p|p.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten();
 
+helper context String def : capitalize(): String = self.substring(1,1).toUpper() + self.substring(2, self.size());
+
 ---------------imperative-method-like rules (sorry, spirit of declarative programming)-------------
 
 -- method used to initialize an object and assign it a unique id
@@ -632,6 +634,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		thisModule.nodeCollector;
 	}
 }
+
 rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	to
 		tStub: Urn!Stub (
@@ -1157,7 +1160,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 			succ <- tNodeConn,
 			diagram <- tUCMmap,
 			label <- tNodeLabel,
-			waitType <- timerObj.kind.toString().substring(1,1).toUpper()+timerObj.kind.toString().substring(2,timerObj.kind.toString().size())
+			waitType <- timerObj.kind.toString().capitalize()
 		),
 		tNodeConn: Urn!NodeConnection(
 			condition <- timerObj.condition
@@ -1296,26 +1299,30 @@ rule IntElements2IntElements{
 		tIntElemRef: Urn!IntentionalElementRef (
 			def <- tIntElem,
 			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
-			
 		)
+		
 	 do{
 		 thisModule.initNextObjectWithName(tIntElemRef, 'IntentionalElementRef');
 		 thisModule.setNameFromObjectLongName(tIntElemRef, s); 
 		 --TODO: determine if this is redundant - we init with name then set the name
 		 
-		 if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0)
-		 	tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
-		 
-		 tIntElem.type <- s.type.toString().substring(1,1).toUpper()+s.type.toString().substring(2,s.type.toString().size());
+		if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0){
+			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().capitalize())-> first();
+		}
+		
+		tIntElem.type <- s.type.toString().capitalize();
 		 
 		 --Added because the default value in enum is considered always.
-		if(s.importance.toString().equals('none'))
+		if(s.importance.toString().equals('none')){
 			tIntElem.importanceQuantitative <- s.importanceQuantitative;
-		else
-			tIntElem.importance <- s.importance.toString().substring(1,1).toUpper()+s.importance.toString().substring(2,s.importance.toString().size());
-	 	 	thisModule.initNextObject(tIntElem);
-		 	thisModule.setNameFromObjectLongName(tIntElem, s);	
-		 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
+		}
+		else{
+			tIntElem.importance <- s.importance.toString().capitalize();
+		}
+		 
+	 	thisModule.initNextObject(tIntElem);
+	 	thisModule.setNameFromObjectLongName(tIntElem, s);
+	 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
 	}
 }
 
@@ -1397,7 +1404,7 @@ rule Contribution2Contribution{
 					tCont.contribution <- 'Make';
 			}
 			else
-				tCont.contribution <- s.contribution.toString().substring(1,1).toUpper()+s.contribution.toString().substring(2,s.contribution.toString().size());
+				tCont.contribution <- s.contribution.toString().capitalize();
 	}
 }
 
@@ -1474,7 +1481,7 @@ rule Evaluation2Evaluation {
 	     	exceeds <- s.exceeds,
 	     	intElement <- s.intElement,
 			evaluation <- s.evaluation,
-			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
+			qualitativeEvaluation <- s.qualitativeEvaluation.toString().capitalize()
 	    )
 	do	{
 		if(not s.conversion.oclIsUndefined()){
@@ -1510,7 +1517,7 @@ rule ContributionChange2ContributionChange{
 		)
 	do{
 		if(not s.newContribution.toString().equals('undefined'))
-			t.newContribution <- s.newContribution.toString().substring(1,1).toUpper()+s.newContribution.toString().substring(2,s.newContribution.toString().size());
+			t.newContribution <- s.newContribution.toString().capitalize();
 	}
 }
 
@@ -1536,7 +1543,7 @@ rule QMapping2QMapping {
 			realWorldLabel <- s.realWorldLabel,
 			exceeds	<- s.exceeds,
 			evaluation <- s.evaluation,
-			qualitativeEvaluation <- s.qualitativeEvaluation.toString().substring(1,1).toUpper()+s.qualitativeEvaluation.toString().substring(2,s.qualitativeEvaluation.toString().size())
+			qualitativeEvaluation <- s.qualitativeEvaluation.toString().capitalize()
 		)
 }
 
@@ -1601,7 +1608,7 @@ rule Component2Component{
 			tCompRef.contDef <- Urn!Component.allInstances() -> any(c|c.name = s.name);	
 
 		if(not s.kind.oclIsUndefined() and s.kind.toString() <> 'parent')
-			tCompRef.contDef.kind <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size());
+			tCompRef.contDef.kind <- s.kind.toString().capitalize();
 		else if(s.kind <> 'parent')
 			tCompRef.contDef.kind <- 'Team';
 		
@@ -1670,7 +1677,7 @@ rule WaitingPlace2WaitingPlace{
 		tWtPlace: Urn!WaitingPlace (
 			succ <- tNodeConn,
 			label <- tNodeLabel,
-			waitType <- s.kind.toString().substring(1,1).toUpper()+s.kind.toString().substring(2,s.kind.toString().size())
+			waitType <- s.kind.toString().capitalize()
 		),
 		tNodeConn: Urn!NodeConnection (
 			condition <- s.condition
@@ -1798,7 +1805,7 @@ rule StartPoint2StartPoint{
 		}
 		
 		if(not s.failKind.oclIsUndefined()){
-			tStartPoint.failureKind <- s.failKind.toString().substring(1,1).toUpper()+s.failKind.toString().substring(2,s.failKind.toString().size());
+			tStartPoint.failureKind <- s.failKind.toString().capitalize();
 		}
 	}
 }
@@ -2048,7 +2055,6 @@ rule UCMmap2UCMmap{
 		}
 		--Node connections
 		tUCMmap.connections <- tUCMmap.nodes ->   flatten() -> collect(of|of.succ) -> flatten();
-		
 		
 		thisModule.initNextObject(tUCMmap);
 		thisModule.setNameFromObjectLongName(tUCMmap, sUCMmap);
