@@ -72,6 +72,9 @@ helper context OclAny def : turnGetLongestName() : String =
 			self.name	
 	endif;
 
+helper context Turn!OrFork def : getPathBodies() : Turn!PathBody =
+	self.body.regularBody -> collect(pb|pb.pathBody) -> flatten();
+
 ---------------imperative-method-like rules (sorry, spirit of declarative programming)-------------
 
 rule nextId(){
@@ -453,31 +456,24 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		thisModule.nodeCollector <- Sequence{};
 		
 		if(not obj.body.oclIsUndefined()) {
-			tUCMmap.nodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tRespRef'));
-			tUCMmap.nodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tOrJoin')) ;
-			tUCMmap.nodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tAndJoin')) ;
-			tUCMmap.nodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tFailPt'));
-			tUCMmap.nodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tWtPlace'));
+			tUCMmap.nodes <- obj.getPathBodies() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tRespRef'));
+			tUCMmap.nodes <- obj.getPathBodies() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tOrJoin')) ;
+			tUCMmap.nodes <- obj.getPathBodies() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tAndJoin')) ;
+			tUCMmap.nodes <- obj.getPathBodies() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tFailPt'));
+			tUCMmap.nodes <- obj.getPathBodies() -> collect(pb|pb.pathNodes) -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tWtPlace'));
 			
-			for (pathbody in obj.body.regularBody -> collect(b|b.pathBody) -> flatten()){
-				thisModule.condition <- '';
-				if(pathbody.pathEnd.oclIsUndefined()){
-					for(exp in pathbody.orFork.condition.expression.content){
-						thisModule.condition <- thisModule.condition + exp;	
-					}					
-				}
-
+			for (pathbody in obj.getPathBodies()){
 				if(pathbody.pathEnd.oclIsTypeOf(Turn!OrFork)){
 					thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createOrFork(pathbody.pathEnd, tUCMmap));
 				}
-				if(pathbody.pathEnd.oclIsTypeOf(Turn!Stub)){
+				else if(pathbody.pathEnd.oclIsTypeOf(Turn!Stub)){
 					thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createStub(pathbody.pathEnd, tUCMmap));
 					thisModule.createStubOutNodes(pathbody.pathEnd, tUCMmap);
 				}
-				if(pathbody.pathEnd.oclIsTypeOf(Turn!AndFork)){
+				else if(pathbody.pathEnd.oclIsTypeOf(Turn!AndFork)){
 					thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createAndFork(pathbody.pathEnd, tUCMmap));
 				}
-				if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 					if(tUCMmap.nodes -> any(n|n.name = pathbody.pathEnd.regularEnd.name).oclIsUndefined()){
 						thisModule.createEndPoint(pathbody.pathEnd.regularEnd, tUCMmap);
 					}
@@ -488,30 +484,32 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			}
 
 			--Orforks with only one pathbody
-			if(obj.body.regularBody -> collect(pb|pb.condition) -> size() = 1){
+			if(obj.getPathBodies() -> size() = 1){
 				--creating a node connection with a negated condition
-				thisModule.createdCondition <- thisModule.createCondition('!'+thisModule.condition);
-				thisModule.createdNC <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
-				thisModule.createdNC.condition <- thisModule.createdCondition;
-				tOrFork.succ <- thisModule.createdNC;
-				if(obj.body.elseBody.oclIsUndefined()){
-				--creating an empty end point
-					thisModule.createdEP <- thisModule.createEndPoint(obj, tUCMmap);
-					thisModule.createdNC.target <- thisModule.createdEP -> first();
+				thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
+				
+				-- TODO: determine if removing the line below will cause any issues
+				thisModule.condition <- '';
+				if(obj.getPathBodies().first().pathEnd.oclIsUndefined()){
+					thisModule.condition <- thisModule.joinStringSequence(obj.getPathBodies().first().orFork.condition.expression, '');
 				}
+				thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
+				
+				--creating an empty end point
+				if(obj.body.elseBody.oclIsUndefined()){
+					thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj, tUCMmap) -> first();
+				}
+				
+				tOrFork.succ <- thisModule.createdOrForkNodeConnection;
 			}
 		}
 		else{
-			thisModule.condition <- '';
-			for(exp in obj.condition.expression.content){
-					thisModule.condition <- exp;	
-			}
-			thisModule.createdCondition <- thisModule.createCondition('!'+thisModule.condition);
-			thisModule.createdNC <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
-			thisModule.createdNC.condition <- thisModule.createdCondition;
-			tOrFork.succ <- thisModule.createdNC;
-			thisModule.createdEP <- thisModule.createEndPoint(obj, tUCMmap);
-			thisModule.createdNC.target <- thisModule.createdEP -> first();
+			thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
+			thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
+			thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
+			thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj, tUCMmap) -> first();
+			
+			tOrFork.succ <- thisModule.createdOrForkNodeConnection;
 		}
 		
 		if(not obj.connectingOrBody.oclIsUndefined()){
@@ -533,14 +531,14 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!OrFork)){
 				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createOrFork(obj.connectingOrBody.pathEnd, tUCMmap) );
 			}
-			if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!Stub)){
+			else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!Stub)){
 				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createStub(obj.connectingOrBody.pathEnd, tUCMmap));
 				thisModule.createStubOutNodes(obj.connectingOrBody.pathEnd, tUCMmap);
 			}
-			if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
+			else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
 					thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createAndFork(obj.connectingOrBody.pathEnd, tUCMmap));
 			}
-			if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathEnd.regularEnd.name).oclIsUndefined()){
 					thisModule.createEndPoint(obj.connectingOrBody.pathEnd.regularEnd, tUCMmap);
 				}
@@ -549,32 +547,23 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 				}
 			}
 			
-			thisModule.nextNode <- '';
+			thisModule.nextNode <- tOrFork;
+			
 			if(thisModule.numberOfterminatingNodes = 2){
 				thisModule.oj <- thisModule.createOrJoin(tUCMmap);
 				thisModule.oj.pred <- tOrFork.succ -> any(s|s.target.oclIsUndefined());
-				thisModule.oj.pred <- tOrFork.succ -> any(s|s.target.oclIsUndefined());
 				thisModule.nextNode <- thisModule.oj;
 			}
-			else if(thisModule.numberOfterminatingNodes = 1){
-				if(not obj.connectingOrBody.pathNodes -> first().oclIsUndefined()){
-					if(not obj.connectingOrBody.pathNodes -> first().oclIsTypeOf(Turn!Connect)){
-						if(not obj.connectingOrBody.pathNodes -> first().name.oclIsUndefined()){
-							thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathNodes -> first().name);
-						}
+			else if(thisModule.numberOfterminatingNodes = 1 and not obj.connectingOrBody.pathNodes -> first().oclIsUndefined()){
+				if(not obj.connectingOrBody.pathNodes -> first().oclIsTypeOf(Turn!Connect)){
+					if(not obj.connectingOrBody.pathNodes -> first().name.oclIsUndefined()){
+						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathNodes -> first().name);
 					}
 				}
-				else{
-					thisModule.nextNode <- tOrFork;
-				}
-			}
-			else{
-				thisModule.nextNode <- tOrFork;
 			}
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
 				if(not obj.body.oclIsUndefined()){
-					
 					if(not obj.body.elseBody.oclIsUndefined()){
 						thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.createdCondition.expression);
 					}
@@ -582,47 +571,37 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 					for (pathbody in obj.body.regularBody -> collect(b|b.pathBody) -> flatten()){
 						thisModule.condition <- '';
 						if(pathbody.pathEnd.oclIsUndefined()){
-							for(exp in pathbody.orFork.condition.expression.content){
-								thisModule.condition <- thisModule.condition + exp;	
-							}					
+							thisModule.condition <- thisModule.joinStringSequence(pathbody.orFork.condition.expression, '');
 						}
 						thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.condition);
 					}
 				}
 				else{
-					thisModule.condition <- '';
-					for(exp in obj.condition.expression.content){
-						thisModule.condition <- exp;	
-					}
+					thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
 					thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.condition);
 				}
 			}
 				
 			thisModule.counter <- 1;
 			thisModule.connectNodes(obj.connectingOrBody, obj, tUCMmap, thisModule.nextNode);
-				
+			
 			if(not obj.body.oclIsUndefined()){
-				for (pathbody in obj.body.regularBody -> collect(b|b.pathBody) -> flatten()){
+				for (pathbody in obj.getPathBodies()){
 					thisModule.condition <- '';
 					if(pathbody.pathEnd.oclIsUndefined()){
-						for(exp in pathbody.orFork.condition.expression.content){
-							thisModule.condition <- thisModule.condition + exp;	
-						}					
+						thisModule.condition <- thisModule.joinStringSequence(pathbody.orFork.condition.expression, '');
 					}
 				}
 			}
 			else{
-				thisModule.condition <- '';
-				for(exp in obj.condition.expression.content){
-					thisModule.condition <- exp;	
-				}
+				thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression);
 			}
 		}
 		
 		--Connecting nodes after OrFork
 		thisModule.count <- 1;
 		if(not obj.body.oclIsUndefined()){
-			for(pathbody in obj.body.regularBody -> collect(pb|pb.pathBody) -> flatten()){
+			for(pathbody in obj.getPathBodies()){
 				if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
 					thisModule.resolveTemp(pathbody.pathNodes -> first(),'tRespRef').pred <- tOrFork.succ -> at(thisModule.count);
 				}
@@ -687,11 +666,12 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		}
 		
 		if(not stubObj.boundTo.oclIsUndefined()){
+			--TODO: the two paths here do the same thing; is this accidental?
 			if(not stubObj.boundTo.comp.oclIsUndefined()){
-				tStub.contRef <-  thisModule.resolveTemp(stubObj.boundTo.comp, 'tCompRef');
+				tStub.contRef <- thisModule.resolveTemp(stubObj.boundTo.comp, 'tCompRef');
 			}
 			else{
-				tStub.contRef <-  thisModule.resolveTemp(stubObj.boundTo.comp, 'tCompRef');
+				tStub.contRef <- thisModule.resolveTemp(stubObj.boundTo.comp, 'tCompRef');
 			}
 		}
 		
@@ -1156,16 +1136,15 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 			
 			--Using backlinks to connect orFork
 			if(ep.epConnect.pbody.pathNodes -> isEmpty()){
-				if(not ep.epConnect.pbody.orFork.oclIsUndefined()){
-					thisModule.condExpression <- '';
-					for(exp in ep.epConnect.pbody.orFork.condition.expression.content){
-						thisModule.condExpression <- thisModule.condExpression + exp;	
-					}
-					tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
+				thisModule.currentOrFork <- ep.epConnect.pbody.orFork;
+				if(not thisModule.currentOrFork.oclIsUndefined()){
+					thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
+					tEndPoint.pred <- thisModule.orForkMap.get(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
 				}
 				--Using backlinks to connect andFork
-				if(not ep.epConnect.pbody.andFork.oclIsUndefined()){
-					tEndPoint.pred <- thisModule.andForkMap.get(ep.epConnect.pbody.andFork).succ -> any(s|s.target = OclUndefined);
+				thisModule.currentAndFork <- ep.epConnect.pbody.andFork;
+				if(not thisModule.currentAndFork.oclIsUndefined()){
+					tEndPoint.pred <- thisModule.andForkMap.get(thisModule.currentAndFork).succ -> any(s|s.target = OclUndefined);
 				}
 			}
 		}
