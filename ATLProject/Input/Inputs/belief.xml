@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ASCII"?>
+<turn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:turn="http://www.xtext.org/project/turn/Turn" name="BeliefTest">
+  <actors name="B">
+    <longName longname="Belief Test for ElementLinks"/>
+    <elems type="belief" name="bSource">
+      <longName/>
+      <linksSrc xsi:type="turn:Contribution" dest="//@actors.0/@elems.1"/>
+      <linksSrc xsi:type="turn:Contribution" dest="//@actors.0/@elems.2" quantitativeContribution="100"/>
+      <linksSrc xsi:type="turn:Contribution" dest="//@actors.0/@elems.3" correlation="true" contribution="break"/>
+    </elems>
+    <elems name="sg1">
+      <longName/>
+    </elems>
+    <elems type="goal" name="g1">
+      <longName/>
+    </elems>
+    <elems type="task" name="t1">
+      <longName/>
+    </elems>
+  </actors>
+  <actors name="B2">
+    <longName longname="Belief Test for Optional Elements"/>
+    <elems type="belief" name="bSource2" importanceQuantitative="100">
+      <longName longname="Belief"/>
+    </elems>
+  </actors>
+</turn:URNspec>

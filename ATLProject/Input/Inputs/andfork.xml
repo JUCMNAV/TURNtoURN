@@ -1,0 +1,816 @@
+<?xml version="1.0" encoding="ASCII"?>
+<turn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:turn="http://www.xtext.org/project/turn/Turn" name="AndForkTest">
+  <ucmMaps name="AndForkTestEndPoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestEndPointAgain">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestResponsibility">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:RespRef" name="r1">
+              <longName/>
+            </pathNodes>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestResponsibilityAgain">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:RespRef" name="r1">
+              <longName/>
+            </pathNodes>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e2">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:RespRef" name="r1">
+              <longName/>
+            </pathNodes>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestOrFork">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:OrFork">
+              <body>
+                <regularBody>
+                  <condition>
+                    <expression>
+                      <content>condition</content>
+                    </expression>
+                  </condition>
+                  <pathBody xsi:type="turn:PathBodyNodes"/>
+                </regularBody>
+              </body>
+              <connectingOrBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+              </connectingOrBody>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestOrJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:OrJoin" name="j">
+              <longName/>
+            </pathNodes>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.5/@paths.0/@pathBody/@pathEnd/@connectingAndBody/@pathNodes.0"/>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestAndFork">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:AndFork">
+              <pathbody xsi:type="turn:PathBodyNodes"/>
+              <pathbody xsi:type="turn:PathBodyNodes"/>
+              <connectingAndBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+              </connectingAndBody>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestAndJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:AndJoin" name="sy">
+              <longName/>
+            </pathNodes>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.7/@paths.0/@pathBody/@pathEnd/@connectingAndBody/@pathNodes.0"/>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestWaitingPlace">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:WaitingPlace"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestWaitingPlaceWithWaitKind">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:WaitingPlace" kind="transient"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestTimer">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:Timer"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestTimerWithWaitKind">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:Timer"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestFailurePoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:FailurePoint"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestStub">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:Stub">
+              <params/>
+              <connectingStubBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+              </connectingStubBody>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestStubWithStubType">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:Stub" stubType="blocking">
+              <params/>
+              <connectingStubBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+              </connectingStubBody>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestAsynchronousConnectStartPoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.15/@paths.1/@startPoint"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestAsynchronousConnectWaitingPlace">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.16/@paths.1/@pathBody/@pathNodes.0"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestAsynchronousConnectTimer">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+            <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.17/@paths.1/@pathBody/@pathNodes.0"/>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Timer" name="t">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestReferencedResponsibility">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.18/@paths.0/@pathBody/@pathNodes.0"/>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestReferencedOrJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:OrJoin" name="j">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.19/@paths.0/@pathBody/@pathNodes.0"/>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestReferencedAndJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:AndJoin" name="sy">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.20/@paths.0/@pathBody/@pathNodes.0"/>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestReferencedFailurePoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:FailurePoint" name="f">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.21/@paths.0/@pathBody/@pathNodes.0"/>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestReferencedStub">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:Stub" name="st">
+          <longName/>
+          <params/>
+          <connectingStubBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingStubBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes" referencedStub="//@ucmMaps.22/@paths.0/@pathBody/@pathEnd" index="1"/>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestReferencedStubInpath2">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:Stub" name="st">
+          <longName/>
+          <params/>
+          <connectingStubBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingStubBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes" referencedStub="//@ucmMaps.23/@paths.0/@pathBody/@pathEnd" index="2"/>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestFull">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork" name="a">
+          <longName longname="AndFork One"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestNoConnectingBody">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork" name="a">
+          <longName longname="AndFork One"/>
+          <pathbody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e1">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </pathbody>
+          <pathbody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e2">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </pathbody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestRegularBranchAndConnectingBranch">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork" name="a">
+          <longName longname="AndFork One"/>
+          <pathbody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e1">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </pathbody>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e2">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="AndForkTestRegularBranchAndTwoConnectingBranches">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork" name="a">
+          <longName longname="AndFork One"/>
+          <pathbody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e1">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </pathbody>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e2">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+</turn:URNspec>

@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="ASCII"?>
+<turn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:turn="http://www.xtext.org/project/turn/Turn" name="ConnectTest">
+  <ucmMaps name="ConnectTestEndPoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.0/@paths.1/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestEndPointAgain">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.1/@paths.1/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.1/@paths.3/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s4">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e4">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp2">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestResponsibility">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.2/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestResponsibilityAgain">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.3/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.3/@paths.3/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s4">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e4">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp2">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestOrFork">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:OrFork">
+          <body>
+            <regularBody>
+              <condition>
+                <expression>
+                  <content>condition</content>
+                </expression>
+              </condition>
+              <pathBody xsi:type="turn:PathBodyNodes"/>
+            </regularBody>
+          </body>
+          <connectingOrBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingOrBody>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.4/@paths.1/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestOrJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.5/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:OrJoin" name="j">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.5/@paths.0/@pathBody/@pathNodes.1"/>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestAndFork">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:AndFork">
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <pathbody xsi:type="turn:PathBodyNodes"/>
+          <connectingAndBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingAndBody>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.6/@paths.1/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestAndJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.7/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:AndJoin" name="sy">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.7/@paths.0/@pathBody/@pathNodes.1"/>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestWaitingPlace">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.8/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:WaitingPlace"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestWaitingPlaceWithWaitKind">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.9/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:WaitingPlace" kind="transient"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestTimer">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.10/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:Timer"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestTimerWithWaitKind">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.11/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:Timer"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestFailurePoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.12/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:FailurePoint"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestStub">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:Stub">
+          <params/>
+          <connectingStubBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingStubBody>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.13/@paths.1/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestStubWithStubType">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:Stub" stubType="blocking">
+          <params/>
+          <connectingStubBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingStubBody>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.14/@paths.1/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestAsynchronousConnectStartPoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.15/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.15/@paths.2/@startPoint"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestAsynchronousConnectWaitingPlace">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.16/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.16/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp2">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestAsynchronousConnectTimer">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.17/@paths.1/@pathBody/@pathNodes.0"/>
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.17/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:Timer" name="t">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestReferencedResponsibility">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.18/@paths.0/@pathBody/@pathNodes.0">
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.18/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestReferencedOrJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:OrJoin" name="j">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.19/@paths.0/@pathBody/@pathNodes.0">
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.19/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestReferencedAndJoin">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:AndJoin" name="sy">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.20/@paths.0/@pathBody/@pathNodes.0">
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.20/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestReferencedFailurePoint">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:FailurePoint" name="f">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.21/@paths.0/@pathBody/@pathNodes.0">
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.21/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestReferencedStub">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:Stub" name="st">
+          <longName/>
+          <params/>
+          <connectingStubBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingStubBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedStub="//@ucmMaps.22/@paths.0/@pathBody/@pathEnd" index="1">
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.22/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+  <ucmMaps name="ConnectTestReferencedStubInpath2">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:Stub" name="st">
+          <longName/>
+          <params/>
+          <connectingStubBody xsi:type="turn:PathBodyNodes">
+            <pathEnd xsi:type="turn:EndpointWithConnect">
+              <regularEnd name="e">
+                <longName/>
+              </regularEnd>
+            </pathEnd>
+          </connectingStubBody>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes" referencedStub="//@ucmMaps.23/@paths.0/@pathBody/@pathEnd" index="2">
+        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.23/@paths.2/@pathBody/@pathNodes.0"/>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s3">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e3">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:WaitingPlace" name="wp">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+  </ucmMaps>
+</turn:URNspec>

@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="ASCII"?>
+<turn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:turn="http://www.xtext.org/project/turn/Turn" name="ComponentTest">
+  <ucmMaps name="ComponentTestSingleComponent">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components name="C">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.0/@paths.0/@startPoint"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.0/@paths.0/@pathBody/@pathNodes.0"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.0/@paths.0/@pathBody/@pathEnd/@regularEnd"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestTwoComponents">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components name="C1">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.1/@paths.0/@startPoint"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.1/@paths.0/@pathBody/@pathEnd/@regularEnd"/>
+    </components>
+    <components name="C2">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.1/@paths.0/@pathBody/@pathNodes.0"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestNestedComponents">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components name="C1">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.2/@paths.0/@startPoint"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.2/@paths.0/@pathBody/@pathEnd/@regularEnd"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.2/@components.1"/>
+    </components>
+    <components name="C2">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.2/@paths.0/@pathBody/@pathNodes.0"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestFromToSingleComponent">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:OrFork">
+          <body>
+            <regularBody>
+              <condition>
+                <expression>
+                  <content>condition</content>
+                </expression>
+              </condition>
+              <pathBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+                <pathNodes xsi:type="turn:RespRef" name="r2">
+                  <longName/>
+                </pathNodes>
+              </pathBody>
+            </regularBody>
+            <regularBody>
+              <condition>
+                <expression>
+                  <content>!</content>
+                  <content>condition</content>
+                </expression>
+              </condition>
+              <pathBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e2">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+                <pathNodes xsi:type="turn:RespRef" name="r3">
+                  <longName/>
+                </pathNodes>
+              </pathBody>
+            </regularBody>
+          </body>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components name="C">
+      <longName/>
+      <element xsi:type="turn:LongBoundElement" from="s" to="e"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestFromToTwoComponents">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:OrFork">
+          <body>
+            <regularBody>
+              <condition>
+                <expression>
+                  <content>condition</content>
+                </expression>
+              </condition>
+              <pathBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+                <pathNodes xsi:type="turn:RespRef" name="r2">
+                  <longName/>
+                </pathNodes>
+              </pathBody>
+            </regularBody>
+            <regularBody>
+              <condition>
+                <expression>
+                  <content>!</content>
+                  <content>condition</content>
+                </expression>
+              </condition>
+              <pathBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e2">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+                <pathNodes xsi:type="turn:RespRef" name="r3">
+                  <longName/>
+                </pathNodes>
+              </pathBody>
+            </regularBody>
+          </body>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components name="C1">
+      <longName/>
+      <element xsi:type="turn:LongBoundElement" from="s" to="e"/>
+    </components>
+    <components name="C2">
+      <longName/>
+      <element xsi:type="turn:LongBoundElement" from="r3" to="e2"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestFromToSecondComponentInMiddle">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:OrFork">
+          <body>
+            <regularBody>
+              <condition>
+                <expression>
+                  <content>condition</content>
+                </expression>
+              </condition>
+              <pathBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+                <pathNodes xsi:type="turn:RespRef" name="r2">
+                  <longName/>
+                </pathNodes>
+              </pathBody>
+            </regularBody>
+            <regularBody>
+              <condition>
+                <expression>
+                  <content>!</content>
+                  <content>condition</content>
+                </expression>
+              </condition>
+              <pathBody xsi:type="turn:PathBodyNodes">
+                <pathEnd xsi:type="turn:EndpointWithConnect">
+                  <regularEnd name="e2">
+                    <longName/>
+                  </regularEnd>
+                </pathEnd>
+                <pathNodes xsi:type="turn:RespRef" name="r3">
+                  <longName/>
+                </pathNodes>
+              </pathBody>
+            </regularBody>
+          </body>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components name="C1">
+      <longName/>
+      <element xsi:type="turn:LongBoundElement" from="s" to="e"/>
+    </components>
+    <components name="C2">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.5/@paths.0/@pathBody/@pathEnd/@body/@regularBody.0/@pathBody/@pathNodes.0"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestProtectedComponent">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components protected="true" name="Cp">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.6/@paths.0/@startPoint"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.6/@paths.0/@pathBody/@pathNodes.0"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.6/@paths.0/@pathBody/@pathEnd/@regularEnd"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestActor">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components kind="actor" name="A">
+      <longName/>
+      <element xsi:type="turn:LongBoundElement" from="s" to="e"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestParentComponent">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="r1">
+          <longName/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components kind="parent" name="C">
+      <longName/>
+      <element xsi:type="turn:LongBoundElement" from="s" to="e"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ParentMap">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:Stub" name="st">
+          <longName/>
+          <params>
+            <plugin map="//@ucmMaps.8">
+              <binding xsi:type="turn:InBinding" mapStart="//@ucmMaps.8/@paths.0/@startPoint" index="1"/>
+              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.8/@paths.0/@pathBody/@pathEnd/@regularEnd" index="1"/>
+              <bindings xsi:type="turn:ComponentBinding" componentIn="//@ucmMaps.0/@components.0" componentOut="//@ucmMaps.9/@components.0"/>
+            </plugin>
+          </params>
+          <outPaths index="1">
+            <path xsi:type="turn:PathBodyNodes">
+              <pathEnd xsi:type="turn:EndpointWithConnect">
+                <regularEnd name="e">
+                  <longName/>
+                </regularEnd>
+              </pathEnd>
+            </path>
+          </outPaths>
+        </pathEnd>
+      </pathBody>
+    </paths>
+    <components name="CParent">
+      <longName/>
+      <element xsi:type="turn:LongBoundElement" from="s" to="e"/>
+    </components>
+  </ucmMaps>
+  <ucmMaps name="ComponentTestLongNames">
+    <longName/>
+    <paths>
+      <startPoint name="s">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="rA">
+          <longName/>
+        </pathNodes>
+        <pathNodes xsi:type="turn:RespRef" name="rB_1">
+          <longName longname="Beta"/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <paths>
+      <startPoint name="s2">
+        <longName/>
+      </startPoint>
+      <pathBody xsi:type="turn:PathBodyNodes">
+        <pathEnd xsi:type="turn:EndpointWithConnect">
+          <regularEnd name="e2">
+            <longName/>
+          </regularEnd>
+        </pathEnd>
+        <pathNodes xsi:type="turn:RespRef" name="rA">
+          <longName/>
+        </pathNodes>
+        <pathNodes xsi:type="turn:RespRef" name="rB_2">
+          <longName longname="Beta"/>
+        </pathNodes>
+      </pathBody>
+    </paths>
+    <components name="C1">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.10/@paths.0/@pathBody/@pathNodes.0"/>
+      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.10/@paths.0/@pathBody/@pathNodes.1"/>
+    </components>
+    <components name="C2">
+      <longName/>
+      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.10/@paths.1/@pathBody/@pathNodes.1"/>
+    </components>
+  </ucmMaps>
+</turn:URNspec>

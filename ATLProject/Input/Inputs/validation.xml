@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="ASCII"?>
+<turn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:turn="http://www.xtext.org/project/turn/Turn" name="UniqueNamesTest">
+  <actors name="UniqueActorName">
+    <longName/>
+    <elems type="goal" name="UniqueIntentionalElementName">
+      <longName/>
+      <linksSrc xsi:type="turn:Contribution" name="UniqueContributionName" dest="//@actors.0/@elems.2">
+        <longName/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Contribution" name="UniqueContributionName" dest="//@actors.0/@elems.3" quantitativeContribution="100">
+        <longName/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Decomposition" name="UniqueDecompositionName" dest="//@actors.0/@elems.4">
+        <longName/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Decomposition" name="UniqueDecompositionName" decompositionType="or" dest="//@actors.0/@elems.5">
+        <longName/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Dependency" name="UniqueDependencyName" dest="//@actors.2/@elems.0">
+        <longName/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Dependency" name="UniqueDependencyName" dest="//@actors.2/@elems.1">
+        <longName/>
+      </linksSrc>
+    </elems>
+    <elems name="UniqueIntentionalElementName">
+      <longName/>
+    </elems>
+    <elems name="sg1">
+      <longName/>
+    </elems>
+    <elems type="goal" name="g1">
+      <longName/>
+    </elems>
+    <elems name="sg2">
+      <longName/>
+    </elems>
+    <elems type="goal" name="g2">
+      <longName/>
+    </elems>
+  </actors>
+  <actors name="UniqueActorName">
+    <longName/>
+  </actors>
+  <actors name="Other">
+    <longName/>
+    <elems name="sg3">
+      <longName/>
+    </elems>
+    <elems type="goal" name="g3">
+      <longName/>
+    </elems>
+  </actors>
+  <stratGroups name="UniqueStrategyGroupName" evalStrategy="//@strategies.2">
+    <longName/>
+  </stratGroups>
+  <stratGroups name="UniqueStrategyGroupName" evalStrategy="//@strategies.3">
+    <longName/>
+  </stratGroups>
+  <strategies name="UniqueStrategyName">
+    <longName/>
+  </strategies>
+  <strategies name="UniqueStrategyName">
+    <longName/>
+  </strategies>
+  <strategies name="s1">
+    <longName/>
+  </strategies>
+  <strategies name="s2">
+    <longName/>
+  </strategies>
+  <indConversions xsi:type="turn:LinearConversion" name="UniqueLinearConversionName" unit="failures/week/10000 connections" thresholdValue="500" worstValue="10000">
+    <longName/>
+  </indConversions>
+  <indConversions xsi:type="turn:LinearConversion" name="UniqueLinearConversionName" unit="failures/week/20000 connections" thresholdValue="500" worstValue="10000">
+    <longName/>
+  </indConversions>
+  <indConversions xsi:type="turn:QualToQMappings" name="UniqueMappingConversionName" unit="equipment class 1">
+    <longName/>
+    <mappings realWorldLabel="Class 1" evaluation="100"/>
+  </indConversions>
+  <indConversions xsi:type="turn:QualToQMappings" name="UniqueMappingConversionName" unit="equipment class 2">
+    <longName/>
+    <mappings realWorldLabel="Class 2" evaluation="100"/>
+  </indConversions>
+  <contribContextGroups name="UniqueCCGroupName" contrib="//@contribContexts.2">
+    <longName/>
+  </contribContextGroups>
+  <contribContextGroups name="UniqueCCGroupName" contrib="//@contribContexts.3">
+    <longName/>
+  </contribContextGroups>
+  <contribContexts name="UniqueCCName">
+    <longName/>
+  </contribContexts>
+  <contribContexts name="UniqueCCName">
+    <longName/>
+  </contribContexts>
+  <contribContexts name="c1">
+    <longName/>
+  </contribContexts>
+  <contribContexts name="c2">
+    <longName/>
+  </contribContexts>
+  <ucmMaps name="UniqueMapName">
+    <longName/>
+  </ucmMaps>
+  <ucmMaps name="UniqueMapName">
+    <longName/>
+  </ucmMaps>
+  <concerns name="UniqueConcernName" element="//@ucmMaps.0">
+    <longName/>
+  </concerns>
+  <concerns name="UniqueConcernName" element="//@ucmMaps.0">
+    <longName/>
+  </concerns>
+</turn:URNspec>
