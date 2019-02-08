@@ -35,3 +35,30 @@
 
 ## Design choices
 * Note that this is not like an OOP language where initNextItem instantiates the object before it can be assigned a name; the object is initialized in the "for" block; the choice of calling id first is merely for familiarity
+
+## Testing
+* I am working on ensuring that the system compiles and runs for all test cases using Turn2Urn.atl (without ConnectingNodes.atl code). If this is not possible due to the task of ConnectingNodes in the system, then I will consider optimizations in Turn2Urn regarding calls made to ConnectingNodes before returning the code from ConnectingNodes.
+* The current issues do have significant overlap, and as such likely have to do with changes to how ATL or OCL is handled. Dealing with one issue in some category should make dealing with others much faster. Current issues and their respective files are as follows:
+	* ClassCastException
+		* AndForkTestMergedBranches
+		* validation
+		* validation-names
+	* ArrayStoreException
+		* Belief
+	* Unable to access property on OclUndefined
+		* component
+		* endpoint
+		* orfork
+		* responsibility
+		* softgoal
+		* task
+		* startpoint
+		* stub
+	* Illegal value exception on the value "resource"
+		* goal
+		* indicator
+		* remaining test cases
+		* resource
+	* Feature does not exist on object
+		* OrForkTestBranches
+		* OrForkTestMergedBranches
