@@ -1006,11 +1006,12 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 					thisModule.backLinksToOrFork(obj.connectingAndBody.pathEnd.regularEnd, tUCMmap.nodes -> any(n|n.name = obj.connectingAndBody.pathEnd.regularEnd.name));
 				}
 			}
-					
-			thisModule.nextNode <- '';
+			
+			--TODO: verify the correctness of this fix
+			thisModule.nextNode <- tAndFork;
+			
 			if(thisModule.numberOfterminatingNodes = 2){
 				thisModule.aj <- thisModule.createAndJoin(tUCMmap);
-				thisModule.aj.pred <- tAndFork.succ -> any(s|s.target.oclIsUndefined());
 				thisModule.aj.pred <- tAndFork.succ -> any(s|s.target.oclIsUndefined());
 				thisModule.nextNode <- thisModule.aj;
 			}
@@ -1021,9 +1022,6 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 							thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingAndBody.pathNodes -> first());
 						}
 					}
-				}
-				else{
-					thisModule.nextNode <- tAndFork;
 				}
 			}
 					
