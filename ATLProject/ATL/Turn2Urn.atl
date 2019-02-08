@@ -98,7 +98,7 @@ rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 	}
 }
 
---Dictionary. Had to use called rule as elseif is not supporter in helpers
+--Dictionary. Had to use called rule as elseif is not supported in helpers
 rule contributionNumberToKeyword(quantitativeContribution: Integer){
 	do{
 		thisModule.contribution <- 'Invalid';
@@ -267,12 +267,9 @@ rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
 
 rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
 	do{
-		if(ep.epConnect.pbody.pathNodes -> size() = 0){
+		if(ep.epConnect.pbody.pathNodes -> isEmpty()){
 			if(not ep.epConnect.pbody.orFork.oclIsUndefined()){
-				thisModule.condExpression <- '';
-				for(exp in ep.epConnect.pbody.orFork.condition.expression.content){
-					thisModule.condExpression <- thisModule.condExpression + exp;	
-				}
+				thisModule.condExpression <- thisModule.joinStringSequence(ep.epConnect.pbody.orFork.condition.expression, '');
 				tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
 			}
 		}
