@@ -224,20 +224,24 @@ rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	do{
 		thisModule.counter <- 1;
 		for(pathbody in pathend.pathbody -> flatten()){
+			thisModule.succeeded <- false;
 			if(not pathbody.referencedEnd.oclIsUndefined()){
-				tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
+				if(not tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).oclIsUndefined()){
+					tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
+					thisModule.succeeded <- true;
+				}
 			}
-			else{
+			if(not thisModule.succeeded){
 				--if pathNodes exist
 				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
 					if(pathbody.pathNodes -> size() > 0){
-						thisModule.connectNodes(pathbody, pathend, tUCMmap);
+						--Unsure if thisModule.andForkMap.get(pathend) should go here; followe dthe example of connectOrForkNodes
+						--Will revisit this when I have a better understanding of the code
+						thisModule.connectNodes(pathbody, pathend, tUCMmap, thisModule.andForkMap.get(pathend));
 					}	
 					--if no pathNodes exist
-					else { 
-						if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-							tUCMmap.nodes -> any(n|pathbody.pathEnd.regularEnd.name=n.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
-						}
+					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+						tUCMmap.nodes -> any(n|pathbody.pathEnd.regularEnd.name=n.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
 					}
 				}
 				thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
@@ -520,11 +524,11 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			tUCMmap.nodes <- obj.connectingOrBody.pathNodes -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tFailPt'));
 			tUCMmap.nodes <- obj.connectingOrBody.pathNodes -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tWtPlace'));
 			
-			thisModule.numberOfterminatingNodes <- 0;
+			thisModule.numberOfTerminatingNodes <- 0;
 			if(not obj.body.oclIsUndefined()){
 				for (pathbody in obj.body.regularBody -> collect(pb|pb.pathBody)){
 					if(pathbody.pathEnd.oclIsUndefined()){
-						thisModule.numberOfterminatingNodes <- thisModule.numberOfterminatingNodes.inc();
+						thisModule.numberOfTerminatingNodes <- thisModule.numberOfTerminatingNodes.inc();
 					}
 				}
 			}
@@ -549,12 +553,12 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			
 			thisModule.nextNode <- tOrFork;
 			
-			if(thisModule.numberOfterminatingNodes = 2){
+			if(thisModule.numberOfTerminatingNodes = 2){
 				thisModule.oj <- thisModule.createOrJoin(tUCMmap);
 				thisModule.oj.pred <- tOrFork.succ -> any(s|s.target.oclIsUndefined());
 				thisModule.nextNode <- thisModule.oj;
 			}
-			else if(thisModule.numberOfterminatingNodes = 1 and not obj.connectingOrBody.pathNodes -> first().oclIsUndefined()){
+			else if(thisModule.numberOfTerminatingNodes = 1 and not obj.connectingOrBody.pathNodes -> first().oclIsUndefined()){
 				if(not obj.connectingOrBody.pathNodes -> first().oclIsTypeOf(Turn!Connect)){
 					if(not obj.connectingOrBody.pathNodes -> first().name.oclIsUndefined()){
 						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathNodes -> first().name);
@@ -568,7 +572,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 						thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.createdCondition.expression);
 					}
 					
-					for (pathbody in obj.body.regularBody -> collect(b|b.pathBody) -> flatten()){
+					for (pathbody in obj.getPathBodies()){
 						thisModule.condition <- '';
 						if(pathbody.pathEnd.oclIsUndefined()){
 							thisModule.condition <- thisModule.joinStringSequence(pathbody.orFork.condition.expression, '');
@@ -980,11 +984,11 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			tUCMmap.nodes <- obj.connectingAndBody.pathNodes -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tFailPt')) ;
 			tUCMmap.nodes <- obj.connectingAndBody.pathNodes -> flatten() ->  collect(r|thisModule.resolveTemp(r,'tWtPlace')) ;
 				
-			thisModule.numberOfterminatingNodes <- 0;
+			thisModule.numberOfTerminatingNodes <- 0;
 			for (pathbody in obj.pathbody){
 				if(pathbody.pathEnd.oclIsUndefined()){
 					--connecting pathnodes after andfork
-					thisModule.numberOfterminatingNodes <- thisModule.numberOfterminatingNodes.inc();
+					thisModule.numberOfTerminatingNodes <- thisModule.numberOfTerminatingNodes.inc();
 				}
 			}
 					
@@ -1010,12 +1014,12 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			--TODO: verify the correctness of this fix
 			thisModule.nextNode <- tAndFork;
 			
-			if(thisModule.numberOfterminatingNodes = 2){
+			if(thisModule.numberOfTerminatingNodes = 2){
 				thisModule.aj <- thisModule.createAndJoin(tUCMmap);
 				thisModule.aj.pred <- tAndFork.succ -> any(s|s.target.oclIsUndefined());
 				thisModule.nextNode <- thisModule.aj;
 			}
-			else if(thisModule.numberOfterminatingNodes = 1){
+			else if(thisModule.numberOfTerminatingNodes = 1){
 				if(not obj.connectingAndBody.pathNodes -> first().oclIsUndefined()){
 					if(not obj.connectingAndBody.pathNodes -> first().oclIsTypeOf(Turn!Connect)){
 						if(not obj.connectingAndBody.pathNodes -> first().name.oclIsUndefined()){
