@@ -75,7 +75,7 @@ rule handleConnectNode(tUCMmap: Urn!UCMmap, node: Turn!PathNode, firstNode: Turn
 			}
 			thisModule.emptyPtTimer.pred <- thisModule.pred;
 		}
-		thisModule.connectMap.add(node,thisModule.connect);
+		thisModule.connectMap <- thisModule.connectMap.including(node,thisModule.connect);
 	}
 }
 
@@ -90,7 +90,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 			
 			if(thisModule.nodeCounter = 1){
 				if(path.oclIsTypeOf(Turn!Path)){
-					thisModule.startPoint = tUCMmap.nodes -> any(n|path.startPoint.name=n.name);
+					thisModule.startPoint <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name);
 					if(node.oclIsTypeOf(Turn!RespRef)){
 						thisModule.resolveTemp(node, 'tRespRef').pred <- thisModule.startPoint.succ -> at(thisModule.counter);
 					}
@@ -297,7 +297,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					thisModule.newPred <- ''; --TODO: determine a proper name for this
 					if(not thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){
 						if(thisModule.currentPathNode.oclIsTypeOf(Turn!WaitingPlace)){
-							if(not thisModule.currentPathNode.connect.oclIsUndefined() and not tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> empty()){
+							if(not thisModule.currentPathNode.connect.oclIsUndefined() and not tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
 								thisModule.newPred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(thisModule.currentPathNode.connect).pred -> first())).succ -> any(s|s.target.oclIsUndefined());
 							}
 							else{

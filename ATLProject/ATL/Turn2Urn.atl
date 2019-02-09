@@ -38,10 +38,6 @@ helper def: stubMap : Map(Turn!Stub, Urn!Stub) = Map{};
 helper def: andForkNodeConnCounter : Integer = 1;
 
 ---------------helper methods-------------------------------------------
-
-helper context Map(Turn!Connect, Urn!Connect) def : add(node: Turn!Connect, connect: Urn!Connect) : Map(Turn!Connect, Urn!Connect) =
-	self.including(node,thisModule.connect);
-
 -- This helper creates an increment method for id
 -- CONTEXT: Integer
 -- RETURN: Integer
