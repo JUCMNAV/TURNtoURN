@@ -44,12 +44,12 @@ rule handleConnectNode(tUCMmap: Urn!UCMmap, node: Turn!PathNode, firstNode: Turn
 	do{
 		thisModule.connect <- thisModule.createConnect(tUCMmap);
 				
-		thisModule.pred = '';
+		thisModule.pred <- '';
 		
 		if (path.oclIsTypeOf(Turn!OrFork) and firstNode.oclIsTypeOf(Turn!Connect))
-			thisModule.pred = nextConnectingNode.succ -> at(thisModule.counter);
+			thisModule.pred <- nextConnectingNode.succ -> at(thisModule.counter);
 		else
-			thisModule.pred = nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
+			thisModule.pred <- nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
 		
 		
 		if(not firstNode.connectsTo.oclIsTypeOf(Turn!Timer)){
@@ -83,9 +83,10 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 	do{ 
 		thisModule.nodeCounter <- 1;
 		thisModule.firstPathNode <- pathbody.pathNodes -> first();
+		thisModule.currentPathNode <- '';
 		
 		for (node in pathbody.pathNodes){
-			thisModule.currentPathNode = pathbody.pathNodes -> at(thisModule.nodeCounter);
+			thisModule.currentPathNode <- pathbody.pathNodes -> at(thisModule.nodeCounter);
 			
 			if(thisModule.nodeCounter = 1){
 				if(path.oclIsTypeOf(Turn!Path)){
@@ -202,7 +203,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				}
 			}
 			else{ 
-				thisModule.previousNode = pathbody.pathNodes -> at(thisModule.nodeCounter-1);
+				thisModule.previousNode <- pathbody.pathNodes -> at(thisModule.nodeCounter-1);
 				
 				if(node.oclIsTypeOf(Turn!RespRef)){
 					thisModule.processNode(tUCMmap, pathbody, thisModule.resolveTemp(node, 'tRespRef'), thisModule.previousNode, false);
@@ -293,7 +294,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					}
 				}
 				else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					thisModule.newPred = ''; --TODO: determine a proper name for this
+					thisModule.newPred <- ''; --TODO: determine a proper name for this
 					if(not thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){
 						if(thisModule.currentPathNode.oclIsTypeOf(Turn!WaitingPlace)){
 							if(not thisModule.currentPathNode.connect.oclIsUndefined() and not tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> empty()){
