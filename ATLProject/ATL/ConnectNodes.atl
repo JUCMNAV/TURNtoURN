@@ -43,7 +43,6 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 			if(thisModule.nodeCounter = 1){
 				if(path.oclIsTypeOf(Turn!Path)){
 					if(node.oclIsTypeOf(Turn!RespRef)){
-						thisModule.respName <- node.turnGetLongestName();
 						thisModule.resolveTemp(node, 'tRespRef').pred <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ -> at(thisModule.counter);
 					}
 					else if(node.oclIsTypeOf(Turn!Connect)) {
@@ -288,7 +287,6 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 			--regular ends
 			if(thisModule.nodeCounter = pathbody.pathNodes -> size() and not pathbody.pathEnd.oclIsUndefined()){
 				if(pathbody.pathNodes -> at(thisModule.nodeCounter).oclIsTypeOf(Turn!RespRef)){
-					thisModule.respname <- pathBody.pathNodes -> at(thisModule.nodeCounter).turnGetLongestName();
 					--added now
 					if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 						if(pathbody.pathNodes -> at(thisModule.nodeCounter).oclIsTypeOf(Turn!Connect)){
