@@ -235,8 +235,7 @@ rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 				--if pathNodes exist
 				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
 					if(pathbody.pathNodes -> size() > 0){
-						--Unsure if thisModule.andForkMap.get(pathend) should go here; followe dthe example of connectOrForkNodes
-						--Will revisit this when I have a better understanding of the code
+						--Unsure if thisModule.andForkMap.get(pathend) should go here; followed the example of connectOrForkNodes
 						thisModule.connectNodes(pathbody, pathend, tUCMmap, thisModule.andForkMap.get(pathend));
 					}	
 					--if no pathNodes exist
