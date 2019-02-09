@@ -27,11 +27,13 @@
 	* determine if the ordering of the conditional statements in InBinding2InBinding and OutBinding2OutBinding matters; if not then they can be modularized
 	* the code in Condition2Condition essentially just joins a bunch of strings; is there any way to do this more cleanly?
 	* else { if { } } to else if { }
+	* -> any(s|s.target.oclIsUndefined())
 * Need consistency with whether empty from / to items have () or not
 * Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
 * Refactor for increased consistency
 	* All if and else loops, including single line ones, should have braces
 * Rearrange methods so that their order feels more natural.
+* Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to
 
 ## Design choices
 * Note that this is not like an OOP language where initNextItem instantiates the object before it can be assigned a name; the object is initialized in the "for" block; the choice of calling id first is merely for familiarity
