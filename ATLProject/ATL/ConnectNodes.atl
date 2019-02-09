@@ -46,10 +46,7 @@ rule handleConnectNode(tUCMmap, node, firstNode, nextConnectingNode, path){
 				
 		thisModule.pred = '';
 		
-				else if(path.oclIsTypeOf(Turn!OrFork)){
-					 if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!Connect)) -- c
-					
-		if(c)
+		if(path.oclIsTypeOf(Turn!OrFork) and firstNode.oclIsTypeOf(Turn!Connect))
 			thisModule.pred = nextConnectingNode.succ -> at(thisModule.counter)
 		else
 			thisModule.pred = nextConnectingNode.succ -> any(s|s.target.oclIsUndefined())
@@ -151,7 +148,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				else if(path.oclIsTypeOf(Turn!AndFork)){
 					if(not nextNode.oclIsUndefined()){
 						if(nextNode <> ''){
-							thisModule.nextConnectingNode <- thisModule.nextNode;
+							thisModule.nextConnectingNode <- nextNode;
 						}
 					}
 					else{
