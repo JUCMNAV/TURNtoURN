@@ -30,7 +30,9 @@
       <linksSrc xsi:type="turn:Contribution" name="contVoiceConnFailureRateToInternetVoiceConn" dest="//@actors.0/@elems.3" quantitativeContribution="100">
         <longName/>
       </linksSrc>
-      <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.0"/>
+      <linksSrc xsi:type="turn:Dependency">
+        <dest href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|7"/>
+      </linksSrc>
     </elems>
     <elems type="belief" name="WirelessReliability">
       <longName longname="Wireless is less reliable than Internet"/>
@@ -39,512 +41,21 @@
   </actors>
   <actors name="Tech">
     <longName longname="Technician"/>
-    <elems type="resource" name="LoggEquip">
-      <longName longname="Logging Equipment"/>
-      <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.1"/>
-    </elems>
-    <elems type="task" name="EquipSetup" importanceQuantitative="100">
-      <longName longname="Correctly setup logging equipment"/>
-    </elems>
   </actors>
-  <stratGroups name="SG1" evalStrategy="//@strategies.0">
-    <longName/>
-  </stratGroups>
-  <strategies name="Eval1">
-    <longName longname="Internet Connection"/>
-    <info author="ITU-T"/>
-    <evaluations intElement="//@actors.1/@elems.1" evaluation="100"/>
-    <evaluations intElement="//@actors.0/@elems.5" conversion="//@indConversions.0">
-      <indicatorEval realWorldValue="265"/>
-    </evaluations>
-  </strategies>
-  <indConversions xsi:type="turn:LinearConversion" name="LC1" unit="failures/week/10000 connections" thresholdValue="500" worstValue="10000">
-    <longName longname="Weakly Failures"/>
-  </indConversions>
-  <indConversions xsi:type="turn:QualToQMappings" name="MC1" unit="equipment class">
-    <longName longname="EquipmentClassification"/>
-    <mappings realWorldLabel="Class 1" evaluation="100"/>
-    <mappings realWorldLabel="Class 2" evaluation="47"/>
-    <mappings realWorldLabel="Class 3" evaluation="-25"/>
-  </indConversions>
-  <contribContextGroups name="CCG1" contrib="//@contribContexts.0" contribs="//@contribContexts.1">
-    <longName/>
-  </contribContextGroups>
-  <contribContexts name="CCP">
-    <longName longname="Pessimistic"/>
-    <changes contribution="//@actors.0/@elems.5/@linksSrc.0" newContribution="help"/>
-  </contribContexts>
-  <contribContexts name="CCPI" includedContext="//@contribContexts.0">
-    <longName longname="PessimisticIneffective"/>
-    <changes contribution="//@actors.0/@elems.5/@linksSrc.0" newQuantitativeContribution="50"/>
-  </contribContexts>
-  <ucmMaps name="Default">
-    <longName/>
-    <paths>
-      <startPoint name="startPoint">
-        <longName/>
-      </startPoint>
-      <pathBody xsi:type="turn:PathBodyNodes">
-        <pathEnd xsi:type="turn:EndpointWithConnect">
-          <regularEnd name="continue">
-            <longName/>
-          </regularEnd>
-        </pathEnd>
-      </pathBody>
-    </paths>
-    <components kind="parent" name="Agent">
-      <longName/>
-      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.0/@paths.0/@startPoint"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.0/@paths.0/@pathBody/@pathEnd/@regularEnd"/>
-    </components>
-  </ucmMaps>
-  <ucmMaps name="OF">
-    <longName longname="Originating Features"/>
-    <paths>
-      <startPoint name="startPoint">
-        <longName/>
-      </startPoint>
-      <pathBody xsi:type="turn:PathBodyNodes">
-        <pathEnd xsi:type="turn:Stub" name="OrigFeatures">
-          <longName/>
-          <params>
-            <plugin map="//@ucmMaps.0">
-              <condition>
-                <expression>
-                  <content>!</content>
-                  <content>subTL</content>
-                </expression>
-              </condition>
-              <binding xsi:type="turn:InBinding" mapStart="//@ucmMaps.0/@paths.0/@startPoint" index="1"/>
-              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.0/@paths.0/@pathBody/@pathEnd/@regularEnd" index="1"/>
-              <bindings xsi:type="turn:ComponentBinding" componentIn="//@ucmMaps.0/@components.0" componentOut="//@ucmMaps.0/@components.0"/>
-            </plugin>
-            <plugin map="//@ucmMaps.5">
-              <condition>
-                <expression>
-                  <content>subTL</content>
-                </expression>
-              </condition>
-              <binding xsi:type="turn:InBinding" mapStart="//@ucmMaps.5/@paths.0/@startPoint" index="1"/>
-              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.5/@paths.0/@pathBody/@pathEnd/@body/@regularBody.0/@pathBody/@pathEnd/@regularEnd" index="1"/>
-              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.5/@paths.0/@pathBody/@pathEnd/@body/@regularBody.1/@pathBody/@pathEnd/@connectingOrBody/@pathEnd/@regularEnd" index="2"/>
-              <bindings xsi:type="turn:ComponentBinding" componentIn="//@ucmMaps.0/@components.0" componentOut="//@ucmMaps.0/@components.0"/>
-            </plugin>
-          </params>
-          <outPaths index="1">
-            <path xsi:type="turn:PathBodyNodes">
-              <pathEnd xsi:type="turn:EndpointWithConnect">
-                <regularEnd name="success">
-                  <longName/>
-                </regularEnd>
-              </pathEnd>
-              <pathNodes xsi:type="turn:RespRef" name="sendRequest">
-                <longName/>
-              </pathNodes>
-            </path>
-          </outPaths>
-          <outPaths index="2">
-            <path xsi:type="turn:PathBodyNodes">
-              <pathEnd xsi:type="turn:EndpointWithConnect">
-                <regularEnd name="failPoint">
-                  <longName/>
-                </regularEnd>
-              </pathEnd>
-            </path>
-          </outPaths>
-        </pathEnd>
-      </pathBody>
-    </paths>
-    <components kind="parent" name="Agent">
-      <longName/>
-      <element xsi:type="turn:LongBoundElement" from="startPoint" to="success"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.1/@paths.0/@pathBody/@pathEnd/@outPaths.1/@path/@pathEnd/@regularEnd"/>
-    </components>
-  </ucmMaps>
-  <ucmMaps name="TCS">
-    <longName longname="Terminating Call Screening (TCS)"/>
-    <paths>
-      <startPoint name="startPoint">
-        <longName/>
-      </startPoint>
-      <pathBody xsi:type="turn:PathBodyNodes">
-        <pathEnd xsi:type="turn:OrFork">
-          <body>
-            <regularBody>
-              <condition>
-                <expression>
-                  <content>!</content>
-                  <content>onTCSlist</content>
-                </expression>
-              </condition>
-              <pathBody xsi:type="turn:PathBodyNodes">
-                <pathEnd xsi:type="turn:EndpointWithConnect">
-                  <regularEnd name="success">
-                    <longName/>
-                  </regularEnd>
-                </pathEnd>
-              </pathBody>
-            </regularBody>
-            <regularBody>
-              <condition>
-                <expression>
-                  <content>onTCSlist</content>
-                </expression>
-              </condition>
-              <pathBody xsi:type="turn:PathBodyNodes">
-                <pathEnd xsi:type="turn:EndpointWithConnect">
-                  <regularEnd name="failPoint">
-                    <longName/>
-                  </regularEnd>
-                </pathEnd>
-              </pathBody>
-            </regularBody>
-          </body>
-        </pathEnd>
-        <pathNodes xsi:type="turn:RespRef" name="checkTCS">
-          <longName/>
-        </pathNodes>
-      </pathBody>
-    </paths>
-    <components kind="parent" name="Agent">
-      <longName/>
-      <element xsi:type="turn:LongBoundElement" from="startPoint" to="success"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.2/@paths.0/@pathBody/@pathEnd/@body/@regularBody.1/@pathBody/@pathEnd/@regularEnd"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.2/@components.1"/>
-    </components>
-    <components kind="parent" name="TCSCreeningList">
-      <longName/>
-      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.2/@paths.0/@pathBody/@pathNodes.0"/>
-    </components>
-  </ucmMaps>
-  <ucmMaps name="TF">
-    <longName longname="Terminating Features"/>
-    <paths>
-      <startPoint name="startPoint">
-        <longName/>
-      </startPoint>
-      <pathBody xsi:type="turn:PathBodyNodes">
-        <pathEnd xsi:type="turn:Stub" name="TermFeatures">
-          <longName/>
-          <params>
-            <plugin map="//@ucmMaps.0">
-              <condition>
-                <expression>
-                  <content>!</content>
-                  <content>subTCS</content>
-                </expression>
-              </condition>
-              <binding xsi:type="turn:InBinding" mapStart="//@ucmMaps.0/@paths.0/@startPoint" index="1"/>
-              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.0/@paths.0/@pathBody/@pathEnd/@regularEnd" index="1"/>
-              <bindings xsi:type="turn:ComponentBinding" componentIn="//@ucmMaps.0/@components.0" componentOut="//@ucmMaps.0/@components.0"/>
-            </plugin>
-            <plugin map="//@ucmMaps.2">
-              <condition>
-                <expression>
-                  <content>subTCS</content>
-                </expression>
-              </condition>
-              <binding xsi:type="turn:InBinding" mapStart="//@ucmMaps.2/@paths.0/@startPoint" index="1"/>
-              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.2/@paths.0/@pathBody/@pathEnd/@body/@regularBody.0/@pathBody/@pathEnd/@regularEnd" index="1"/>
-              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.2/@paths.0/@pathBody/@pathEnd/@body/@regularBody.1/@pathBody/@pathEnd/@regularEnd" index="2"/>
-              <bindings xsi:type="turn:ComponentBinding" componentIn="//@ucmMaps.0/@components.0" componentOut="//@ucmMaps.0/@components.0"/>
-            </plugin>
-          </params>
-          <outPaths index="1">
-            <path xsi:type="turn:PathBodyNodes">
-              <pathEnd xsi:type="turn:OrFork">
-                <body>
-                  <regularBody>
-                    <condition>
-                      <expression>
-                        <content>!</content>
-                        <content>busy</content>
-                      </expression>
-                    </condition>
-                    <pathBody xsi:type="turn:PathBodyNodes">
-                      <pathEnd xsi:type="turn:AndFork">
-                        <pathbody xsi:type="turn:PathBodyNodes">
-                          <pathEnd xsi:type="turn:EndpointWithConnect">
-                            <regularEnd name="success">
-                              <longName/>
-                            </regularEnd>
-                          </pathEnd>
-                          <pathNodes xsi:type="turn:RespRef" name="ringTreatment">
-                            <longName/>
-                          </pathNodes>
-                        </pathbody>
-                        <pathbody xsi:type="turn:PathBodyNodes">
-                          <pathEnd xsi:type="turn:EndpointWithConnect">
-                            <regularEnd name="reportSuccess">
-                              <longName/>
-                            </regularEnd>
-                          </pathEnd>
-                          <pathNodes xsi:type="turn:RespRef" name="ringingTreatment">
-                            <longName/>
-                          </pathNodes>
-                        </pathbody>
-                      </pathEnd>
-                    </pathBody>
-                  </regularBody>
-                  <regularBody>
-                    <condition>
-                      <expression>
-                        <content>busy</content>
-                      </expression>
-                    </condition>
-                    <pathBody xsi:type="turn:PathBodyNodes">
-                      <pathEnd xsi:type="turn:EndpointWithConnect">
-                        <regularEnd name="busy">
-                          <longName/>
-                        </regularEnd>
-                      </pathEnd>
-                      <pathNodes xsi:type="turn:RespRef" name="busyTreatment">
-                        <longName/>
-                      </pathNodes>
-                    </pathBody>
-                  </regularBody>
-                </body>
-              </pathEnd>
-            </path>
-          </outPaths>
-          <outPaths index="2">
-            <path xsi:type="turn:PathBodyNodes">
-              <pathEnd xsi:type="turn:EndpointWithConnect">
-                <regularEnd name="failPoint">
-                  <longName/>
-                </regularEnd>
-              </pathEnd>
-            </path>
-          </outPaths>
-        </pathEnd>
-      </pathBody>
-    </paths>
-    <components kind="parent" name="Agent">
-      <longName/>
-      <element xsi:type="turn:LongBoundElement" from="startPoint" to="success"/>
-      <elements xsi:type="turn:LongBoundElement" from="startPoint" to="reportSuccess"/>
-      <elements xsi:type="turn:LongBoundElement" from="startPoint" to="busy"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.3/@paths.0/@pathBody/@pathEnd/@outPaths.1/@path/@pathEnd/@regularEnd"/>
-    </components>
-  </ucmMaps>
-  <ucmMaps name="SC">
-    <longName longname="Simple Connection"/>
-    <paths>
-      <startPoint name="request">
-        <longName/>
-      </startPoint>
-      <pathBody xsi:type="turn:PathBodyNodes">
-        <pathEnd xsi:type="turn:Stub" name="Originating">
-          <longName/>
-          <params>
-            <plugin map="//@ucmMaps.1">
-              <binding xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.1/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@regularEnd" index="1"/>
-              <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.1/@paths.0/@pathBody/@pathEnd/@outPaths.1/@path/@pathEnd/@regularEnd" index="2"/>
-              <bindings xsi:type="turn:InBinding" mapStart="//@ucmMaps.1/@paths.0/@startPoint" index="1"/>
-              <bindings xsi:type="turn:ComponentBinding" componentIn="//@ucmMaps.0/@components.0" componentOut="//@ucmMaps.4/@components.1"/>
-            </plugin>
-          </params>
-          <outPaths index="1">
-            <path xsi:type="turn:PathBodyNodes">
-              <pathEnd xsi:type="turn:Stub" name="Terminating">
-                <longName/>
-                <params>
-                  <plugin map="//@ucmMaps.3">
-                    <binding xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.3/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@body/@regularBody.0/@pathBody/@pathEnd/@pathbody.0/@pathEnd/@regularEnd" index="1"/>
-                    <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.3/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@body/@regularBody.0/@pathBody/@pathEnd/@pathbody.1/@pathEnd/@regularEnd" index="2"/>
-                    <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.3/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@body/@regularBody.1/@pathBody/@pathEnd/@regularEnd" index="3"/>
-                    <bindings xsi:type="turn:OutBinding" mapEnd="//@ucmMaps.3/@paths.0/@pathBody/@pathEnd/@outPaths.1/@path/@pathEnd/@regularEnd" index="4"/>
-                    <bindings xsi:type="turn:InBinding" mapStart="//@ucmMaps.3/@paths.0/@startPoint" index="1"/>
-                    <bindings xsi:type="turn:ComponentBinding" componentIn="//@ucmMaps.0/@components.0" componentOut="//@ucmMaps.4/@components.2"/>
-                  </plugin>
-                </params>
-                <outPaths index="1">
-                  <path xsi:type="turn:PathBodyNodes">
-                    <pathEnd xsi:type="turn:EndpointWithConnect">
-                      <regularEnd name="ring">
-                        <longName/>
-                      </regularEnd>
-                    </pathEnd>
-                  </path>
-                </outPaths>
-                <outPaths index="2">
-                  <path xsi:type="turn:PathBodyNodes">
-                    <pathEnd xsi:type="turn:EndpointWithConnect">
-                      <regularEnd name="ringing">
-                        <longName/>
-                      </regularEnd>
-                    </pathEnd>
-                    <pathNodes xsi:type="turn:RespRef" name="forwardSignal">
-                      <longName/>
-                    </pathNodes>
-                  </path>
-                </outPaths>
-                <outPaths index="3">
-                  <path xsi:type="turn:PathBodyNodes">
-                    <pathEnd xsi:type="turn:EndpointWithConnect">
-                      <regularEnd name="busy">
-                        <longName/>
-                      </regularEnd>
-                    </pathEnd>
-                    <pathNodes xsi:type="turn:RespRef" name="forwardSignal">
-                      <longName/>
-                    </pathNodes>
-                  </path>
-                </outPaths>
-                <outPaths index="4">
-                  <path xsi:type="turn:PathBodyNodes">
-                    <pathEnd xsi:type="turn:EndpointWithConnect">
-                      <regularEnd name="notify">
-                        <longName/>
-                      </regularEnd>
-                    </pathEnd>
-                  </path>
-                </outPaths>
-              </pathEnd>
-            </path>
-          </outPaths>
-          <outPaths index="2">
-            <path xsi:type="turn:PathBodyNodes">
-              <pathEnd xsi:type="turn:EndpointWithConnect">
-                <regularEnd name="notify">
-                  <longName/>
-                </regularEnd>
-              </pathEnd>
-            </path>
-          </outPaths>
-        </pathEnd>
-      </pathBody>
-    </paths>
-    <components kind="parent" name="OriginatingUser">
-      <longName/>
-      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@startPoint"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@outPaths.3/@path/@pathEnd/@regularEnd"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@outPaths.2/@path/@pathEnd/@regularEnd"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@outPaths.1/@path/@pathEnd/@regularEnd"/>
-    </components>
-    <components kind="parent" name="OriginatingAgent">
-      <longName/>
-      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@pathBody/@pathEnd"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@outPaths.1/@path/@pathNodes.0"/>
-    </components>
-    <components kind="parent" name="TerminatingAgent">
-      <longName/>
-      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd"/>
-    </components>
-    <components kind="parent" name="TerminatingUser">
-      <longName/>
-      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.4/@paths.0/@pathBody/@pathEnd/@outPaths.0/@path/@pathEnd/@outPaths.0/@path/@pathEnd/@regularEnd"/>
-    </components>
-  </ucmMaps>
-  <ucmMaps name="TL">
-    <longName/>
-    <paths>
-      <startPoint name="startPoint">
-        <longName/>
-      </startPoint>
-      <pathBody xsi:type="turn:PathBodyNodes">
-        <pathEnd xsi:type="turn:OrFork">
-          <body>
-            <regularBody>
-              <condition>
-                <expression>
-                  <content>!</content>
-                  <content>TLactive</content>
-                </expression>
-              </condition>
-              <pathBody xsi:type="turn:PathBodyNodes">
-                <pathEnd xsi:type="turn:EndpointWithConnect">
-                  <regularEnd name="success">
-                    <longName/>
-                  </regularEnd>
-                </pathEnd>
-              </pathBody>
-            </regularBody>
-            <regularBody>
-              <condition>
-                <expression>
-                  <content>TLactive</content>
-                </expression>
-              </condition>
-              <pathBody xsi:type="turn:PathBodyNodes">
-                <pathEnd xsi:type="turn:OrFork">
-                  <body>
-                    <regularBody>
-                      <condition>
-                        <expression>
-                          <content>PINvalid</content>
-                        </expression>
-                      </condition>
-                      <pathBody xsi:type="turn:PathBodyNodes">
-                        <pathEnd xsi:type="turn:EndpointWithConnect">
-                          <regularEnd name="success">
-                            <longName/>
-                          </regularEnd>
-                        </pathEnd>
-                      </pathBody>
-                    </regularBody>
-                    <regularBody>
-                      <condition>
-                        <expression>
-                          <content>!</content>
-                          <content>PINvalid</content>
-                        </expression>
-                      </condition>
-                      <pathBody xsi:type="turn:PathBodyNodes"/>
-                    </regularBody>
-                  </body>
-                  <connectingOrBody xsi:type="turn:PathBodyNodes">
-                    <pathEnd xsi:type="turn:EndpointWithConnect">
-                      <regularEnd name="failPoint">
-                        <longName/>
-                      </regularEnd>
-                    </pathEnd>
-                    <pathNodes xsi:type="turn:RespRef" name="deny">
-                      <longName/>
-                    </pathNodes>
-                  </connectingOrBody>
-                </pathEnd>
-                <pathNodes xsi:type="turn:Timer" name="getPIN">
-                  <longName/>
-                  <timeoutPath xsi:type="turn:PathBodyNodes" referencedEnd="//@ucmMaps.5/@paths.0/@pathBody/@pathEnd/@body/@regularBody.1/@pathBody/@pathEnd/@connectingOrBody/@pathNodes.0"/>
-                </pathNodes>
-              </pathBody>
-            </regularBody>
-          </body>
-        </pathEnd>
-        <pathNodes xsi:type="turn:RespRef" name="checkTime">
-          <longName/>
-        </pathNodes>
-      </pathBody>
-    </paths>
-    <paths>
-      <startPoint name="enterPIN">
-        <longName/>
-      </startPoint>
-      <pathBody xsi:type="turn:PathBodyNodes">
-        <pathNodes xsi:type="turn:Connect" connectsTo="//@ucmMaps.5/@paths.0/@pathBody/@pathEnd/@body/@regularBody.1/@pathBody/@pathNodes.0"/>
-      </pathBody>
-    </paths>
-    <components kind="parent" name="Agent">
-      <longName/>
-      <element xsi:type="turn:LongBoundElement" from="startPoint" to="failPoint"/>
-      <elements xsi:type="turn:BoundElement" elem="//@ucmMaps.5/@paths.0/@pathBody/@pathEnd/@body/@regularBody.0/@pathBody/@pathEnd/@regularEnd"/>
-    </components>
-    <components kind="parent" name="OriginatingUser">
-      <longName/>
-      <element xsi:type="turn:BoundElement" elem="//@ucmMaps.5/@paths.1/@startPoint"/>
-    </components>
-  </ucmMaps>
   <concerns name="TCConcern" element="//@actors.0">
     <longName/>
   </concerns>
-  <urnlinks fromElem="//@actors.0" toElem="//@ucmMaps.4/@components.1"/>
-  <metadata elem="//@ucmMaps.2" name="popularity">
+  <urnlinks fromElem="//@actors.0">
+    <toElem href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|11"/>
+  </urnlinks>
+  <metadata name="popularity">
+    <elem href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|12"/>
     <value>
       <content>90</content>
     </value>
   </metadata>
-  <metadata elem="//@ucmMaps.5" name="popularity">
+  <metadata name="popularity">
+    <elem href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|13"/>
     <value>
       <content>35</content>
     </value>
@@ -554,22 +65,26 @@
       <content>90</content>
     </value>
   </metadata>
-  <metadata elem="//@stratGroups.0" name="hh">
+  <metadata name="hh">
+    <elem href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|15"/>
     <value>
       <content>90</content>
     </value>
   </metadata>
-  <metadata elem="//@ucmMaps.1" name="hh">
+  <metadata name="hh">
+    <elem href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|16"/>
     <value>
       <content>00</content>
     </value>
   </metadata>
-  <metadata elem="//@ucmMaps.1/@paths.0/@startPoint" name="ff">
+  <metadata name="ff">
+    <elem href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|17"/>
     <value>
       <content>00</content>
     </value>
   </metadata>
-  <metadata elem="//@ucmMaps.0/@components.0" name="rr">
+  <metadata name="rr">
+    <elem href="../../../../TURNTestInput/src/remaining%20test%20cases.turn#|18"/>
     <value>
       <content>10</content>
     </value>

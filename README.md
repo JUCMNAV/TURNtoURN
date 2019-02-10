@@ -56,11 +56,6 @@
 		* task
 		* startpoint
 		* stub
-	* Illegal value exception on the value "resource"
-		* goal
-		* indicator
-		* remaining test cases
-		* resource
 	* Feature does not exist on object
 		* OrForkTestBranches
 		* OrForkTestMergedBranches

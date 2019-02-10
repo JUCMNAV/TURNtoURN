@@ -10,12 +10,24 @@
       <linksSrc xsi:type="turn:Decomposition" dest="//@actors.0/@elems.2"/>
       <linksSrc xsi:type="turn:Decomposition" decompositionType="or" dest="//@actors.0/@elems.4"/>
       <linksSrc xsi:type="turn:Decomposition" decompositionType="xor" dest="//@actors.0/@elems.6"/>
-      <linksSrc xsi:type="turn:Decomposition" dest="//@actors.0/@elems.7"/>
-      <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.0"/>
-      <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.1"/>
-      <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.2"/>
-      <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.3"/>
-      <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.4"/>
+      <linksSrc xsi:type="turn:Decomposition">
+        <dest href="../../../../TURNTestInput/src/goal.turn#|6"/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Dependency">
+        <dest href="../../../../TURNTestInput/src/goal.turn#|7"/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Dependency">
+        <dest href="../../../../TURNTestInput/src/goal.turn#|8"/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Dependency">
+        <dest href="../../../../TURNTestInput/src/goal.turn#|9"/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Dependency">
+        <dest href="../../../../TURNTestInput/src/goal.turn#|10"/>
+      </linksSrc>
+      <linksSrc xsi:type="turn:Dependency">
+        <dest href="../../../../TURNTestInput/src/goal.turn#|11"/>
+      </linksSrc>
     </elems>
     <elems name="sg1">
       <longName/>
@@ -34,33 +46,6 @@
     </elems>
     <elems type="task" name="t2">
       <longName/>
-    </elems>
-    <elems type="resource" name="r2">
-      <longName/>
-    </elems>
-  </actors>
-  <actors name="Other">
-    <longName/>
-    <elems name="sg3">
-      <longName/>
-    </elems>
-    <elems type="goal" name="g3">
-      <longName/>
-    </elems>
-    <elems type="task" name="t3">
-      <longName/>
-    </elems>
-    <elems type="resource" name="r3">
-      <longName/>
-    </elems>
-    <elems type="indicator" name="i3">
-      <longName/>
-    </elems>
-  </actors>
-  <actors name="G2">
-    <longName longname="Goal Test for Optional Elements"/>
-    <elems type="goal" name="gSource2" importanceQuantitative="100">
-      <longName longname="Goal"/>
     </elems>
   </actors>
 </turn:URNspec>
