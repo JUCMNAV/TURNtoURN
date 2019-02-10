@@ -246,7 +246,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 							thisModule.emptyPtTimer.pred <- tUCMmap.nodes -> any(n|thisModule.previousNode.name=n.name).succ; 
 					}
 					
-					thisModule.connectMap.add(node,thisModule.connect);
+					thisModule.connectMap <- thisModule.connectMap -> including(node,thisModule.connect);
 				}
 				else if(node.oclIsTypeOf(Turn!WaitingPlace)){
 					thisModule.processNode(tUCMmap, pathbody, thisModule.resolveTemp(node, 'tWtPlace'), thisModule.previousNode, false);
