@@ -2,12 +2,6 @@ module ConnectNodes;
 
 create OUT : Urn from IN : Turn;
 
-rule getFirstWithName(seq: Sequence(OclAny), nameToFind: String){
-	do{
-		seq -> any(n|n.name=nameToFind);
-	}
-}
-
 -- TODO: determine if this name is appropriate
 rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, previousNode: Urn!PathNode, isTimer: Boolean){
 	do{
