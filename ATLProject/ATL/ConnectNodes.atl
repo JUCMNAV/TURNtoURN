@@ -2,9 +2,16 @@ module ConnectNodes;
 
 create OUT : Urn from IN : Turn;
 
+rule getFirstWithName(seq: Sequence(OclAny), nameToFind: String){
+	do{
+		seq -> any(n|n.name=nameToFind);
+	}
+}
+
 -- TODO: determine if this name is appropriate
 rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, previousNode: Urn!PathNode, isTimer: Boolean){
 	do{
+		--QUESTION: are select(s|s.target = OclUndefined) and any(s|s.target.oclIsUndefined()) equivalent here? i.e., will there only ever be one item with s.target = undefined?
 		if(previousNode.oclIsTypeOf(Turn!RespRef)){
 			if(isTimer)
 				currentNode.pred <- thisModule.resolveTemp(previousNode, 'tRespRef').succ -> select(s|s.target = OclUndefined);
@@ -37,7 +44,7 @@ rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 	}
 }
 
--- TODO: determine why we look at the first node rather than the last
+-- QUESTION: determine why we look at the first node, i.e., pathbody.pathNodes -> first(), rather than the last
 -- TODO: determine how the next connecting node is chosen
 -- TODO: determine if this name is appropriate
 rule handleConnectNode(tUCMmap: Urn!UCMmap, node: Turn!PathNode, firstNode: Turn!PathNode, nextConnectingNode: Urn!PathNode, path: Turn!Path){
@@ -57,6 +64,7 @@ rule handleConnectNode(tUCMmap: Urn!UCMmap, node: Turn!PathNode, firstNode: Turn
 			thisModule.connect.pred <- thisModule.emptyPt.succ -> at(1);
 			
 			tUCMmap.nodes -> any(n|n.name = firstNode.connectsTo.name).pred <- thisModule.connect.succ;
+			--QUESTION: does the statement below overwrite what the statement above did? It's assigning a value to the same location
 			tUCMmap.nodes -> any(n|n.name = firstNode.connectsTo.name).pred <- thisModule.pred;
 		}
 		else{
@@ -115,8 +123,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					}
 				}
 				else if(path.oclIsTypeOf(Turn!OrFork)){
-					-- TODO: need to determine which whether thisModule.nextNode is incorrectly set in Turn2Urn
-					-- (in the createOrFork method & createAndFork method)
+					-- TODO: move this logic up a level into the methods that assign nextNode a value
 					if(not nextNode.oclIsUndefined()){
 						if(nextNode <> ''){
 							thisModule.nextConnectingNode <- nextNode;
@@ -129,7 +136,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 						thisModule.resolveTemp(thisModule.firstPathNode ,'tRespRef').pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
 					}
 					else if(thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
-						-- look for asynchronous connect
+						-- look for asynchronous connect (QUESTION: what does this mean?)
 						thisModule.handleConnectNode(tUCMmap, node, thisModule.firstPathNode, thisModule.nextConnectingNode, path);
 					}
 					else{
@@ -193,6 +200,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					thisModule.handleConnectNode(tUCMmap, node, thisModule.firstPathNode, thisModule.stubMap.get(path), path);
 				}
 				else if(node.oclIsTypeOf(Turn!WaitingPlace)){
+					--QUESTION: why do we look for terms that match "any(s|s.target.oclIsUndefined())"
 					thisModule.resolveTemp(node, 'tWtPlace').pred <- thisModule.stubMap.get(path).succ -> any(s|s.target.oclIsUndefined());
 				}
 				else if(node.oclIsTypeOf(Turn!FailurePoint)){
@@ -228,7 +236,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 						else{
 							tUCMmap.nodes -> any(n|n.name = node.connectsTo.name).pred <-  tUCMmap.nodes -> any(n|thisModule.previousNode.name=n.name).succ;
 						}
-						--TODO: determine if the logic below overwriters what the if statements above did
+						--QUESTION: does the statement below overwrite what the if statements above did? It's assigning a value to the same location
 						tUCMmap.nodes -> any(n|n.name = node.connectsTo.name).pred <- thisModule.connect.succ;
 					}
 					else{

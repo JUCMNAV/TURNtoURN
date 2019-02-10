@@ -234,7 +234,8 @@ rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 				--if pathNodes exist
 				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
 					if(pathbody.pathNodes -> size() > 0){
-						--Unsure if thisModule.andForkMap.get(pathend) should go here; followed the example of connectOrForkNodes
+						-- The method below was missing its last argument, which led to a null pointer error.
+						-- QUESTION: should thisModule.andForkMap.get(pathend) should go here? I followed the example of connectOrForkNodes
 						thisModule.connectNodes(pathbody, pathend, tUCMmap, thisModule.andForkMap.get(pathend));
 					}	
 					--if no pathNodes exist
@@ -668,7 +669,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		}
 		
 		if(not stubObj.boundTo.oclIsUndefined()){
-			--TODO: the two paths here do the same thing; is this accidental?
+			--QUESTION: the two paths here do the same thing; is this accidental?
 			if(not stubObj.boundTo.comp.oclIsUndefined()){
 				tStub.contRef <- thisModule.resolveTemp(stubObj.boundTo.comp, 'tCompRef');
 			}
@@ -923,8 +924,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		)
 	do{
 		if(not tAndFork.name.oclIsUndefined()){
-			--TODO: I'm not sure this was actually ever entered in the original code. 
-			--Name was always set to '' if no valid value was found; would that enter here?
+			--TODO: determine if the name setting method turnGetLongestName() can ever return null so that this branch is entered
 			tAndFork.label <- thisModule.createLabel();
 		}
 		else{
@@ -1009,7 +1009,8 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 				}
 			}
 			
-			--TODO: verify the correctness of this fix
+			--previously this was assigned to '' but that led to a compiler error
+			--QUESTION: is setting this to tAndFork instead of '' correct? I followed the logic in createOrFork to do so
 			thisModule.nextNode <- tAndFork;
 			
 			if(thisModule.numberOfTerminatingNodes = 2){
@@ -1278,7 +1279,7 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 		else{
 			tEmptyPt.name <- 'EmptyPoint'+tEmptyPt.id;
 			tEmptyPt.succ <- thisModule.createNodeConns();
-			-- TODO: determine why this is called twice; is it intentional?
+			-- QUESTION: this is called twice; is it intentional?
 			tEmptyPt.succ <- thisModule.createNodeConns();
 		}
 		tEmptyPt;	
@@ -1614,7 +1615,7 @@ rule Responsibility2Responsibility{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		--TODO: Should this be called "existingResponsibilities" instead? i.e., can we have multiple retrieved by this in any case?
+		--QUESTION: Should this be called "existingResponsibilities" instead? i.e., can we have multiple retrieved by this in any case?
 		thisModule.existingResponsibility <- Urn!Responsibility.allInstances() -> any(r|r.name = s.turnGetLongestName());
 		
 		if(thisModule.existingResponsibility.oclIsUndefined()){
