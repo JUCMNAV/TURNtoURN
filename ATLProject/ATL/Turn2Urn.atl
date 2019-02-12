@@ -100,6 +100,8 @@ rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 	}
 }
 
+--TODO: to remove the boolean, take the logic that makes it necessary 
+--and withdraw it into places this method is called and the boolean is true
 rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklinks: Boolean){
 	do {
 		thisModule.newNode <- '';
@@ -189,6 +191,38 @@ rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
 	}
 }
 
+--TODO: It's worth considering use of the following method. However, I need to further consider
+--how to design it best for usability before making use of it in the code.
+rule getFromSequenceByName(seq: Sequence(OclAny), name: String){
+	do{
+		seq -> any(e|e.name=name);
+	}
+}
+
+rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNode: Urn!PathNode){
+	do {
+		thisModule.finishedConnection <- true;
+		
+		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
+			tUCMmap.nodes -> any(n|n.name = pathend.regularEnd.name).pred <- nextNode;
+		}
+		else if(pathend.oclIsTypeOf(Turn!OrFork)){
+			thisModule.orForkMap.get(pathend).pred <- nextNode;
+		}
+		else if(pathend.oclIsTypeOf(Turn!AndFork)){
+			thisModule.andForkMap.get(pathend).pred <- nextNode;
+		}
+		else if(pathend.oclIsTypeOf(Turn!Stub)){
+			tUCMmap.nodes -> any(n|n.name = pathend.name).pred <- nextNode;
+		}
+		else{
+			thisModule.finishedConnection <- false;
+		}
+		
+		thisModule.finishedConnection;
+	}
+}
+
 rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	do{
 		thisModule.counter <- 1;
@@ -220,27 +254,16 @@ rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 
 rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String){
 	do{
-		thisModule.nextNodeSucc <- '';
+		thisModule.Pred <- '';
 		
 		if(nextNode.oclIsTypeOf(Urn!OrFork)){
-			thisModule.nextNodeSucc <- nextNode.succ -> any(s|s.condition.expression = expression);
+			thisModule.nextPred <- nextNode.succ -> any(s|s.condition.expression = expression);
 		}
 		else{
-			thisModule.nextNodeSucc <- nextNode.succ -> any(s|s.target.oclIsUndefined());
+			thisModule.nextPred <- nextNode.succ -> any(s|s.target.oclIsUndefined());
 		}
 		
-		if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-	 		tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathEnd.regularEnd.name).pred <- thisModule.nextNodeSucc;
-		}
-		else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-			tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathEnd.name).pred <- thisModule.nextNodeSucc;
-		}
-		else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!OrFork)){
-			thisModule.orForkMap.get(obj.connectingOrBody.pathEnd).pred <- thisModule.nextNodeSucc;
-		}
-		else if(obj.connectingOrBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
-			thisModule.andForkMap.get(obj.connectingOrBody.pathEnd).pred <- thisModule.nextNodeSucc;
-		}
+		thisModule.connectPathEndToNextNode(tUCMmap, obj.connectingOrBody.pathEnd, thisModule.nextPred);
 	
 		if(not obj.connectingOrBody.referencedEnd.oclIsUndefined()){
 			--added now
@@ -529,7 +552,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 				--creating a node connection with a negated condition
 				thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
 				
-				-- TODO: determine if removing the line below will cause any issues
 				thisModule.condition <- '';
 				if(obj.getPathBodies().first().pathEnd.oclIsUndefined()){
 					thisModule.condition <- thisModule.joinStringSequence(obj.getPathBodies().first().orFork.condition.expression, '');
@@ -554,7 +576,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		}
 		
 		if(not obj.connectingOrBody.oclIsUndefined()){
-			
 			tUCMmap.nodes <- thisModule.collectReferencedEnds(obj.connectingOrBody.pathNodes);
 			
 			thisModule.numberOfTerminatingNodes <- 0;
@@ -754,9 +775,9 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			thisModule.nextNode <- tStub;
 			if(thisModule.numberOfterminatingStubNodes > 1){
 				thisModule.oj <- thisModule.createOrJoin(tUCMmap);
-				--TODO: determine if changing this to use "including" would be appropriate
 				thisModule.oj.pred <- tStub.succ -> at(thisModule.outPathNumber -> at(1));
-				thisModule.oj.pred <- tStub.succ -> at(thisModule.outPathNumber -> at(2));
+				--TODO: determine if adding the use of 'including' below was correct
+				thisModule.oj.pred <- thisModule.oj.pred -> including(tStub.succ -> at(thisModule.outPathNumber -> at(2)));
 				thisModule.nextNode <- thisModule.oj;
 				thisModule.outPathNumber <- Sequence{1};
 				--thisModule.index <- 1;
@@ -771,19 +792,8 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			}
 			
 			if(stubObj.connectingStubBody.pathNodes -> isEmpty()){
-				if(stubObj.connectingStubBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){ 
-					tUCMmap.nodes -> any(n|stubObj.connectingStubBody.pathEnd.regularEnd.name=n.name).pred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
-				}
-				else if(stubObj.connectingStubBody.pathEnd.oclIsTypeOf(Turn!OrFork)){
-					thisModule.orForkMap.get(stubObj.connectingStubBody.pathEnd).pred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
-				}
-				else if(stubObj.connectingStubBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
-					thisModule.andForkMap.get(stubObj.connectingStubBody.pathEnd).pred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
-				}
-				else if(stubObj.connectingStubBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-					thisModule.stubMap.get(stubObj.connectingStubBody.pathEnd).pred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
-				}
-					
+				thisModule.connectPathEndToNextNode(tUCMmap, stubObj.connectingStubBody.pathEnd, thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1)));
+				
 				if(not stubObj.connectingStubBody.referencedEnd.oclIsUndefined()){
 					
 					if(stubObj.connectingStubBody.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
@@ -802,9 +812,9 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 					if(tUCMmap.nodes -> any(n|stubObj.connectingStubBody.referencedStub.name=n.name).pred -> size() >= stubObj.connectingStubBody.index){
 						thisModule.firstPred <-  tUCMmap.nodes -> any(n|stubObj.connectingStubBody.referencedStub.name=n.name).pred -> first().source;
 						thisModule.oj <- thisModule.createOrJoin(tUCMmap);
-						--TODO: determine if changing this to use "including" would be appropriate
 						thisModule.oj.pred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
-						thisModule.oj.pred <- thisModule.firstPred.succ;
+						--TODO: determine if adding the use of 'including' below was correct
+						thisModule.oj.pred <- thisModule.oj.pred -> including(thisModule.firstPred.succ);
 						tUCMmap.nodes -> any(n|stubObj.connectingStubBody.referencedStub.name=n.name).pred <- thisModule.oj.succ;
 					}
 					else{
@@ -840,24 +850,27 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 		for(outPath in stubObj.outPaths -> flatten()){
 			--if no pathNodes exist
 			if(stubObj.outPaths -> flatten() -> at(thisModule.stubOutPathCounter).path.pathNodes -> isEmpty()){
-				if(not outPath.path.pathEnd.oclIsUndefined()){
-					if(outPath.path.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						tUCMmap.nodes -> any(n|n.name = outPath.path.pathEnd.regularEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+				thisModule.pathEnd <- outPath.path.pathEnd;
+				
+				if(not thisModule.pathEnd.oclIsUndefined()){
+					--TODO: see if there is a way to integrate this logic with connectPathEndToNextNode
+					if(thisModule.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+						tUCMmap.nodes -> any(n|n.name = thisModule.pathEnd.regularEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
 					}
-					else if(outPath.path.pathEnd.oclIsTypeOf(Turn!OrFork)){
-						thisModule.connectOrForkNodes(outPath.path.pathEnd, tUCMmap);
-						thisModule.orForkMap.get(outPath.path.pathEnd).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					else if(thisModule.pathEnd.oclIsTypeOf(Turn!OrFork)){
+						thisModule.connectOrForkNodes(thisModule.pathEnd, tUCMmap);
+						thisModule.orForkMap.get(thisModule.pathEnd).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
 					}
-					else if(outPath.path.pathEnd.oclIsTypeOf(Turn!AndFork)){
-						thisModule.createAndForkNodes(outPath.path.pathEnd, tUCMmap);
-						thisModule.andForkMap.get(outPath.path.pathEnd).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					else if(thisModule.pathEnd.oclIsTypeOf(Turn!AndFork)){
+						thisModule.createAndForkNodes(thisModule.pathEnd, tUCMmap);
+						thisModule.andForkMap.get().pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
 					}
 					-- ADD MORE CODE BELOW
 					else if (not outPath.path.referencedEnd.oclIsUndefined()){
 						tUCMmap.nodes -> any(n|n.name = outPath.path.referencedEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
 					}
 					else { 
-						tUCMmap.nodes -> any(n|n.name = outPath.path.pathEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+						tUCMmap.nodes -> any(n|n.name = thisModule.pathEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
 					}
 				}
 			}
@@ -987,18 +1000,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 					
 			if(obj.connectingAndBody.pathNodes -> isEmpty()){
 				--also modify the connecting path body with a respRef (line 1093)
-				if(obj.connectingAndBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					tUCMmap.nodes -> any(n|obj.connectingAndBody.pathEnd.regularEnd.name=n.name).pred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
-				}
-				else if(obj.connectingAndBody.pathEnd.oclIsTypeOf(Turn!OrFork)){
-					thisModule.orForkMap.get(obj.connectingAndBody.pathEnd).pred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
-				}
-				else if(obj.connectingAndBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
-					thisModule.andForkMap.get(obj.connectingAndBody.pathEnd).pred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
-				}
-				else if(obj.connectingAndBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-					tUCMmap.nodes -> any(n|obj.connectingAndBody.pathEnd.name=n.name).pred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
-				}
+				thisModule.connectPathEndToNextNode(tUCMmap, obj.connectingAndBody.pathEnd, thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined()));
 				--ADD MORE CODE
 				
 				if(not obj.connectingAndBody.referencedEnd.oclIsUndefined()){
@@ -1082,18 +1084,20 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 			tEndPoint.name <- ep.turnGetLongestName();
 			
 			thisModule.endPointMap <- thisModule.endPointMap.including(ep,tEndPoint);
+			
 			--component bindings
 			if(not ep.boundTo.oclIsUndefined()){
 				tEndPoint.contRef <- thisModule.getUrnCompRef(ep);
 			}
-			
-			--Using backlinks to connect orFork
+	
 			if(ep.epConnect.pbody.pathNodes -> isEmpty()){
+				--Using backlinks to connect orFork
 				thisModule.currentOrFork <- ep.epConnect.pbody.orFork;
 				if(not thisModule.currentOrFork.oclIsUndefined()){
 					thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
 					tEndPoint.pred <- thisModule.orForkMap.get(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
 				}
+				
 				--Using backlinks to connect andFork
 				thisModule.currentAndFork <- ep.epConnect.pbody.andFork;
 				if(not thisModule.currentAndFork.oclIsUndefined()){
@@ -1151,22 +1155,11 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 				
 				if(timerObj.timeoutPath.pathNodes -> isEmpty()){
 				--also modify the connecting path body with a respRef (line 1093)
-					if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						tUCMmap.nodes -> any(n|timerObj.timeoutPath.pathEnd.regularEnd.name=n.name).pred <- tTimer.succ -> at(2);
-					}
-					else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!OrFork)){
-						thisModule.orForkMap.get(timerObj.timeoutPath.pathEnd).pred <- tTimer.succ -> at(2);
-					}
-					else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!AndFork)){
-						thisModule.andForkMap.get(timerObj.timeoutPath.pathEnd).pred <- tTimer.succ -> at(2);
-					}
-					else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!Stub)){
-						tUCMmap.nodes -> any(n|timerObj.timeoutPath.pathEnd.name=n.name).pred <- tTimer.succ -> at(2);
-					}
+					thisModule.connectPathEndToNextNode(tUCMmap, timerObj.timeoutPath.pathEnd, tTimer.succ -> at(2));
+				
 					--ADD MORE CODE
 
 					if(not timerObj.timeoutPath.referencedEnd.oclIsUndefined()){
-				
 						if(timerObj.timeoutPath.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 							if(not timerObj.timeoutPath.pathNodes -> at(thisModule.nodeCounter).oclIsTypeOf(Turn!Connect)){
 							if(tUCMmap.nodes -> any(n|timerObj.timeoutPath.referencedEnd.name=n.name).pred -> collect(s|s.source) -> isEmpty())
@@ -1183,9 +1176,9 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 					if(tUCMmap.nodes -> any(n|timerObj.timeoutPath.referencedStub.name=n.name).pred -> size() >= timerObj.timeoutPath.index){
 						thisModule.firstPred <-  tUCMmap.nodes -> any(n|timerObj.timeoutPath.referencedStub.name=n.name).pred -> first().source;
 						thisModule.oj <- thisModule.createOrJoin(tUCMmap);
-						--TODO: determine if changing this to use "including" would be appropriate
 						thisModule.oj.pred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
-						thisModule.oj.pred <- thisModule.firstPred.succ;
+						--TODO: determine if adding the use of 'including' below was correct
+						thisModule.oj.pred <- thisModule.oj.pred -> including(thisModule.firstPred.succ);
 						tUCMmap.nodes -> any(n|timerObj.timeoutPath.referencedStub.name=n.name).pred <- thisModule.oj.succ;
 					}
 					else{
@@ -1224,7 +1217,7 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 	}
 }
 
----------------------final mapping rules------------------------------------
+-----------------------matched rules------------------------------------
 
 rule IntElements2IntElements{
 	from 
@@ -1771,6 +1764,7 @@ rule InBinding2InBinding{
 			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
 		)
 	do{
+		--QUESTION: does the order in which the if checks are performed matter?
 		if(not s.binding.oclIsUndefined()){
 			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
 				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
