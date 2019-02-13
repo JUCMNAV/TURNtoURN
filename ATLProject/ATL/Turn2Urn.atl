@@ -223,7 +223,6 @@ rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNo
 	}
 }
 
-
 --TODO: ensure all arguments in all calls of connectReferencedEnds are actually valid
 --TODO: figure out if calling the argument "nextPred" in all calls is correct
 rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, position: Integer, nextNode: Turn!PathNode){
@@ -843,24 +842,24 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 				thisModule.pathEnd <- outPath.path.pathEnd;
 				
 				if(not thisModule.pathEnd.oclIsUndefined()){
-					--TODO: see if there is a way to integrate this logic with connectPathEndToNextNode
-					if(thisModule.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						tUCMmap.nodes -> any(n|n.name = thisModule.pathEnd.regularEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					thisModule.nextNode <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					thisModule.finishedConnection < thisModule.connectPathEndToNextNode(tUCMmap, thisModule.pathEnd, thisModule.nextNode);
+					
+					if(not thisModule.finishedConnection){
+						-- ADD MORE CODE BELOW
+						if (not outPath.path.referencedEnd.oclIsUndefined()){
+							tUCMmap.nodes -> any(n|n.name = outPath.path.referencedEnd.name).pred <- thisModule.nextNode;
+						}
+						else { 
+							tUCMmap.nodes -> any(n|n.name = thisModule.pathend.name).pred <- thisModule.nextNode;
+						}
 					}
-					else if(thisModule.pathEnd.oclIsTypeOf(Turn!OrFork)){
-						thisModule.connectOrForkNodes(thisModule.pathEnd, tUCMmap);
-						thisModule.orForkMap.get(thisModule.pathEnd).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					
+					if(thisModule.pathend.oclIsTypeOf(Turn!OrFork)){
+						thisModule.connectOrForkNodes(thisModule.pathend, tUCMmap);
 					}
-					else if(thisModule.pathEnd.oclIsTypeOf(Turn!AndFork)){
-						thisModule.createAndForkNodes(thisModule.pathEnd, tUCMmap);
-						thisModule.andForkMap.get().pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
-					}
-					-- ADD MORE CODE BELOW
-					else if (not outPath.path.referencedEnd.oclIsUndefined()){
-						tUCMmap.nodes -> any(n|n.name = outPath.path.referencedEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
-					}
-					else { 
-						tUCMmap.nodes -> any(n|n.name = thisModule.pathEnd.name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+					else if(thisModule.pathend.oclIsTypeOf(Turn!AndFork)){
+						thisModule.createAndForkNodes(thisModule.pathend, tUCMmap);
 					}
 				}
 			}
