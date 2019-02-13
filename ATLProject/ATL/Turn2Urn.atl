@@ -1827,17 +1827,18 @@ rule UCMmap2UCMmap{
 		--Regular ends
 		--ADD CODE HERE
 		for(path in sUCMmap.paths){
-			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, path.pathBody.pathEnd, false);
+			thisModule.pathEnd <- path.pathBody.pathEnd;
+			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, thisModule.pathEnd, false);
 			
 			if(not (thisModule.newNode = '')){
 				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
 			}
 			
-			if(path.pathBody.pathEnd.oclIsTypeOf(Turn!OrFork)) {
-				thisModule.connectOrForkNodes(path.pathBody.pathEnd, tUCMmap);
+			if(thisModule.pathEnd.oclIsTypeOf(Turn!OrFork)) {
+				thisModule.connectOrForkNodes(thisModule.pathEnd, tUCMmap);
 			}
-			else if(path.pathBody.pathEnd.oclIsTypeOf(Turn!AndFork)) {
-				thisModule.connectAndForkNodes(path.pathBody.pathEnd, tUCMmap);
+			else if(thisModule.pathEnd.oclIsTypeOf(Turn!AndFork)) {
+				thisModule.connectAndForkNodes(thisModule.pathEnd, tUCMmap);
 			}
 		
 			--connect nodes in a map
@@ -1846,20 +1847,21 @@ rule UCMmap2UCMmap{
 			if(not path.startPoint.connect.oclIsUndefined() and tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> size() <> 0){
 				tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(path.startPoint.connect).pred -> first())).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ -> any(s|s.target.oclIsUndefined());
 			}--if no pathnodes exist
-			if(not path.pathBody.pathEnd.oclIsUndefined() and  path.pathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and path.pathBody.pathNodes -> isEmpty()){
-				thisModule.endPointName <- path.pathBody.pathEnd.regularEnd.turnGetLongestName();
+			
+			if(not thisModule.pathEnd.oclIsUndefined() and  thisModule.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and path.pathBody.pathNodes -> isEmpty()){
+				thisModule.endPointName <- thisModule.pathEnd.regularEnd.turnGetLongestName();
 				
-				if(not path.pathBody.pathEnd.connect.oclIsUndefined()){
+				if(not thisModule.pathEnd.connect.oclIsUndefined()){
 					--create succ for the connecting endpoint
 					tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).succ <- thisModule.createNodeConns();
 					thisModule.connect <- thisModule.createConnect(tUCMmap);
 					thisModule.connect.pred <- tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).succ;
-					thisModule.connectMap <-  thisModule.connectMap.including(path.pathBody.pathEnd.connect,thisModule.connect);
-					if(not path.pathBody.pathEnd.connect.connectsTo.oclIsTypeOf(Turn!Timer)){
-						tUCMmap.nodes -> any(n|n.name = path.pathBody.pathEnd.connect.connectsTo.name).pred <- thisModule.connect.succ;
+					thisModule.connectMap <-  thisModule.connectMap.including(thisModule.pathEnd.connect,thisModule.connect);
+					if(not thisModule.pathEnd.connect.connectsTo.oclIsTypeOf(Turn!Timer)){
+						tUCMmap.nodes -> any(n|n.name = thisModule.pathEnd.connect.connectsTo.name).pred <- thisModule.connect.succ;
 					}
 					else{
-						thisModule.createdEmptyPt <- thisModule.createEmptyPt(tUCMmap, path.pathBody.pathEnd.connect.connectsTo, false);
+						thisModule.createdEmptyPt <- thisModule.createEmptyPt(tUCMmap, thisModule.pathEnd.connect.connectsTo, false);
 						thisModule.createdEmptyPt.pred <-  thisModule.connect.succ;
 					}
 				}
@@ -1868,16 +1870,17 @@ rule UCMmap2UCMmap{
 				} 
 				tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ -> any(s|s.target.oclIsUndefined());
 			}--added code for stub....
-			else if (not path.pathBody.pathEnd.oclIsUndefined() and path.pathBody.pathNodes -> isEmpty() ){
-				if(path.pathBody.pathEnd.oclIsTypeOf(Turn!OrFork)){
-					thisModule.orForkMap.get(path.pathBody.pathEnd).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ;
+			else if (not thisModule.pathEnd.oclIsUndefined() and path.pathBody.pathNodes -> isEmpty() ){
+				if(thisModule.pathEnd.oclIsTypeOf(Turn!OrFork)){
+					thisModule.orForkMap.get(thisModule.pathEnd).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ;
 				}
-				else if(path.pathBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
-					thisModule.andForkMap.get(path.pathBody.pathEnd).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ;
+				else if(thisModule.pathEnd.oclIsTypeOf(Turn!AndFork)){
+					thisModule.andForkMap.get(thisModule.pathEnd).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ;
 				}
-				else if(path.pathBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-					thisModule.stubMap.get(path.pathBody.pathEnd).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ;
+				else if(thisModule.pathEnd.oclIsTypeOf(Turn!Stub)){
+					thisModule.stubMap.get(thisModule.pathEnd).pred <- tUCMmap.nodes -> any(n|thisModule.startPointName=n.name).succ;
 				}
+				
 			}
 			--if pathnodes exist
 			else{
@@ -1885,25 +1888,36 @@ rule UCMmap2UCMmap{
 				thisModule.connectNodes(path.pathBody, path, tUCMmap, OclAny);
 			}
 			
-			if(path.pathBody.pathNodes -> isEmpty() and (not path.pathBody.referencedEnd.oclIsUndefined())){
-				if(path.pathBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-					thisModule.resolveTemp(path.pathBody.referencedEnd,'tRespRef').pred  <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ; 
+			-- THIS IS 5
+			thisModule.turnReferencedEnd <- path.pathBody.referencedEnd;
+			thisModule.turnReferencedStub <- path.pathBody.referencedStub;
+			
+			if(path.pathBody.pathNodes -> isEmpty() and (not thisModule.turnReferencedEnd.oclIsUndefined())){
+				thisModule.urnReferencedEnd <- '';
+				
+				if(thisModule.turnReferencedEnd.oclIsTypeOf(Turn!RespRef)){
+					thisModule.urnReferencedEnd <- thisModule.resolveTemp(thisModule.turnReferencedEnd,'tRespRef'); 
 				}
 				else{
-					thisModule.nodeName <- path.pathBody.referencedEnd.turnGetLongestName();
-					tUCMmap.nodes -> any(n|n.name=thisModule.nodeName).pred <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ; 
+					thisModule.nodeName <- thisModule.turnReferencedEnd.turnGetLongestName();
+					thisModule.urnReferencedEnd <- tUCMmap.nodes -> any(n|n.name=thisModule.nodeName); 
 				}
+				
+				thisModule.urnReferencedEnd.pred <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ;
 			}
-			else if (path.pathBody.pathNodes -> isEmpty() and (not path.pathBody.referencedStub.oclIsUndefined())){
-				if (tUCMmap.nodes -> any(n|path.pathBody.referencedStub.name=n.name).pred -> size() >= path.pathBody.index){
-					thisModule.firstPred <-  tUCMmap.nodes -> any(n|path.pathBody.referencedStub.name=n.name).pred -> first().source;
+			else if (path.pathBody.pathNodes -> isEmpty() and (not thisModule.turnReferencedStub.oclIsUndefined())){
+				thisModule.urnReferencedStub <- tUCMmap.nodes -> any(n|thisModule.turnReferencedStub.name=n.name);
+				
+				if (thisModule.urnReferencedStub.pred -> size() >= path.pathBody.index){
+					thisModule.firstPred <-  thisModule.urnReferencedStub.pred -> first().source;
 					thisModule.oj <- thisModule.createOrJoin(tUCMmap);
 					thisModule.oj.pred <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ;
-					thisModule.oj.pred <- thisModule.firstPred.succ;
-					tUCMmap.nodes -> any(n|path.pathBody.referencedStub.name=n.name).pred <- thisModule.oj.succ;
+					--TODO: determine if adding the use of 'including' below was correct
+					thisModule.oj.pred <- thisModule.oj.pred -> including(thisModule.firstPred.succ);
+					thisModule.urnReferencedStub.pred <- thisModule.oj.succ;
 				}
 				else{
-					tUCMmap.nodes -> any(n|path.pathBody.referencedStub.name=n.name).pred <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ; 
+					thisModule.urnReferencedStub.pred <- tUCMmap.nodes -> any(n|path.startPoint.name=n.name).succ; 
 				}
 			}
 		}
