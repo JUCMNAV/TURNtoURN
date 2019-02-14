@@ -27,7 +27,7 @@ rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 				currentNode.pred <- thisModule.connectMap.get(previousNode).succ -> any(s|s.target.oclIsUndefined()); 
 			}
 			else 
-				currentNode.pred  <- tUCMmap.nodes -> any(n|n.name = previousNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
+				currentNode.pred <- tUCMmap.nodes -> any(n|n.name = previousNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
 		}
 		else{
 			if(isTimer)
@@ -147,7 +147,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				else if (path.oclIsTypeOf(Urn!OrJoin)){
 					if(node.oclIsTypeOf(Turn!RespRef)){
 						if(Urn!Responsibility.allInstances() -> any(n|node.name=n.name).respRefs -> select(r|r.diagram.name = tUCMmap.name) -> size() = 0){
-							Urn!Responsibility.allInstances() -> any(n|node.name=n.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).pred <-  	tUCMmap.nodes -> any(n|path.name=n.name).succ ;
+							Urn!Responsibility.allInstances() -> any(n|node.name=n.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).pred <- 	tUCMmap.nodes -> any(n|path.name=n.name).succ ;
 						}
 					}
 					else{
@@ -217,33 +217,33 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				}
 				--NEED TO CREATE CONNECT FOR ALL OTHER COMBINATIONS
 				else if(node.oclIsTypeOf(Turn!Connect)){
-					thisModule.connect <- thisModule.createConnect(tUCMmap); 
+					thisModule.connect <- thisModule.createConnect(tUCMmap);
+					
 					if(not node.connectsTo.oclIsTypeOf(Turn!Timer)){
 						thisModule.emptyPt <- thisModule.createEmptyPt(tUCMmap, OclAny, true);
 						thisModule.connect.pred <- thisModule.emptyPt.succ -> at(1);
-						if(thisModule.previousNode.oclIsTypeOf(Turn!RespRef)){
-							tUCMmap.nodes -> any(n|n.name = node.connectsTo.name).pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.previousNode.name)-> flatten() -> any(s|s.pred <> OclUndefined).succ;
-						}
-						else if(thisModule.previousNode.oclIsTypeOf(Turn!Connect)){
-							tUCMmap.nodes -> any(n|n.name = node.connectsTo.name).pred <-  tUCMmap.nodes -> any(n|n.name = thisModule.previousNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
-						}
-						else{
-							tUCMmap.nodes -> any(n|n.name = node.connectsTo.name).pred <-  tUCMmap.nodes -> any(n|thisModule.previousNode.name=n.name).succ;
-						}
-						--QUESTION: does the statement below overwrite what the if statements above did? It's assigning a value to the same location
-						tUCMmap.nodes -> any(n|n.name = node.connectsTo.name).pred <- thisModule.connect.succ;
+						thisModule.nodeToConnect <- tUCMmap.nodes -> any(n|n.name = node.connectsTo.name);
 					}
 					else{
 						thisModule.emptyPtTimer <- thisModule.createEmptyPt(tUCMmap, node.connectsTo, true);
 						thisModule.connect.pred <- thisModule.emptyPtTimer.succ -> at(1);
 						thisModule.timerMap.get(thisModule.firstPathNode.connectsTo).pred <- thisModule.connect.succ;
-						
-						if(thisModule.previousNode.oclIsTypeOf(Turn!RespRef))
-							thisModule.emptyPtTimer.pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.previousNode.name)-> flatten() -> any(s|s.pred <> OclUndefined).succ;
-						else if(thisModule.previousNode.oclIsTypeOf(Turn!Connect))
-							thisModule.emptyPtTimer.pred <- tUCMmap.nodes -> any(n|n.name = thisModule.previousNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined()); 
-						else
-							thisModule.emptyPtTimer.pred <- tUCMmap.nodes -> any(n|thisModule.previousNode.name=n.name).succ; 
+						thisModule.nodeToConnect <- thisModule.emptyPtTimer;
+					}
+					
+					if(thisModule.previousNode.oclIsTypeOf(Turn!RespRef)){
+						thisModule.nodeToConnect.pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.previousNode.name)-> flatten() -> any(s|s.pred <> OclUndefined).succ;
+					}
+					else if(thisModule.previousNode.oclIsTypeOf(Turn!Connect)){
+						thisModule.nodeToConnect.pred <- tUCMmap.nodes -> any(n|n.name = thisModule.previousNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
+					}
+					else{
+						thisModule.nodeToConnect.pred <- tUCMmap.nodes -> any(n|thisModule.previousNode.name=n.name).succ;
+					}
+					
+					--QUESTION: does the statement below overwrite what the if statements above did? It's assigning a value to the same location
+					if(not node.connectsTo.oclIsTypeOf(Turn!Timer)){
+						thisModule.nodeToConnect.pred <- thisModule.connect.succ;
 					}
 					
 					thisModule.connectMap <- thisModule.connectMap -> including(node, thisModule.connect);
@@ -270,28 +270,23 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					}
 				}
 				else{
-					tUCMmap.nodes -> any(n|n.name = node.name).pred  <- tUCMmap.nodes -> any(n|thisModule.previousNode.name=n.name).succ;
+					tUCMmap.nodes -> any(n|n.name = node.name).pred <- tUCMmap.nodes -> any(n|thisModule.previousNode.name=n.name).succ;
 				}
 			}
 			--regular ends
 			if(thisModule.nodeCounter = pathbody.pathNodes -> size() and not pathbody.pathEnd.oclIsUndefined()){
 				if(thisModule.currentPathNode.oclIsTypeOf(Turn!RespRef)){
-					if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						if(thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){
-							tUCMmap.nodes -> any(n|pathbody.pathEnd.regularEnd.name=n.name).pred <- tUCMmap.nodes -> any(n|n.name = thisModule.currentPathNode.connectsTo.name).succ ;
-						}
-						else{
-							tUCMmap.nodes -> any(n|pathbody.pathEnd.regularEnd.name=n.name).pred <-  thisModule.resolveTemp(thisModule.currentPathNode ,'tRespRef').succ -> any(s|s.target = OclUndefined);
-						}
+					thisModule.nextNode <- thisModule.resolveTemp(thisModule.currentPathNode ,'tRespRef').succ -> any(s|s.target = OclUndefined);
+					thisModule.pathend <- pathbody.pathEnd;
+					
+					if(thisModule.pathend.oclIsTypeOf(Turn!EndpointWithConnect) and thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){
+						tUCMmap.nodes -> any(n|thisModule.pathbend.regularEnd.name=n.name).pred <- tUCMmap.nodes -> any(n|n.name = thisModule.currentPathNode.connectsTo.name).succ;
 					}
-					else if (pathbody.pathEnd.oclIsTypeOf(Turn!OrFork)){
-						thisModule.orForkMap.get(pathbody.pathEnd).pred <- thisModule.resolveTemp(thisModule.currentPathNode ,'tRespRef').succ -> any(s|s.target = OclUndefined);
+					else if (thisModule.pathend.oclIsTypeOf(Turn!Stub)){
+						thisModule.stubMap.get(thisModule.pathend).pred <- nextNode;
 					}
-					else if (pathbody.pathEnd.oclIsTypeOf(Turn!AndFork)){
-						thisModule.andForkMap.get(pathbody.pathEnd).pred <- thisModule.resolveTemp(thisModule.currentPathNode ,'tRespRef').succ -> any(s|s.target = OclUndefined);
-					}
-					else if (pathbody.pathEnd.oclIsTypeOf(Turn!Stub)){
-						thisModule.stubMap.get(pathbody.pathEnd).pred <- thisModule.resolveTemp(thisModule.currentPathNode ,'tRespRef').succ -> any(s|s.target = OclUndefined);
+					else{
+						thisModule.connectPathEndToNextNode(tUCMmap, thisModule.pathend, thisModule.nextNode);
 					}
 				}
 				else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
@@ -375,16 +370,21 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 			--referenced ends
 			else if(thisModule.nodeCounter = pathbody.pathNodes -> size() and not pathbody.referencedEnd.oclIsUndefined()){
 				if(thisModule.currentPathNode.oclIsTypeOf(Turn!RespRef)){
-					if(pathbody.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect))
-						tUCMmap.nodes -> any(n|pathbody.referencedEnd.name=n.name).pred <-  tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
-					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!OrFork))
+					if(pathbody.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+						tUCMmap.nodes -> any(n|pathbody.referencedEnd.name=n.name).pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
+					}
+					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!OrFork)){
 						thisModule.orForkMap.get(pathbody.pathEnd).pred <- Urn!Responsibility.allInstances() -> any(n|n.name=thisModule.currentPathNode.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).succ;
-					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!AndFork))
+					}
+					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!AndFork)){
 						thisModule.andForkMap.get(pathbody.pathEnd).pred <- Urn!Responsibility.allInstances() -> any(n|n.name=thisModule.currentPathNode.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).succ;
-					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef))
-						tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(r|r.respDef.name =  pathbody.referencedEnd.name).pred <-  tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
-					else 
-						tUCMmap.nodes -> any(n|pathbody.referencedEnd.name=n.name).pred <-  tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
+					}
+					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+						tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(r|r.respDef.name = pathbody.referencedEnd.name).pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
+					}
+					else{
+						tUCMmap.nodes -> any(n|pathbody.referencedEnd.name=n.name).pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
+					}
 				}
 				else if(pathbody.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 					if(not thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){
@@ -403,7 +403,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					if(thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){
 						--ADD CODE FOR ALL TYPES OF CONNECTS
 						if(thisModule.currentPathNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
-							thisModule.resolveTemp(pathbody.referencedEnd,'tRespRef').pred  <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
+							thisModule.resolveTemp(pathbody.referencedEnd,'tRespRef').pred <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
 						}
 					}
 					else{
@@ -412,7 +412,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				}
 				else if(thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){ --ADD CODE FOR ALL TYPES OF CONNECTS
 					if(thisModule.currentPathNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
-						tUCMmap.nodes -> any(n|pathbody.referencedEnd.name=n.name).pred  <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
+						tUCMmap.nodes -> any(n|pathbody.referencedEnd.name=n.name).pred <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
 					}
 				}
 				else{
@@ -421,34 +421,36 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 			}
 			else if(thisModule.nodeCounter = pathbody.pathNodes -> size() and (not pathbody.referencedStub.oclIsUndefined())){
 				if(thisModule.currentPathNode.oclIsTypeOf(Turn!RespRef)){
+					thisModule.nextNode <- '';
+					
 					if(tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred -> size() >= pathbody.index){
-						thisModule.firstPred <-  tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred -> first().source;
-						thisModule.oj <- thisModule.createOrJoin(tUCMmap);
-						thisModule.oj.pred <-tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(r|r.respDef.name =  thisModule.currentPathNode.name).succ;
-						thisModule.oj.pred <- thisModule.firstPred.succ;
-						tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred <- thisModule.oj.succ;
+						thisModule.nextNode <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(r|r.respDef.name = thisModule.currentPathNode.name).succ;
 					}
 					else{
-						tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred <-  tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
+						thisModule.nextNode <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
 					}
+					
+					thisModule.processReferencedStub(tUCMmap, pathbody, thisModule.nextNode);
 				}
 				else if(tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred -> size() >= pathbody.index){
-					thisModule.firstPred <-  tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred -> first().source;
-					thisModule.oj <- thisModule.createOrJoin(tUCMmap);
+					thisModule.firstPred <- tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred -> first().source;
+					
 					if(thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){ --ADD CODE FOR ALL TYPES OF CONNECTS
 						if(thisModule.currentPathNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
-							thisModule.oj.pred  <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
+							thisModule.orJoinPred <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
 						}
 					}
 					else{
-						thisModule.oj.pred <- tUCMmap.nodes -> any(n|n.name =  thisModule.currentPathNode.name).succ;
+						thisModule.orJoinPred <- tUCMmap.nodes -> any(n|n.name = thisModule.currentPathNode.name).succ;
 					}
-					thisModule.oj.pred <- thisModule.firstPred.succ;
-					tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred <- thisModule.oj.succ;
+					
+					thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, thisModule.orJoinPred);
+					thisModule.orJoin.pred <- thisModule.firstPred.succ;
+					tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred <- thisModule.orJoin.succ;
 				}
 				else if(thisModule.currentPathNode.oclIsTypeOf(Turn!Connect)){ --ADD CODE FOR ALL TYPES OF CONNECTS
 					if(thisModule.currentPathNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
-						tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred  <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
+						tUCMmap.nodes -> any(n|pathbody.referencedStub.name=n.name).pred <- tUCMmap.nodes -> any(s|s.name = thisModule.currentPathNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
 					}
 				}
 				else{	
