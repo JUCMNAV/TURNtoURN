@@ -111,7 +111,14 @@ rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklink
 				thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
 			}
 			else if (includeBacklinks){
-				thisModule.backLinksToOrFork(pathend.regularEnd, tUCMmap.nodes -> any(n|n.name = pathend.regularEnd.name));
+				thisModule.tEndPoint <- tUCMmap.nodes -> any(n|n.name = pathend.regularEnd.name);
+				thisModule.ep <- pathend.regularEnd;
+				if(thisModule.ep.epConnect.pbody.pathNodes -> isEmpty()){
+					if(not thisModule.ep.epConnect.pbody.orFork.oclIsUndefined()){
+						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.ep.epConnect.pbody.orFork.condition.expression, '');
+						thisModule.tEndPoint.pred <- thisModule.orForkMap.get(thisModule.ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
+					}
+				}
 			}
 		}
 		else {
@@ -368,23 +375,12 @@ rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
 	}
 }
 
-rule backLinksToOrFork(ep: Turn!EndPoint, tEndPoint: Urn!EndPoint){
-	do{
-		if(ep.epConnect.pbody.pathNodes -> isEmpty()){
-			if(not ep.epConnect.pbody.orFork.oclIsUndefined()){
-				thisModule.condExpression <- thisModule.joinStringSequence(ep.epConnect.pbody.orFork.condition.expression, '');
-				tEndPoint.pred <- thisModule.orForkMap.get(ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression = thisModule.condExpression);
-			}
-		}
-	}
-}
-
 rule createMetadata(name: String, value: String) {
 	to 
- targetMetadata: Urn!Metadata(
- 	name <- name,
- 	value <- value 
- )
+ 		targetMetadata: Urn!Metadata(
+ 			name <- name,
+ 			value <- value 
+		)
 	do{
 	 	targetMetadata;
 	}
@@ -587,8 +583,9 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			}
 		}
 		else{
-			thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
 			thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
+			
+			thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
 			thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
 			thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj, tUCMmap) -> first();
 			
@@ -763,7 +760,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			thisModule.newNode <- '';
 			
 			if(pathend.oclIsTypeOf(Turn!Timer)){
-				thisModule.newNode <- thisModule.nodeCollector -> union(thisModule.createTimer(pathend, tUCMmap));
+				thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
 			}
 			else{
 				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, false);	
@@ -982,11 +979,10 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 				thisModule.nextNode <- thisModule.aj;
 			}
 			else if(thisModule.numberOfTerminatingNodes = 1){
-				if(not obj.connectingAndBody.pathNodes -> first().oclIsUndefined()){
-					if(not obj.connectingAndBody.pathNodes -> first().oclIsTypeOf(Turn!Connect)){
-						if(not obj.connectingAndBody.pathNodes -> first().name.oclIsUndefined()){
-							thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingAndBody.pathNodes -> first());
-						}
+				thisModule.firstPathNode <- obj.connectingAndBody.pathNodes -> first();
+				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
+					if(not obj.connectingAndBody.pathNodes -> first().name.oclIsUndefined()){
+						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingAndBody.pathNodes -> first());
 					}
 				}
 			}
@@ -1139,6 +1135,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 	}
 }
 
+ --TODO: potential case of adding in unions / includings
 rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean){
 	to
 		tEmptyPt: Urn!EmptyPoint(
@@ -1151,8 +1148,9 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 				tEmptyPt.name <- 'AsynchConnectTimer#'+node.name;
 				tEmptyPt.succ <- thisModule.createNodeConns();
 			}
-			else
+			else{
 				tEmptyPt.name <- 'SynchConnectTimer#'+node.name;
+			}
 		}
 		else{
 			tEmptyPt.name <- 'EmptyPoint'+tEmptyPt.id;
@@ -1179,6 +1177,7 @@ rule IntElements2IntElements{
 		tIntElem: Urn!IntentionalElement (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
+			type <- s.type.toString().capitalize(),
 			linksSrc <- s.linksSrc
 		)
 		
@@ -1187,8 +1186,6 @@ rule IntElements2IntElements{
 			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().capitalize())-> first();
 		}
 		
-		tIntElem.type <- s.type.toString().capitalize();
-		 
 		 --Added because the default value in enum is considered always.
 		if(s.importance.toString().toLower().equals('none')){
 			tIntElem.importanceQuantitative <- s.importanceQuantitative;
@@ -1224,13 +1221,13 @@ rule Actor2Actor{
 rule Belief2Belief {
 	from
 		s: Turn!IntentionalElement(s.type.toString() = 'belief')
- to 
- 	tBelief: Urn!Belief(
- 		id <- thisModule.nextId().toString(),
- 		name <- s.name,
+	to 
+	 	tBelief: Urn!Belief(
+	 		id <- thisModule.nextId().toString(),
+	 		name <- s.name,
 			description <- s.name,
 			succ <- tBeliefLink
- 	),
+	 	),
 		tBeliefLink: Urn!BeliefLink(
 			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
 		)
@@ -1308,6 +1305,7 @@ rule Strategies2Strategies{
 		)
 }
 
+--TODO: potential case of adding in unions / includings
 rule StrategiesGroup2StrategiesGroup{
 	from
 		s: Turn!StrategiesGroup
@@ -1316,7 +1314,6 @@ rule StrategiesGroup2StrategiesGroup{
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
 			strategies <- s.evalStrategy,
-			-- TODO: determine if these overwrite each other
 			strategies <- s.evalStrategies
 		)
 }
@@ -1336,7 +1333,8 @@ rule Evaluation2Evaluation {
 			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings))
 				tEval.kpiEvalValueSet <- thisModule.createQMapKpiEvalValueSet(s.conversion);
 			else{
-				tEval.kpiEvalValueSet <- thisModule.createKpiEvalValueSet(s.conversion);}
+				tEval.kpiEvalValueSet <- thisModule.createKpiEvalValueSet(s.conversion);
+			}
 		}
 	}
 }
@@ -1368,6 +1366,7 @@ rule ContributionChange2ContributionChange{
 	}
 }
 
+-- TODO: potential case of adding in union / including
 rule ContributionContextGroup2ContributionContextGroup{
 	from
 		s: Turn!ContributionContextGroup
@@ -1376,7 +1375,6 @@ rule ContributionContextGroup2ContributionContextGroup{
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
 			contribs <- s.contrib,
-			-- TODO: determine if these overwrite each other
 			contribs <- s.contribs
 		)
 }
@@ -1428,6 +1426,7 @@ rule URNlink2URNlink{
 		)
 }
 
+--TODO: many potential cases of adding in unions / includings
 rule Component2Component{
 	from 
 		s:Turn!ComponentRef 
@@ -1548,6 +1547,7 @@ rule FailurePoint2FailurePoint{
 	}
 }
 
+--TODO: many potential cases of adding in unions / includings
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
@@ -1583,8 +1583,8 @@ rule URNspec2URNspec{
 		 	nodes <- sURNspec.getActorElements() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')),
 			nodes <- Urn!Belief.allInstances(),
 			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
-		 connections <- sURNspec.getActorElements() -> collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')), 
-	 	connections <- sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')) 
+			connections <- sURNspec.getActorElements() -> collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')), 
+	 		connections <- sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')) 
 		),
 		tUcmspec: Urn!UCMspec
 	do{
@@ -1603,6 +1603,7 @@ rule URNspec2URNspec{
 			tURNspec.urnVersion <- sURNspec.info.urnVersion; 
 		}
 		
+		--TODO: try to understand what the line below is doing
 		tURNspec.nextGlobalID <- thisModule.id.toString();
 	}
 }
@@ -1666,7 +1667,6 @@ rule OrJoin2OrJoin{
 		if(not s.boundTo.oclIsUndefined()){
 			tOrJoin.contRef <- thisModule.getUrnCompRef(s);
 		}
-		
 	}
 }
 
@@ -1689,6 +1689,7 @@ rule AndJoin2AndJoin{
 	}
 }
 
+--TODO: potential cases of adding in unions / includings
 rule PluginBinding2PluginBinding{
 	from 
 		s:Turn!PluginBinding	
@@ -1705,6 +1706,7 @@ rule PluginBinding2PluginBinding{
 		)
 }
 
+--TODO: modularize after test cases are working
 rule InBinding2InBinding{
 	from
 		s:Turn!InBinding
@@ -1733,6 +1735,7 @@ rule InBinding2InBinding{
 	}
 }
 
+--TODO: modularize after test cases are working
 rule OutBinding2OutBinding{
 	from
 		s:Turn!OutBinding
