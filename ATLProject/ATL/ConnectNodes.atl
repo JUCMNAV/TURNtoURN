@@ -58,6 +58,7 @@ rule handleConnectNode(tUCMmap: Urn!UCMmap, NODE: Turn!PathNode, ITEM: Turn!Path
 			thisModule.emptyPtTimer <- thisModule.createEmptyPt(tUCMmap, NODE.connectsTo, true);
 			thisModule.connect.pred <- thisModule.emptyPtTimer.succ -> at(1);
 			if(not timerNode.oclIsUndefined()){
+				--BROKEN TODO: fix the issue caused by this line
 				thisModule.timerMap.get(timerNode.connectsTo).pred <- thisModule.connect.succ;
 			}
 			thisModule.emptyPtTimer.pred <- ITEM;
@@ -160,24 +161,8 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					}
 					else if(thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){ 
 						-- look for asynchronous connect
-						-- look for asynchronous connect
-						thisModule.connect <- thisModule.createConnect(tUCMmap);
-			
-						if(not pathbody.pathNodes -> first().connectsTo.oclIsTypeOf(Turn!Timer)){
-							thisModule.emptyPt <- thisModule.createEmptyPt(tUCMmap, OclAny, true);
-							thisModule.connect.pred <- thisModule.emptyPt.succ -> at(1);
-							
-							tUCMmap.nodes -> any(n|n.name = pathbody.pathNodes -> first().connectsTo.name).pred <- thisModule.connect.succ;
-							tUCMmap.nodes -> any(n|n.name = pathbody.pathNodes -> first().connectsTo.name).pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
-						}
-						else{
-							thisModule.emptyPtTimer <- thisModule.createEmptyPt(tUCMmap, pathbody.pathNodes -> first().connectsTo, true);
-							thisModule.connect.pred <- thisModule.emptyPtTimer.succ -> at(1);
-							thisModule.timerMap.get(pathbody.pathNodes -> first().connectsTo).pred <- thisModule.connect.succ;
-							thisModule.emptyPtTimer.pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
-						}
-						
-						thisModule.connectMap <-  thisModule.connectMap.including(node,thisModule.connect);
+						thisModule.connect <- thisModule.handleConnectNode(tUCMmap, thisModule.firstPathNode, thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined()), thisModule.firstPathNode);
+						thisModule.connectMap <- thisModule.connectMap.including(node, thisModule.connect);
 					}
 					else {
 						if(thisModule.firstPathNode.oclIsTypeOf(Turn!Timer)){ 
