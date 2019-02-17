@@ -300,9 +300,6 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 								thisModule.newPred <- thisModule.resolveTemp(thisModule.currentPathNode, 'tWtPlace').succ -> any(s|s.target.oclIsUndefined());
 							}
 						}
-						else if(thisModule.currentPathNode.oclIsTypeOf(Turn!WaitingPlace)){
-							thisModule.newPred <- thisModule.resolveTemp(thisModule.currentPathNode, 'tWtPlace').succ -> any(s|s.target.oclIsUndefined());
-						}
 						else if(thisModule.currentPathNode.oclIsTypeOf(Turn!FailurePoint)){
 							thisModule.newPred <- thisModule.resolveTemp(thisModule.currentPathNode, 'tFailPt').succ -> any(s|s.target.oclIsUndefined());
 						}
@@ -392,7 +389,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 							tUCMmap.nodes -> any(n|pathbody.referencedEnd.name=n.name).pred <- tUCMmap.nodes -> any(n|n.name=thisModule.currentPathNode.name).succ;
 						}
 					}
-				}
+				} 
 				else if(pathbody.referencedEnd.oclIsTypeOf(Turn!OrFork)){
 					thisModule.orForkMap.get(pathbody.referencedEnd).pred <- tUCMmap.nodes -> any(n|n.name=thisModule.currentPathNode.name).succ -> any(s|s.target.oclIsUndefined());
 				}
