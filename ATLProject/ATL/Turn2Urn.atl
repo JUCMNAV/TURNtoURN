@@ -230,18 +230,22 @@ rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNo
 	}
 }
 
+-- TODO: potential case of adding in union / including
 rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
 	do{
-		if(tUCMmap.nodes -> any(n|body.referencedStub.name=n.name).pred -> size() >= body.index){
-			thisModule.firstPredSource <- tUCMmap.nodes -> any(n|body.referencedStub.name=n.name).pred -> first().source;
+		thisModule.stub <- tUCMmap.nodes -> any(n|body.referencedStub.name=n.name);
+		
+		if(thisModule.stub.pred -> size() >= body.index){
 			thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, nextNode);
+			thisModule.firstPred <- thisModule.stub.pred -> first();
+			thisModule.orJoin.pred <- nextNode;
 			--TODO: this overwrites the orJoin we just created; determine if this is intentional
-			thisModule.orJoin.pred <- thisModule.firstPredSource.succ;
-			tUCMmap.nodes -> any(n|body.referencedStub.name=n.name).pred <- thisModule.orJoin.succ;
+			--TODO: verify if this does indeed match the original logic of the system
+			thisModule.orJoin.pred <- thisModule.firstPred.source.succ;
+			nextNode <- thisModule.orJoin.succ;
 		}
-		else{
-			tUCMmap.nodes -> any(n|body.referencedStub.name=n.name).pred <- nextNode;
-		}
+		
+		thisModule.stub.pred <- nextNode;
 	}
 }
 
@@ -310,9 +314,9 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 			thisModule.nextPred <- nextNode.succ -> any(s|s.target.oclIsUndefined());
 		}
 		
-		thisModule.connectPathEndToNextNode(tUCMmap, obj.connectingOrBody.pathEnd, thisModule.nextPred);
-
 		thisModule.body <- obj.connectingOrBody;
+		
+		thisModule.connectPathEndToNextNode(tUCMmap, thisModule.body.pathEnd, thisModule.nextPred);
 		
 		if(thisModule.body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
 			Urn!Responsibility.allInstances() -> any(n|thisModule.body.referencedEnd.name=n.name).pred <- thisModule.nextPred;
@@ -923,7 +927,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			tAndFork.name <- 'AndFork' + tAndFork.id;
 		}
 		
-		thisModule.andForkMap <- thisModule.andForkMap.including(obj,tAndFork);
+		thisModule.andForkMap <- thisModule.andForkMap.including(obj, tAndFork);
 		
 		for(elem in obj.pathbody){
 			tAndFork.succ <- thisModule.createAndForkNodeConns(elem, tUCMmap);
@@ -974,14 +978,14 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			thisModule.nextNode <- tAndFork;
 			
 			if(thisModule.numberOfTerminatingNodes = 2){
-				thisModule.aj <- thisModule.createAndJoin(tUCMmap);
-				thisModule.aj.pred <- tAndFork.succ -> any(s|s.target.oclIsUndefined());
-				thisModule.nextNode <- thisModule.aj;
+				thisModule.newAndJoin <- thisModule.createAndJoin(tUCMmap);
+				thisModule.newAndJoin.pred <- tAndFork.succ -> any(s|s.target.oclIsUndefined());
+				thisModule.nextNode <- thisModule.newAndJoin;
 			}
 			else if(thisModule.numberOfTerminatingNodes = 1){
 				thisModule.firstPathNode <- obj.connectingAndBody.pathNodes -> first();
 				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
-					if(not obj.connectingAndBody.pathNodes -> first().name.oclIsUndefined()){
+					if(not thisModule.firstPathNode.name.oclIsUndefined()){
 						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingAndBody.pathNodes -> first());
 					}
 				}
