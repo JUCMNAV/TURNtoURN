@@ -200,7 +200,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					}
 				}
 				else if(path.oclIsTypeOf(Turn!OrFork)){
-					thisModule.handleForkLogic(tUCMmap, node, thisModule.firstPathNode, thisModule.counter, 'or');
+					thisModule.handleForkLogic(tUCMmap, pathbody, node, thisModule.firstPathNode, nextNode, thisModule.counter, 'or');
 				}
 				else if (path.oclIsTypeOf(Urn!OrJoin)){
 					thisModule.succeeded <- false;
@@ -217,7 +217,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					}
 				}
 				else if(path.oclIsTypeOf(Turn!AndFork)){
-					thisModule.handleForkLogic(tUCMmap, node, thisModule.firstPathNode, thisModule.counter, 'and');
+					thisModule.handleForkLogic(tUCMmap, pathbody, node, thisModule.firstPathNode, nextNode, thisModule.counter, 'and');
 				}
 				else {
 					thisModule.currentNode <- thisModule.stubMap.get(path);
