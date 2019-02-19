@@ -4499,15 +4499,15 @@
 		<constant value="225:6-244:7"/>
 		<constant value="220:6-220:16"/>
 		<constant value="220:33-220:40"/>
-		<constant value="220:42-220:50"/>
-		<constant value="220:52-220:56"/>
-		<constant value="220:58-220:68"/>
-		<constant value="220:58-220:82"/>
-		<constant value="220:84-220:92"/>
-		<constant value="220:94-220:104"/>
-		<constant value="220:94-220:112"/>
-		<constant value="220:114-220:119"/>
-		<constant value="220:6-220:121"/>
+		<constant value="220:42-220:46"/>
+		<constant value="220:48-220:52"/>
+		<constant value="220:54-220:64"/>
+		<constant value="220:54-220:78"/>
+		<constant value="220:80-220:88"/>
+		<constant value="220:90-220:100"/>
+		<constant value="220:90-220:108"/>
+		<constant value="220:110-220:115"/>
+		<constant value="220:6-220:117"/>
 		<constant value="219:10-245:6"/>
 		<constant value="206:6-206:16"/>
 		<constant value="206:30-206:35"/>
@@ -4590,15 +4590,15 @@
 		<constant value="205:10-245:6"/>
 		<constant value="203:6-203:16"/>
 		<constant value="203:33-203:40"/>
-		<constant value="203:42-203:50"/>
-		<constant value="203:52-203:56"/>
-		<constant value="203:58-203:68"/>
-		<constant value="203:58-203:82"/>
-		<constant value="203:84-203:92"/>
-		<constant value="203:94-203:104"/>
-		<constant value="203:94-203:112"/>
-		<constant value="203:114-203:118"/>
-		<constant value="203:6-203:120"/>
+		<constant value="203:42-203:46"/>
+		<constant value="203:48-203:52"/>
+		<constant value="203:54-203:64"/>
+		<constant value="203:54-203:78"/>
+		<constant value="203:80-203:88"/>
+		<constant value="203:90-203:100"/>
+		<constant value="203:90-203:108"/>
+		<constant value="203:110-203:114"/>
+		<constant value="203:6-203:116"/>
 		<constant value="202:10-245:6"/>
 		<constant value="174:6-174:16"/>
 		<constant value="174:31-174:38"/>
@@ -10509,7 +10509,7 @@
 <<<<<<< HEAD
 =======
 			<load arg="42"/>
-			<load arg="19"/>
+			<load arg="29"/>
 			<load arg="44"/>
 >>>>>>> f79db0f... Added in a missing argument to calls of handleForkLogic; code remains broken for now. As the readability has improved significantly, I'm moving closer to being able to debug the code to fix its behavior
 			<getasm/>
@@ -10900,6 +10900,7 @@
 			<getasm/>
 <<<<<<< HEAD
 			<load arg="42"/>
+<<<<<<< HEAD
 			<load arg="19"/>
 <<<<<<< HEAD
 			<getasm/>
@@ -10907,6 +10908,9 @@
 			<get arg="91"/>
 =======
 >>>>>>> f79db0f... Added in a missing argument to calls of handleForkLogic; code remains broken for now. As the readability has improved significantly, I'm moving closer to being able to debug the code to fix its behavior
+=======
+			<load arg="29"/>
+>>>>>>> 08ecee1... Fixed arguments to handleConnectNode as I put pathbody instead of path; final commit for tonight
 			<load arg="44"/>
 			<call arg="84"/>
 			<getasm/>
