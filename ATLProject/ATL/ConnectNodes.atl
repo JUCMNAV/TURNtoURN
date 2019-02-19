@@ -98,6 +98,59 @@ rule handleConnectNode(tUCMmap: Urn!UCMmap, NODE: Turn!PathNode, ITEM: Turn!Path
 	}
 }
 
+
+--TODO: find a way to reduce the number of arguments for this rule
+rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, node: Turn!PathNode, firstPathNode: Turn!PathNode, nextNode: Urn!PathNode, counter: Integer, case: String){
+	do{
+		if(case = 'and'){
+			thisModule.currentMap <- thisModule.andForkMap;
+		}
+		else if(case = 'or'){
+			thisModule.currentMap <- thisModule.orForkMap;
+		}
+		else{
+			--there should not be any other cases
+		}
+	
+		if(not nextNode.oclIsUndefined()){
+			--TODO: this won't do anything if the second condition isn't met; determine if this intentional
+			if(nextNode <> ''){
+				thisModule.nextConnectingNode <- nextNode;
+			}
+		}
+		else{
+			thisModule.nextConnectingNode <- thisModule.currentMap.get(path);
+		}
+
+		if(firstPathNode.oclIsTypeOf(Turn!RespRef)){
+			thisModule.resolveTemp(firstPathNode ,'tRespRef').pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
+		}
+		else if(firstPathNode.oclIsTypeOf(Turn!Connect)){
+			-- look for asynchronous connect (QUESTION: what does this mean?)
+			if(counter = -1){ --AND case
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstPathNode, thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined()), firstPathNode);
+			}
+			else{ --OR case
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstPathNode, thisModule.nextConnectingNode.succ -> at(counter), OclUndefined);
+			}
+
+			thisModule.connectMap <- thisModule.connectMap.including(node, thisModule.connect);
+		}
+		else{
+			-- where is this defined? where is it used?
+			if(firstPathNode.oclIsTypeOf(Turn!Timer)){
+				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createTimer(firstPathNode, tUCMmap));
+			}
+			tUCMmap.nodes -> any(n|n.name=firstPathNode.name).pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
+		}
+		
+		--ADDED FOR TIMER AND ORFORK CONNECTION
+		if(node.oclIsTypeOf(Turn!Timer)){
+			tUCMmap.nodes -> any(n|n.name=node.name).pred <- thisModule.currentMap.get(path).succ -> at(counter);
+		}
+	}
+}
+
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: Urn!UCMmap, nextNode: Urn!PathNode){
 	do{ 
 		thisModule.nodeCounter <- 1;
@@ -138,34 +191,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				}
 				else if(path.oclIsTypeOf(Turn!OrFork)){
 					-- TODO: move this logic up a level into the methods that assign nextNode a value
-					if(not nextNode.oclIsUndefined()){
-						--TODO: this won't do anything if the second condition isn't met; determine if this intentional
-						if(nextNode <> ''){
-							thisModule.nextConnectingNode <- nextNode;
-						}
-					}
-					else{
-						thisModule.nextConnectingNode <- thisModule.orForkMap.get(path);
-					}
-					
-					if(thisModule.firstPathNode.oclIsTypeOf(Turn!RespRef)){
-						thisModule.resolveTemp(thisModule.firstPathNode ,'tRespRef').pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
-					}
-					else if(thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
-						-- look for asynchronous connect (QUESTION: what does this mean?)
-						thisModule.connect <- thisModule.handleConnectNode(tUCMmap, thisModule.firstPathNode, thisModule.nextConnectingNode.succ -> at(thisModule.counter), OclUndefined);
-						thisModule.connectMap <- thisModule.connectMap.including(node, thisModule.connect);
-					}
-					else{
-						if(thisModule.firstPathNode.oclIsTypeOf(Turn!Timer)){
-							thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createTimer(thisModule.firstPathNode, tUCMmap));
-						}
-						tUCMmap.nodes -> any(n|n.name=thisModule.firstPathNode.name).pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
-					}
-					--ADDED FOR TIMER AND ORFORK CONNECTION
-					if(node.oclIsTypeOf(Turn!Timer)){
-						tUCMmap.nodes -> any(n|n.name=node.name).pred <- thisModule.orForkMap.get(path).succ -> at(thisModule.counter);
-					}
+					thisModule.handleForkLogic(tUCMmap, node, thisModule.firstPathNode, thisModule.counter, 'or');
 				}
 				else if (path.oclIsTypeOf(Urn!OrJoin)){
 					if(node.oclIsTypeOf(Turn!RespRef)){
@@ -178,33 +204,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					}
 				}
 				else if(path.oclIsTypeOf(Turn!AndFork)){
-					if(not nextNode.oclIsUndefined()){
-						if(nextNode <> ''){
-							thisModule.nextConnectingNode <- nextNode;
-						}
-					}
-					else{
-						thisModule.nextConnectingNode <- thisModule.andForkMap.get(path);
-					}
-					
-					if(thisModule.firstPathNode.oclIsTypeOf(Turn!RespRef)){
-						thisModule.resolveTemp(thisModule.firstPathNode,'tRespRef').pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
-					}
-					else if(thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){ 
-						-- look for asynchronous connect
-						thisModule.connect <- thisModule.handleConnectNode(tUCMmap, thisModule.firstPathNode, thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined()), thisModule.firstPathNode);
-						thisModule.connectMap <- thisModule.connectMap.including(node, thisModule.connect);
-					}
-					else {
-						if(thisModule.firstPathNode.oclIsTypeOf(Turn!Timer)){ 
-							thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createTimer(thisModule.firstPathNode, tUCMmap));
-						}
-						tUCMmap.nodes -> any(n|n.name=thisModule.firstPathNode.name).pred <- thisModule.nextConnectingNode.succ -> any(s|s.target.oclIsUndefined());
-					}
-					--ADDED FOR TIMER AND ORFORK CONNECTION
-					if(node.oclIsTypeOf(Turn!Timer)){ 
-						tUCMmap.nodes -> any(n|n.name=node.name).pred <- thisModule.andForkMap.get(path).succ -> at(thisModule.counter);
-					}
+					thisModule.handleForkLogic(tUCMmap, node, thisModule.firstPathNode, thisModule.counter, 'and');
 				}
 				else if(node.oclIsTypeOf(Turn!RespRef)){
 					thisModule.resolveTemp(node, 'tRespRef').pred <- thisModule.stubMap.get(path).succ -> at(1);
