@@ -241,7 +241,7 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 			thisModule.orJoin.pred <- nextNode;
 			--TODO: this overwrites the orJoin we just created; determine if this is intentional
 			--TODO: verify if this does indeed match the original logic of the system
-			thisModule.orJoin.pred <- thisModule.firstPred.source.succ;
+			thisModule.orJoin.pred <- thisModule.orJoin.pred -> union(thisModule.firstPred.source.succ);
 			nextNode <- thisModule.orJoin.succ;
 		}
 		
@@ -254,18 +254,22 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, position: Integer, nextNode: Turn!PathNode){
 	do{
 		if(not body.referencedEnd.oclIsUndefined()){
+			thisModule.succeeded <- false;
 			if(body.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(not body.pathNodes -> at(position).oclIsTypeOf(Turn!Connect)){
 					if(tUCMmap.nodes -> any(n|body.referencedEnd.name=n.name).pred -> collect(s|s.source) -> isEmpty()){
 						tUCMmap.nodes -> any(n|body.referencedEnd.name=n.name).pred <- nextNode;
+						thisModule.succeeded <- true;
 					}
 				}
 			}
-			else if(body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-				thisModule.resolveTemp(body.referencedEnd, 'tRespRef').pred <- nextNode;
-			}
-			else {
-				tUCMmap.nodes -> any(n|body.referencedEnd.name=n.name).pred <- nextNode;
+			if(not thisModule.succeeded){
+				if(body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+					thisModule.resolveTemp(body.referencedEnd, 'tRespRef').pred <- nextNode;
+				}
+				else {
+					tUCMmap.nodes -> any(n|body.referencedEnd.name=n.name).pred <- nextNode;
+				}
 			}
 		}
 		else if(not body.referencedStub.oclIsUndefined()){
@@ -291,7 +295,7 @@ rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 					}
 
 					if(regularbody.pathBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-						thisModule.createStubOutNodes(pathend, tUCMmap);
+						thisModule.createStubOutNodes(regularbody.pathBody.pathend, tUCMmap);
 					}
 					else{
 						thisModule.processPathNode(regularbody.pathBody.pathEnd, tUCMmap);
@@ -1099,6 +1103,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 		}
 		
 		thisModule.nodeCollector <- Sequence{};
+		
 		--timer out path
 		if(not timerObj.timeoutPath.oclIsUndefined()){
 			tTimer.succ <- thisModule.createNodeConns();
@@ -1135,6 +1140,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 		}
 		
 		thisModule.timerMap <- thisModule.timerMap.including(timerObj, tTimer);
+		
 		thisModule.nodeCollector;
 	}
 }
@@ -1160,7 +1166,7 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 			tEmptyPt.name <- 'EmptyPoint'+tEmptyPt.id;
 			tEmptyPt.succ <- thisModule.createNodeConns();
 			-- QUESTION: this is called twice; is it intentional?
-			tEmptyPt.succ <- thisModule.createNodeConns();
+			-- tEmptyPt.succ <- thisModule.createNodeConns();
 		}
 		tEmptyPt;	
 	}
@@ -1244,7 +1250,7 @@ rule Contribution2Contribution{
 		tCont: Urn!Contribution (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-		 	dest <- s.dest,
+		 	dest <- thisModule.resolveTemp(s.dest, 'tIntElem'),
 			refs <- tLinkRef,
 	 		correlation <- s.correlation
 		),
@@ -1271,7 +1277,7 @@ rule Decomposition2Decomposition{
 		tDecomp: Urn!Decomposition (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-		 	dest <- s.dest,
+		 	dest <- thisModule.resolveTemp(s.dest, 'tIntElem'),
 			refs <- tLinkRef
 		),
 		tLinkRef: Urn!LinkRef (
@@ -1317,9 +1323,9 @@ rule StrategiesGroup2StrategiesGroup{
 		tStrategiesGroup: Urn!StrategiesGroup (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-			strategies <- s.evalStrategy,
-			strategies <- s.evalStrategies
+			strategies <- s.evalStrategies -> including(s.evalStrategy)
 		)
+	
 }
 
 rule Evaluation2Evaluation {
@@ -1378,8 +1384,7 @@ rule ContributionContextGroup2ContributionContextGroup{
 		tContribGroups: Urn!ContributionContextGroup (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-			contribs <- s.contrib,
-			contribs <- s.contribs
+			contribs <- s.contribs -> including(s.contrib)
 		)
 }
 
@@ -1444,8 +1449,7 @@ rule Component2Component{
 		tCompLabel: Urn!ComponentLabel
 	do{
 		if(Urn!Component.allInstances() -> any(c|c.name = s.name).oclIsUndefined()){
-			thisModule.comp <- thisModule.createComponent(s);
-			tCompRef.contDef <- thisModule.comp;	
+			tCompRef.contDef <- thisModule.createComponent(s);	
 		}
 		else {
 			tCompRef.contDef <- Urn!Component.allInstances() -> any(c|c.name = s.name);	
@@ -1468,14 +1472,14 @@ rule Component2Component{
 		
 		if(s.element.oclIsTypeOf(Turn!LongBoundElement)){
 			tCompRef.metadata <- thisModule.createMetadata('from',s.element.from);
-			tCompRef.metadata <- thisModule.createMetadata('to',s.element.to);
+			tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to',s.element.to));
 		}
 		
 		if(not (s.elements -> isEmpty())){
 			for(elem in s.elements){
 				if(elem.oclIsTypeOf(Turn!LongBoundElement)){
 					tCompRef.metadata <- thisModule.createMetadata('from',elem.from);
-					tCompRef.metadata <- thisModule.createMetadata('to',elem.to);
+					tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to',elem.to));
 				}
 			}
 		}
@@ -1565,8 +1569,7 @@ rule URNspec2URNspec{
 			urndef <- tURNdef
 		),
 		tURNdef: Urn!URNdefinition(
-			specDiagrams <- tGRLSpecDiag,
-			specDiagrams <- sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap')),
+			specDiagrams <- sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap')) -> including(tGRLSpecDiag),
 			concerns <- sURNspec.concerns,
 			components <- Urn!Component.allInstances(),
 			responsibilities <- Urn!Responsibility.allInstances()
@@ -1574,9 +1577,6 @@ rule URNspec2URNspec{
 		tGRLSpec: Urn!GRLspec(
 			actors <- sURNspec.actors,
 			intElements <- sURNspec.getActorElements() -> select(e|e.type.toString() <> 'belief'),
-			links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tCont')),
-			links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDecomp')),
-			links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDep')),
 			groups <- sURNspec.stratGroups,
 			strategies <- sURNspec.strategies,
 			contributionGroups <- sURNspec.contribContextGroups,
@@ -1584,14 +1584,18 @@ rule URNspec2URNspec{
 			KPIConversion <- sURNspec.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings))
 		),
 		tGRLSpecDiag: Urn!GRLGraph(
-		 	nodes <- sURNspec.getActorElements() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')),
-			nodes <- Urn!Belief.allInstances(),
-			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
-			connections <- sURNspec.getActorElements() -> collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')), 
-	 		connections <- sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')) 
+		 	nodes <- sURNspec.getActorElements() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')) -> union(Urn!Belief.allInstances()),
+			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef'))
 		),
 		tUcmspec: Urn!UCMspec
 	do{
+		tGRLSpec.links <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tCont'));
+		tGRLSpec.links <- tGRLSpec.links -> union(sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDecomp')));
+		tGRLSpec.links <- tGRLSpec.links -> union(sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tDep')));
+		
+		tGRLSpecDiag.connections <- sURNspec.getActorElements() -> collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')); 
+	 	tGRLSpecDiag.connections <- tGRLSpecDiag.connections -> union(sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')));
+		
 		if(sURNspec.metadata -> select(m| m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
 	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty()){
 	 			thisModule.id <- sURNspec.metadata -> any(m|m.name = 'TURN-URN-nextGlobalID').value.toInteger();
@@ -1701,13 +1705,13 @@ rule PluginBinding2PluginBinding{
 		tPluginBinding: Urn!PluginBinding (
 			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
 			--This could be other way round, binding could be inBinding or OutBinding and vice-versa.
-			in <- thisModule.resolveTemp(s.binding,'tInBinding'),
-			in <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')),
-			out <- thisModule.resolveTemp(s.binding,'tOutBinding'),
-			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')),
 			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
 			replicationFactor <- s.replication
 		)
+	do{
+		tPluginBinding.in  <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')) -> including(thisModule.resolveTemp(s.binding,'tInBinding'));
+		tPluginBinding.out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')) -> including(thisModule.resolveTemp(s.binding,'tOutBinding'));	
+	}
 }
 
 --TODO: modularize after test cases are working
@@ -1785,7 +1789,7 @@ rule UCMmap2UCMmap{
 		for(path in sUCMmap.paths){
 			thisModule.pathEnd <- path.pathBody.pathEnd;
 			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, thisModule.pathEnd, false);
-			
+
 			if(not (thisModule.newNode = '')){
 				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
 			}
@@ -1812,7 +1816,7 @@ rule UCMmap2UCMmap{
 					tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).succ <- thisModule.createNodeConns();
 					thisModule.connect <- thisModule.createConnect(tUCMmap);
 					thisModule.connect.pred <- tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).succ;
-					thisModule.connectMap <- thisModule.connectMap.including(thisModule.pathEnd.connect,thisModule.connect);
+					thisModule.connectMap <- thisModule.connectMap.including(thisModule.pathEnd.connect, thisModule.connect);
 					if(not thisModule.pathEnd.connect.connectsTo.oclIsTypeOf(Turn!Timer)){
 						tUCMmap.nodes -> any(n|n.name = thisModule.pathEnd.connect.connectsTo.name).pred <- thisModule.connect.succ;
 					}
@@ -1861,7 +1865,6 @@ rule UCMmap2UCMmap{
 		}
 		--Node connections
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
-		
 		tUCMmap.id <- thisModule.nextId().toString();
 		tUCMmap.name <- sUCMmap.turnGetLongestName();
 	}
