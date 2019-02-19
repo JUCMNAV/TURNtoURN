@@ -46,7 +46,7 @@ rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 
 --I'm using the vague term isCaseOne here as I'm not sure of the difference between the two cases / why it is necessary
 --TODO: name this more precisely
-rule getNodeToJoin(tUCMmap: Urn!UCMmap, currentPathNode: Turn!PathNode, isCaseOne: Boolean){
+rule getNodeToConnect(tUCMmap: Urn!UCMmap, currentPathNode: Turn!PathNode, isCaseOne: Boolean){
 	do{
 		thisModule.nodeToJoin <- '';
 		
@@ -333,10 +333,10 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					tUCMmap.nodes -> any(n|n.name=pathbody.pathEnd.regularEnd.name).pred <- thisModule.newPred;
 				}
 				else if(pathbody.pathEnd.oclIsTypeOf(Turn!OrFork)){
-					thisModule.orForkMap.get(pathbody.pathEnd).pred <- thisModule.getNodeToJoin(tUCMmap, thisModule.currentPathNode, true);
+					thisModule.orForkMap.get(pathbody.pathEnd).pred <- thisModule.getNodeToConnect(tUCMmap, thisModule.currentPathNode, true);
 				}
 				else if(pathbody.pathEnd.oclIsTypeOf(Turn!AndFork)){
-					thisModule.andForkMap.get(pathbody.pathEnd).pred <- thisModule.getNodeToJoin(tUCMmap, thisModule.currentPathNode, true);
+					thisModule.andForkMap.get(pathbody.pathEnd).pred <- thisModule.getNodeToConnect(tUCMmap, thisModule.currentPathNode, true);
 				}
 				else if(pathbody.pathEnd.oclIsTypeOf(Turn!Stub)){
 					if(thisModule.currentPathNode.oclIsTypeOf(Turn!Timer)){
@@ -346,7 +346,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 						thisModule.stubMap.get(pathbody.pathEnd).pred <- thisModule.stubMap.get(thisModule.currentPathNode).succ -> any(s|s.target.oclIsUndefined());
 					}
 					else{
-						thisModule.stubMap.get(pathbody.pathEnd).pred <- thisModule.getNodeToJoin(tUCMmap, thisModule.currentPathNode, true);	
+						thisModule.stubMap.get(pathbody.pathEnd).pred <- thisModule.getNodeToConnect(tUCMmap, thisModule.currentPathNode, true);	
 					}
 				}
 			}
@@ -383,10 +383,10 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					thisModule.andForkMap.get(pathbody.referencedEnd).pred <- tUCMmap.nodes -> any(n|n.name=thisModule.currentPathNode.name).succ -> any(s|s.target.oclIsUndefined());
 				}
 				else if(pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-					thisModule.resolveTemp(pathbody.referencedEnd,'tRespRef').pred <- thisModule.getNodeToJoin(tUCMmap, thisModule.currentPathNode, true);
+					thisModule.resolveTemp(pathbody.referencedEnd,'tRespRef').pred <- thisModule.getNodeToConnect(tUCMmap, thisModule.currentPathNode, true);
 				}
 				else{
-					tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).pred <- thisModule.getNodeToJoin(tUCMmap, thisModule.currentPathNode, false);	
+					tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).pred <- thisModule.getNodeToConnect(tUCMmap, thisModule.currentPathNode, false);	
 				}
 			}
 			else if(thisModule.nodeCounter = pathbody.pathNodes -> size() and (not pathbody.referencedStub.oclIsUndefined())){
@@ -405,14 +405,14 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				else if(tUCMmap.nodes -> any(n|n.name=pathbody.referencedStub.name).pred -> size() >= pathbody.index){
 					thisModule.firstPred <- tUCMmap.nodes -> any(n|n.name=pathbody.referencedStub.name).pred -> first().source;
 					
-					thisModule.orJoinPred <- thisModule.getNodeToJoin(tUCMmap, tUCMmap, thisModule.currentPathNode, false);
+					thisModule.orJoinPred <- thisModule.getNodeToConnect(tUCMmap, tUCMmap, thisModule.currentPathNode, false);
 					
 					thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, thisModule.orJoinPred);
 					thisModule.orJoin.pred <- thisModule.firstPred.succ;
 					tUCMmap.nodes -> any(n|n.name=pathbody.referencedStub.name).pred <- thisModule.orJoin.succ;
 				}
 				else{
-					tUCMmap.nodes -> any(n|n.name=pathbody.referencedStub.name).pred <- thisModule.getNodeToJoin(tUCMmap, thisModule.currentPathNode, false);
+					tUCMmap.nodes -> any(n|n.name=pathbody.referencedStub.name).pred <- thisModule.getNodeToConnect(tUCMmap, thisModule.currentPathNode, false);
 				}
 			}
 			thisModule.nodeCounter <- thisModule.nodeCounter.inc();
