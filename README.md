@@ -28,6 +28,7 @@
 	* Make sure all select(n.name='') are consistent in (Turn2Urn remains)
 * Consider writing a getFromSequenceByName method
 * Look at all uses of -> including and -> union to see if they are behaving correctly
+	* Look to see if any other places should have -> including or -> union called instead of simple assignments
 * Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to.
 
 ## ACTIVE TASK
