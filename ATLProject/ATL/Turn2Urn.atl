@@ -308,9 +308,44 @@ rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
 	}
 }
 
+rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
+	do{
+		thisModule.counter <- 1;
+		
+		for(pathbody in pathend.pathbody -> flatten()){
+			thisModule.succeeded <- false;
+			
+			if(not pathbody.referencedEnd.oclIsUndefined()){
+				if(not tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).oclIsUndefined()){
+					tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
+					thisModule.succeeded <- true;
+				}
+			}
+			
+			if(not thisModule.succeeded){
+				--if pathNodes exist
+				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
+					if(pathbody.pathNodes -> size() > 0){
+						-- The method below was missing its last argument, which led to a null pointer error.
+						-- QUESTION: should thisModule.andForkMap.get(pathend) go here? I followed the example of connectOrForkNodes
+						thisModule.connectNodes(pathbody, pathend, tUCMmap, thisModule.andForkMap.get(pathend));
+					}	
+					--if no pathNodes exist
+					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+						tUCMmap.nodes -> any(n|pathbody.pathEnd.regularEnd.name=n.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
+					}
+				}
+				thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
+			}
+			thisModule.counter <- thisModule.counter.inc();
+		}
+	}
+}
+
 rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	do{
 		thisModule.counter <- 1;
+		
 		if(not pathend.body.oclIsUndefined()){
 			for(regularbody in pathend.body.regularBody -> flatten()){
 				if(not regularbody.pathBody.referencedEnd.oclIsUndefined()){
@@ -339,7 +374,7 @@ rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 
 rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String){
 	do{
-		thisModule.Pred <- '';
+		thisModule.nextPred <- '';
 		
 		if(nextNode.oclIsTypeOf(Urn!OrFork)){
 			thisModule.nextPred <- nextNode.succ -> any(s|s.condition.expression = expression);
@@ -357,37 +392,6 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 		}
 		else{
 			thisModule.connectReferencedEndToNextNode(tUCMmap, thisModule.body, thisModule.nodeCounter, thisModule.nextPred);
-		}
-	}
-}
-
-rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
-	do{
-		thisModule.counter <- 1;
-		for(pathbody in pathend.pathbody -> flatten()){
-			thisModule.succeeded <- false;
-			if(not pathbody.referencedEnd.oclIsUndefined()){
-				if(not tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).oclIsUndefined()){
-					tUCMmap.nodes -> any(n|n.name=pathbody.referencedEnd.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
-					thisModule.succeeded <- true;
-				}
-			}
-			if(not thisModule.succeeded){
-				--if pathNodes exist
-				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
-					if(pathbody.pathNodes -> size() > 0){
-						-- The method below was missing its last argument, which led to a null pointer error.
-						-- QUESTION: should thisModule.andForkMap.get(pathend) go here? I followed the example of connectOrForkNodes
-						thisModule.connectNodes(pathbody, pathend, tUCMmap, thisModule.andForkMap.get(pathend));
-					}	
-					--if no pathNodes exist
-					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						tUCMmap.nodes -> any(n|pathbody.pathEnd.regularEnd.name=n.name).pred <- thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter);
-					}
-				}
-				thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
-			}
-			thisModule.counter <- thisModule.counter.inc();
 		}
 	}
 }

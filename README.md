@@ -32,6 +32,7 @@
 * Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to.
 * Make sure all typings are correct; I'm worried that sometimes we pass in a sequence to a method that takes in a single value as an argument (e.g., collectRegularEnds)
 * Verify that all calls to methods I've created match the logic of the original system
+* Verify if cases in which 'succeeded' logic is used to handle nested conditionals are all correct (i.e., make sure none of the nested ifs were intentional to avoid the else)
 
 ## ACTIVE TASK
 I am currently refactoring the code until it is at a point I feel is sufficiently readable for me to troubleshoot it. I have significantly improved readability but cannot be sure of functionality. I have likely broken some code along the way, and the current version is broken. However, the original version was also broken, so this should not be an issue.
