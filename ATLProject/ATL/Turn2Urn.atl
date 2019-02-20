@@ -451,7 +451,7 @@ rule createOrJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 	}
 }
 
-rule createAndJoin(tUCMmap: Urn!UCMmap){
+rule createAndJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 	to
 		tAndJoin: Urn!AndJoin(
 			id <- thisModule.nextId().toString(),
@@ -553,6 +553,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		}
 			
 		thisModule.orForkMap <- thisModule.orForkMap.including(obj,tOrFork);
+		
 		--Connecting nodes before OrFork in case it is a stub
 		if(not obj.pbody.parentStub.oclIsUndefined()){
 			tOrFork.pred <- tUCMmap.nodes -> any(n|n.name = obj.pbody.parentStub.parentStub.name).succ ;
@@ -982,9 +983,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			thisModule.nextNode <- tAndFork;
 			
 			if(thisModule.numberOfTerminatingNodes = 2){
-				thisModule.newAndJoin <- thisModule.createAndJoin(tUCMmap);
-				thisModule.newAndJoin.pred <- tAndFork.succ -> any(s|s.target.oclIsUndefined());
-				thisModule.nextNode <- thisModule.newAndJoin;
+				thisModule.nextNode <- thisModule.createAndJoin(tUCMmap, tAndFork.succ -> any(s|s.target.oclIsUndefined()));
 			}
 			else if(thisModule.numberOfTerminatingNodes = 1){
 				thisModule.firstPathNode <- obj.connectingAndBody.pathNodes -> first();
