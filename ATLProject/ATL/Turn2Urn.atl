@@ -520,6 +520,7 @@ rule createResponsibility(s: Turn!RespRef){
 	}
 }
 
+--QUESTION: in createOrFork this took an object as an argument but not in createAndFork; should it have one? the label is empty when made otherwise
 rule createLabel(){
 	to
 		tNodeLabel: Urn!NodeLabel()
@@ -540,7 +541,11 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			tOrFork.name <- 'OrFork'+tOrFork.id;
 		}
 		else{
-			tOrFork.label <- thisModule.createLabel(obj);
+			tOrFork.label <- thisModule.createLabel();
+		}
+		
+		if (not obj.boundTo.oclIsUndefined()){
+			tOrFork.contRef <- thisModule.getUrnCompRef(obj);
 		}
 		
 		if(not obj.body.oclIsUndefined()){
@@ -606,11 +611,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			
 			thisModule.numberOfTerminatingNodes <- 0;
 			if(not obj.body.oclIsUndefined()){
-				for (pathbody in obj.body.regularBody -> collect(pb|pb.pathBody)){
-					if(pathbody.pathEnd.oclIsUndefined()){
-						thisModule.numberOfTerminatingNodes <- thisModule.numberOfTerminatingNodes.inc();
-					}
-				}
+				thisModule.numberOfTerminatingNodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
 			}
 			
 			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, obj.connectingOrBody.pathEnd, true);
@@ -624,10 +625,12 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			if(thisModule.numberOfTerminatingNodes = 2){
 				thisModule.nextNode <- thisModule.createOrJoin(tUCMmap, tOrFork.succ -> any(s|s.target.oclIsUndefined()));
 			}
-			else if(thisModule.numberOfTerminatingNodes = 1 and not obj.connectingOrBody.pathNodes -> first().oclIsUndefined()){
-				if(not obj.connectingOrBody.pathNodes -> first().oclIsTypeOf(Turn!Connect)){
-					if(not obj.connectingOrBody.pathNodes -> first().name.oclIsUndefined()){
-						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingOrBody.pathNodes -> first().name);
+			else if(thisModule.numberOfTerminatingNodes = 1){
+				thisModule.firstPathNode <- obj.connectingOrBody.pathNodes -> first();
+				
+				if(not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
+					if(not thisModule.firstPathNode.name.oclIsUndefined()){
+						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = thisModule.firstPathNode.name);
 					}
 				}
 			}
@@ -654,18 +657,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 				
 			thisModule.counter <- 1;
 			thisModule.connectNodes(obj.connectingOrBody, obj, tUCMmap, thisModule.nextNode);
-			
-			if(not obj.body.oclIsUndefined()){
-				for (pathbody in obj.getPathBodies()){
-					thisModule.condition <- '';
-					if(pathbody.pathEnd.oclIsUndefined()){
-						thisModule.condition <- thisModule.joinStringSequence(pathbody.orFork.condition.expression, '');
-					}
-				}
-			}
-			else{
-				thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression);
-			}
 		}
 		
 		--Connecting nodes after OrFork
@@ -677,10 +668,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 				}
 				thisModule.count <- thisModule.count.inc(); 			
 			}
-		}
-		
-		if (not obj.boundTo.oclIsUndefined()){
-			tOrFork.contRef <- thisModule.getUrnCompRef(obj);
 		}
 		
 		--Using backlinks to connect orForks
@@ -924,12 +911,11 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			diagram <- tUCMmap
 		)
 	do{
-		if(not tAndFork.name.oclIsUndefined()){
-			--TODO: determine if the name setting method turnGetLongestName() can ever return null so that this branch is entered
-			tAndFork.label <- thisModule.createLabel();
+		if(tAndFork.name.oclIsUndefined()){ --TODO: determine if the name setting method turnGetLongestName() can ever return null so that this branch is entered
+			tAndFork.name <- 'AndFork' + tAndFork.id;
 		}
 		else{
-			tAndFork.name <- 'AndFork' + tAndFork.id;
+			tAndFork.label <- thisModule.createLabel();
 		}
 		
 		thisModule.andForkMap <- thisModule.andForkMap.including(obj, tAndFork);
@@ -964,14 +950,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		if(not obj.connectingAndBody.oclIsUndefined()){	
 			tUCMmap.nodes <- thisModule.collectReferencedEnds(obj.connectingAndBody.pathNodes);
 			
-			thisModule.numberOfTerminatingNodes <- 0;
-			for (pathbody in obj.pathbody){
-				if(pathbody.pathEnd.oclIsUndefined()){
-					--connecting pathnodes after andfork
-					thisModule.numberOfTerminatingNodes <- thisModule.numberOfTerminatingNodes.inc();
-				}
-			}
-			
+			thisModule.numberOfTerminatingNodes <- obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
 			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, obj.connectingAndBody.pathEnd, true);
 			
 			if(not (thisModule.newNode = '')){
@@ -987,9 +966,10 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			}
 			else if(thisModule.numberOfTerminatingNodes = 1){
 				thisModule.firstPathNode <- obj.connectingAndBody.pathNodes -> first();
+				
 				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
 					if(not thisModule.firstPathNode.name.oclIsUndefined()){
-						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = obj.connectingAndBody.pathNodes -> first());
+						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = thisModule.firstPathNode.name);
 					}
 				}
 			}
