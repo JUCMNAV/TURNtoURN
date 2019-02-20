@@ -20,7 +20,7 @@ BODY1 <- obj.pathbody;
 BODY2 <- obj.body.regularBody;
 
 ================================
-rule createNodeConnection(){ --Not sure if this method will work as create or fork node connections was called in other places
+rule createNodeConnection(){ -- TODO: Not sure if this method will work as create or fork node connections was called in other places
 	to
 	 	tNodeConnection: Urn!NodeConnection
 	do{
@@ -71,7 +71,8 @@ if(COND){
 	for(pathend in PATHBODY -> flatten() -> collect(pb|pb.pathEnd) -> flatten()){
 		thisModule.newNode <- '';
 		
-		if(FORKTYPE = 'And' and pathend.oclIsTypeOf(Turn!Timer)){
+		if(FORKTYPE = 'And' and pathend.oclIsTypeOf(Turn!Timer)){ 
+			-- TODO: using a call to collectRegularEnds in the And case now; this needs to be updated accordingly
 			thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
 		}
 		else{
