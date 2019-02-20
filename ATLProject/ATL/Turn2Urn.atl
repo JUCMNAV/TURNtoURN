@@ -198,11 +198,21 @@ rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
 	}
 }
 
---TODO: It's worth considering use of the following method. However, I need to further consider
---how to design it best for usability before making use of it in the code.
-rule getFromSequenceByName(seq: Sequence(OclAny), name: String){
+--TODO: determine more precisely what this does
+rule useBacklinksToConnectOrFork(pathbody: Turn!PathBody, urnNode: OclAny){
 	do{
-		seq -> any(e|e.name=name);
+		if(not pathbody.orFork.oclIsUndefined()){
+			if(urnNode.oclIsTypeOf(Urn!Stub) or urnNode.oclIsTypeOf(Urn!AndFork) or (urnNode.oclIsTypeOf(Urn!OrFork) and pathbody.pathNodes -> isEmpty())){
+				urnNode.pred <- thisModule.orForkMap.get(pathbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter);
+				
+				if(thisModule.orForkMap.get(pathbody.orFork.orBody.orFork).succ -> size() = thisModule.orForkNodeConnCounter){
+					thisModule.orForkNodeConnCounter <- 1;
+				}
+				else{
+					thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
+				}
+			}
+		}
 	}
 }
 
@@ -295,7 +305,7 @@ rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 					}
 
 					if(regularbody.pathBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-						thisModule.createStubOutNodes(regularbody.pathBody.pathend, tUCMmap);
+						thisModule.createStubOutNodes(regularbody.pathBody.pathEnd, tUCMmap);
 					}
 					else{
 						thisModule.processPathNode(regularbody.pathBody.pathEnd, tUCMmap);
@@ -629,7 +639,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			else if(thisModule.numberOfTerminatingNodes = 1){
 				thisModule.firstPathNode <- obj.connectingOrBody.pathNodes -> first();
 				
-				if(not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
+				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
 					if(not thisModule.firstPathNode.name.oclIsUndefined()){
 						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = thisModule.firstPathNode.name);
 					}
@@ -671,18 +681,8 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			}
 		}
 		
-		--Using backlinks to connect orForks
-		if(not obj.pbody.orFork.oclIsUndefined()){
-			if(obj.pbody.pathNodes -> isEmpty()){
-				tOrFork.pred <- thisModule.orForkMap.get(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter);
-				if(thisModule.orForkMap.get(obj.pbody.orFork.orBody.orFork).succ -> size() = thisModule.orForkNodeConnCounter){
-					thisModule.orForkNodeConnCounter <- 1;
-				}
-				else{
-					thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
-				}
-			}
-		}
+		thisModule.useBacklinksToConnectOrFork(obj.pbody, tOrFork);
+		
 		thisModule.nodeCollector;
 	}
 }
@@ -816,16 +816,8 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		}
 		--WRITE CODE FOR OUTPATH NODES as outpath has nodes too.
 	
-		--Using backlinks to connect orForks
-		if(not stubObj.pbody.orFork.oclIsUndefined()){
-			tStub.pred <- thisModule.orForkMap.get(stubObj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter);
-			if(thisModule.orForkMap.get(stubObj.pbody.orFork.orBody.orFork).succ -> size() = thisModule.orForkNodeConnCounter){
-				thisModule.orForkNodeConnCounter <- 1;
-			}
-			else{
-				thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
-			}
-		}
+		thisModule.useBacklinksToConnectOrFork(stubObj.pbody, tStub);
+		
 		thisModule.nodeCollector;
 	}
 }
@@ -978,7 +970,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			if(obj.connectingAndBody.pathNodes -> isEmpty()){
 				thisModule.nextPred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
 				thisModule.connectPathEndToNextNode(tUCMmap, obj.connectingAndBody.pathEnd, thisModule.nextPred);
-				thisModule.connectReferencedEndToNextNode(tUCMmap, obj.connectingAndBody.body, thisModule.nodeCounter, thisModule.nextPred);
+				thisModule.connectReferencedEndToNextNode(tUCMmap, obj.connectingAndBody, thisModule.nodeCounter, thisModule.nextPred);
 			}
 			thisModule.counter <- 1;
 			thisModule.connectNodes(obj.connectingAndBody, obj, tUCMmap, thisModule.nextNode);
@@ -994,16 +986,8 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			thisModule.andForkNodeConnCounter <- thisModule.andForkNodeConnCounter.inc(); 			
 		}
 		
-		--Using backlinks to connect orForks
-		if(not obj.pbody.orFork.oclIsUndefined()){
-			tAndFork.pred <- thisModule.orForkMap.get(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter);
-			if(thisModule.orForkMap.get(obj.pbody.orFork.orBody.orFork).succ -> size() = thisModule.orForkNodeConnCounter){
-				thisModule.orForkNodeConnCounter <- 1;
-			}
-			else{
-				thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
-			}
-		}
+		thisModule.useBacklinksToConnectOrFork(obj.pbody, tAndFork);
+		
 		thisModule.nodeCollector;
 	}
 }
