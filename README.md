@@ -24,7 +24,10 @@
 	* Need consistency with whether empty from / to items have () or not
 	* Decide if all conditionals should have an else loop that explicitly states the else case should not be entered in valid method calls
 		* Determine if error messages can be sent out by ATL in these cases
+	* Make all caps variable names into camel case (all caps was for refactoring purposes to make variable names easier to find)
+	* Make sure all select(n.name='') are consistent in (Turn2Urn remains)
 * Consider writing a getFromSequenceByName method
+* Look at all uses of -> including and -> union to see if they are behaving correctly
 * Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to.
 
 ## ACTIVE TASK

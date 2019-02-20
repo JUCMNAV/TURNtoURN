@@ -249,7 +249,6 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 			thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, nextNode);
 			thisModule.firstPred <- thisModule.stub.pred -> first();
 			thisModule.orJoin.pred <- nextNode;
-			--TODO: this overwrites the orJoin we just created; determine if this is intentional
 			--TODO: verify if this does indeed match the original logic of the system
 			thisModule.orJoin.pred <- thisModule.orJoin.pred -> union(thisModule.firstPred.source.succ);
 			nextNode <- thisModule.orJoin.succ;
@@ -260,7 +259,7 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 }
 
 --TODO: ensure all arguments in all calls of connectReferencedEnds are actually valid
---TODO: figure out if calling the argument "nextPred" in all calls is correct
+--TODO: all calls to this method use the argument "nextPred" as nextNode; verify if this matches the original code
 rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, position: Integer, nextNode: Turn!PathNode){
 	do{
 		if(not body.referencedEnd.oclIsUndefined()){
@@ -425,24 +424,24 @@ rule createComponent(s: Turn!ComponentRef){
 
 rule createKpiEvalValueSet(s: Turn!LinearConversion) {
 	to
-		tkpiEvalValueSet: Urn! KPIEvalValueSet(
+		tKpiEvalValueSet: Urn! KPIEvalValueSet(
 			unit <- s.unit,
 			targetValue <- s.targetValue,
 			thresholdValue <- s.thresholdValue,
 			worstValue <- s.worstValue
 		)
 	do{ 
-		tkpiEvalValueSet;
+		tKpiEvalValueSet;
 	}
 }
 
 rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
 	to		
-		tkpiEvalValueSet: Urn!KPIEvalValueSet(
+		tQMapKpiEvalValueSet: Urn!KPIEvalValueSet(
 			kpiConv <- conv	
 		)
-	do{ 
-		tkpiEvalValueSet;
+	do{
+		tQMapKpiEvalValueSet;
 	}
 }
 
@@ -1153,7 +1152,7 @@ rule IntElements2IntElements{
 		
 	 do{
 	 	if(not (Turn!Decomposition -> allInstances() -> select(d|d.dest=s)) -> isEmpty()){
-			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().capitalize())-> first();
+			tIntElem.decompositionType <- Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().capitalize())-> first();
 		}
 		
 		 --Added because the default value in enum is considered always.
@@ -1164,6 +1163,7 @@ rule IntElements2IntElements{
 			tIntElem.importance <- s.importance.toString().capitalize();
 		}
 		
+		 --TODO: move these to the declaration of tIntElem above once code has been verified as working
 	 	tIntElem.metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name);
 	}
 }
@@ -1181,8 +1181,7 @@ rule Actor2Actor{
 			id <- thisModule.nextId().toString(),
 			name <- 'ActorRef' + tActorRef.id,
 			contDef <- tActor,
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')),
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief')),
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')) -> union(s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief'))),
 			label <- tCompLabel
 		),
 		tCompLabel: Urn!ComponentLabel()
@@ -1275,7 +1274,6 @@ rule Strategies2Strategies{
 		)
 }
 
---TODO: potential case of adding in unions / includings
 rule StrategiesGroup2StrategiesGroup{
 	from
 		s: Turn!StrategiesGroup
@@ -1300,9 +1298,10 @@ rule Evaluation2Evaluation {
 	 )
 	do {
 		if(not s.conversion.oclIsUndefined()){
-			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings))
+			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings)){
 				tEval.kpiEvalValueSet <- thisModule.createQMapKpiEvalValueSet(s.conversion);
-			else{
+			}
+			else if(s.conversion.oclIsTypeOf(Turn!LinearConversion)){
 				tEval.kpiEvalValueSet <- thisModule.createKpiEvalValueSet(s.conversion);
 			}
 		}
@@ -1336,7 +1335,6 @@ rule ContributionChange2ContributionChange{
 	}
 }
 
--- TODO: potential case of adding in union / including
 rule ContributionContextGroup2ContributionContextGroup{
 	from
 		s: Turn!ContributionContextGroup
@@ -1395,7 +1393,6 @@ rule URNlink2URNlink{
 		)
 }
 
---TODO: many potential cases of adding in unions / includings
 rule Component2Component{
 	from 
 		s:Turn!ComponentRef 
@@ -1467,11 +1464,11 @@ rule Responsibility2Responsibility{
 			tRespRef.respDef <- thisModule.existingResponsibility;
 		}
 		
-		--component bindings added
 		if (not s.boundTo.oclIsUndefined()){
 			tRespRef.contRef <- thisModule.getUrnCompRef(s);
 		}
 		
+		--TODO: move these to the declaration of tRespRef above once code has been verified as working
 		tRespRef.id <- thisModule.nextId().toString();
 		tRespRef.name <- 'RespRef' + tRespRef.id;
 	}
@@ -1515,7 +1512,6 @@ rule FailurePoint2FailurePoint{
 	}
 }
 
---TODO: many potential cases of adding in unions / includings
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
@@ -1657,21 +1653,18 @@ rule AndJoin2AndJoin{
 	}
 }
 
---TODO: potential cases of adding in unions / includings
 rule PluginBinding2PluginBinding{
 	from 
 		s:Turn!PluginBinding	
 	to
 		tPluginBinding: Urn!PluginBinding (
+			in  <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')) -> including(thisModule.resolveTemp(s.binding,'tInBinding')),
+			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')) -> including(thisModule.resolveTemp(s.binding,'tOutBinding')),
 			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
 			--This could be other way round, binding could be inBinding or OutBinding and vice-versa.
 			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
 			replicationFactor <- s.replication
 		)
-	do{
-		tPluginBinding.in  <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')) -> including(thisModule.resolveTemp(s.binding,'tInBinding'));
-		tPluginBinding.out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')) -> including(thisModule.resolveTemp(s.binding,'tOutBinding'));	
-	}
 }
 
 --TODO: modularize after test cases are working
@@ -1825,6 +1818,8 @@ rule UCMmap2UCMmap{
 		}
 		--Node connections
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
+		
+		--TODO: move these to the declaration of tUCMmap above once code has been verified as working
 		tUCMmap.id <- thisModule.nextId().toString();
 		tUCMmap.name <- sUCMmap.turnGetLongestName();
 	}
