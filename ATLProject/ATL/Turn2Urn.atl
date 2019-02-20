@@ -240,7 +240,6 @@ rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNo
 	}
 }
 
--- TODO: potential case of adding in union / including
 rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
 	do{
 		thisModule.stub <- tUCMmap.nodes -> any(n|body.referencedStub.name=n.name);
@@ -249,7 +248,6 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 			thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, nextNode);
 			thisModule.firstPred <- thisModule.stub.pred -> first();
 			thisModule.orJoin.pred <- nextNode;
-			--TODO: verify if this does indeed match the original logic of the system
 			thisModule.orJoin.pred <- thisModule.orJoin.pred -> union(thisModule.firstPred.source.succ);
 			nextNode <- thisModule.orJoin.succ;
 		}
@@ -284,6 +282,29 @@ rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, p
 		else if(not body.referencedStub.oclIsUndefined()){
 			thisModule.processReferencedStub(tUCMmap, body, nextNode);
 		}
+	}
+}
+
+rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
+	do{
+		thisModule.nodeCollector <- Sequence{};	
+		
+		for(pathend in pathbody -> collect(pb|pb.pathEnd) ){
+			thisModule.newNode <- '';
+			
+			if(pathend.oclIsTypeOf(Turn!Timer)){
+				thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
+			}
+			else{
+				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, false);	
+			}
+			
+			if(not (thisModule.newNode = '')){
+				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
+			}	
+		}
+		
+		thisModule.nodeCollector;
 	}
 }
 
@@ -403,14 +424,6 @@ rule createMetadata(name: String, value: String) {
 	}
 }
 
-rule createNodeConnection(){
-	to
-	 	targetNodeConn: Urn!NodeConnection
-	do{
-		targetNodeConn;	
-	}		
-}
-
 rule createComponent(s: Turn!ComponentRef){
 	to
 		tComp: Urn!Component(
@@ -450,11 +463,11 @@ rule createOrJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 		tOrJoin: Urn!OrJoin(
 			id <- thisModule.nextId().toString(),
 			name <- 'OrJoin' + tOrJoin.id,
-			succ <- tConn,
+			succ <- tConnection,
 			diagram <- tUCMmap,
 			pred <- predNode
 		),
-		tConn: Urn!NodeConnection()
+		tConnection: Urn!NodeConnection()
 	do{
 		tOrJoin;
 	}
@@ -465,10 +478,10 @@ rule createAndJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 		tAndJoin: Urn!AndJoin(
 			id <- thisModule.nextId().toString(),
 			name <- 'AndJoin' + tAndJoin.id,
-			succ <- tConn,
+			succ <- tConnection,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection()
+		tConnection: Urn!NodeConnection()
 	do{
 		tAndJoin;
 	}
@@ -479,10 +492,10 @@ rule createConnect(tUCMmap: Urn!UCMmap){
 		tConnect: Urn!Connect(
 			id <- thisModule.nextId().toString(),
 			name <- 'Connect' + tConnect.id,
-			succ <- tConn,
+			succ <- tConnection,
 			diagram <- tUCMmap
 		),
-		tConn: Urn!NodeConnection()
+		tConnection: Urn!NodeConnection()
 	do{
 		tConnect;	
 	}
@@ -499,7 +512,15 @@ rule createCondition(sourceExpression: String){
 	}		
 }
 
-rule createOrForkNodeConns(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
+rule createNodeConnection(){
+	to
+	 	targetNodeConn: Urn!NodeConnection
+	do{
+		targetNodeConn;	
+	}		
+}
+
+rule createOrForkNodeConnection(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
 	to
 	 	targetNodeConn: Urn!NodeConnection
 	do{
@@ -511,7 +532,7 @@ rule createOrForkNodeConns(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
 }
 
 --QUESTION: this is just an empty object; it doesn't use the arguments. Should it do something?
-rule createAndForkNodeConns(ref: Turn!PathBodyNodes, tUCMmap: Urn!UCMmap){
+rule createAndForkNodeConnection(ref: Turn!PathBodyNodes, tUCMmap: Urn!UCMmap){
 	to
 	 	targetNodeConn: Urn!NodeConnection
 	do{
@@ -530,7 +551,8 @@ rule createResponsibility(s: Turn!RespRef){
 	}
 }
 
---QUESTION: in createOrFork this took an object as an argument but not in createAndFork; should it have one? the label is empty when made otherwise
+-- QUESTION: in createOrFork this took an object as an argument but not in createAndFork; 
+-- should it have one? the label doesn't seem to get any properties set at present
 rule createLabel(){
 	to
 		tNodeLabel: Urn!NodeLabel()
@@ -560,11 +582,11 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		
 		if(not obj.body.oclIsUndefined()){
 			for(elem in obj.body.regularBody){
-				tOrFork.succ <- thisModule.createOrForkNodeConns(elem, tUCMmap);
+				tOrFork.succ <- thisModule.createOrForkNodeConnection(elem, tUCMmap);
 			}
 		}
 		else if(not obj.connectingOrBody.oclIsUndefined()){
-			tOrFork.succ <- thisModule.createOrForkNodeConns(obj, tUCMmap);
+			tOrFork.succ <- thisModule.createOrForkNodeConnection(obj, tUCMmap);
 		}
 			
 		thisModule.orForkMap <- thisModule.orForkMap.including(obj,tOrFork);
@@ -590,7 +612,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			--Orforks with only one pathbody
 			if(obj.getPathBodies() -> size() = 1){
 				--creating a node connection with a negated condition
-				thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
+				thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny, tUCMmap);
 				
 				thisModule.condition <- '';
 				if(obj.getPathBodies().first().pathEnd.oclIsUndefined()){
@@ -607,7 +629,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			}
 		}
 		else{
-			thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConns(OclAny, tUCMmap);
+			thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny, tUCMmap);
 			
 			thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
 			thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
@@ -632,17 +654,17 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			
 			thisModule.nextNode <- tOrFork;
 			
-			if(thisModule.numberOfTerminatingNodes = 2){
-				thisModule.nextNode <- thisModule.createOrJoin(tUCMmap, tOrFork.succ -> any(s|s.target.oclIsUndefined()));
-			}
-			else if(thisModule.numberOfTerminatingNodes = 1){
+			if(thisModule.numberOfTerminatingNodes = 1){
 				thisModule.firstPathNode <- obj.connectingOrBody.pathNodes -> first();
 				
-				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
+				if(not thisModule.pathNodes -> first().oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
 					if(not thisModule.firstPathNode.name.oclIsUndefined()){
-						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = thisModule.firstPathNode.name);
+						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name=thisModule.firstPathNode.name);
 					}
 				}
+			}
+			else if(thisModule.numberOfTerminatingNodes = 2){
+				thisModule.nextNode <- thisModule.createOrJoin(tUCMmap, tOrFork.succ -> any(s|s.target.oclIsUndefined()));
 			}
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
@@ -651,6 +673,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 						thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.createdCondition.expression);
 					}
 					
+					--TODO: consider adding a createTimer Boolean to collectReferencedNodes to move this logic there
 					for (pathbody in obj.getPathBodies()){
 						thisModule.condition <- '';
 						if(pathbody.pathEnd.oclIsUndefined()){
@@ -680,29 +703,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		}
 		
 		thisModule.useBacklinksToConnectOrFork(obj.pbody, tOrFork);
-		
-		thisModule.nodeCollector;
-	}
-}
-
-rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
-	do{
-		thisModule.nodeCollector <- Sequence{};	
-		
-		for(pathend in pathbody -> collect(pb|pb.pathEnd) ){
-			thisModule.newNode <- '';
-			
-			if(pathend.oclIsTypeOf(Turn!Timer)){
-				thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
-			}
-			else{
-				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, false);	
-			}
-			
-			if(not (thisModule.newNode = '')){
-				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
-			}	
-		}
 		
 		thisModule.nodeCollector;
 	}
@@ -770,6 +770,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			
+			--TODO: determine if in cases like this, we want to union tUCMmap.nodes or to overwrite it; current behavior is overwrite
 			tUCMmap.nodes <- thisModule.collectReferencedEnds(stubObj.connectingStubBody.pathNodes);
 			
 			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, stubObj.connectingStubBody.pathEnd, true);
@@ -779,6 +780,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			}
 			
 			thisModule.nextNode <- tStub;
+			
 			if(thisModule.numberOfterminatingStubNodes > 1){
 				thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, tStub.succ -> at(thisModule.outPathNumber -> at(1)));
 				thisModule.orJoin.pred <- thisModule.orJoin.pred -> including(tStub.succ -> at(thisModule.outPathNumber -> at(2)));
@@ -904,7 +906,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		thisModule.andForkMap <- thisModule.andForkMap.including(obj, tAndFork);
 		
 		for(elem in obj.pathbody){
-			tAndFork.succ <- thisModule.createAndForkNodeConns(elem, tUCMmap);
+			tAndFork.succ <- thisModule.createAndForkNodeConnection(elem, tUCMmap);
 		}
 		
 		if(not obj.boundTo.oclIsUndefined()){
