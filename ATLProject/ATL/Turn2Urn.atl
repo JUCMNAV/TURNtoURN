@@ -999,8 +999,7 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 			diagram <- tUCMmap
 		)
 	do{
-		--TODO: determine why this needs to be created here (as in the original) to match the original output
-		-- i.e., why can't it be moved to the "to" block?
+		--TODO: move this to the declaration of tEndPoint above once code has been verified as working
 		tEndPoint.label <- thisModule.createLabel();
 		
 		if(ep.oclIsTypeOf(Turn!EndPoint)){
@@ -1037,8 +1036,8 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 			}
 		}
 		
-		thisModule.epNodeCollector <- Sequence{tEndPoint};
-		thisModule.epNodeCollector;
+		thisModule.endPointNodeInNewSequence <- Sequence{tEndPoint};
+		thisModule.endPointNodeInNewSequence;
 	}
 }
 
@@ -1061,17 +1060,27 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 			tTimer.contRef <- thisModule.getUrnCompRef(timerObj);
 		}
 		
-		thisModule.nodeCollector <- Sequence{};
-		
 		--timer out path
 		if(not timerObj.timeoutPath.oclIsUndefined()){
+			tUCMmap.nodes <- thisModule.collectReferencedEnds(timerObj.timeoutPath.pathNodes);
+			
 			tTimer.succ <- thisModule.createNodeConns();
+			
 			if(not timerObj.timeoutCondition.oclIsUndefined()){
 				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> at(1));
 			}
 			
-			tUCMmap.nodes <- thisModule.collectReferencedEnds(timerObj.timeoutPath.pathNodes);
-			
+			if(not timerObj.timeoutPath.referencedStub.oclIsUndefined()){
+				thisModule.next <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
+			}
+			else{
+				thisModule.next <- tTimer.succ -> at(2);
+			}
+		}
+		
+		thisModule.nodeCollector <- Sequence{};
+		
+		if(not timerObj.timeoutPath.oclIsUndefined()){
 			thisModule.newNode <- '';
 		
 			if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!Timer)){
@@ -1085,17 +1094,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
 			}
 			
-			-- THIS IS 4
-			thisModule.body <- timerObj.timeoutPath;
-			
-			if(not thisModule.body.referencedStub.oclIsUndefined()){
-				thisModule.next <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
-			}
-			else{
-				thisModule.next <- tTimer.succ -> at(2);
-			}
-			
-			thisModule.connectReferencedEndToNextNode(tUCMmap, thisModule.body, thisModule.nodeCounter, thisModule.next);
+			thisModule.connectReferencedEndToNextNode(tUCMmap, timerObj.timeoutPath, thisModule.nodeCounter, thisModule.next);
 		}
 		
 		thisModule.timerMap <- thisModule.timerMap.including(timerObj, tTimer);
@@ -1104,7 +1103,6 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 	}
 }
 
- --TODO: potential case of adding in unions / includings
 rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean){
 	to
 		tEmptyPt: Urn!EmptyPoint(
