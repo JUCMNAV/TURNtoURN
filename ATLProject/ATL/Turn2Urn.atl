@@ -57,6 +57,9 @@ helper context Turn!UCMmap def: getPathNodes() : Sequence(OclAny) =
 
 helper context String def : capitalize(): String = self.substring(1,1).toUpper() + self.substring(2, self.size());
 
+helper context Turn!UCMmap def : getNodeByName(nodeName: String) : OclAny =
+	self.nodes -> any(n|n.name=nodeName);
+
 --This should only be called on TURN objects; I haven't been able to determine how to express that restriction using OCL, though.
 helper context OclAny def : turnGetLongestName() : String = 
 	if(not self.longName.oclIsUndefined())
@@ -660,7 +663,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			if(thisModule.numberOfTerminatingNodes = 1){
 				thisModule.firstPathNode <- obj.connectingOrBody.pathNodes -> first();
 				
-				if(not thisModule.pathNodes -> first().oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
+				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
 					if(not thisModule.firstPathNode.name.oclIsUndefined()){
 						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name=thisModule.firstPathNode.name);
 					}
