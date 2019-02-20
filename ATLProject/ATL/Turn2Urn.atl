@@ -403,7 +403,7 @@ rule createMetadata(name: String, value: String) {
 	}
 }
 
-rule createNodeConns(){
+rule createNodeConnection(){
 	to
 	 	targetNodeConn: Urn!NodeConnection
 	do{
@@ -685,11 +685,11 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 	}
 }
 
-rule collectRegularEnds(tUCMmap: Urn!UCMmap, path: Turn!Path){
+rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
 	do{
 		thisModule.nodeCollector <- Sequence{};	
 		
-		for(pathend in path -> collect(p|p.pathEnd) ){
+		for(pathend in pathbody -> collect(pb|pb.pathEnd) ){
 			thisModule.newNode <- '';
 			
 			if(pathend.oclIsTypeOf(Turn!Timer)){
@@ -747,7 +747,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		thisModule.outPathNumber <- Sequence{};
 		
 		for(outPath in stubObj.outPaths -> flatten()){
-			thisModule.stubOutPathNodeConnection <- thisModule.createNodeConns();
+			thisModule.stubOutPathNodeConnection <- thisModule.createNodeConnection();
 			tStub.succ <- tStub.succ -> including(thisModule.stubOutPathNodeConnection);
 			if(outPath.threshold <> 0){
 				thisModule.stubOutPathNodeConnection.threshold <- outPath.threshold.toString();
@@ -766,7 +766,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		--collecting nodes from connecting stub body
 		if(not stubObj.connectingStubBody.oclIsUndefined()){ 
 			if(stubObj.outPaths -> isEmpty()){
-				tStub.succ <- tStub.succ -> including(thisModule.createNodeConns());
+				tStub.succ <- tStub.succ -> including(thisModule.createNodeConnection());
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			
@@ -914,21 +914,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		thisModule.nodeCollector <- Sequence{};
 		
 		tUCMmap.nodes <- thisModule.collectReferencedEnds(obj.pathbody -> collect(pb|pb.pathNodes));
-		
-		for(pathend in obj.pathbody -> flatten() -> collect(pb|pb.pathEnd) -> flatten()){
-			thisModule.newNode <- '';
-			
-			if(pathend.oclIsTypeOf(Turn!Timer)){
-				thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
-			}
-			else{
-				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, false);
-			}
-			
-			if(not (thisModule.newNode = '')){
-				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
-			}
-		}
+		thisModule.nodeCollector <- thisModule.collectRegularEnds(tUCMmap, obj.pathbody -> flatten());
 		
 		if(not obj.connectingAndBody.oclIsUndefined()){	
 			tUCMmap.nodes <- thisModule.collectReferencedEnds(obj.connectingAndBody.pathNodes);
@@ -997,7 +983,7 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 		}
 		
 		if(not(ep <> OclAny)){
-			tEndPoint.succ <- thisModule.createNodeConns();
+			tEndPoint.succ <- thisModule.createNodeConnection();
 		}
 		else if(not ep.oclIsTypeOf(Turn!OrFork)){
 			-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we change it)
@@ -1053,8 +1039,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 		--timer out path
 		if(not timerObj.timeoutPath.oclIsUndefined()){
 			tUCMmap.nodes <- thisModule.collectReferencedEnds(timerObj.timeoutPath.pathNodes);
-			
-			tTimer.succ <- thisModule.createNodeConns();
+			tTimer.succ <- thisModule.createNodeConnection();
 			
 			if(not timerObj.timeoutCondition.oclIsUndefined()){
 				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> at(1));
@@ -1068,26 +1053,17 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 			}
 		}
 		
+		thisModule.timerMap <- thisModule.timerMap.including(timerObj, tTimer);
+		
 		thisModule.nodeCollector <- Sequence{};
 		
 		if(not timerObj.timeoutPath.oclIsUndefined()){
 			thisModule.newNode <- '';
-		
-			if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!Timer)){
-				thisModule.newNode <- thisModule.createTimer(timerObj.timeoutPath.pathEnd, tUCMmap);
-			}
-			else{
-				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, timerObj.timeoutPath.pathEnd, false);
-			}
-			
-			if(not (thisModule.newNode = '')){
-				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
-			}
-			
+			-- QUESTION: collectRegularEnds uses a for loop. The original code here seemed to imply timeoutPath was only one item. 
+			-- Will it ever have more items (i.e., could the for loop cause issues?)
+			thisModule.nodeCollector <- thisModule.collectRegularEnds(tUCMmap, timerObj.timeoutPath);
 			thisModule.connectReferencedEndToNextNode(tUCMmap, timerObj.timeoutPath, thisModule.nodeCounter, thisModule.next);
 		}
-		
-		thisModule.timerMap <- thisModule.timerMap.including(timerObj, tTimer);
 		
 		thisModule.nodeCollector;
 	}
@@ -1103,7 +1079,7 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 		if (node <> OclAny){
 			if(asynch){
 				tEmptyPt.name <- 'AsynchConnectTimer#'+node.name;
-				tEmptyPt.succ <- thisModule.createNodeConns();
+				tEmptyPt.succ <- thisModule.createNodeConnection();
 			}
 			else{
 				tEmptyPt.name <- 'SynchConnectTimer#'+node.name;
@@ -1111,9 +1087,9 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 		}
 		else{
 			tEmptyPt.name <- 'EmptyPoint'+tEmptyPt.id;
-			tEmptyPt.succ <- thisModule.createNodeConns();
+			tEmptyPt.succ <- thisModule.createNodeConnection();
 			-- QUESTION: this is called twice; is it intentional?
-			-- tEmptyPt.succ <- thisModule.createNodeConns();
+			-- tEmptyPt.succ <- thisModule.createNodeConnection();
 		}
 		tEmptyPt;	
 	}
@@ -1754,7 +1730,7 @@ rule UCMmap2UCMmap{
 				
 				if(not thisModule.pathEnd.connect.oclIsUndefined()){
 					--create succ for the connecting endpoint
-					tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).succ <- thisModule.createNodeConns();
+					tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).succ <- thisModule.createNodeConnection();
 					thisModule.connect <- thisModule.createConnect(tUCMmap);
 					thisModule.connect.pred <- tUCMmap.nodes -> any(n|thisModule.endPointName=n.name).succ;
 					thisModule.connectMap <- thisModule.connectMap.including(thisModule.pathEnd.connect, thisModule.connect);
