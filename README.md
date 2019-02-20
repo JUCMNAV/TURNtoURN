@@ -22,6 +22,9 @@
 	* All if and else loops, including single line ones, should have braces
 	* Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
 	* Need consistency with whether empty from / to items have () or not
+	* Decide if all conditionals should have an else loop that explicitly states the else case should not be entered in valid method calls
+		* Determine if error messages can be sent out by ATL in these cases
+* Consider writing a getFromSequenceByName method
 * Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to.
 
 ## ACTIVE TASK
