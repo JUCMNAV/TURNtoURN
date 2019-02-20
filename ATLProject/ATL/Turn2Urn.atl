@@ -664,8 +664,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 					thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.condition);
 				}
 			}
-				
-			thisModule.counter <- 1;
+			
 			thisModule.connectNodes(obj.connectingOrBody, obj, tUCMmap, thisModule.nextNode);
 		}
 		
@@ -801,8 +800,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 				thisModule.connectPathEndToNextNode(tUCMmap, stubObj.connectingStubBody.pathEnd, thisModule.nextPred);
 				thisModule.connectReferencedEndToNextNode(tUCMmap, stubObj.connectingStubBody, thisModule.nodeCounter, thisModule.nextPred);
 			}
-				
-			thisModule.counter <- 1;
+
 			thisModule.connectNodes(stubObj.connectingStubBody, stubObj, tUCMmap, thisModule.nextNode);
 			
 		}
@@ -964,9 +962,8 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 				thisModule.connectPathEndToNextNode(tUCMmap, obj.connectingAndBody.pathEnd, thisModule.nextPred);
 				thisModule.connectReferencedEndToNextNode(tUCMmap, obj.connectingAndBody, thisModule.nodeCounter, thisModule.nextPred);
 			}
-			thisModule.counter <- 1;
-			thisModule.connectNodes(obj.connectingAndBody, obj, tUCMmap, thisModule.nextNode);
-					
+			
+			thisModule.connectNodes(obj.connectingAndBody, obj, tUCMmap, thisModule.nextNode);		
 		}
 		
 		--Connecting nodes after AndFork
@@ -1788,7 +1785,6 @@ rule UCMmap2UCMmap{
 			}
 			--if pathnodes exist
 			else{
-				thisModule.counter <- 1;
 				thisModule.connectNodes(path.pathBody, path, tUCMmap, OclAny);
 			}
 			
