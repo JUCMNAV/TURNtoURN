@@ -15,47 +15,14 @@
 **Turn2UrnPhase2.java -** Phase 2 of transformation 
 
 ## TODO
-* Verify functionality of Turn2Urn.atl is equivalent to original before proceeding
-* Determine if "conns" stands for "connections"; if so then replace where relevant
-* Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
-* Start returning code from ConnectNodesTemporarilyRemovedCode to ConnectNodes.atl. Refactor it and improve its efficiency as you go.
-	* I've realized that this task requires a strong understanding of Turn2Urn.atl before it can be performed. Consequently, I will hold off on it until I perform more refactoring iterations on Turn2Urn, whereupon I expect to understand functionality better.
-* Potential patterns to generalize into methods:
-	* x -> collect(y|y.someProperty) -> flatten() -> collect(z|thisModule.resolveTemp(z, 'someString'))
-		* getting referenced points; resolveTemp('tSomething'...); need to determine if resolveTemp works with correct containment in a called method
-	* is it possible to use the called rules created as methods directly in the "to" block? That would remove the need for a lot of the do blocks.
-	* determine if the ordering of the conditional statements in InBinding2InBinding and OutBinding2OutBinding matters; if not then they can be modularized
-	* the code in Condition2Condition essentially just joins a bunch of strings; is there any way to do this more cleanly?
-	* else { if { } } to else if { }
-	* -> any(s|s.target.oclIsUndefined())
-* Need consistency with whether empty from / to items have () or not
-* Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
+* Refactor for increased readability
+	* Rearrange methods so that their order feels more natural.
+	* Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
 * Refactor for increased consistency
 	* All if and else loops, including single line ones, should have braces
-* Rearrange methods so that their order feels more natural.
-* Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to
+	* Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
+	* Need consistency with whether empty from / to items have () or not
+* Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to.
 
-## Design choices
-* Note that this is not like an OOP language where initNextItem instantiates the object before it can be assigned a name; the object is initialized in the "for" block; the choice of calling id first is merely for familiarity
-
-## Testing
-* I am working on ensuring that the system compiles and runs for all test cases using Turn2Urn.atl (without ConnectingNodes.atl code). If this is not possible due to the task of ConnectingNodes in the system, then I will consider optimizations in Turn2Urn regarding calls made to ConnectingNodes before returning the code from ConnectingNodes.
-* The current issues do have significant overlap, and as such likely have to do with changes to how ATL or OCL is handled. Dealing with one issue in some category should make dealing with others much faster. Current issues and their respective files are as follows:
-	* ClassCastException
-		* AndForkTestMergedBranches
-		* validation
-		* validation-names
-	* ArrayStoreException
-		* Belief
-	* Unable to access property on OclUndefined
-		* component
-		* endpoint
-		* orfork
-		* responsibility
-		* softgoal
-		* task
-		* startpoint
-		* stub
-	* Feature does not exist on object
-		* OrForkTestBranches
-		* OrForkTestMergedBranches
+## ACTIVE TASK
+I am currently refactoring the code until it is at a point I feel is sufficiently readable for me to troubleshoot it. I have significantly improved readability but cannot be sure of functionality. I have likely broken some code along the way, and the current version is broken. However, the original version was also broken, so this should not be an issue.
