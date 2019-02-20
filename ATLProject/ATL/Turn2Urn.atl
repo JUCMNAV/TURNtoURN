@@ -686,6 +686,29 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 	}
 }
 
+rule collectRegularEnds(tUCMmap: Urn!UCMmap, path: Turn!Path){
+	do{
+		thisModule.nodeCollector <- Sequence{};	
+		
+		for(pathend in path -> collect(p|p.pathEnd) ){
+			thisModule.newNode <- '';
+			
+			if(pathend.oclIsTypeOf(Turn!Timer)){
+				thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
+			}
+			else{
+				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, false);	
+			}
+			
+			if(not (thisModule.newNode = '')){
+				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
+			}	
+		}
+		
+		thisModule.nodeCollector;
+	}
+}
+
 rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 	to
 		tStub: Urn!Stub (
@@ -703,77 +726,50 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		else{
 			tStub.bindings <- Turn!UCMmap.allInstances() -> any(m|m.name = tUCMmap.name).stubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
+		
+		if(not stubObj.boundTo.oclIsUndefined()){
+			tStub.contRef <- thisModule.getUrnCompRef(stubObj);
+		}
 			
 		if(not stubObj.stubType.oclIsUndefined()){
-			if(stubObj.stubType.toString() = ('blocking').toString()){
+			if(stubObj.stubType.toString() = 'blocking'){
 				tStub.blocking <- true;
 				tStub.dynamic <- true;
 				tStub.synchronization <- true;
 			}
 			--original of the line below had no braces around the body of this conditional; was this a bug? 
-			else if(stubObj.stubType.toString() = ('synchronizing').toString()){
+			else if(stubObj.stubType.toString() = 'synchronizing'){
 				tStub.synchronization <- true;
 				tStub.dynamic <- true;
 			}
 		}
 		
-		if(not stubObj.boundTo.oclIsUndefined()){
-			--QUESTION: the two paths here do the same thing; is this accidental?
-			if(not stubObj.boundTo.comp.oclIsUndefined()){
-				tStub.contRef <- thisModule.resolveTemp(stubObj.boundTo.comp, 'tCompRef');
-			}
-			else{
-				tStub.contRef <- thisModule.resolveTemp(stubObj.boundTo.comp, 'tCompRef');
-			}
-		}
-		
-		for(outPath in stubObj.outPaths -> flatten()){
-			thisModule.stubOutPathNC <- thisModule.createNodeConns();
-			tStub.succ <- thisModule.stubOutPathNC;
-			if(outPath.threshold <> 0){
-				thisModule.stubOutPathNC.threshold <- outPath.threshold.toString();
-			}
-		}
-		
-		thisModule.nodeCollector <- Sequence{};
-		--collect referenced ends
-		thisModule.pathNodes <- stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten() -> collect(p|p.pathNodes);
-		tUCMmap.nodes <- thisModule.collectReferencedEnds(thisModule.pathNodes);
-		
-		thisModule.stubMap <- thisModule.stubMap.including(stubObj, tStub);
-		
 		thisModule.numberOfterminatingStubNodes <- 0;
 		thisModule.outPathNumber <- Sequence{};
-		for (outpath in stubObj.outPaths){
-				if(outpath.path.pathEnd.oclIsUndefined()){
-					--connecting pathnodes after andfork
-					thisModule.numberOfterminatingStubNodes <- thisModule.numberOfterminatingStubNodes.inc();
-					thisModule.outPathNumber <- thisModule.outPathNumber -> union(Sequence{outpath.index});
-				}
-		}
-		-- collect regular ends
-		for(pathend in stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten() -> collect(p|p.pathEnd) ){
-			thisModule.newNode <- '';
-			
-			if(pathend.oclIsTypeOf(Turn!Timer)){
-				thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
+		
+		for(outPath in stubObj.outPaths -> flatten()){
+			thisModule.stubOutPathNodeConnection <- thisModule.createNodeConns();
+			tStub.succ <- tStub.succ -> including(thisModule.stubOutPathNodeConnection);
+			if(outPath.threshold <> 0){
+				thisModule.stubOutPathNodeConnection.threshold <- outPath.threshold.toString();
 			}
-			else{
-				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, false);	
+			if(outPath.path.pathEnd.oclIsUndefined()){
+				--connecting pathnodes after andfork
+				thisModule.numberOfterminatingStubNodes <- thisModule.numberOfterminatingStubNodes.inc();
+				thisModule.outPathNumber <- thisModule.outPathNumber -> union(Sequence{outPath.index});
 			}
-			
-			if(not (thisModule.newNode = '')){
-				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
-			}
-			
 		}
-		if(stubObj.outPaths -> isEmpty() and not stubObj.connectingStubBody.oclIsUndefined()){
-			tStub.succ <- thisModule.createNodeConns();
-			thisModule.outPathNumber <- Sequence{1};
-		}
+		
+		thisModule.paths <- stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
+		tUCMmap.nodes <- tUCMmap.nodes -> union(thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes)));
+		thisModule.nodeCollector <- thisModule.collectRegularEnds(tUCMmap, thisModule.paths);
 		
 		--collecting nodes from connecting stub body
 		if(not stubObj.connectingStubBody.oclIsUndefined()){ 
+			if(stubObj.outPaths -> isEmpty()){
+				tStub.succ <- tStub.succ -> including(thisModule.createNodeConns());
+				thisModule.outPathNumber <- Sequence{1};
+			}
 			
 			tUCMmap.nodes <- thisModule.collectReferencedEnds(stubObj.connectingStubBody.pathNodes);
 			
@@ -785,28 +781,25 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			
 			thisModule.nextNode <- tStub;
 			if(thisModule.numberOfterminatingStubNodes > 1){
-				thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, tStub.succ -> at(thisModule.outPathNumber -> at(1))); 
-				--TODO: determine if adding the use of 'including' below was correct
+				thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, tStub.succ -> at(thisModule.outPathNumber -> at(1)));
 				thisModule.orJoin.pred <- thisModule.orJoin.pred -> including(tStub.succ -> at(thisModule.outPathNumber -> at(2)));
 				thisModule.nextNode <- thisModule.orJoin;
 				thisModule.outPathNumber <- Sequence{1};
-				--thisModule.index <- 1;
 			}
 			else if(thisModule.numberOfterminatingStubNodes = 1){
-				if(not stubObj.connectingStubBody.pathNodes -> first().oclIsUndefined()){
-					if(not stubObj.connectingStubBody.pathNodes -> first().oclIsTypeOf(Turn!Connect)){
-						if(not stubObj.connectingStubBody.pathNodes -> first().name.oclIsUndefined())
-							thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name = stubObj.connectingStubBody.pathNodes -> first());
+				thisModule.firstNode <- stubObj.connectingStubBody.pathNodes -> first();
+				
+				if(not thisModule.firstNode.oclIsUndefined() and not thisModule.firstNode.oclIsTypeOf(Turn!Connect)){
+					if(not thisModule.firstNode.name.oclIsUndefined()){
+						thisModule.nextNode <- tUCMmap.nodes -> any(n|n.name=thisModule.firstNode.name);
 					}
 				}
 			}
 			
-			thisModule.nextPred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
-			thisModule.body <- stubObj.connectingStubBody;
-			
 			if(stubObj.connectingStubBody.pathNodes -> isEmpty()){
-				thisModule.connectPathEndToNextNode(tUCMmap, thisModule.body.pathEnd, thisModule.nextPred);
-				thisModule.connectReferencedEndToNextNode(tUCMmap, thisModule.body, thisModule.nodeCounter, thisModule.nextPred);
+				thisModule.nextPred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
+				thisModule.connectPathEndToNextNode(tUCMmap, stubObj.connectingStubBody.pathEnd, thisModule.nextPred);
+				thisModule.connectReferencedEndToNextNode(tUCMmap, stubObj.connectingStubBody, thisModule.nodeCounter, thisModule.nextPred);
 			}
 				
 			thisModule.counter <- 1;
@@ -890,7 +883,7 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 					thisModule.nodeCounter <- thisModule.nodeCounter.inc();
 				}
 			}
-		 thisModule.stubOutPathCounter <- thisModule.stubOutPathCounter.inc();
+			thisModule.stubOutPathCounter <- thisModule.stubOutPathCounter.inc();
 		}	
 	}
 }
