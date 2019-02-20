@@ -367,14 +367,14 @@ rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
 		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
 		if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
 			--THIS WILL ALWAYS BE AT(2)
-			tUCMmap.nodes -> any(n|timerObj.timeoutPath.pathNodes -> first().name=n.name).pred <- tUCMmap.nodes -> any(n|timerObj.name=n.name).succ -> at(2);
+			tUCMmap.nodes -> any(n|n.name=timerObj.timeoutPath.pathNodes -> first().name).pred <- tUCMmap.nodes -> any(n|n.name=timerObj.name).succ -> at(2);
 			thisModule.connectNodes(timerObj.timeoutPath, timerObj, tUCMmap, OclAny);
 		}
 		
 		if(not timerObj.timeoutPath.referencedEnd.oclIsUndefined()){
 			if(timerObj.timeoutPath.referencedEnd.oclIsTypeOf(Turn!RespRef)){
 				--THIS WILL ALWAYS BE AT(2)
-				Urn!Responsibility.allInstances() -> any(n|timerObj.timeoutPath.referencedEnd.name = n.name).respRefs -> first().pred <- tUCMmap.nodes -> any(n|timerObj.name=n.name).succ -> at(2);
+				Urn!Responsibility.allInstances() -> any(n|n.name=timerObj.timeoutPath.referencedEnd.name).respRefs -> first().pred <- tUCMmap.nodes -> any(n|n.name=timerObj.name).succ -> at(2);
 			}
 			--ADD MORE CODE
 		}
@@ -501,6 +501,7 @@ rule createOrForkNodeConns(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
 	}	
 }
 
+--QUESTION: this is just an empty object; it doesn't use the arguments. Should it do something?
 rule createAndForkNodeConns(ref: Turn!PathBodyNodes, tUCMmap: Urn!UCMmap){
 	to
 	 	targetNodeConn: Urn!NodeConnection
@@ -569,8 +570,8 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		if(not obj.body.oclIsUndefined()) {
 			tUCMmap.nodes <- thisModule.collectReferencedEnds(obj.getPathBodies() -> collect(pb|pb.pathNodes));
 			
-			for (pathbody in obj.getPathBodies()){
-				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathbody.pathEnd, true);
+			for (pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd) -> flatten()){
+				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, true);
 				
 				if(not (thisModule.newNode = '')){
 					thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
@@ -911,7 +912,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			diagram <- tUCMmap
 		)
 	do{
-		if(tAndFork.name.oclIsUndefined()){ --TODO: determine if the name setting method turnGetLongestName() can ever return null so that this branch is entered
+		if(tAndFork.name.oclIsUndefined()){
 			tAndFork.name <- 'AndFork' + tAndFork.id;
 		}
 		else{
@@ -974,14 +975,10 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 				}
 			}
 			
-			thisModule.body <- obj.connectingAndBody;
-			thisModule.nextPred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
-			
 			if(obj.connectingAndBody.pathNodes -> isEmpty()){
-				--also modify the connecting path body with a respRef (line 1093)
-				thisModule.connectPathEndToNextNode(tUCMmap, thisModule.body.pathEnd, thisModule.nextPred);
-				--ADD MORE CODE
-				thisModule.connectReferencedEndToNextNode(tUCMmap, thisModule.body, thisModule.nodeCounter, thisModule.nextPred);
+				thisModule.nextPred <- thisModule.nextNode.succ -> any(s|s.target.oclIsUndefined());
+				thisModule.connectPathEndToNextNode(tUCMmap, obj.connectingAndBody.pathEnd, thisModule.nextPred);
+				thisModule.connectReferencedEndToNextNode(tUCMmap, obj.connectingAndBody.body, thisModule.nodeCounter, thisModule.nextPred);
 			}
 			thisModule.counter <- 1;
 			thisModule.connectNodes(obj.connectingAndBody, obj, tUCMmap, thisModule.nextNode);
