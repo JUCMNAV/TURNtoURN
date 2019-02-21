@@ -478,8 +478,8 @@
 		<constant value="153:29-153:39"/>
 		<constant value="153:7-153:40"/>
 		<constant value="154:5-154:15"/>
-		<constant value="154:28-154:37"/>
-		<constant value="154:39-154:46"/>
+		<constant value="154:28-154:35"/>
+		<constant value="154:37-154:46"/>
 		<constant value="154:5-154:48"/>
 		<constant value="153:4-155:5"/>
 		<constant value="156:4-156:14"/>
@@ -703,8 +703,8 @@
 		<constant value="227:9-239:5"/>
 		<constant value="225:5-225:15"/>
 		<constant value="225:24-225:34"/>
-		<constant value="225:47-225:56"/>
-		<constant value="225:58-225:65"/>
+		<constant value="225:47-225:54"/>
+		<constant value="225:56-225:65"/>
 		<constant value="225:24-225:66"/>
 		<constant value="225:68-225:75"/>
 		<constant value="225:84-225:88"/>
@@ -911,8 +911,8 @@
 		<constant value="181:5-181:93"/>
 		<constant value="179:9-196:5"/>
 		<constant value="176:5-176:15"/>
-		<constant value="176:28-176:37"/>
-		<constant value="176:39-176:46"/>
+		<constant value="176:28-176:35"/>
+		<constant value="176:37-176:46"/>
 		<constant value="176:5-176:48"/>
 		<constant value="177:5-177:15"/>
 		<constant value="177:24-177:34"/>
@@ -1116,8 +1116,8 @@
 		<constant value="257:27-257:34"/>
 		<constant value="257:36-257:44"/>
 		<constant value="257:46-257:56"/>
-		<constant value="257:69-257:80"/>
-		<constant value="257:82-257:89"/>
+		<constant value="257:69-257:76"/>
+		<constant value="257:78-257:89"/>
 		<constant value="257:46-257:90"/>
 		<constant value="257:92-257:104"/>
 		<constant value="257:106-257:110"/>
@@ -9838,17 +9838,15 @@
 		<constant value="416:2-441:3"/>
 		<constant value="connectNodes"/>
 		<constant value="pathNodes"/>
-		<constant value="22"/>
-		<constant value="J.handleNode(JJJJJ):J"/>
-		<constant value="28"/>
+		<constant value="20"/>
+		<constant value="J.handleNode(JJJJ):J"/>
 		<constant value="J.handleFirstNode(JJJJ):J"/>
 		<constant value="nodeCounter"/>
-		<constant value="36"/>
-		<constant value="66"/>
-		<constant value="52"/>
-		<constant value="59"/>
+		<constant value="34"/>
+		<constant value="58"/>
+		<constant value="50"/>
 		<constant value="J.handleReferencedStubs(JJJJ):J"/>
-		<constant value="65"/>
+		<constant value="63"/>
 		<constant value="J.handleReferencedEnds(JJJ):J"/>
 		<constant value="J.handleRegularEnds(JJJ):J"/>
 <<<<<<< HEAD
@@ -10030,9 +10028,7 @@
 		<constant value="454:46-454:57"/>
 		<constant value="454:59-454:69"/>
 		<constant value="454:59-454:82"/>
-		<constant value="454:84-454:94"/>
-		<constant value="454:84-454:104"/>
-		<constant value="454:5-454:106"/>
+		<constant value="454:5-454:84"/>
 		<constant value="451:5-451:15"/>
 		<constant value="451:32-451:39"/>
 		<constant value="451:41-451:45"/>
@@ -10960,8 +10956,8 @@
 			<if arg="409"/>
 			<goto arg="410"/>
 			<getasm/>
-			<load arg="42"/>
 			<load arg="19"/>
+			<load arg="42"/>
 			<pcall arg="411"/>
 			<getasm/>
 			<load arg="19"/>
@@ -11319,8 +11315,8 @@
 			<goto arg="407"/>
 			<getasm/>
 			<getasm/>
-			<load arg="42"/>
 			<load arg="19"/>
+			<load arg="42"/>
 			<call arg="411"/>
 			<load arg="19"/>
 			<load arg="29"/>
@@ -11605,8 +11601,8 @@
 			<set arg="82"/>
 			<goto arg="614"/>
 			<getasm/>
-			<load arg="42"/>
 			<load arg="19"/>
+			<load arg="42"/>
 			<pcall arg="411"/>
 			<getasm/>
 			<getasm/>
@@ -13703,8 +13699,8 @@
 			<load arg="19"/>
 			<load arg="29"/>
 			<getasm/>
-			<load arg="42"/>
 			<load arg="19"/>
+			<load arg="42"/>
 			<call arg="411"/>
 			<load arg="43"/>
 			<pusht/>
@@ -31199,40 +31195,38 @@
 			<load arg="44"/>
 			<getasm/>
 			<get arg="230"/>
-			<getasm/>
-			<get arg="560"/>
 			<pcall arg="1835"/>
-			<goto arg="1836"/>
+			<goto arg="401"/>
 			<getasm/>
 			<load arg="42"/>
 			<load arg="29"/>
 			<load arg="44"/>
 			<load arg="43"/>
-			<pcall arg="1837"/>
+			<pcall arg="1836"/>
 			<getasm/>
-			<get arg="1838"/>
+			<get arg="1837"/>
 			<load arg="19"/>
 			<get arg="1833"/>
 			<call arg="1712"/>
 			<call arg="394"/>
-			<if arg="1839"/>
-			<goto arg="410"/>
+			<if arg="1838"/>
+			<goto arg="947"/>
 			<load arg="19"/>
 			<get arg="1158"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1840"/>
+			<if arg="1468"/>
 			<load arg="19"/>
 			<get arg="1462"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1165"/>
+			<if arg="1839"/>
 			<load arg="19"/>
 			<get arg="1711"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1841"/>
-			<goto arg="1842"/>
+			<if arg="1840"/>
+			<goto arg="294"/>
 			<getasm/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<load arg="42"/>
@@ -38468,6 +38462,7 @@
 			<get arg="230"/>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<pcall arg="1876"/>
 			<goto arg="1877"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
@@ -38479,12 +38474,16 @@
 			<pcall arg="1843"/>
 			<goto arg="1844"/>
 >>>>>>> be59b34... Removed almost all cases of tUCMmap.mergeNodes by simplifying logic; updated collectReferencedEnds and UCMmap2UCMmap to add nodes to tUCMmap which should capture many of the nodes that were previously lost. Updated README with new concerns
+=======
+			<pcall arg="1841"/>
+			<goto arg="1842"/>
+>>>>>>> bc5d9cd... Removed nodeCollector altogether in favor of directly adding nodes when they are created; removed an extra argument from a method call in ConnectNodes; rearranged order of arguments in createTimer
 			<getasm/>
 			<load arg="42"/>
 			<load arg="19"/>
 			<load arg="44"/>
-			<pcall arg="1845"/>
-			<goto arg="410"/>
+			<pcall arg="1843"/>
+			<goto arg="947"/>
 			<getasm/>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -38501,7 +38500,7 @@
 			<load arg="42"/>
 			<load arg="19"/>
 			<load arg="44"/>
-			<pcall arg="1846"/>
+			<pcall arg="1844"/>
 			<getasm/>
 			<load arg="44"/>
 <<<<<<< HEAD
@@ -38513,77 +38512,76 @@
 			<enditerate/>
 		</code>
 		<linenumbertable>
-			<lne id="1847" begin="0" end="0"/>
-			<lne id="1848" begin="1" end="1"/>
-			<lne id="1849" begin="0" end="2"/>
-			<lne id="1850" begin="3" end="3"/>
-			<lne id="1851" begin="3" end="4"/>
-			<lne id="1852" begin="7" end="7"/>
-			<lne id="1853" begin="7" end="8"/>
-			<lne id="1854" begin="9" end="9"/>
-			<lne id="1855" begin="7" end="10"/>
-			<lne id="1856" begin="12" end="12"/>
-			<lne id="1857" begin="13" end="13"/>
-			<lne id="1858" begin="14" end="14"/>
-			<lne id="1859" begin="15" end="15"/>
-			<lne id="1860" begin="16" end="16"/>
-			<lne id="1861" begin="16" end="17"/>
-			<lne id="1862" begin="18" end="18"/>
-			<lne id="1863" begin="18" end="19"/>
-			<lne id="1864" begin="12" end="20"/>
-			<lne id="1865" begin="22" end="22"/>
-			<lne id="1866" begin="23" end="23"/>
-			<lne id="1867" begin="24" end="24"/>
-			<lne id="1868" begin="25" end="25"/>
-			<lne id="1869" begin="26" end="26"/>
-			<lne id="1870" begin="22" end="27"/>
-			<lne id="1871" begin="7" end="27"/>
-			<lne id="1872" begin="28" end="28"/>
-			<lne id="1873" begin="28" end="29"/>
-			<lne id="1874" begin="30" end="30"/>
-			<lne id="1875" begin="30" end="31"/>
-			<lne id="1876" begin="30" end="32"/>
-			<lne id="1877" begin="28" end="33"/>
-			<lne id="1878" begin="36" end="36"/>
-			<lne id="1879" begin="36" end="37"/>
-			<lne id="1880" begin="36" end="38"/>
-			<lne id="1881" begin="36" end="39"/>
-			<lne id="1882" begin="41" end="41"/>
-			<lne id="1883" begin="41" end="42"/>
-			<lne id="1884" begin="41" end="43"/>
-			<lne id="1885" begin="41" end="44"/>
-			<lne id="1886" begin="46" end="46"/>
-			<lne id="1887" begin="46" end="47"/>
-			<lne id="1888" begin="46" end="48"/>
-			<lne id="1889" begin="46" end="49"/>
-			<lne id="1890" begin="52" end="52"/>
-			<lne id="1891" begin="53" end="53"/>
-			<lne id="1892" begin="54" end="54"/>
-			<lne id="1893" begin="55" end="55"/>
-			<lne id="1894" begin="56" end="56"/>
-			<lne id="1895" begin="56" end="57"/>
-			<lne id="1896" begin="52" end="58"/>
-			<lne id="1897" begin="46" end="58"/>
-			<lne id="1898" begin="60" end="60"/>
-			<lne id="1899" begin="61" end="61"/>
-			<lne id="1900" begin="62" end="62"/>
-			<lne id="1901" begin="63" end="63"/>
-			<lne id="1902" begin="60" end="64"/>
-			<lne id="1903" begin="41" end="64"/>
-			<lne id="1904" begin="66" end="66"/>
-			<lne id="1905" begin="67" end="67"/>
-			<lne id="1906" begin="68" end="68"/>
+			<lne id="1845" begin="0" end="0"/>
+			<lne id="1846" begin="1" end="1"/>
+			<lne id="1847" begin="0" end="2"/>
+			<lne id="1848" begin="3" end="3"/>
+			<lne id="1849" begin="3" end="4"/>
+			<lne id="1850" begin="7" end="7"/>
+			<lne id="1851" begin="7" end="8"/>
+			<lne id="1852" begin="9" end="9"/>
+			<lne id="1853" begin="7" end="10"/>
+			<lne id="1854" begin="12" end="12"/>
+			<lne id="1855" begin="13" end="13"/>
+			<lne id="1856" begin="14" end="14"/>
+			<lne id="1857" begin="15" end="15"/>
+			<lne id="1858" begin="16" end="16"/>
+			<lne id="1859" begin="16" end="17"/>
+			<lne id="1860" begin="12" end="18"/>
+			<lne id="1861" begin="20" end="20"/>
+			<lne id="1862" begin="21" end="21"/>
+			<lne id="1863" begin="22" end="22"/>
+			<lne id="1864" begin="23" end="23"/>
+			<lne id="1865" begin="24" end="24"/>
+			<lne id="1866" begin="20" end="25"/>
+			<lne id="1867" begin="7" end="25"/>
+			<lne id="1868" begin="26" end="26"/>
+			<lne id="1869" begin="26" end="27"/>
+			<lne id="1870" begin="28" end="28"/>
+			<lne id="1871" begin="28" end="29"/>
+			<lne id="1872" begin="28" end="30"/>
+			<lne id="1873" begin="26" end="31"/>
+			<lne id="1874" begin="34" end="34"/>
+			<lne id="1875" begin="34" end="35"/>
+			<lne id="1876" begin="34" end="36"/>
+			<lne id="1877" begin="34" end="37"/>
+			<lne id="1878" begin="39" end="39"/>
+			<lne id="1879" begin="39" end="40"/>
+			<lne id="1880" begin="39" end="41"/>
+			<lne id="1881" begin="39" end="42"/>
+			<lne id="1882" begin="44" end="44"/>
+			<lne id="1883" begin="44" end="45"/>
+			<lne id="1884" begin="44" end="46"/>
+			<lne id="1885" begin="44" end="47"/>
+			<lne id="1886" begin="50" end="50"/>
+			<lne id="1887" begin="51" end="51"/>
+			<lne id="1888" begin="52" end="52"/>
+			<lne id="1889" begin="53" end="53"/>
+			<lne id="1890" begin="54" end="54"/>
+			<lne id="1891" begin="54" end="55"/>
+			<lne id="1892" begin="50" end="56"/>
+			<lne id="1893" begin="44" end="56"/>
+			<lne id="1894" begin="58" end="58"/>
+			<lne id="1895" begin="59" end="59"/>
+			<lne id="1896" begin="60" end="60"/>
+			<lne id="1897" begin="61" end="61"/>
+			<lne id="1898" begin="58" end="62"/>
+			<lne id="1899" begin="39" end="62"/>
+			<lne id="1900" begin="64" end="64"/>
+			<lne id="1901" begin="65" end="65"/>
+			<lne id="1902" begin="66" end="66"/>
+			<lne id="1903" begin="67" end="67"/>
+			<lne id="1904" begin="64" end="68"/>
+			<lne id="1905" begin="34" end="68"/>
+			<lne id="1906" begin="26" end="68"/>
 			<lne id="1907" begin="69" end="69"/>
-			<lne id="1908" begin="66" end="70"/>
-			<lne id="1909" begin="36" end="70"/>
-			<lne id="1910" begin="28" end="70"/>
-			<lne id="1911" begin="71" end="71"/>
-			<lne id="1912" begin="72" end="72"/>
-			<lne id="1913" begin="71" end="73"/>
-			<lne id="1914" begin="3" end="74"/>
-			<lne id="1915" begin="0" end="74"/>
+			<lne id="1908" begin="70" end="70"/>
+			<lne id="1909" begin="69" end="71"/>
+			<lne id="1910" begin="3" end="72"/>
+			<lne id="1911" begin="0" end="72"/>
 		</linenumbertable>
 		<localvariabletable>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -39664,6 +39662,14 @@
 =======
 			<lve slot="4" name="561" begin="0" end="74"/>
 >>>>>>> be59b34... Removed almost all cases of tUCMmap.mergeNodes by simplifying logic; updated collectReferencedEnds and UCMmap2UCMmap to add nodes to tUCMmap which should capture many of the nodes that were previously lost. Updated README with new concerns
+=======
+			<lve slot="5" name="229" begin="6" end="71"/>
+			<lve slot="0" name="17" begin="0" end="72"/>
+			<lve slot="1" name="228" begin="0" end="72"/>
+			<lve slot="2" name="559" begin="0" end="72"/>
+			<lve slot="3" name="227" begin="0" end="72"/>
+			<lve slot="4" name="561" begin="0" end="72"/>
+>>>>>>> bc5d9cd... Removed nodeCollector altogether in favor of directly adding nodes when they are created; removed an extra argument from a method call in ConnectNodes; rearranged order of arguments in createTimer
 		</localvariabletable>
 	</operation>
 </asm>
