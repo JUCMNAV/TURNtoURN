@@ -766,6 +766,8 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			}
 		}
 		
+		thisModule.stubMap <- thisModule.stubMap.including(stubObj, tStub);
+		
 		thisModule.numberOfterminatingStubNodes <- 0;
 		thisModule.outPathNumber <- Sequence{};
 		

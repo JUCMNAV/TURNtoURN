@@ -91,9 +91,10 @@ rule handleConnectNode(tUCMmap: Urn!UCMmap, NODE: Turn!PathNode, ITEM: Turn!Path
 			thisModule.emptyPtTimer <- thisModule.createEmptyPt(tUCMmap, NODE.connectsTo, true);
 			thisModule.connect.pred <- thisModule.emptyPtTimer.succ -> at(1);
 			-- TODO: not sure if this second condition I added avoids trying to connect the first path node or prevents the connect chain from starting up altogether
-			if(not timerNode.oclIsUndefined() and not thisModule.connectMap.get(timerNode.connectsTo).oclIsUndefined()){
-				--BROKEN TODO: fix the issue caused by this line
-				thisModule.connectMap.get(timerNode.connectsTo).pred <- thisModule.connect.succ;
+			if(not timerNode.oclIsUndefined()){
+				if(not thisModule.connectMap.get(timerNode.connectsTo).oclIsUndefined()){
+					thisModule.connectMap.get(timerNode.connectsTo).pred <- thisModule.connect.succ;
+				}
 			}
 			thisModule.emptyPtTimer.pred <- thisModule.emptyPtTimer.pred -> including(ITEM);
 		}
@@ -177,7 +178,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 						thisModule.resolveTemp(node, 'tRespRef').pred <- thisModule.startPoint.succ -> at(1);
 					}
 					else if(node.oclIsTypeOf(Turn!Timer)){
-						tUCMmap.nodes <- tUCMmap.nodes -> including(thisModule.createTimer(node, tUCMmap));
+						tUCMmap.nodes <- tUCMmap.nodes -> union(thisModule.createTimer(node, tUCMmap));
 						thisModule.timerMap.get(node).pred <- thisModule.startPoint.succ;
 					} --with an else
 					else if(node.oclIsTypeOf(Turn!Connect)) {
@@ -266,7 +267,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					thisModule.pred <- '';
 					
 					if(thisModule.previousNode.oclIsTypeOf(Turn!RespRef)){
-						thisModule.pred <- tUCMmap.getSelectedRespDef(thisModule.previousNode.name) -> any(s|s.pred <> OclUndefined).succ;
+						thisModule.pred <- tUCMmap.getSelectedRespDef(thisModule.previousNode.name) -> any(s|not s.pred.oclIsUndefined()).succ;
 					}
 					else if(thisModule.previousNode.oclIsTypeOf(Turn!Connect)){
 						thisModule.pred <- tUCMmap.getNode(thisModule.previousNode.connectsTo.name).succ -> any(s|s.target.oclIsUndefined());
