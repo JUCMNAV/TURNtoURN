@@ -89,6 +89,12 @@ rule nextId(){
 	}
 }
 
+rule getResponsibility(responsibilityName: String){
+	do{
+		Urn!Responsibility.allInstances() -> any(n|n.name=responsibilityName);	
+	}
+}
+
 rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 	do{
 		if(node.oclIsTypeOf(Turn!Timer)){
@@ -394,7 +400,7 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 		thisModule.connectPathEndToNextNode(tUCMmap, thisModule.body.pathEnd, thisModule.nextPred);
 		
 		if(thisModule.body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-			Urn!Responsibility.allInstances() -> any(n|n.name=thisModule.body.referencedEnd.name).pred <- thisModule.nextPred;
+			thisModule.getResponsibility(thisModule.body.referencedEnd.name).pred <- thisModule.nextPred;
 		}
 		else{
 			thisModule.connectReferencedEndToNextNode(tUCMmap, thisModule.body, thisModule.nodeCounter, thisModule.nextPred);
@@ -414,7 +420,7 @@ rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
 		if(not timerObj.timeoutPath.referencedEnd.oclIsUndefined()){
 			if(timerObj.timeoutPath.referencedEnd.oclIsTypeOf(Turn!RespRef)){
 				--THIS WILL ALWAYS BE AT(2)
-				Urn!Responsibility.allInstances() -> any(n|n.name=timerObj.timeoutPath.referencedEnd.name).respRefs -> first().pred <- tUCMmap.getNode(timerObj.name).succ -> at(2);
+				thisModule.getResponsibility(timerObj.timeoutPath.referencedEnd.name).respRefs -> first().pred <- tUCMmap.getNode(timerObj.name).succ -> at(2);
 			}
 			--ADD MORE CODE
 		}
@@ -863,7 +869,7 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 				for(node in outPath.path.pathNodes){
 					if(thisModule.nodeCounter = 1){
 						if(node.oclIsTypeOf(Turn!RespRef)){
-							Urn!Responsibility.allInstances() -> any(n|n.name=node.name).respRefs -> select(r|r.diagram.name=tUCMmap.name) -> flatten() -> any(ref|ref.pred -> isEmpty()).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+							thisModule.getResponsibility(node.name).respRefs -> select(r|r.diagram.name=tUCMmap.name) -> flatten() -> any(ref|ref.pred -> isEmpty()).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
 						}
 						else{	
 							tUCMmap.getNode(outPath.path.pathNodes -> first().name).pred <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
@@ -1437,8 +1443,7 @@ rule Responsibility2Responsibility{
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 	do{
-		--QUESTION: Should this be called "existingResponsibilities" instead? i.e., can we have multiple retrieved by this in any case?
-		thisModule.existingResponsibility <- Urn!Responsibility.allInstances() -> any(r|r.name=s.turnGetLongestName());
+		thisModule.existingResponsibility <- thisModule.getResponsibility(s.turnGetLongestName());
 		
 		if(thisModule.existingResponsibility.oclIsUndefined()){
 			tRespRef.respDef <- thisModule.createResponsibility(s);

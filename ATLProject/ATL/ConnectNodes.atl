@@ -206,8 +206,8 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 					thisModule.succeeded <- false;
 					
 					if(node.oclIsTypeOf(Turn!RespRef)){
-						if(Urn!Responsibility.allInstances() -> any(n|n.name=node.name).respRefs -> select(r|r.diagram.name = tUCMmap.name) -> isEmpty()){
-							Urn!Responsibility.allInstances() -> any(n|n.name=node.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).pred <- tUCMmap.getNode(path.name).succ;
+						if(thisModule.getResponsibility(node.name).respRefs -> select(r|r.diagram.name=tUCMmap.name) -> isEmpty()){
+							thisModule.getResponsibility(node.name).respRefs -> any(r|r.diagram.name=tUCMmap.name).pred <- tUCMmap.getNode(path.name).succ;
 							thisModule.succeeded <- true;
 						}
 					}
@@ -372,10 +372,10 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 						tUCMmap.getNode(pathbody.referencedEnd.name).pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
 					}
 					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!OrFork)){
-						thisModule.orForkMap.get(pathbody.pathEnd).pred <- Urn!Responsibility.allInstances() -> any(n|n.name=thisModule.currentPathNode.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).succ;
+						thisModule.orForkMap.get(pathbody.pathEnd).pred <- thisModule.getResponsibility(thisModule.currentPathNode.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).succ;
 					}
 					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!AndFork)){
-						thisModule.andForkMap.get(pathbody.pathEnd).pred <- Urn!Responsibility.allInstances() -> any(n|n.name=thisModule.currentPathNode.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).succ;
+						thisModule.andForkMap.get(pathbody.pathEnd).pred <- thisModule.getResponsibility(thisModule.currentPathNode.name).respRefs -> any(r|r.diagram.name = tUCMmap.name).succ;
 					}
 					else if (pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
 						tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(r|r.respDef.name = pathbody.referencedEnd.name).pred <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name = thisModule.currentPathNode.name)-> flatten() -> collect(s|s.succ) -> flatten() -> select(s|s.target = OclUndefined);
