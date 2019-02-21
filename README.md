@@ -36,6 +36,8 @@
 * Verify the lifetime of variables to make sure they aren't sitting around eternally
 * Make variable name orderings in method arguments consistent
 * Rename methods so that their names describe their behavior better
+* Go over all matched rules to make sure assignments are from Urn object to Urn object (i.e., that resolveTemps are used where appropriate)
+* Untangle the counter logic so that it isn't spread out in random places in Turn2Urn and ConnectNodes and so it no longer uses a global variable counter
 
 ## ACTIVE TASK
 I am currently refactoring the code until it is at a point I feel is sufficiently readable for me to troubleshoot it. I have significantly improved readability but cannot be sure of functionality. I have likely broken some code along the way, and the current version is broken. However, the original version was also broken, so this should not be an issue.

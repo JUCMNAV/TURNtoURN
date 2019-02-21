@@ -109,12 +109,12 @@ rule handleConnectNode(tUCMmap: Urn!UCMmap, NODE: Turn!PathNode, ITEM: OclAny, t
 
 
 --TODO: find a way to reduce the number of arguments for this rule
-rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Urn!PathNode, counter: Integer, case: String){
+rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!PathNode, case: String){
 	do{
-		if(case = 'and'){
+		if(case = 'And'){
 			thisModule.currentMap <- thisModule.andForkMap;
 		}
-		else if(case = 'or'){
+		else if(case = 'Or'){
 			thisModule.currentMap <- thisModule.orForkMap;
 		}
 		else{
@@ -140,14 +140,14 @@ rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, node: Turn!PathNode,
 		}
 		else if(firstNode.oclIsTypeOf(Turn!Connect)){
 			-- look for asynchronous connect (QUESTION: what does this mean?)
-			if(counter = -1){ --AND case
+			if(case = 'And'){ --AND case
 				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.firstUnconnectedSucc(), firstNode);
 			}
-			else{ --OR case
-				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.succ -> at(counter), OclUndefined);
+			else if(case = 'Or'){ --OR case
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.succ -> at(thisModule.counter), OclUndefined);
 			}
 
-			thisModule.connectMap <- thisModule.connectMap.including(node, thisModule.connect);
+			thisModule.connectMap <- thisModule.connectMap.including(firstNode, thisModule.connect);
 		}
 		else{
 			-- where is this defined? where is it used?
@@ -158,8 +158,8 @@ rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, node: Turn!PathNode,
 		}
 		
 		--ADDED FOR TIMER AND ORFORK CONNECTION
-		if(node.oclIsTypeOf(Turn!Timer)){
-			thisModule.addPred(tUCMmap.getNode(node.name), thisModule.currentMap.get(path).succ -> at(counter));
+		if(firstNode.oclIsTypeOf(Turn!Timer)){
+			thisModule.addPred(tUCMmap.getNode(firstNode.name), thisModule.currentMap.get(path).succ -> at(thisModule.counter));
 		}
 	}
 }
@@ -197,7 +197,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 			}
 		}
 		else if(path.oclIsTypeOf(Turn!OrFork)){
-			thisModule.handleForkLogic(tUCMmap, path, firstNode, firstNode, nextNode, thisModule.counter, 'or');
+			thisModule.handleForkLogic(tUCMmap, path, firstNode, nextNode, 'Or');
 		}
 		else if (path.oclIsTypeOf(Urn!OrJoin)){
 			thisModule.succeeded <- false;
@@ -214,7 +214,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 			}
 		}
 		else if(path.oclIsTypeOf(Turn!AndFork)){
-			thisModule.handleForkLogic(tUCMmap, path, firstNode, firstNode, nextNode, thisModule.counter, 'and');
+			thisModule.handleForkLogic(tUCMmap, path, firstNode, nextNode, 'And');
 		}
 		else {
 			thisModule.currentNode <- thisModule.stubMap.get(path);

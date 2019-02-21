@@ -747,13 +747,13 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		}
 		
 		--Connecting nodes after OrFork
-		thisModule.count <- 1;
+		thisModule.connectNodesAfterOrForkCounter <- 1;
 		if(not obj.body.oclIsUndefined()){
 			for(pathbody in obj.getPathBodies()){
 				if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
-					thisModule.addPred(thisModule.resolveTemp(pathbody.pathNodes -> first(),'tRespRef'), tOrFork.succ -> at(thisModule.count));
+					thisModule.addPred(thisModule.resolveTemp(pathbody.pathNodes -> first(),'tRespRef'), tOrFork.succ -> at(thisModule.connectNodesAfterOrForkCounter));
 				}
-				thisModule.count <- thisModule.count.inc(); 			
+				thisModule.connectNodesAfterOrForkCounter <- thisModule.connectNodesAfterOrForkCounter.inc(); 			
 			}
 		}
 		
@@ -1124,9 +1124,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 		
 		if(not timerObj.timeoutPath.oclIsUndefined()){
 			thisModule.newNode <- '';
-			-- QUESTION: collectRegularEnds uses a for loop. The original code here seemed to imply timeoutPath was only one item. 
-			-- Will it ever have more items (i.e., could the for loop cause issues?)
-			thisModule.nodeCollector <- thisModule.collectRegularEnds(tUCMmap, timerObj.timeoutPath);
+			thisModule.nodeCollector <- thisModule.collectRegularEnds(tUCMmap, Sequence{timerObj.timeoutPath});
 			thisModule.connectReferencedEndToNextNode(tUCMmap, timerObj.timeoutPath, thisModule.nodeCounter, thisModule.next);
 		}
 		
@@ -1410,8 +1408,9 @@ rule Concern2Concern{
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
 		 	elements <- s.elements,
-			condition <- s.condition,
-			metadata <- s.metadata
+			--QUESTION: Turn!Concern has no property metadata; is this perhaps a logical error?
+			--metadata <- s.metadata,
+			condition <- s.condition
 		)
 }
 
@@ -1421,6 +1420,7 @@ rule URNlink2URNlink{
 	to 
 		tCon: Urn!URNlink (
 			type <- s.type,
+			--TODO: determine if the assignments below are valid (the second in particular gave a runtime warning as not being possible during 'remaining test cases')
 			fromElem <- s.fromElem,
 			toElem <- s.toElem
 		)
@@ -1829,7 +1829,6 @@ rule UCMmap2UCMmap{
 			}
 			--if pathnodes exist
 			else{
-				thisModule.counter <- 1;
 				thisModule.connectNodes(path.pathBody, path, tUCMmap, OclAny);
 			}
 			
