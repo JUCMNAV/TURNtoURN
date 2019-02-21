@@ -80,6 +80,12 @@ helper context OclAny def : turnGetLongestName() : String =
 helper context Turn!OrFork def : getPathBodies() : Turn!PathBody =
 	self.body.regularBody -> collect(pb|pb.pathBody) -> flatten();
 
+helper context Urn!UCMmap def : getSelectedRespDef(turnNodeName: String) : OclAny =
+	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
+
+helper context Urn!UCMmap def : getAnyRespDef(turnNodeName: String) : OclAny =
+	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(r|r.respDef.name=turnNodeName);
+
 ---------------imperative-method-like rules (sorry, spirit of declarative programming)-------------
 
 rule nextId(){
@@ -1032,7 +1038,7 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 				--Using backlinks to connect andFork
 				thisModule.currentAndFork <- ep.epConnect.pbody.andFork;
 				if(not thisModule.currentAndFork.oclIsUndefined()){
-					tEndPoint.pred <- thisModule.andForkMap.get(thisModule.currentAndFork).succ -> any(s|s.target = OclUndefined);
+					tEndPoint.pred <- thisModule.andForkMap.get(thisModule.currentAndFork).succ -> any(s|s.target.oclIsUndefined());
 				}
 			}
 		}
