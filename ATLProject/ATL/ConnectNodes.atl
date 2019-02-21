@@ -150,9 +150,8 @@ rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, firstNode: Turn!Path
 			thisModule.connectMap <- thisModule.connectMap.including(firstNode, thisModule.connect);
 		}
 		else{
-			-- where is this defined? where is it used?
 			if(firstNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.createTimer(firstNode, tUCMmap));
+				thisModule.createTimer(firstNode, tUCMmap);
 			}
 			thisModule.addPred(tUCMmap.getNode(firstNode.name), thisModule.nextConnectingNode.firstUnconnectedSucc());
 		}
@@ -174,7 +173,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), thisModule.startPoint.succ -> at(1));
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Timer)){
-				tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.createTimer(firstNode, tUCMmap));
+				thisModule.createTimer(firstNode, tUCMmap);
 				thisModule.addPred(thisModule.timerMap.get(firstNode), thisModule.startPoint.succ);
 			} --with an else
 			else if(firstNode.oclIsTypeOf(Turn!Connect)) {
@@ -223,8 +222,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), thisModule.currentNode.succ -> at(1));
 			} 
 			else if(firstNode.oclIsTypeOf(Turn!Timer)){
-				tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.createTimer(firstNode, tUCMmap));
-				thisModule.addPred(thisModule.timerMap.get(firstNode), tUCMmap.getNode(path.name).succ -> at(1));
+				thisModule.addPred(thisModule.createTimer(firstNode, tUCMmap), tUCMmap.getNode(path.name).succ -> at(1));
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Connect)){
 				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.currentNode.firstUnconnectedSucc(), firstNode);
@@ -256,8 +254,7 @@ rule handleNode(tUCMmap: Turn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 		}
 		--NEED TO CREATE TIMER FOR ALL OTHER COMBINATIONS
 		else if(currentNode.oclIsTypeOf(Turn!Timer)){
-			tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.createTimer(currentNode, tUCMmap));
-			thisModule.processNode(tUCMmap, pathbody, thisModule.timerMap.get(currentNode), previousNode, true);
+			thisModule.processNode(tUCMmap, pathbody, thisModule.createTimer(currentNode, tUCMmap), previousNode, true);
 		}
 		--NEED TO CREATE CONNECT FOR ALL OTHER COMBINATIONS
 		else if(currentNode.oclIsTypeOf(Turn!Connect)){

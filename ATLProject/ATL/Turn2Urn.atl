@@ -233,14 +233,13 @@ rule joinStringSequence(s: String, delim: String){
 	}
 }
 
-rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
+rule collectReferencedEnds(tUCMmap: Turn!UCMmap, pathNodes: Sequence(Turn!PathNode)){
 	do{
-		thisModule.nodes <- pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tRespRef'));
-		thisModule.nodes <- thisModule.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tOrJoin')));
-		thisModule.nodes <- thisModule.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tAndJoin')));
-		thisModule.nodes <- thisModule.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tFailPt')));
-		thisModule.nodes <- thisModule.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tWtPlace')));
-		thisModule.nodes;
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tRespRef')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tOrJoin')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tAndJoin')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tFailPt')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tWtPlace')));
 	}
 }
 
@@ -339,7 +338,7 @@ rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
 			thisModule.newNode <- '';
 			
 			if(pathend.oclIsTypeOf(Turn!Timer)){
-				thisModule.newNode <- thisModule.createTimer(pathend, tUCMmap);
+				thisModule.createTimer(pathend, tUCMmap);
 			}
 			else{
 				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, false);	
@@ -651,7 +650,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		thisModule.nodeCollector <- Sequence{};
 		
 		if(not obj.body.oclIsUndefined()) {
-			tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(obj.getPathBodies() -> collect(pb|pb.pathNodes)));
+			thisModule.collectReferencedEnds(tUCMmap, obj.getPathBodies() -> collect(pb|pb.pathNodes));
 			
 			for (pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd) -> flatten()){
 				thisModule.newNode <- thisModule.processPathEnd(tUCMmap, pathend, true);
@@ -691,7 +690,7 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		}
 		
 		if(not obj.connectingOrBody.oclIsUndefined()){
-			tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(obj.connectingOrBody.pathNodes));
+			thisModule.collectReferencedEnds(tUCMmap, obj.connectingOrBody.pathNodes);
 			
 			thisModule.numberOfTerminatingNodes <- 0;
 			if(not obj.body.oclIsUndefined()){
@@ -727,7 +726,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 						-- thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.createdCondition.expression);
 					}
 					
-					--TODO: consider adding a createTimer Boolean to collectReferencedNodes to move this logic there
 					for (pathbody in obj.getPathBodies()){
 						thisModule.condition <- '';
 						if(pathbody.pathEnd.oclIsUndefined()){
@@ -817,7 +815,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		}
 		
 		thisModule.paths <- stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
-		tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes)));
+		thisModule.collectReferencedEnds(tUCMmap, thisModule.paths -> collect(p|p.pathNodes));
 		thisModule.nodeCollector <- thisModule.collectRegularEnds(tUCMmap, thisModule.paths);
 		
 		--collecting nodes from connecting stub body
@@ -827,8 +825,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			
-			--TODO: determine if in cases like this, we want to union tUCMmap.nodes or to overwrite it; current behavior is overwrite
-			tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(stubObj.connectingStubBody.pathNodes));
+			thisModule.collectReferencedEnds(tUCMmap, stubObj.connectingStubBody.pathNodes);
 			
 			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, stubObj.connectingStubBody.pathEnd, true);
 			
@@ -977,11 +974,11 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		
 		thisModule.nodeCollector <- Sequence{};
 		
-		tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(obj.pathbody -> collect(pb|pb.pathNodes)));
+		thisModule.collectReferencedEnds(tUCMmap, obj.pathbody -> collect(pb|pb.pathNodes));
 		thisModule.nodeCollector <- thisModule.collectRegularEnds(tUCMmap, obj.pathbody -> flatten());
 		
 		if(not obj.connectingAndBody.oclIsUndefined()){	
-			tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(obj.connectingAndBody.pathNodes));
+			thisModule.collectReferencedEnds(tUCMmap, obj.connectingAndBody.pathNodes);
 			
 			thisModule.numberOfTerminatingNodes <- obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
 			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, obj.connectingAndBody.pathEnd, true);
@@ -1103,7 +1100,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 		
 		--timer out path
 		if(not timerObj.timeoutPath.oclIsUndefined()){
-			tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(timerObj.timeoutPath.pathNodes));
+			thisModule.collectReferencedEnds(tUCMmap, timerObj.timeoutPath.pathNodes);
 			thisModule.addSucc(tTimer, thisModule.createNodeConnection());
 			
 			if(not timerObj.timeoutCondition.oclIsUndefined()){
@@ -1128,7 +1125,7 @@ rule createTimer(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 			thisModule.connectReferencedEndToNextNode(tUCMmap, timerObj.timeoutPath, thisModule.nodeCounter, thisModule.next);
 		}
 		
-		thisModule.nodeCollector;
+		tTimer;
 	}
 }
 
@@ -1766,19 +1763,18 @@ rule UCMmap2UCMmap{
 			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p,'tNodeConn'))
 		)
 	do{
-		--Referenced ends
-		tUCMmap.nodes <- tUCMmap.mergeNodes(thisModule.collectReferencedEnds(sUCMmap.getPathNodes()));
+		thisModule.collectReferencedEnds(tUCMmap, sUCMmap.getPathNodes());
 		
 		--Regular ends
 		--ADD CODE HERE
 		for(path in sUCMmap.paths){
 			thisModule.pathEnd <- path.pathBody.pathEnd;
-			thisModule.newNode <- thisModule.processPathEnd(tUCMmap, thisModule.pathEnd, false);
-
-			if(not (thisModule.newNode = '')){
-				thisModule.nodeCollector <- thisModule.nodeCollector -> union(thisModule.newNode);	
-			}
+			thisModule.newNodes <- thisModule.processPathEnd(tUCMmap, thisModule.pathEnd, false);
 			
+			if(thisModule.newNodes <> ''){
+				tUCMmap.nodes <- tUCMmap.nodes -> union(thisModule.newNodes);	
+			}
+
 			if(thisModule.pathEnd.oclIsTypeOf(Turn!OrFork)) {
 				thisModule.connectOrForkNodes(thisModule.pathEnd, tUCMmap);
 			}
