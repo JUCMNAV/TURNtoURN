@@ -34,6 +34,8 @@
 * Verify that all calls to methods I've created match the logic of the original system
 * Verify if cases in which 'succeeded' logic is used to handle nested conditionals are all correct (i.e., make sure none of the nested ifs were intentional to avoid the else)
 * Verify the lifetime of variables to make sure they aren't sitting around eternally
+* Make variable name orderings in method arguments consistent
+* Rename methods so that their names describe their behavior better
 
 ## ACTIVE TASK
 I am currently refactoring the code until it is at a point I feel is sufficiently readable for me to troubleshoot it. I have significantly improved readability but cannot be sure of functionality. I have likely broken some code along the way, and the current version is broken. However, the original version was also broken, so this should not be an issue.
