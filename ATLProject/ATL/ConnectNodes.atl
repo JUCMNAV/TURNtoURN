@@ -242,7 +242,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 	}
 }
 
-rule handleNode(tUCMmap: Turn!UCMmap, pathbody: Sequence(Turn!PathBody), currentNode: Turn!PathNode, previousNode: Turn!PathNode, firstNode: Turn!PathNode){
+rule handleNode(tUCMmap: Turn!UCMmap, pathbody: Sequence(Turn!PathBody), currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 	do{
 		if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
 			thisModule.processNode(tUCMmap, pathbody, thisModule.resolveTemp(currentNode, 'tWtPlace'), previousNode, false);
@@ -271,8 +271,8 @@ rule handleNode(tUCMmap: Turn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 			else{
 				thisModule.pred <- tUCMmap.getNode(previousNode.name).succ;
 			}
-			--QUESTION: why does this need the first node?
-			thisModule.connect <- thisModule.handleConnectNode(tUCMmap, currentNode, thisModule.pred, firstNode);
+			
+			thisModule.connect <- thisModule.handleConnectNode(tUCMmap, currentNode, thisModule.pred, previousNode);
 			thisModule.connectMap <- thisModule.connectMap.including(currentNode, thisModule.connect);
 		}
 		-- DOUBLE CHECK IF THIS IS REQUIRED
@@ -445,13 +445,11 @@ rule handleReferencedStubs(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!Pathbody
 
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: Urn!UCMmap, nextNode: Urn!PathNode){
 	do{
-		thisModule.firstNode <- '';
 		thisModule.previousNode <- '';
 		
 		for (currentNode in pathbody.pathNodes){
 			
 			if(thisModule.previousNode = ''){
-				thisModule.firstNode <- currentNode;
 				thisModule.handleFirstNode(tUCMmap, path, currentNode, nextNode);
 			}
 			else{

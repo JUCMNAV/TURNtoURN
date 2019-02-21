@@ -1209,9 +1209,9 @@
 		<constant value="275:64-275:75"/>
 		<constant value="275:77-275:87"/>
 		<constant value="275:77-275:92"/>
-		<constant value="275:94-275:103"/>
-		<constant value="275:26-275:104"/>
-		<constant value="275:4-275:105"/>
+		<constant value="275:94-275:106"/>
+		<constant value="275:26-275:107"/>
+		<constant value="275:4-275:108"/>
 		<constant value="276:4-276:14"/>
 		<constant value="276:29-276:39"/>
 		<constant value="276:29-276:50"/>
@@ -9538,19 +9538,18 @@
 		<constant value="418:2-443:3"/>
 		<constant value="connectNodes"/>
 		<constant value="pathNodes"/>
-		<constant value="25"/>
+		<constant value="22"/>
 		<constant value="J.handleNode(JJJJJ):J"/>
-		<constant value="34"/>
+		<constant value="28"/>
 		<constant value="J.handleFirstNode(JJJJ):J"/>
 		<constant value="nodeCounter"/>
-		<constant value="77"/>
-		<constant value="72"/>
-		<constant value="58"/>
-		<constant value="J.handleReferencedStubs(JJJJ):J"/>
 		<constant value="71"/>
+		<constant value="60"/>
+		<constant value="J.handleReferencedStubs(JJJJ):J"/>
 		<constant value="J.handleReferencedEnds(JJJ):J"/>
 		<constant value="J.handleRegularEnds(JJJ):J"/>
 		<constant value="448:3-448:13"/>
+<<<<<<< HEAD
 		<constant value="448:27-448:29"/>
 		<constant value="448:3-448:30"/>
 		<constant value="449:3-449:13"/>
@@ -9626,6 +9625,76 @@
 		<constant value="451:3-474:4"/>
 		<constant value="447:2-475:3"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
+=======
+		<constant value="448:30-448:32"/>
+		<constant value="448:3-448:33"/>
+		<constant value="450:23-450:31"/>
+		<constant value="450:23-450:41"/>
+		<constant value="452:7-452:17"/>
+		<constant value="452:7-452:30"/>
+		<constant value="452:33-452:35"/>
+		<constant value="452:7-452:35"/>
+		<constant value="456:5-456:15"/>
+		<constant value="456:27-456:34"/>
+		<constant value="456:36-456:44"/>
+		<constant value="456:46-456:57"/>
+		<constant value="456:59-456:69"/>
+		<constant value="456:59-456:82"/>
+		<constant value="456:84-456:94"/>
+		<constant value="456:84-456:104"/>
+		<constant value="456:5-456:106"/>
+		<constant value="453:5-453:15"/>
+		<constant value="453:32-453:39"/>
+		<constant value="453:41-453:45"/>
+		<constant value="453:47-453:58"/>
+		<constant value="453:60-453:68"/>
+		<constant value="453:5-453:70"/>
+		<constant value="452:4-457:5"/>
+		<constant value="459:7-459:17"/>
+		<constant value="459:7-459:29"/>
+		<constant value="459:32-459:40"/>
+		<constant value="459:32-459:50"/>
+		<constant value="459:32-459:60"/>
+		<constant value="459:7-459:60"/>
+		<constant value="460:12-460:20"/>
+		<constant value="460:12-460:28"/>
+		<constant value="460:12-460:45"/>
+		<constant value="460:8-460:45"/>
+		<constant value="463:17-463:25"/>
+		<constant value="463:17-463:39"/>
+		<constant value="463:17-463:56"/>
+		<constant value="463:13-463:56"/>
+		<constant value="466:17-466:25"/>
+		<constant value="466:17-466:40"/>
+		<constant value="466:17-466:57"/>
+		<constant value="466:13-466:57"/>
+		<constant value="467:6-467:16"/>
+		<constant value="467:39-467:46"/>
+		<constant value="467:48-467:56"/>
+		<constant value="467:58-467:69"/>
+		<constant value="467:71-467:81"/>
+		<constant value="467:71-467:94"/>
+		<constant value="467:6-467:96"/>
+		<constant value="466:10-468:6"/>
+		<constant value="464:6-464:16"/>
+		<constant value="464:38-464:45"/>
+		<constant value="464:47-464:55"/>
+		<constant value="464:57-464:68"/>
+		<constant value="464:6-464:70"/>
+		<constant value="463:10-468:6"/>
+		<constant value="461:6-461:16"/>
+		<constant value="461:35-461:42"/>
+		<constant value="461:44-461:52"/>
+		<constant value="461:54-461:65"/>
+		<constant value="461:6-461:67"/>
+		<constant value="460:5-468:6"/>
+		<constant value="459:4-469:5"/>
+		<constant value="471:4-471:14"/>
+		<constant value="471:31-471:42"/>
+		<constant value="471:4-471:43"/>
+		<constant value="450:3-472:4"/>
+		<constant value="447:2-473:3"/>
+>>>>>>> 055e462... Fixed a bug in the logic where the first node was used in an improper location
 	</cp>
 	<field name="1" type="2"/>
 	<field name="3" type="4"/>
@@ -11993,7 +12062,6 @@
 			<parameter name="29" type="4"/>
 			<parameter name="42" type="4"/>
 			<parameter name="43" type="4"/>
-			<parameter name="44" type="4"/>
 		</parameters>
 		<code>
 			<load arg="42"/>
@@ -12229,13 +12297,13 @@
 			<get arg="61"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<iterate/>
-			<store arg="66"/>
-			<load arg="66"/>
+			<store arg="44"/>
+			<load arg="44"/>
 			<get arg="67"/>
 			<call arg="68"/>
 			<call arg="69"/>
 			<if arg="1051"/>
-			<load arg="66"/>
+			<load arg="44"/>
 			<call arg="71"/>
 			<enditerate/>
 			<call arg="72"/>
@@ -12325,13 +12393,13 @@
 			<get arg="61"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<iterate/>
-			<store arg="66"/>
-			<load arg="66"/>
+			<store arg="44"/>
+			<load arg="44"/>
 			<get arg="67"/>
 			<call arg="68"/>
 			<call arg="69"/>
 			<if arg="1052"/>
-			<load arg="66"/>
+			<load arg="44"/>
 			<call arg="71"/>
 			<enditerate/>
 			<call arg="72"/>
@@ -12501,20 +12569,20 @@
 			<get arg="38"/>
 			<call arg="1054"/>
 			<iterate/>
-			<store arg="66"/>
-			<load arg="66"/>
+			<store arg="44"/>
+			<load arg="44"/>
 			<get arg="61"/>
 			<call arg="71"/>
 			<enditerate/>
 			<call arg="1055"/>
 			<iterate/>
-			<store arg="66"/>
-			<load arg="66"/>
+			<store arg="44"/>
+			<load arg="44"/>
 			<get arg="67"/>
 			<call arg="68"/>
 			<call arg="69"/>
 			<if arg="1056"/>
-			<load arg="66"/>
+			<load arg="44"/>
 			<call arg="71"/>
 			<enditerate/>
 			<set arg="62"/>
@@ -12869,6 +12937,7 @@
 			<push arg="28"/>
 			<push arg="8"/>
 			<new/>
+<<<<<<< HEAD
 			<load arg="42"/>
 			<get arg="60"/>
 =======
@@ -12971,6 +13040,8 @@
 			<push arg="28"/>
 			<push arg="8"/>
 			<new/>
+=======
+>>>>>>> 055e462... Fixed a bug in the logic where the first node was used in an improper location
 			<load arg="19"/>
 			<load arg="43"/>
 			<get arg="80"/>
@@ -12978,6 +13049,7 @@
 			<call arg="60"/>
 			<get arg="61"/>
 			<iterate/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 			<store arg="61"/>
 			<load arg="29"/>
@@ -13116,11 +13188,15 @@
 =======
 			<store arg="66"/>
 			<load arg="66"/>
+=======
+			<store arg="44"/>
+			<load arg="44"/>
+>>>>>>> 055e462... Fixed a bug in the logic where the first node was used in an improper location
 			<get arg="67"/>
 			<call arg="68"/>
 			<call arg="69"/>
 			<if arg="90"/>
-			<load arg="66"/>
+			<load arg="44"/>
 			<call arg="71"/>
 			<enditerate/>
 			<call arg="72"/>
@@ -13136,14 +13212,14 @@
 			<get arg="38"/>
 			<call arg="1054"/>
 			<iterate/>
-			<store arg="66"/>
-			<load arg="66"/>
+			<store arg="44"/>
+			<load arg="44"/>
 			<get arg="62"/>
 			<call arg="68"/>
 			<call arg="51"/>
 			<call arg="69"/>
 			<if arg="93"/>
-			<load arg="66"/>
+			<load arg="44"/>
 			<call arg="71"/>
 			<enditerate/>
 			<call arg="72"/>
@@ -13423,7 +13499,7 @@
 			<load arg="42"/>
 			<getasm/>
 			<get arg="62"/>
-			<load arg="44"/>
+			<load arg="43"/>
 			<call arg="493"/>
 			<set arg="335"/>
 			<getasm/>
@@ -13889,18 +13965,17 @@
 			<lne id="1270" begin="0" end="298"/>
 		</linenumbertable>
 		<localvariabletable>
-			<lve slot="6" name="256" begin="90" end="97"/>
-			<lve slot="6" name="256" begin="116" end="123"/>
-			<lve slot="6" name="256" begin="144" end="147"/>
-			<lve slot="6" name="256" begin="151" end="158"/>
-			<lve slot="6" name="256" begin="196" end="203"/>
-			<lve slot="6" name="256" begin="218" end="226"/>
+			<lve slot="5" name="256" begin="90" end="97"/>
+			<lve slot="5" name="256" begin="116" end="123"/>
+			<lve slot="5" name="256" begin="144" end="147"/>
+			<lve slot="5" name="256" begin="151" end="158"/>
+			<lve slot="5" name="256" begin="196" end="203"/>
+			<lve slot="5" name="256" begin="218" end="226"/>
 			<lve slot="0" name="17" begin="0" end="298"/>
 			<lve slot="1" name="257" begin="0" end="298"/>
 			<lve slot="2" name="258" begin="0" end="298"/>
 			<lve slot="3" name="259" begin="0" end="298"/>
 			<lve slot="4" name="260" begin="0" end="298"/>
-			<lve slot="5" name="647" begin="0" end="298"/>
 		</localvariabletable>
 	</operation>
 	<operation name="1271">
@@ -30054,9 +30129,6 @@
 		<code>
 			<getasm/>
 			<push arg="263"/>
-			<set arg="647"/>
-			<getasm/>
-			<push arg="263"/>
 			<set arg="260"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<load arg="19"/>
@@ -30253,9 +30325,6 @@
 			<pcall arg="1986"/>
 			<goto arg="1987"/>
 			<getasm/>
-			<load arg="44"/>
-			<set arg="647"/>
-			<getasm/>
 			<load arg="42"/>
 			<load arg="29"/>
 			<load arg="44"/>
@@ -30267,24 +30336,24 @@
 			<get arg="1984"/>
 			<call arg="1866"/>
 			<call arg="468"/>
-			<if arg="480"/>
+			<if arg="340"/>
 			<goto arg="1990"/>
 			<load arg="19"/>
 			<get arg="1272"/>
 			<call arg="68"/>
 			<call arg="51"/>
-			<if arg="1991"/>
+			<if arg="57"/>
 			<load arg="19"/>
 			<get arg="1614"/>
 			<call arg="68"/>
 			<call arg="51"/>
-			<if arg="57"/>
+			<if arg="1991"/>
 			<load arg="19"/>
 			<get arg="1865"/>
 			<call arg="68"/>
 			<call arg="51"/>
-			<if arg="1992"/>
-			<goto arg="63"/>
+			<if arg="270"/>
+			<goto arg="1280"/>
 			<getasm/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<load arg="42"/>
@@ -37507,14 +37576,19 @@
 			<set arg="62"/>
 =======
 			<get arg="260"/>
+<<<<<<< HEAD
 			<pcall arg="1993"/>
 			<goto arg="1994"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
+=======
+			<pcall arg="1992"/>
+			<goto arg="63"/>
+>>>>>>> 055e462... Fixed a bug in the logic where the first node was used in an improper location
 			<getasm/>
 			<load arg="42"/>
 			<load arg="19"/>
 			<load arg="44"/>
-			<pcall arg="1995"/>
+			<pcall arg="1993"/>
 			<goto arg="1990"/>
 			<getasm/>
 <<<<<<< HEAD
@@ -37532,7 +37606,7 @@
 			<load arg="42"/>
 			<load arg="19"/>
 			<load arg="44"/>
-			<pcall arg="1996"/>
+			<pcall arg="1994"/>
 			<getasm/>
 			<load arg="44"/>
 			<set arg="260"/>
@@ -37540,83 +37614,78 @@
 			<enditerate/>
 		</code>
 		<linenumbertable>
-			<lne id="1997" begin="0" end="0"/>
-			<lne id="1998" begin="1" end="1"/>
-			<lne id="1999" begin="0" end="2"/>
-			<lne id="2000" begin="3" end="3"/>
-			<lne id="2001" begin="4" end="4"/>
-			<lne id="2002" begin="3" end="5"/>
-			<lne id="2003" begin="6" end="6"/>
-			<lne id="2004" begin="6" end="7"/>
-			<lne id="2005" begin="10" end="10"/>
-			<lne id="2006" begin="10" end="11"/>
-			<lne id="2007" begin="12" end="12"/>
-			<lne id="2008" begin="10" end="13"/>
-			<lne id="2009" begin="15" end="15"/>
-			<lne id="2010" begin="16" end="16"/>
-			<lne id="2011" begin="17" end="17"/>
-			<lne id="2012" begin="18" end="18"/>
-			<lne id="2013" begin="19" end="19"/>
-			<lne id="2014" begin="19" end="20"/>
-			<lne id="2015" begin="21" end="21"/>
-			<lne id="2016" begin="21" end="22"/>
-			<lne id="2017" begin="15" end="23"/>
-			<lne id="2018" begin="25" end="25"/>
-			<lne id="2019" begin="26" end="26"/>
-			<lne id="2020" begin="25" end="27"/>
-			<lne id="2021" begin="28" end="28"/>
-			<lne id="2022" begin="29" end="29"/>
-			<lne id="2023" begin="30" end="30"/>
-			<lne id="2024" begin="31" end="31"/>
-			<lne id="2025" begin="32" end="32"/>
-			<lne id="2026" begin="28" end="33"/>
-			<lne id="2027" begin="10" end="33"/>
-			<lne id="2028" begin="34" end="34"/>
-			<lne id="2029" begin="34" end="35"/>
-			<lne id="2030" begin="36" end="36"/>
-			<lne id="2031" begin="36" end="37"/>
-			<lne id="2032" begin="36" end="38"/>
-			<lne id="2033" begin="34" end="39"/>
-			<lne id="2034" begin="42" end="42"/>
-			<lne id="2035" begin="42" end="43"/>
-			<lne id="2036" begin="42" end="44"/>
-			<lne id="2037" begin="42" end="45"/>
-			<lne id="2038" begin="47" end="47"/>
-			<lne id="2039" begin="47" end="48"/>
-			<lne id="2040" begin="47" end="49"/>
-			<lne id="2041" begin="47" end="50"/>
-			<lne id="2042" begin="52" end="52"/>
-			<lne id="2043" begin="52" end="53"/>
-			<lne id="2044" begin="52" end="54"/>
-			<lne id="2045" begin="52" end="55"/>
-			<lne id="2046" begin="58" end="58"/>
-			<lne id="2047" begin="59" end="59"/>
-			<lne id="2048" begin="60" end="60"/>
-			<lne id="2049" begin="61" end="61"/>
-			<lne id="2050" begin="62" end="62"/>
-			<lne id="2051" begin="62" end="63"/>
-			<lne id="2052" begin="58" end="64"/>
-			<lne id="2053" begin="52" end="64"/>
-			<lne id="2054" begin="66" end="66"/>
-			<lne id="2055" begin="67" end="67"/>
-			<lne id="2056" begin="68" end="68"/>
-			<lne id="2057" begin="69" end="69"/>
-			<lne id="2058" begin="66" end="70"/>
-			<lne id="2059" begin="47" end="70"/>
+			<lne id="1995" begin="0" end="0"/>
+			<lne id="1996" begin="1" end="1"/>
+			<lne id="1997" begin="0" end="2"/>
+			<lne id="1998" begin="3" end="3"/>
+			<lne id="1999" begin="3" end="4"/>
+			<lne id="2000" begin="7" end="7"/>
+			<lne id="2001" begin="7" end="8"/>
+			<lne id="2002" begin="9" end="9"/>
+			<lne id="2003" begin="7" end="10"/>
+			<lne id="2004" begin="12" end="12"/>
+			<lne id="2005" begin="13" end="13"/>
+			<lne id="2006" begin="14" end="14"/>
+			<lne id="2007" begin="15" end="15"/>
+			<lne id="2008" begin="16" end="16"/>
+			<lne id="2009" begin="16" end="17"/>
+			<lne id="2010" begin="18" end="18"/>
+			<lne id="2011" begin="18" end="19"/>
+			<lne id="2012" begin="12" end="20"/>
+			<lne id="2013" begin="22" end="22"/>
+			<lne id="2014" begin="23" end="23"/>
+			<lne id="2015" begin="24" end="24"/>
+			<lne id="2016" begin="25" end="25"/>
+			<lne id="2017" begin="26" end="26"/>
+			<lne id="2018" begin="22" end="27"/>
+			<lne id="2019" begin="7" end="27"/>
+			<lne id="2020" begin="28" end="28"/>
+			<lne id="2021" begin="28" end="29"/>
+			<lne id="2022" begin="30" end="30"/>
+			<lne id="2023" begin="30" end="31"/>
+			<lne id="2024" begin="30" end="32"/>
+			<lne id="2025" begin="28" end="33"/>
+			<lne id="2026" begin="36" end="36"/>
+			<lne id="2027" begin="36" end="37"/>
+			<lne id="2028" begin="36" end="38"/>
+			<lne id="2029" begin="36" end="39"/>
+			<lne id="2030" begin="41" end="41"/>
+			<lne id="2031" begin="41" end="42"/>
+			<lne id="2032" begin="41" end="43"/>
+			<lne id="2033" begin="41" end="44"/>
+			<lne id="2034" begin="46" end="46"/>
+			<lne id="2035" begin="46" end="47"/>
+			<lne id="2036" begin="46" end="48"/>
+			<lne id="2037" begin="46" end="49"/>
+			<lne id="2038" begin="52" end="52"/>
+			<lne id="2039" begin="53" end="53"/>
+			<lne id="2040" begin="54" end="54"/>
+			<lne id="2041" begin="55" end="55"/>
+			<lne id="2042" begin="56" end="56"/>
+			<lne id="2043" begin="56" end="57"/>
+			<lne id="2044" begin="52" end="58"/>
+			<lne id="2045" begin="46" end="58"/>
+			<lne id="2046" begin="60" end="60"/>
+			<lne id="2047" begin="61" end="61"/>
+			<lne id="2048" begin="62" end="62"/>
+			<lne id="2049" begin="63" end="63"/>
+			<lne id="2050" begin="60" end="64"/>
+			<lne id="2051" begin="41" end="64"/>
+			<lne id="2052" begin="66" end="66"/>
+			<lne id="2053" begin="67" end="67"/>
+			<lne id="2054" begin="68" end="68"/>
+			<lne id="2055" begin="69" end="69"/>
+			<lne id="2056" begin="66" end="70"/>
+			<lne id="2057" begin="36" end="70"/>
+			<lne id="2058" begin="28" end="70"/>
+			<lne id="2059" begin="71" end="71"/>
 			<lne id="2060" begin="72" end="72"/>
-			<lne id="2061" begin="73" end="73"/>
-			<lne id="2062" begin="74" end="74"/>
-			<lne id="2063" begin="75" end="75"/>
-			<lne id="2064" begin="72" end="76"/>
-			<lne id="2065" begin="42" end="76"/>
-			<lne id="2066" begin="34" end="76"/>
-			<lne id="2067" begin="77" end="77"/>
-			<lne id="2068" begin="78" end="78"/>
-			<lne id="2069" begin="77" end="79"/>
-			<lne id="2070" begin="6" end="80"/>
-			<lne id="2071" begin="0" end="80"/>
+			<lne id="2061" begin="71" end="73"/>
+			<lne id="2062" begin="3" end="74"/>
+			<lne id="2063" begin="0" end="74"/>
 		</linenumbertable>
 		<localvariabletable>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -38671,6 +38740,14 @@
 			<lve slot="3" name="257" begin="0" end="80"/>
 			<lve slot="4" name="648" begin="0" end="80"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
+=======
+			<lve slot="5" name="259" begin="6" end="73"/>
+			<lve slot="0" name="17" begin="0" end="74"/>
+			<lve slot="1" name="258" begin="0" end="74"/>
+			<lve slot="2" name="645" begin="0" end="74"/>
+			<lve slot="3" name="257" begin="0" end="74"/>
+			<lve slot="4" name="648" begin="0" end="74"/>
+>>>>>>> 055e462... Fixed a bug in the logic where the first node was used in an improper location
 		</localvariabletable>
 	</operation>
 </asm>
