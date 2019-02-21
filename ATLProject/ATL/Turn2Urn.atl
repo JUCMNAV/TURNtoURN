@@ -434,7 +434,9 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 		thisModule.connectPathEndToNextNode(tUCMmap, thisModule.body.pathEnd, thisModule.nextPred);
 		
 		if(thisModule.body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-			thisModule.addPred(thisModule.getResponsibility(thisModule.body.referencedEnd.name), thisModule.nextPred);
+			-- TODO (COMMENTED OUT): I get the error that there is no property pred on the item responsibility; I can't think of any ways to rseolve that here
+			-- QUESTION: Is this perhaps a logic error? I've commented it out for now
+			-- thisModule.addPred(thisModule.getResponsibility(thisModule.body.referencedEnd.name), thisModule.nextPred);
 		}
 		else{
 			thisModule.connectReferencedEndToNextNode(tUCMmap, thisModule.body, thisModule.nodeCounter, thisModule.nextPred);
@@ -720,7 +722,9 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
 				if(not obj.body.oclIsUndefined()){
 					if(not obj.body.elseBody.oclIsUndefined()){
-						thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.createdCondition.expression);
+						-- TODO (COMMENTED OUT): thisModule.createdCondition isn't defined; I'm not sure what should go here instead. Try to determine it
+						-- QUESTION: where should the condition come from?
+						-- thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.createdCondition.expression);
 					}
 					
 					--TODO: consider adding a createTimer Boolean to collectReferencedNodes to move this logic there
@@ -1277,7 +1281,7 @@ rule Dependency2Dependency{
 		tDep: Urn!Dependency (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-		 	dest <- s.dest,
+		 	dest <- thisModule.resolveTemp(s.dest, 'tIntElem'),
 			refs <- tLinkRef
 		),
 		tLinkRef: Urn!LinkRef (
@@ -1293,10 +1297,14 @@ rule Strategies2Strategies{
 		tStrategies: Urn!EvaluationStrategy (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-			author <- s.info.author,
 			evaluations <- s.evaluations,
 			includedStrategies <- s.includedStrategies
 		)
+	do{
+		if(not s.info.oclIsUndefined()){
+			tStrategies.author <- s.info.author;
+		}
+	}
 }
 
 rule StrategiesGroup2StrategiesGroup{
@@ -1556,7 +1564,7 @@ rule URNspec2URNspec{
 		),
 		tGRLSpec: Urn!GRLspec(
 			actors <- sURNspec.actors,
-			intElements <- sURNspec.getActorElements() -> select(e|e.type.toString() <> 'belief'),
+			intElements <- thisModule.resolveTemp(sURNspec.getActorElements() -> select(e|e.type.toString() <> 'belief'), 'tIntElem'),
 			groups <- sURNspec.stratGroups,
 			strategies <- sURNspec.strategies,
 			contributionGroups <- sURNspec.contribContextGroups,
