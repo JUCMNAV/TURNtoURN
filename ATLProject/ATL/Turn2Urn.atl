@@ -180,11 +180,16 @@ rule getUrnCompRef(obj: OclAny){
 	do{
 		thisModule.compRef <- '';
 		
-		if (not obj.boundTo.comp.oclIsUndefined()){
-			thisModule.compRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
+		if (not obj.boundTo.oclIsUndefined()) {
+			if (not obj.boundTo.comp.oclIsUndefined()){
+				thisModule.compRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
+			}
+			else{
+				thisModule.compRef <- thisModule.resolveTemp(obj.boundTo.comp2, 'tCompRef');
+			}
 		}
 		else{
-			thisModule.compRef <- thisModule.resolveTemp(obj.boundTo.comp2, 'tCompRef');
+			thisModule.compRef <- OclUndefined;	
 		}
 		
 		thisModule.compRef;
@@ -597,7 +602,8 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		tOrFork: Urn!OrFork (
 			id <- thisModule.nextId().toString(),
 			name <- obj.turnGetLongestName(),
-			diagram <- tUCMmap
+			diagram <- tUCMmap,
+			contRef <- thisModule.getUrnCompRef(obj)
 		)
 	do{
 		if(tOrFork.name.oclIsUndefined()){
@@ -605,10 +611,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		}
 		else{
 			tOrFork.label <- thisModule.createLabel();
-		}
-		
-		if (not obj.boundTo.oclIsUndefined()){
-			tOrFork.contRef <- thisModule.getUrnCompRef(obj);
 		}
 		
 		if(not obj.body.oclIsUndefined()){
@@ -737,7 +739,8 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			id <- thisModule.nextId().toString(),
 			name <- stubObj.turnGetLongestName(),
 			diagram <- tUCMmap,
-			label <- tNodeLabel
+			label <- tNodeLabel,
+			contRef <- thisModule.getUrnCompRef(stubObj)
 		),
 		tNodeLabel: Urn!NodeLabel()
 	do{
@@ -748,10 +751,6 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		else{
 			thisModule.existingStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=tUCMmap.name).stubs;
 			tStub.bindings <- thisModule.existingStubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
-		}
-		
-		if(not stubObj.boundTo.oclIsUndefined()){
-			tStub.contRef <- thisModule.getUrnCompRef(stubObj);
 		}
 			
 		if(not stubObj.stubType.oclIsUndefined()){
@@ -920,7 +919,8 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		tAndFork: Urn!AndFork (
 			id <- thisModule.nextId().toString(),
 			name <- obj.turnGetLongestName(),
-			diagram <- tUCMmap
+			diagram <- tUCMmap,
+			contRef <- thisModule.getUrnCompRef(obj)
 		)
 	do{
 		if(tAndFork.name.oclIsUndefined()){
@@ -934,10 +934,6 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		
 		for(elem in obj.pathbody){
 			thisModule.addSucc(tAndFork, thisModule.createAndForkNodeConnection(elem, tUCMmap));
-		}
-		
-		if(not obj.boundTo.oclIsUndefined()){
-			tAndFork.contRef <- thisModule.getUrnCompRef(obj);
 		}
 		
 		thisModule.collectReferencedEnds(tUCMmap, obj.pathbody -> collect(pb|pb.pathNodes));
@@ -995,7 +991,8 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 		tEndPoint: Urn!EndPoint (
 			id <- thisModule.nextId().toString(),
 			name <- 'EndPoint' + tEndPoint.id,
-			diagram <- tUCMmap
+			diagram <- tUCMmap,
+			contRef <- thisModule.getUrnCompRef(ep)
 		)
 	do{
 		--TODO: move this to the declaration of tEndPoint above once code has been verified as working
@@ -1014,11 +1011,6 @@ rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
 			
 			thisModule.endPointMap <- thisModule.endPointMap.including(ep,tEndPoint);
 			
-			--component bindings
-			if(not ep.boundTo.oclIsUndefined()){
-				tEndPoint.contRef <- thisModule.getUrnCompRef(ep);
-			}
-	
 			if(ep.epConnect.pbody.pathNodes -> isEmpty()){
 				--Using backlinks to connect orFork
 				thisModule.currentOrFork <- ep.epConnect.pbody.orFork;
@@ -1048,17 +1040,14 @@ rule createTimer(tUCMmap: Urn!UCMmap, timerObj: Turn!Timer){
 			succ <- tNodeConn,
 			diagram <- tUCMmap,
 			label <- tNodeLabel,
-			waitType <- timerObj.kind.toString().capitalize()
+			waitType <- timerObj.kind.toString().capitalize(),
+			contRef <- thisModule.getUrnCompRef(timerObj)
 		),
 		tNodeConn: Urn!NodeConnection(
 			condition <- timerObj.condition
 		),
 		tNodeLabel: Urn!NodeLabel()
 	do{
-		if(not timerObj.boundTo.oclIsUndefined()){
-			tTimer.contRef <- thisModule.getUrnCompRef(timerObj);
-		}
-		
 		--timer out path
 		if(not timerObj.timeoutPath.oclIsUndefined()){
 			thisModule.collectReferencedEnds(tUCMmap, timerObj.timeoutPath.pathNodes);
@@ -1428,12 +1417,6 @@ rule Component2Component{
 			else
 				Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name)
 			endif;
-		vCompRef : Urn!ComponentRef = 
-			if (not s.boundTo.oclIsUndefined()) then
-				thisModule.getUrnCompRef(s)
-			else
-				OclUndefined
-			endif;
 	}
 	to
 		tCompRef: Urn!ComponentRef(
@@ -1442,7 +1425,7 @@ rule Component2Component{
 			label <- tCompLabel,
 			diagram <- s.map,
 			contDef <- vComponent,
-			parent <- vCompRef
+			parent <- thisModule.getUrnCompRef(s)
 		),
 		tCompLabel: Urn!ComponentLabel
 	do{
@@ -1483,12 +1466,6 @@ rule Responsibility2Responsibility{
 			else
 				thisModule.getResponsibility(s.turnGetLongestName())
 			endif;
-		vCompRef : Urn!ComponentRef = 
-			if (not s.boundTo.oclIsUndefined()) then
-				thisModule.getUrnCompRef(s)
-			else
-				OclUndefined
-			endif;
 	}
 	to
 		tRespRef: Urn!RespRef (
@@ -1497,7 +1474,7 @@ rule Responsibility2Responsibility{
 			succ <- tNodeConn,
 			label <- tNodeLabel,
 			respDef <- vResponsibility,
-			contRef <- vCompRef
+			contRef <- thisModule.getUrnCompRef(s)
 		),
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
@@ -1624,12 +1601,6 @@ rule StartPoint2StartPoint{
 	from
 		s: Turn!StartPoint
 	using {
-		vCompRef : Urn!ComponentRef = 
-			if (not s.boundTo.oclIsUndefined()) then
-				thisModule.getUrnCompRef(s)
-			else
-				OclUndefined
-			endif;
 		vFailureKind : String =
 			if(not s.failKind.oclIsUndefined()) then
 				s.failKind.toString().capitalize()
@@ -1645,7 +1616,7 @@ rule StartPoint2StartPoint{
 			label <- tNodeLabel,
 			diagram <- s.path.map,
 			precondition <- s.precondition,
-			contRef <- vCompRef,
+			contRef <- thisModule.getUrnCompRef(s),
 			failureKind <- vFailureKind
 		),
 		tNodeConn: Urn!NodeConnection(),
@@ -1664,14 +1635,6 @@ rule Condition2Condition{
 rule OrJoin2OrJoin{
 	from 	
 		s: Turn!OrJoin
-	using {
-		vCompRef : Urn!ComponentRef = 
-			if (not s.boundTo.oclIsUndefined()) then
-				thisModule.getUrnCompRef(s)
-			else
-				OclUndefined
-			endif;		
-	}
 	to
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel,
@@ -1680,21 +1643,13 @@ rule OrJoin2OrJoin{
 			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel,
-			contRef <- vCompRef
+			contRef <- thisModule.getUrnCompRef(s)
 		)
 }
 
 rule AndJoin2AndJoin{
 	from 	
 		s: Turn!AndJoin
-	using {
-		vCompRef : Urn!ComponentRef = 
-			if (not s.boundTo.oclIsUndefined()) then
-				thisModule.getUrnCompRef(s)
-			else
-				OclUndefined
-			endif;		
-	}
 	to
 		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel,
@@ -1703,7 +1658,7 @@ rule AndJoin2AndJoin{
 			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel,
-			contRef <- vCompRef
+			contRef <- thisModule.getUrnCompRef(s)
 		)
 }
 
