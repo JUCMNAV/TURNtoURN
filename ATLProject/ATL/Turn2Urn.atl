@@ -984,41 +984,44 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 	}
 }
 
-rule createEndPoint(ep: Turn!EndPoint, tUCMmap: Urn!UCMmap){
+rule createEndPoint(node: Turn!PathNode, tUCMmap: Urn!UCMmap){
+	using {
+		vPostcondition : String =
+			if(node.oclIsTypeOf(Turn!EndPoint)) then
+				node.condition
+			else
+				OclUndefined
+			endif;
+	}
 	to
 		tEndPoint: Urn!EndPoint (
 			id <- thisModule.nextId().toString(),
 			name <- 'EndPoint' + tEndPoint.id,
+			label <- thisModule.createLabel(),
 			diagram <- tUCMmap,
-			contRef <- thisModule.getUrnCompRef(ep)
+			contRef <- thisModule.getUrnCompRef(node),
+			postcondition <- vPostcondition
 		)
 	do{
-		--TODO: move this to the declaration of tEndPoint above once code has been verified as working
-		tEndPoint.label <- thisModule.createLabel();
-		
-		if(ep.oclIsTypeOf(Turn!EndPoint)){
-			tEndPoint.postcondition <- ep.condition;
-		}
-		
-		if(not(ep <> OclAny)){
+		if(not(node <> OclAny)){
 			thisModule.addSucc(tEndPoint, thisModule.createNodeConnection());
 		}
-		else if(not ep.oclIsTypeOf(Turn!OrFork)){
+		else if(not node.oclIsTypeOf(Turn!OrFork)){
 			-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we change it)
-			tEndPoint.name <- ep.turnGetLongestName();
+			tEndPoint.name <- node.turnGetLongestName();
 			
-			thisModule.endPointMap <- thisModule.endPointMap.including(ep,tEndPoint);
+			thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
 			
-			if(ep.epConnect.pbody.pathNodes -> isEmpty()){
+			if(node.epConnect.pbody.pathNodes -> isEmpty()){
 				--Using backlinks to connect orFork
-				thisModule.currentOrFork <- ep.epConnect.pbody.orFork;
+				thisModule.currentOrFork <- node.epConnect.pbody.orFork;
 				if(not thisModule.currentOrFork.oclIsUndefined()){
 					thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
 					thisModule.addPred(tEndPoint, thisModule.orForkMap.get(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
 				}
 				
 				--Using backlinks to connect andFork
-				thisModule.currentAndFork <- ep.epConnect.pbody.andFork;
+				thisModule.currentAndFork <- node.epConnect.pbody.andFork;
 				if(not thisModule.currentAndFork.oclIsUndefined()){
 					thisModule.addPred(tEndPoint, thisModule.andForkMap.get(thisModule.currentAndFork).firstUnconnectedSucc());
 				}
@@ -1306,13 +1309,13 @@ rule Evaluation2Evaluation {
 			endif;
 	}
  	to 
-	 tEval : Urn!Evaluation (
-	 		exceeds <- s.exceeds,
-	 		intElement <- s.intElement,
+		tEval : Urn!Evaluation (
+		 	exceeds <- s.exceeds,
+		 	intElement <- s.intElement,
 			evaluation <- s.evaluation,
 			qualitativeEvaluation <- s.qualitativeEvaluation.toString().capitalize(),
 			kpiEvalValueSet <- vKpiEvalValueSet
-	 )
+		)
 }
 
 rule ContributionContext2ContributionContext{
@@ -1744,6 +1747,8 @@ rule UCMmap2UCMmap{
 	}
 	to
 		tUCMmap: Urn!UCMmap (
+			id <- thisModule.nextId().toString(),
+			name <- sUCMmap.turnGetLongestName(),
 			contRefs <- sUCMmap.components -> collect(c|thisModule.resolveTemp(c,'tCompRef')),
 			nodes <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p,'tStartPoint')),
 			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p,'tNodeConn'))
@@ -1839,9 +1844,5 @@ rule UCMmap2UCMmap{
 		}
 		--Node connections
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
-		
-		--TODO: move these to the declaration of tUCMmap above once code has been verified as working
-		tUCMmap.id <- thisModule.nextId().toString();
-		tUCMmap.name <- sUCMmap.turnGetLongestName();
 	}
 }
