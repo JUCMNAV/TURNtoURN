@@ -443,30 +443,34 @@ rule handleReferencedStubs(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!Pathbody
 
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: Urn!UCMmap, nextNode: Urn!PathNode){
 	do{
-		thisModule.previousNode <- '';
-		
-		for (currentNode in pathbody.pathNodes){
+		if(not pathbody.pathNodes -> isEmpty()){
+			thisModule.previousNode <- '';
 			
-			if(thisModule.previousNode = ''){
-				thisModule.handleFirstNode(tUCMmap, path, currentNode, nextNode);
-			}
-			else{
-				thisModule.handleNode(tUCMmap, pathbody, currentNode, thisModule.previousNode);
-			}
-			
-			if(thisModule.nodeCounter = pathbody.pathNodes -> size()){
-				if(not pathbody.pathEnd.oclIsUndefined()){
-					thisModule.handleRegularEnds(tUCMmap, pathbody, currentNode);
+			for (currentNode in pathbody.pathNodes){
+				
+				if(thisModule.previousNode = ''){
+					thisModule.handleFirstNode(tUCMmap, path, currentNode, nextNode);
 				}
-				else if(not pathbody.referencedEnd.oclIsUndefined()){
-					thisModule.handleReferencedEnds(tUCMmap, pathbody, currentNode);
+				else{
+					thisModule.handleNode(tUCMmap, pathbody, currentNode, thisModule.previousNode);
 				}
-				else if(not pathbody.referencedStub.oclIsUndefined()){
-					thisModule.handleReferencedStubs(tUCMmap, pathbody, currentNode, thisModule.previousNode);
+				
+				if(currentNode <> pathbody.pathNodes -> last()){
+					thisModule.previousNode <- currentNode;
 				}
 			}
 			
-			thisModule.previousNode <- currentNode;
+			thisModule.lastNode <- pathbody.pathNodes -> last();
+			
+			if(not pathbody.pathEnd.oclIsUndefined()){
+				thisModule.handleRegularEnds(tUCMmap, pathbody, thisModule.lastNode);
+			}
+			else if(not pathbody.referencedEnd.oclIsUndefined()){
+				thisModule.handleReferencedEnds(tUCMmap, pathbody, thisModule.lastNode);
+			}
+			else if(not pathbody.referencedStub.oclIsUndefined()){
+				thisModule.handleReferencedStubs(tUCMmap, pathbody, thisModule.lastNode, thisModule.previousNode);
+			}
 		}
-	}		
+	}
 }

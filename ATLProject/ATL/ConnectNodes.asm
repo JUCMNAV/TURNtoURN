@@ -9837,18 +9837,16 @@
 		<constant value="416:2-441:3"/>
 		<constant value="connectNodes"/>
 		<constant value="pathNodes"/>
-		<constant value="20"/>
 		<constant value="J.handleNode(JJJJ):J"/>
 		<constant value="J.handleFirstNode(JJJJ):J"/>
-		<constant value="nodeCounter"/>
-		<constant value="34"/>
-		<constant value="58"/>
-		<constant value="50"/>
-		<constant value="57"/>
+		<constant value="J.last():J"/>
+		<constant value="39"/>
+		<constant value="lastNode"/>
+		<constant value="80"/>
 		<constant value="J.handleReferencedStubs(JJJJ):J"/>
-		<constant value="63"/>
 		<constant value="J.handleReferencedEnds(JJJ):J"/>
 		<constant value="J.handleRegularEnds(JJJ):J"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		<constant value="448:3-448:13"/>
@@ -10095,6 +10093,87 @@
 		<constant value="448:3-470:4"/>
 		<constant value="445:2-471:3"/>
 >>>>>>> be59b34... Removed almost all cases of tUCMmap.mergeNodes by simplifying logic; updated collectReferencedEnds and UCMmap2UCMmap to add nodes to tUCMmap which should capture many of the nodes that were previously lost. Updated README with new concerns
+=======
+		<constant value="446:10-446:18"/>
+		<constant value="446:10-446:28"/>
+		<constant value="446:10-446:41"/>
+		<constant value="446:6-446:41"/>
+		<constant value="447:4-447:14"/>
+		<constant value="447:31-447:33"/>
+		<constant value="447:4-447:34"/>
+		<constant value="449:24-449:32"/>
+		<constant value="449:24-449:42"/>
+		<constant value="451:8-451:18"/>
+		<constant value="451:8-451:31"/>
+		<constant value="451:34-451:36"/>
+		<constant value="451:8-451:36"/>
+		<constant value="455:6-455:16"/>
+		<constant value="455:28-455:35"/>
+		<constant value="455:37-455:45"/>
+		<constant value="455:47-455:58"/>
+		<constant value="455:60-455:70"/>
+		<constant value="455:60-455:83"/>
+		<constant value="455:6-455:85"/>
+		<constant value="452:6-452:16"/>
+		<constant value="452:33-452:40"/>
+		<constant value="452:42-452:46"/>
+		<constant value="452:48-452:59"/>
+		<constant value="452:61-452:69"/>
+		<constant value="452:6-452:71"/>
+		<constant value="451:5-456:6"/>
+		<constant value="458:8-458:19"/>
+		<constant value="458:23-458:31"/>
+		<constant value="458:23-458:41"/>
+		<constant value="458:23-458:51"/>
+		<constant value="458:8-458:51"/>
+		<constant value="459:6-459:16"/>
+		<constant value="459:33-459:44"/>
+		<constant value="459:6-459:45"/>
+		<constant value="458:5-460:6"/>
+		<constant value="449:4-461:5"/>
+		<constant value="463:4-463:14"/>
+		<constant value="463:27-463:35"/>
+		<constant value="463:27-463:45"/>
+		<constant value="463:27-463:55"/>
+		<constant value="463:4-463:56"/>
+		<constant value="465:11-465:19"/>
+		<constant value="465:11-465:27"/>
+		<constant value="465:11-465:44"/>
+		<constant value="465:7-465:44"/>
+		<constant value="468:16-468:24"/>
+		<constant value="468:16-468:38"/>
+		<constant value="468:16-468:55"/>
+		<constant value="468:12-468:55"/>
+		<constant value="471:16-471:24"/>
+		<constant value="471:16-471:39"/>
+		<constant value="471:16-471:56"/>
+		<constant value="471:12-471:56"/>
+		<constant value="472:5-472:15"/>
+		<constant value="472:38-472:45"/>
+		<constant value="472:47-472:55"/>
+		<constant value="472:57-472:67"/>
+		<constant value="472:57-472:76"/>
+		<constant value="472:78-472:88"/>
+		<constant value="472:78-472:101"/>
+		<constant value="472:5-472:103"/>
+		<constant value="471:9-473:5"/>
+		<constant value="469:5-469:15"/>
+		<constant value="469:37-469:44"/>
+		<constant value="469:46-469:54"/>
+		<constant value="469:56-469:66"/>
+		<constant value="469:56-469:75"/>
+		<constant value="469:5-469:77"/>
+		<constant value="468:9-473:5"/>
+		<constant value="466:5-466:15"/>
+		<constant value="466:34-466:41"/>
+		<constant value="466:43-466:51"/>
+		<constant value="466:53-466:63"/>
+		<constant value="466:53-466:72"/>
+		<constant value="466:5-466:74"/>
+		<constant value="465:4-473:5"/>
+		<constant value="446:3-474:4"/>
+		<constant value="445:2-475:3"/>
+>>>>>>> 33640b0... Changes to Turn2Urn: added more variables to UCMmap2UCMmap, using the convention -- INIT (varname) for the lines where the variables are first defined for readability; fixed an issue in createTimer where I missed some logic when refactoring; fixed other logic in createTimer and removed all uses of the nodeCounter global variable from both files
 	</cp>
 	<field name="1" type="2"/>
 	<field name="3" type="4"/>
@@ -31136,6 +31215,12 @@
 			<parameter name="43" type="4"/>
 		</parameters>
 		<code>
+			<load arg="19"/>
+			<get arg="1829"/>
+			<call arg="591"/>
+			<call arg="53"/>
+			<if arg="70"/>
+			<goto arg="74"/>
 			<getasm/>
 <<<<<<< HEAD
 			<push arg="263"/>
@@ -31283,8 +31368,12 @@
 			<if arg="1834"/>
 =======
 			<call arg="395"/>
+<<<<<<< HEAD
 			<if arg="1830"/>
 >>>>>>> a294d14... Readability changes: replaced all instances of at(1) with first(); replaced instances of 'x -> size() <> 0' with 'not x -> isEmpty()'; shortened some of the longer lines of code by using variables; also added an item to README; fixed a bug caused by incorrect return type of createTimer
+=======
+			<if arg="402"/>
+>>>>>>> 33640b0... Changes to Turn2Urn: added more variables to UCMmap2UCMmap, using the convention -- INIT (varname) for the lines where the variables are first defined for readability; fixed an issue in createTimer where I missed some logic when refactoring; fixed other logic in createTimer and removed all uses of the nodeCounter global variable from both files
 			<getasm/>
 >>>>>>> b30e32a... Fixed a logic error in ConnectNodes handleForkLogic; commented out a line in Turn2Urn that I suspect has a logical error; fixed a logic error in UCMmap2UCMmap; added TODO comments to Turn2Urn; updated README with new tasks
 			<load arg="42"/>
@@ -31352,43 +31441,52 @@
 			<load arg="44"/>
 			<getasm/>
 			<get arg="230"/>
-			<pcall arg="1831"/>
-			<goto arg="402"/>
+			<pcall arg="1830"/>
+			<goto arg="236"/>
 			<getasm/>
 			<load arg="42"/>
 			<load arg="29"/>
 			<load arg="44"/>
 			<load arg="43"/>
-			<pcall arg="1832"/>
-			<getasm/>
-			<get arg="1833"/>
+			<pcall arg="1831"/>
+			<load arg="44"/>
 			<load arg="19"/>
 			<get arg="1829"/>
-			<call arg="1707"/>
-			<call arg="395"/>
-			<if arg="1834"/>
-			<goto arg="942"/>
+			<call arg="1832"/>
+			<call arg="403"/>
+			<if arg="1833"/>
+			<goto arg="406"/>
+			<getasm/>
+			<load arg="44"/>
+			<set arg="230"/>
+			<enditerate/>
+			<getasm/>
+			<load arg="19"/>
+			<get arg="1829"/>
+			<call arg="1832"/>
+			<set arg="1834"/>
 			<load arg="19"/>
 			<get arg="1154"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1461"/>
+			<if arg="1835"/>
 			<load arg="19"/>
 			<get arg="1455"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1835"/>
+			<if arg="578"/>
 			<load arg="19"/>
 			<get arg="1706"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1836"/>
-			<goto arg="1837"/>
+			<if arg="1461"/>
+			<goto arg="1162"/>
 			<getasm/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<load arg="42"/>
 			<load arg="19"/>
-			<load arg="44"/>
+			<getasm/>
+			<get arg="1834"/>
 			<getasm/>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -38621,6 +38719,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<pcall arg="1876"/>
 			<goto arg="1877"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
@@ -38640,12 +38739,17 @@
 			<pcall arg="1838"/>
 			<goto arg="1839"/>
 >>>>>>> a294d14... Readability changes: replaced all instances of at(1) with first(); replaced instances of 'x -> size() <> 0' with 'not x -> isEmpty()'; shortened some of the longer lines of code by using variables; also added an item to README; fixed a bug caused by incorrect return type of createTimer
+=======
+			<pcall arg="1836"/>
+			<goto arg="943"/>
+>>>>>>> 33640b0... Changes to Turn2Urn: added more variables to UCMmap2UCMmap, using the convention -- INIT (varname) for the lines where the variables are first defined for readability; fixed an issue in createTimer where I missed some logic when refactoring; fixed other logic in createTimer and removed all uses of the nodeCounter global variable from both files
 			<getasm/>
 			<load arg="42"/>
 			<load arg="19"/>
-			<load arg="44"/>
-			<pcall arg="1840"/>
-			<goto arg="942"/>
+			<getasm/>
+			<get arg="1834"/>
+			<pcall arg="1837"/>
+			<goto arg="74"/>
 			<getasm/>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -38661,9 +38765,8 @@
 =======
 			<load arg="42"/>
 			<load arg="19"/>
-			<load arg="44"/>
-			<pcall arg="1841"/>
 			<getasm/>
+<<<<<<< HEAD
 			<load arg="44"/>
 <<<<<<< HEAD
 			<set arg="260"/>
@@ -38672,77 +38775,94 @@
 			<set arg="230"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<enditerate/>
+=======
+			<get arg="1834"/>
+			<pcall arg="1838"/>
+>>>>>>> 33640b0... Changes to Turn2Urn: added more variables to UCMmap2UCMmap, using the convention -- INIT (varname) for the lines where the variables are first defined for readability; fixed an issue in createTimer where I missed some logic when refactoring; fixed other logic in createTimer and removed all uses of the nodeCounter global variable from both files
 		</code>
 		<linenumbertable>
-			<lne id="1842" begin="0" end="0"/>
-			<lne id="1843" begin="1" end="1"/>
-			<lne id="1844" begin="0" end="2"/>
-			<lne id="1845" begin="3" end="3"/>
-			<lne id="1846" begin="3" end="4"/>
-			<lne id="1847" begin="7" end="7"/>
-			<lne id="1848" begin="7" end="8"/>
-			<lne id="1849" begin="9" end="9"/>
-			<lne id="1850" begin="7" end="10"/>
-			<lne id="1851" begin="12" end="12"/>
-			<lne id="1852" begin="13" end="13"/>
-			<lne id="1853" begin="14" end="14"/>
-			<lne id="1854" begin="15" end="15"/>
-			<lne id="1855" begin="16" end="16"/>
-			<lne id="1856" begin="16" end="17"/>
-			<lne id="1857" begin="12" end="18"/>
-			<lne id="1858" begin="20" end="20"/>
-			<lne id="1859" begin="21" end="21"/>
-			<lne id="1860" begin="22" end="22"/>
-			<lne id="1861" begin="23" end="23"/>
-			<lne id="1862" begin="24" end="24"/>
-			<lne id="1863" begin="20" end="25"/>
-			<lne id="1864" begin="7" end="25"/>
-			<lne id="1865" begin="26" end="26"/>
-			<lne id="1866" begin="26" end="27"/>
-			<lne id="1867" begin="28" end="28"/>
-			<lne id="1868" begin="28" end="29"/>
-			<lne id="1869" begin="28" end="30"/>
-			<lne id="1870" begin="26" end="31"/>
-			<lne id="1871" begin="34" end="34"/>
-			<lne id="1872" begin="34" end="35"/>
-			<lne id="1873" begin="34" end="36"/>
-			<lne id="1874" begin="34" end="37"/>
-			<lne id="1875" begin="39" end="39"/>
-			<lne id="1876" begin="39" end="40"/>
-			<lne id="1877" begin="39" end="41"/>
-			<lne id="1878" begin="39" end="42"/>
-			<lne id="1879" begin="44" end="44"/>
-			<lne id="1880" begin="44" end="45"/>
-			<lne id="1881" begin="44" end="46"/>
-			<lne id="1882" begin="44" end="47"/>
-			<lne id="1883" begin="50" end="50"/>
-			<lne id="1884" begin="51" end="51"/>
-			<lne id="1885" begin="52" end="52"/>
-			<lne id="1886" begin="53" end="53"/>
-			<lne id="1887" begin="54" end="54"/>
-			<lne id="1888" begin="54" end="55"/>
-			<lne id="1889" begin="50" end="56"/>
-			<lne id="1890" begin="44" end="56"/>
-			<lne id="1891" begin="58" end="58"/>
-			<lne id="1892" begin="59" end="59"/>
-			<lne id="1893" begin="60" end="60"/>
-			<lne id="1894" begin="61" end="61"/>
-			<lne id="1895" begin="58" end="62"/>
-			<lne id="1896" begin="39" end="62"/>
-			<lne id="1897" begin="64" end="64"/>
-			<lne id="1898" begin="65" end="65"/>
-			<lne id="1899" begin="66" end="66"/>
-			<lne id="1900" begin="67" end="67"/>
-			<lne id="1901" begin="64" end="68"/>
-			<lne id="1902" begin="34" end="68"/>
-			<lne id="1903" begin="26" end="68"/>
-			<lne id="1904" begin="69" end="69"/>
-			<lne id="1905" begin="70" end="70"/>
-			<lne id="1906" begin="69" end="71"/>
-			<lne id="1907" begin="3" end="72"/>
-			<lne id="1908" begin="0" end="72"/>
+			<lne id="1839" begin="0" end="0"/>
+			<lne id="1840" begin="0" end="1"/>
+			<lne id="1841" begin="0" end="2"/>
+			<lne id="1842" begin="0" end="3"/>
+			<lne id="1843" begin="6" end="6"/>
+			<lne id="1844" begin="7" end="7"/>
+			<lne id="1845" begin="6" end="8"/>
+			<lne id="1846" begin="9" end="9"/>
+			<lne id="1847" begin="9" end="10"/>
+			<lne id="1848" begin="13" end="13"/>
+			<lne id="1849" begin="13" end="14"/>
+			<lne id="1850" begin="15" end="15"/>
+			<lne id="1851" begin="13" end="16"/>
+			<lne id="1852" begin="18" end="18"/>
+			<lne id="1853" begin="19" end="19"/>
+			<lne id="1854" begin="20" end="20"/>
+			<lne id="1855" begin="21" end="21"/>
+			<lne id="1856" begin="22" end="22"/>
+			<lne id="1857" begin="22" end="23"/>
+			<lne id="1858" begin="18" end="24"/>
+			<lne id="1859" begin="26" end="26"/>
+			<lne id="1860" begin="27" end="27"/>
+			<lne id="1861" begin="28" end="28"/>
+			<lne id="1862" begin="29" end="29"/>
+			<lne id="1863" begin="30" end="30"/>
+			<lne id="1864" begin="26" end="31"/>
+			<lne id="1865" begin="13" end="31"/>
+			<lne id="1866" begin="32" end="32"/>
+			<lne id="1867" begin="33" end="33"/>
+			<lne id="1868" begin="33" end="34"/>
+			<lne id="1869" begin="33" end="35"/>
+			<lne id="1870" begin="32" end="36"/>
+			<lne id="1871" begin="39" end="39"/>
+			<lne id="1872" begin="40" end="40"/>
+			<lne id="1873" begin="39" end="41"/>
+			<lne id="1874" begin="32" end="41"/>
+			<lne id="1875" begin="9" end="42"/>
+			<lne id="1876" begin="43" end="43"/>
+			<lne id="1877" begin="44" end="44"/>
+			<lne id="1878" begin="44" end="45"/>
+			<lne id="1879" begin="44" end="46"/>
+			<lne id="1880" begin="43" end="47"/>
+			<lne id="1881" begin="48" end="48"/>
+			<lne id="1882" begin="48" end="49"/>
+			<lne id="1883" begin="48" end="50"/>
+			<lne id="1884" begin="48" end="51"/>
+			<lne id="1885" begin="53" end="53"/>
+			<lne id="1886" begin="53" end="54"/>
+			<lne id="1887" begin="53" end="55"/>
+			<lne id="1888" begin="53" end="56"/>
+			<lne id="1889" begin="58" end="58"/>
+			<lne id="1890" begin="58" end="59"/>
+			<lne id="1891" begin="58" end="60"/>
+			<lne id="1892" begin="58" end="61"/>
+			<lne id="1893" begin="64" end="64"/>
+			<lne id="1894" begin="65" end="65"/>
+			<lne id="1895" begin="66" end="66"/>
+			<lne id="1896" begin="67" end="67"/>
+			<lne id="1897" begin="67" end="68"/>
+			<lne id="1898" begin="69" end="69"/>
+			<lne id="1899" begin="69" end="70"/>
+			<lne id="1900" begin="64" end="71"/>
+			<lne id="1901" begin="58" end="71"/>
+			<lne id="1902" begin="73" end="73"/>
+			<lne id="1903" begin="74" end="74"/>
+			<lne id="1904" begin="75" end="75"/>
+			<lne id="1905" begin="76" end="76"/>
+			<lne id="1906" begin="76" end="77"/>
+			<lne id="1907" begin="73" end="78"/>
+			<lne id="1908" begin="53" end="78"/>
+			<lne id="1909" begin="80" end="80"/>
+			<lne id="1910" begin="81" end="81"/>
+			<lne id="1911" begin="82" end="82"/>
+			<lne id="1912" begin="83" end="83"/>
+			<lne id="1913" begin="83" end="84"/>
+			<lne id="1914" begin="80" end="85"/>
+			<lne id="1915" begin="48" end="85"/>
+			<lne id="1916" begin="0" end="85"/>
+			<lne id="1917" begin="0" end="85"/>
 		</linenumbertable>
 		<localvariabletable>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -39836,6 +39956,14 @@
 =======
 			<lve slot="4" name="563" begin="0" end="72"/>
 >>>>>>> a294d14... Readability changes: replaced all instances of at(1) with first(); replaced instances of 'x -> size() <> 0' with 'not x -> isEmpty()'; shortened some of the longer lines of code by using variables; also added an item to README; fixed a bug caused by incorrect return type of createTimer
+=======
+			<lve slot="5" name="229" begin="12" end="41"/>
+			<lve slot="0" name="17" begin="0" end="85"/>
+			<lve slot="1" name="228" begin="0" end="85"/>
+			<lve slot="2" name="561" begin="0" end="85"/>
+			<lve slot="3" name="227" begin="0" end="85"/>
+			<lve slot="4" name="563" begin="0" end="85"/>
+>>>>>>> 33640b0... Changes to Turn2Urn: added more variables to UCMmap2UCMmap, using the convention -- INIT (varname) for the lines where the variables are first defined for readability; fixed an issue in createTimer where I missed some logic when refactoring; fixed other logic in createTimer and removed all uses of the nodeCounter global variable from both files
 		</localvariabletable>
 	</operation>
 </asm>
