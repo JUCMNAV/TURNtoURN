@@ -144,8 +144,7 @@ rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 	}
 }
 
---TODO: to remove the boolean, take the logic that makes it necessary 
---and withdraw it into places this method is called and the boolean is true
+--TODO: to remove the boolean, take the logic that makes it necessary and withdraw it into places this method is called and the boolean is true
 rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklinks: Boolean){
 	do {
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
@@ -157,8 +156,9 @@ rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklink
 				thisModule.ep <- pathend.regularEnd;
 				if(thisModule.ep.epConnect.pbody.pathNodes -> isEmpty()){
 					if(not thisModule.ep.epConnect.pbody.orFork.oclIsUndefined()){
-						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.ep.epConnect.pbody.orFork.condition.expression, '');
-						thisModule.addPred(thisModule.tEndPoint, thisModule.orForkMap.get(thisModule.ep.epConnect.pbody.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
+						thisModule.orFork <- thisModule.ep.epConnect.pbody.orFork;
+						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.orFork.condition.expression, '');
+						thisModule.addPred(thisModule.tEndPoint, thisModule.orForkMap.get(thisModule.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
 					}
 				}
 			}
@@ -354,7 +354,7 @@ rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
 			if(not thisModule.succeeded){
 				--if pathNodes exist
 				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
-					if(pathbody.pathNodes -> size() > 0){
+					if(not pathbody.pathNodes -> isEmpty()){
 						-- The method below was missing its last argument, which led to a null pointer error.
 						-- QUESTION: should thisModule.andForkMap.get(pathend) go here? I followed the example of connectOrForkNodes
 						thisModule.connectNodes(pathbody, pathend, tUCMmap, thisModule.andForkMap.get(pathend));
@@ -436,12 +436,10 @@ rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
 			thisModule.connectNodes(timerObj.timeoutPath, timerObj, tUCMmap, OclAny);
 		}
 		
-		if(not timerObj.timeoutPath.referencedEnd.oclIsUndefined()){
-			if(timerObj.timeoutPath.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-				--THIS WILL ALWAYS BE AT(2)
-				thisModule.addPred(thisModule.getResponsibility(timerObj.timeoutPath.referencedEnd.name).respRefs -> first(), tUCMmap.getNode(timerObj.name).succ -> at(2));
-			}
-			--ADD MORE CODE
+		thisModule.referencedEnd <- timerObj.timeoutPath.referencedEnd;
+		if(thisModule.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+			--THIS WILL ALWAYS BE AT(2)
+			thisModule.addPred(thisModule.getResponsibility(thisModule.referencedEnd.name).respRefs -> first(), tUCMmap.getNode(timerObj.name).succ -> at(2));
 		}
 		
 		thisModule.processPathNode(timerObj.timeoutPath.pathEnd, tUCMmap);
@@ -806,7 +804,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			thisModule.nextNode <- tStub;
 			
 			if(thisModule.numberOfterminatingStubNodes > 1){
-				thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, tStub.succ -> at(thisModule.outPathNumber -> at(1)));
+				thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, tStub.succ -> at(thisModule.outPathNumber -> first()));
 				thisModule.addPred(thisModule.orJoin, tStub.succ -> at(thisModule.outPathNumber -> at(2)));
 				thisModule.nextNode <- thisModule.orJoin;
 				thisModule.outPathNumber <- Sequence{1};
@@ -822,7 +820,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			}
 			
 			if(stubObj.connectingStubBody.pathNodes -> isEmpty()){
-				thisModule.nextPred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> at(1));
+				thisModule.nextPred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> first());
 				thisModule.connectPathEndToNextNode(tUCMmap, stubObj.connectingStubBody.pathEnd, thisModule.nextPred);
 				thisModule.connectReferencedEndToNextNode(tUCMmap, stubObj.connectingStubBody, thisModule.nodeCounter, thisModule.nextPred);
 			}
@@ -843,21 +841,22 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 		--create stubInPathCounter also...
 		thisModule.stubOutPathCounter <- 1;
 		for(outPath in stubObj.outPaths -> flatten()){
+			--successor currently under consideration
+			thisModule.currentSuccessorToStub <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+			
 			--if no pathNodes exist
-			if(stubObj.outPaths -> flatten() -> at(thisModule.stubOutPathCounter).path.pathNodes -> isEmpty()){
+			if(outPath.path.pathNodes -> isEmpty()){
 				thisModule.pathEnd <- outPath.path.pathEnd;
 				
 				if(not thisModule.pathEnd.oclIsUndefined()){
-					thisModule.nextNode <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
-					thisModule.finishedConnection < thisModule.connectPathEndToNextNode(tUCMmap, thisModule.pathEnd, thisModule.nextNode);
+					thisModule.finishedConnection < thisModule.connectPathEndToNextNode(tUCMmap, thisModule.pathEnd, thisModule.currentSuccessorToStub);
 					
 					if(not thisModule.finishedConnection){
-						-- ADD MORE CODE BELOW
 						if (not outPath.path.referencedEnd.oclIsUndefined()){
-							thisModule.addPred(tUCMmap.getNode(outPath.path.referencedEnd.name), thisModule.nextNode);
+							thisModule.addPred(tUCMmap.getNode(outPath.path.referencedEnd.name), thisModule.currentSuccessorToStub);
 						}
 						else { 
-							thisModule.addPred(tUCMmap.getNode(thisModule.pathend.name), thisModule.nextNode);
+							thisModule.addPred(tUCMmap.getNode(thisModule.pathend.name), thisModule.currentSuccessorToStub);
 						}
 					}
 					
@@ -871,18 +870,19 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 			}
 			--if pathNodes exist
 			else{
-				thisModule.nodeCounter <- 1;
+				thisModule.previousNode <- '';
+				
 				for(node in outPath.path.pathNodes){
-					if(thisModule.nodeCounter = 1){
+					if(thisModule.previousNode = ''){
 						if(node.oclIsTypeOf(Turn!RespRef)){
-							thisModule.addPred(thisModule.getResponsibility(node.name).respRefs -> select(r|r.diagram.name=tUCMmap.name) -> flatten() -> any(ref|ref.pred -> isEmpty()). thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter));
+							thisModule.nextUnconnectedRef <- thisModule.getResponsibility(node.name).respRefs -> select(r|r.diagram.name=tUCMmap.name) -> flatten() -> any(ref|ref.pred -> isEmpty());
+							thisModule.addPred(thisModule.nextUnconnectedRef, thisModule.currentSucessorToStub);
 						}
 						else{	
-							thisModule.addPred(tUCMmap.getNode(outPath.path.pathNodes -> first().name), thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter));
+							thisModule.addPred(tUCMmap.getNode(node.name), thisModule.currentSucessorToStub);
 						}
 					}
 					else{
-						thisModule.previousPathNode <- outPath.path.pathNodes -> at(thisModule.nodeCounter-1);
 						thisModule.currentNode <- '';
 						
 						if(node.oclIsTypeOf(Turn!RespRef)){
@@ -892,23 +892,23 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 							thisModule.currentNode <- tUCMmap.getNode(node.name);	
 						}
 						
-						if(thisModule.previousPathNode.oclIsTypeOf(Turn!RespRef)){
-							thisModule.addPred(thisModule.currentNode, thisModule.resolveTemp(thisModule.previousPathNode, 'tRespRef').firstUnconnectedSucc());	
+						if(thisModule.previousNode.oclIsTypeOf(Turn!RespRef)){
+							thisModule.addPred(thisModule.currentNode, thisModule.resolveTemp(thisModule.previousNode, 'tRespRef').firstUnconnectedSucc());	
 						}
 						else{
-							thisModule.addPred(thisModule.currentNode, tUCMmap.getNode(thisModule.previousPathNode.name).succ);
+							thisModule.addPred(thisModule.currentNode, tUCMmap.getNode(thisModule.previousNode.name).succ);
 						}
 					}
 					
 					if(thisModule.nodeCounter = outPath.path.pathNodes -> size()){
 						if(outPath.path.pathNodes -> at(thisModule.nodeCounter).oclIsTypeOf(Turn!RespRef)){
-							thisModule.addPred(tUCMmap.getNode(outPath.path.pathEnd.regularEnd.name), thisModule.resolveTemp(outPath.path.pathNodes -> at(thisModule.nodeCounter), 'tRespRef').firstUnconnectedSucc());
+							thisModule.addPred(tUCMmap.getNode(outPath.path.pathEnd.regularEnd.name), thisModule.resolveTemp(node, 'tRespRef').firstUnconnectedSucc());
 						}
 						else{
-							thisModule.addPred(tUCMmap.getNode(outPath.path.pathEnd.name), tUCMmap.getNode(outPath.path.pathNodes -> at(thisModule.nodeCounter).name).succ);
+							thisModule.addPred(tUCMmap.getNode(outPath.path.pathEnd.name), tUCMmap.getNode(node.name).succ);
 						}
 					}
-					thisModule.nodeCounter <- thisModule.nodeCounter.inc();
+					thisModule.previousNode <- node;
 				}
 			}
 			thisModule.stubOutPathCounter <- thisModule.stubOutPathCounter.inc();
@@ -1066,7 +1066,7 @@ rule createTimer(tUCMmap: Urn!UCMmap, timerObj: Turn!Timer){
 			thisModule.addSucc(tTimer, thisModule.createNodeConnection());
 			
 			if(not timerObj.timeoutCondition.oclIsUndefined()){
-				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> at(1));
+				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> first());
 			}
 			
 			if(not timerObj.timeoutPath.referencedStub.oclIsUndefined()){
@@ -1085,6 +1085,7 @@ rule createTimer(tUCMmap: Urn!UCMmap, timerObj: Turn!Timer){
 		}
 		
 		tUCMmap.nodes <- tUCMmap.nodes -> including(tTimer);
+		tTimer;
 	}
 }
 
@@ -1540,7 +1541,7 @@ rule URNspec2URNspec{
 		tGRLSpecDiag.connections <- sURNspec.getActorElements() -> collect(l|l.linksSrc) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tLinkRef')); 
 	 	tGRLSpecDiag.connections <- tGRLSpecDiag.connections -> union(sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')));
 		
-		if(sURNspec.metadata -> select(m| m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
+		if(sURNspec.metadata -> select(m|m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
 	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty()){
 	 			thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 	 		}
@@ -1738,10 +1739,12 @@ rule UCMmap2UCMmap{
 			}
 		
 			--connect nodes in a map
+			thisModule.emptyPoints <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint));
 			thisModule.startPointName <- path.startPoint.turnGetLongestName();
+			thisModule.startPoint <- tUCMmap.getNode(path.startPoint.turnGetLongestName());
 			
-			if(not path.startPoint.connect.oclIsUndefined() and tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> size() <> 0){
-				thisModule.addPred(tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(path.startPoint.connect).pred -> first())), tUCMmap.getNode(thisModule.startPointName).firstUnconnectedSucc());
+			if(not path.startPoint.connect.oclIsUndefined() and not thisModule.emptyPoints -> isEmpty()){
+				thisModule.addPred(thisModule.emptyPoints -> any(ept|ept.succ -> includes(thisModule.connectMap.get(path.startPoint.connect).pred -> first())), thisModule.startPoint.firstUnconnectedSucc());
 			}--if no pathnodes exist
 			
 			if(not thisModule.pathEnd.oclIsUndefined() and thisModule.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and path.pathBody.pathNodes -> isEmpty()){
@@ -1761,8 +1764,11 @@ rule UCMmap2UCMmap{
 						thisModule.addPred(thisModule.createdEmptyPt, thisModule.connect.succ);
 					}
 				}
-				else if(not path.startPoint.connect.oclIsUndefined() and tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> size() <> 0){
-					thisModule.addPred(tUCMmap.getNode(thisModule.endPointName), tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(path.startPoint.connect).pred -> first())).firstUnconnectedSucc());
+				else{
+					thisModule.emptyPoints <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint));
+					if(not path.startPoint.connect.oclIsUndefined() and not thisModule.emptyPoints -> isEmpty()){
+						thisModule.addPred(tUCMmap.getNode(thisModule.endPointName), thisModule.emptyPoints -> any(ept|ept.succ -> includes(thisModule.connectMap.get(path.startPoint.connect).pred -> first())).firstUnconnectedSucc());
+					}
 				} 
 				thisModule.addPred(tUCMmap.getNode(thisModule.endPointName), tUCMmap.getNode(thisModule.startPointName).firstUnconnectedSucc());
 			}--added code for stub....

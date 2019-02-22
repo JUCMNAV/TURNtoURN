@@ -39,6 +39,7 @@
 * Go over all matched rules to make sure assignments are from Urn object to Urn object (i.e., that resolveTemps are used where appropriate)
 * Untangle the thisModule.counter logic so that it isn't spread out in random places in Turn2Urn and ConnectNodes and so it no longer uses a global variable counter
 * Make sure that no issues are occurring because tUCMmap is only updated in UCMmap2UCMmap; this seems highly likely to cause issues with tUCMmap.getNode() calls 
+* Look to see if there is a way to remove any or all map global objects
 
 ## ACTIVE TASK
 I am currently refactoring the code until it is at a point I feel is sufficiently readable for me to troubleshoot it. I have significantly improved readability but cannot be sure of functionality. I have likely broken some code along the way, and the current version is broken. However, the original version was also broken, so this should not be an issue.
