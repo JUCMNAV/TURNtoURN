@@ -1526,6 +1526,14 @@ rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
 	using {
+		vLinksSrc : Sequence(Turn!ElementLink) = sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten();
+		vLinks : Sequence(Turn!ElementLink) = 
+			vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'))
+				-> union(vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDecomp')))
+					-> union(vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDep')));
+		vConnections : Sequence(Turn!ElementLink) =
+			vLinksSrc -> collect(m| thisModule.resolveTemp(m,'tLinkRef'))
+				-> union(sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')));
 		
 	}
 	to
@@ -1550,24 +1558,16 @@ rule URNspec2URNspec{
 			strategies <- sURNspec.strategies,
 			contributionGroups <- sURNspec.contribContextGroups,
 			contributionContexts <- sURNspec.contribContexts,
-			KPIConversion <- sURNspec.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings))
+			KPIConversion <- sURNspec.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings)),
+			links <- vLinks
 		),
 		tGRLSpecDiag: Urn!GRLGraph(
 		 	nodes <- sURNspec.getActorElements() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')) -> union(Urn!Belief.allInstances()),
-			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef'))
+			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
+			connections <- vConnections
 		),
 		tUcmspec: Urn!UCMspec
 	do{
-		thisModule.linksSrc <- sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten();
-		
-		tGRLSpec.links <- thisModule.linksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'));
-		tGRLSpec.links <- tGRLSpec.links -> union(thisModule.linksSrc -> collect(l|thisModule.resolveTemp(l,'tDecomp')));
-		tGRLSpec.links <- tGRLSpec.links -> union(thisModule.linksSrc -> collect(l|thisModule.resolveTemp(l,'tDep')));
-		
-		tGRLSpecDiag.connections <- thisModule.linksSrc -> collect(m| thisModule.resolveTemp(m,'tLinkRef')); 
-		--QUESTION: why does this use just getActorElements() while the others use getActorElements.linksSrc?
-	 	tGRLSpecDiag.connections <- tGRLSpecDiag.connections -> union(sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')));
-		
 		if(sURNspec.metadata -> select(m|m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
 	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty()){
 	 			thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
