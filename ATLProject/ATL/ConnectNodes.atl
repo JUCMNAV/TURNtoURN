@@ -144,7 +144,7 @@ rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, firstNode: Turn!Path
 				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.firstUnconnectedSucc(), firstNode);
 			}
 			else if(case = 'Or'){ --OR case
-				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.succ -> at(thisModule.counter), OclUndefined);
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.succ -> first(), OclUndefined);
 			}
 
 			thisModule.connectMap <- thisModule.connectMap.including(firstNode, thisModule.connect);
@@ -158,7 +158,7 @@ rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, firstNode: Turn!Path
 		
 		--ADDED FOR TIMER AND ORFORK CONNECTION
 		if(firstNode.oclIsTypeOf(Turn!Timer)){
-			thisModule.addPred(tUCMmap.getNode(firstNode.name), thisModule.currentMap.get(path).succ -> at(thisModule.counter));
+			thisModule.addPred(tUCMmap.getNode(firstNode.name), thisModule.currentMap.get(path).succ -> first());
 		}
 	}
 }

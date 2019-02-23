@@ -286,14 +286,14 @@ rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNo
 
 rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
 	using{
-		vStub : Urn!Stub = tUCMmap.getNode(body.referencedStub.name);
-		vOrJoin: Urn!OrJoin = OclUndefined;
+		vStub : Urn!Stub = tUCMmap.getNode(body.referencedStub.name); -- INIT vStub
+		vOrJoin : Urn!OrJoin = OclUndefined;
 		vFirstPred : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(vStub.pred -> size() >= body.index){
 			vOrJoin <- thisModule.createOrJoin(tUCMmap, nextNode); -- INIT vOrJoin
-			vFirstPred <- vStub.pred -> first();
+			vFirstPred <- vStub.pred -> first(); -- INIT vFirstPred
 			thisModule.addPred(vOrJoin, nextNode);
 			thisModule.addPred(vOrJoin, vFirstPred.source.succ);
 			nextNode <- vOrJoin.succ;
@@ -306,7 +306,7 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 --TODO: ensure all arguments in all calls of connectReferencedEnds are actually valid
 --TODO: all calls to this method use the argument "nextPred" as nextNode; verify if this matches the original code
 rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
-	using {
+	using{
 		succeeded : Boolean = false;	
 	}
 	do{
@@ -349,12 +349,11 @@ rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
 
 rule connectAndForkNodes(pathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	using{
-		vHasReferencedEnd : Boolean = OclUndefined; -- INIT vHasReferencedEnd
-		vAndFork : Urn!AndFork = thisModule.andForkMap.get(pathend);
+		vHasReferencedEnd : Boolean = OclUndefined;
+		vAndFork : Urn!AndFork = thisModule.andForkMap.get(pathend); -- INIT vAndFOrk
+		vCounter : Integer = 1; -- INIT vCounter
 	}
 	do{
-		thisModule.counter <- 1;
-		
 		for(pathbody in pathend.pathbody -> flatten()){
 			if(pathbody.referencedEnd.oclIsUndefined()){
 				vHasReferencedEnd <- false;
@@ -364,7 +363,7 @@ rule connectAndForkNodes(pathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 			}
 			
 			if(vHasReferencedEnd){
-				thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), vAndFork.succ -> at(thisModule.counter));
+				thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), vAndFork.succ -> at(vCounter));
 			}
 			else{
 				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
@@ -375,74 +374,75 @@ rule connectAndForkNodes(pathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 					}	
 					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 						--if no pathNodes exist
-						thisModule.addPred(tUCMmap.getNode(pathbody.pathEnd.regularEnd.name), vAndFork.succ -> at(thisModule.counter));
+						thisModule.addPred(tUCMmap.getNode(pathbody.pathEnd.regularEnd.name), vAndFork.succ -> at(vCounter));
 					}
 				}
 				thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
 			}
 			
-			thisModule.counter <- thisModule.counter.inc();
+			vCounter <- vCounter.inc();
 		}
 	}
 }
 
-rule connectOrForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
+rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
+	using{
+		vCounter : Integer = 1;
+	}
 	do{
-		thisModule.counter <- 1;
-		
-		if(not pathend.body.oclIsUndefined()){
-			for(regularbody in pathend.body.regularBody -> flatten()){
-				if(not regularbody.pathBody.referencedEnd.oclIsUndefined()){
-					thisModule.addPred(tUCMmap.getNode(regularbody.pathBody.referencedEnd.name), tUCMmap.getNode(pathend.name).succ -> at(thisModule.counter));
+		if(not originalPathend.body.oclIsUndefined()){
+			for(pathbody in originalPathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody)){
+				if(not pathbody.referencedEnd.oclIsUndefined()){
+					thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
 				}
 				else{
 					--if pathNodes exist
-					if(regularbody.pathBody.oclIsTypeOf(Turn!PathBodyNodes)){
-						if(not (regularbody.pathBody.pathNodes -> isEmpty())){
-							thisModule.connectNodes(regularbody.pathBody, pathend, tUCMmap, thisModule.orForkMap.get(pathend));
+					if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
+						if(not (pathbody.pathNodes -> isEmpty())){
+							thisModule.connectNodes(pathbody, originalPathend, tUCMmap, thisModule.orForkMap.get(originalPathend));
 						}	
 					}
 
-					if(regularbody.pathBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-						thisModule.createStubOutNodes(regularbody.pathBody.pathEnd, tUCMmap);
+					if(pathbody.pathEnd.oclIsTypeOf(Turn!Stub)){
+						thisModule.createStubOutNodes(pathbody.pathEnd, tUCMmap);
 					}
 					else{
-						thisModule.processPathNode(regularbody.pathBody.pathEnd, tUCMmap);
+						thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
 					}
 				}
 			}		
-			thisModule.counter <- thisModule.counter.inc();
+			vCounter <- vCounter.inc();
 		}
 	}
 }
 
 rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String){
+	using{
+		vNextPred : Urn!NodeConnection = OclUndefined;
+		vBody : Turn!PathBody = obj.connectingOrBody; -- INIT vBody
+	}
 	do{
-		thisModule.nextPred <- '';
-		
 		if(nextNode.oclIsTypeOf(Urn!OrFork)){
-			thisModule.nextPred <- nextNode.succ -> any(s|s.condition.expression = expression);
+			vNextPred <- nextNode.succ -> any(s|s.condition.expression=expression);
 		}
 		else{
-			thisModule.nextPred <- nextNode.firstUnconnectedSucc();
+			vNextPred <- nextNode.firstUnconnectedSucc();
 		}
 		
-		thisModule.body <- obj.connectingOrBody;
+		thisModule.connectPathEndToNextNode(tUCMmap, vBody.pathEnd, vNextPred);
 		
-		thisModule.connectPathEndToNextNode(tUCMmap, thisModule.body.pathEnd, thisModule.nextPred);
-		
-		if(thisModule.body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+		if(vBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
 			-- TODO (COMMENTED OUT): I get the error that there is no property pred on the item responsibility; I can't think of any ways to rseolve that here
 			-- QUESTION: Is this perhaps a logic error? I've commented it out for now
-			-- thisModule.addPred(thisModule.getResponsibility(thisModule.body.referencedEnd.name), thisModule.nextPred);
+			-- thisModule.addPred(thisModule.getResponsibility(vBody.referencedEnd.name), thisModule.nextPred);
 		}
 		else{
-			thisModule.connectReferencedEndToNextNode(tUCMmap, thisModule.body, thisModule.nextPred);
+			thisModule.connectReferencedEndToNextNode(tUCMmap, vBody, vNextPred);
 		}
 	}
 }
 
-rule connectTimerNodes(timerObj:Turn!Timer, tUCMmap:Urn!UCMmap){
+rule connectTimerNodes(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 	do{
 		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
 		if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
@@ -724,7 +724,6 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 				}
 			}
 			
-			thisModule.counter <- 1;
 			thisModule.connectNodes(obj.connectingOrBody, obj, tUCMmap, thisModule.nextNode);
 		}
 		
@@ -835,7 +834,6 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 				thisModule.connectReferencedEndToNextNode(tUCMmap, stubObj.connectingStubBody, thisModule.nextPred);
 			}
 
-			thisModule.counter <- 1;
 			thisModule.connectNodes(stubObj.connectingStubBody, stubObj, tUCMmap, thisModule.nextNode);
 			
 		}
@@ -980,7 +978,6 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 				thisModule.connectReferencedEndToNextNode(tUCMmap, obj.connectingAndBody, thisModule.nextPred);
 			}
 			
-			thisModule.counter <- 1;
 			thisModule.connectNodes(obj.connectingAndBody, obj, tUCMmap, thisModule.nextNode);		
 		}
 		
@@ -999,7 +996,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 }
 
 rule createEndPoint(node: Turn!PathNode, tUCMmap: Urn!UCMmap){
-	using {
+	using{
 		vPostcondition : String =
 			if(node.oclIsTypeOf(Turn!EndPoint)) then
 				node.condition
@@ -1124,7 +1121,7 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 rule IntElements2IntElements{
 	from 
 		s: Turn!IntentionalElement (s.type.toString() <> 'belief')
-	using {
+	using{
 		vDecomp : Turn!Decomposition = Turn!Decomposition -> allInstances() -> any(d|d.dest=s);
 		vDecompType : String = 
 			if(not vDecomp.oclIsUndefined()) then
@@ -1186,7 +1183,7 @@ rule Actor2Actor{
 rule Belief2Belief {
 	from
 		s: Turn!IntentionalElement(s.type.toString() = 'belief')
-	using {
+	using{
 		vFirstSrcLink : Turn!ElementLink = 
 			if(not s.linksSrc -> first().oclIsUndefined()) then
 				s.linksSrc -> first()
@@ -1215,7 +1212,7 @@ rule Belief2Belief {
 rule Contribution2Contribution{
 	from 
 		s: Turn!Contribution (not (s.link.type.toString() = 'belief'))
-	using {
+	using{
 			
 	}
 	to 
@@ -1277,7 +1274,7 @@ rule Dependency2Dependency{
 rule Strategies2Strategies{
 	from
 		s: Turn!EvaluationStrategy
-	using {
+	using{
 		vAuthor : String =
 			if(not s.info.oclIsUndefined()) then
 				s.info.author
@@ -1310,7 +1307,7 @@ rule StrategiesGroup2StrategiesGroup{
 rule Evaluation2Evaluation {
 	from
 		s: Turn!Evaluation
-	using {
+	using{
 		vKpiEvalValueSet : Urn!KPIEvalValueSet =
 			if(s.conversion.oclIsTypeOf(Turn!QualToQMappings)) then
 				thisModule.createQMapKpiEvalValueSet(s.conversion)
@@ -1516,7 +1513,7 @@ rule WaitingPlace2WaitingPlace{
 rule FailurePoint2FailurePoint{
 	from		
 		s: Turn!FailurePoint
-	using {
+	using{
 		vExpression : String = 
 			if(not s.failLabel.oclIsUndefined()) then
 				s.failLabel.failure
@@ -1541,7 +1538,7 @@ rule FailurePoint2FailurePoint{
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
-	using {
+	using{
 		vLinksSrc : Sequence(Turn!ElementLink) = sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten();
 		vLinks : Sequence(Turn!ElementLink) = 
 			vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'))
@@ -1615,7 +1612,7 @@ rule Metadata2Metadata{
 rule StartPoint2StartPoint{
 	from
 		s: Turn!StartPoint
-	using {
+	using{
 		vFailureKind : String =
 			if(not s.failKind.oclIsUndefined()) then
 				s.failKind.toString().capitalize()
@@ -1751,7 +1748,7 @@ rule OutBinding2OutBinding{
 rule UCMmap2UCMmap{
 	from
 		sUCMmap: Turn!UCMmap
-	using {
+	using{
 		vPathEnd : Turn!RegularEnd = OclUndefined;
 		vConnect : Urn!Connect = OclUndefined;
 		vConnectingEndPoint : Urn!EndPoint = OclUndefined;
@@ -1835,7 +1832,6 @@ rule UCMmap2UCMmap{
 			}
 			else{
 				--if pathnodes exist
-				thisModule.counter <- 1;
 				thisModule.connectNodes(path.pathBody, path, tUCMmap, OclAny);
 			}
 			
