@@ -315,18 +315,15 @@ rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, n
 			if(body.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(not body.pathNodes -> last().oclIsTypeOf(Turn!Connect)){
 					if(tUCMmap.getNode(body.referencedEnd.name).pred -> collect(s|s.source) -> isEmpty()){
-						thisModule.addPred(tUCMmap.getNode(body.referencedEnd.name).pred, nextNode);
-						succeeded <- true;
+						thisModule.addPred(tUCMmap.getNode(body.referencedEnd.name), nextNode);
 					}
 				}
 			}
-			if(not succeeded){
-				if(body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-					thisModule.addPred(thisModule.resolveTemp(body.referencedEnd, 'tRespRef'), nextNode);
-				}
-				else {
-					thisModule.addPred(tUCMmap.getNode(body.referencedEnd.name), nextNode);
-				}
+			else if(body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+				thisModule.addPred(thisModule.resolveTemp(body.referencedEnd, 'tRespRef'), nextNode);
+			}
+			else {
+				thisModule.addPred(tUCMmap.getNode(body.referencedEnd.name), nextNode);
 			}
 		}
 		else if(not body.referencedStub.oclIsUndefined()){
@@ -1458,11 +1455,12 @@ rule Component2Component{
 	from 
 		s:Turn!ComponentRef
 	using{
-		vComponent : Urn!Component =
-			if(Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name).oclIsUndefined()) then
+		vExistingComponent : Urn!Component = Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name);
+		vRetrievedComponent : Urn!Component =
+			if(vExistingComponent.oclIsUndefined()) then
 				thisModule.createComponent(s)
 			else
-				Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name)
+				vExistingComponent
 			endif;
 	}
 	to
@@ -1471,7 +1469,7 @@ rule Component2Component{
 			name <- 'ComponentRef' + tCompRef.id,
 			label <- tCompLabel,
 			diagram <- s.map,
-			contDef <- vComponent,
+			contDef <- vRetrievedComponent,
 			parent <- thisModule.getUrnCompRef(s)
 		),
 		tCompLabel: Urn!ComponentLabel
@@ -1487,17 +1485,10 @@ rule Component2Component{
 		
 		tCompRef.contDef.protected <- s.protected;
 		
-		if(s.element.oclIsTypeOf(Turn!LongBoundElement)){
-			tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('from',s.element.from));
-			tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to',s.element.to));
-		}
-		
-		if(not s.elements -> isEmpty()){
-			for(elem in s.elements){
-				if(elem.oclIsTypeOf(Turn!LongBoundElement)){
-					tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('from',elem.from));
-					tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to',elem.to));
-				}
+		for(elem in s.elements -> including(s.element)){
+			if(elem.oclIsTypeOf(Turn!LongBoundElement)){
+				tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('from',elem.from));
+				tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to',elem.to));
 			}
 		}
 	}
@@ -1523,25 +1514,25 @@ rule Responsibility2Responsibility{
 			respDef <- vResponsibility,
 			contRef <- thisModule.getUrnCompRef(s)
 		),
-		tNodeConn: Urn!NodeConnection,
-		tNodeLabel: Urn!NodeLabel
+		tNodeConn: Urn!NodeConnection(),
+		tNodeLabel: Urn!NodeLabel()
 }
 
 rule WaitingPlace2WaitingPlace{
 	from		
 		s: Turn!WaitingPlace
 	to
+		tNodeConn: Urn!NodeConnection (
+			condition <- s.condition
+		),
+		tNodeLabel: Urn!NodeLabel(),
 		tWtPlace: Urn!WaitingPlace (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel,
 			waitType <- s.kind.toString().capitalize()
-		),
-		tNodeConn: Urn!NodeConnection (
-			condition <- s.condition
-		),
-		tNodeLabel: Urn!NodeLabel()
+		)
 }
 
 rule FailurePoint2FailurePoint{
@@ -1556,17 +1547,17 @@ rule FailurePoint2FailurePoint{
 			endif;
 	}
 	to
+		tNodeConn: Urn!NodeConnection (
+			condition <- s.condition
+		),
+		tNodeLabel: Urn!NodeLabel(),
 		tFailPt: Urn!FailurePoint (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel,
 			expression <- vExpression
-		),
-		tNodeConn: Urn!NodeConnection (
-			condition <- s.condition
-		),
-		tNodeLabel: Urn!NodeLabel()
+		)
 }
 
 rule URNspec2URNspec{
@@ -1574,14 +1565,15 @@ rule URNspec2URNspec{
 		sURNspec: Turn!URNspec
 	using{
 		vLinksSrc : Sequence(Turn!ElementLink) = sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten();
-		vLinks : Sequence(Turn!ElementLink) = 
-			vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'))
-				-> union(vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDecomp')))
-					-> union(vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDep')));
-		vConnections : Sequence(Turn!ElementLink) =
-			vLinksSrc -> collect(m| thisModule.resolveTemp(m,'tLinkRef'))
-				-> union(sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink')));
-		
+
+		vContributions : Sequence(Urn!Contribution) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'));
+		vDecompositions : Sequence(Urn!Decomposition) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDecomp'));
+		vDependencies : Sequence(Urn!Dependency) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDep'));
+		vLinks : Sequence(Urn!ElementLink) = vContributions -> union(vDecompositions) -> union(vDependencies);
+
+		vLinkRefs : Sequence(Urn!LinkRef) = vLinksSrc -> collect(m| thisModule.resolveTemp(m,'tLinkRef'));
+		vBeliefLinks : Sequence(Urn!BeliefLink) = sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink'));
+		vConnections : Sequence(Urn!ElementLink) = vLinkRefs -> union(vBeliefLinks);
 	}
 	to
 		tURNspec: Urn!URNspec(
@@ -1624,7 +1616,7 @@ rule URNspec2URNspec{
 			tURNspec.urnVersion <- sURNspec.info.urnVersion; 
 		}
 		
-		--TODO: determine what the logic below is doing
+		--TODO: refactor the below into the 'using' block above once you find an appropriate test case to test this
 		if(sURNspec.metadata -> select(m|m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
 	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty()){
 	 			thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
@@ -1655,6 +1647,8 @@ rule StartPoint2StartPoint{
 			endif;
 	}
 	to
+		tNodeConn: Urn!NodeConnection(),
+		tNodeLabel: Urn!NodeLabel(),
 		tStartPoint: Urn!StartPoint (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
@@ -1664,9 +1658,7 @@ rule StartPoint2StartPoint{
 			precondition <- s.precondition,
 			contRef <- thisModule.getUrnCompRef(s),
 			failureKind <- vFailureKind
-		),
-		tNodeConn: Urn!NodeConnection(),
-		tNodeLabel: Urn!NodeLabel()
+		)
 }
 
 rule Condition2Condition{
@@ -1838,8 +1830,7 @@ rule UCMmap2UCMmap{
 						thisModule.addPred(tUCMmap.getNode(vPathEnd.connect.connectsTo.name), vConnect.succ);
 					}
 					else{
-						thisModule.createdEmptyPt <- thisModule.createEmptyPt(tUCMmap, vPathEnd.connect.connectsTo, false);
-						thisModule.addPred(thisModule.createdEmptyPt, vConnect.succ);
+						thisModule.addPred(thisModule.createEmptyPt(tUCMmap, vPathEnd.connect.connectsTo, false), vConnect.succ);
 					}
 				}
 				else{
@@ -1862,7 +1853,6 @@ rule UCMmap2UCMmap{
 				else if(vPathEnd.oclIsTypeOf(Turn!Stub)){
 					thisModule.addPred(thisModule.stubMap.get(vPathEnd), vStartPoint.succ);
 				}
-				
 			}
 			else{
 				--if pathnodes exist
