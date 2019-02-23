@@ -507,14 +507,14 @@ rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
 
 rule createOrJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 	to
+		tNodeConnection: Urn!NodeConnection(),
 		tOrJoin: Urn!OrJoin(
 			id <- thisModule.nextId().toString(),
 			name <- 'OrJoin' + tOrJoin.id,
-			succ <- tConnection,
+			succ <- tNodeConnection,
 			diagram <- tUCMmap,
 			pred <- predNode
-		),
-		tConnection: Urn!NodeConnection()
+		)
 	do{
 		tOrJoin;
 	}
@@ -522,13 +522,13 @@ rule createOrJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 
 rule createAndJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 	to
+		tNodeConnection: Urn!NodeConnection(),
 		tAndJoin: Urn!AndJoin(
 			id <- thisModule.nextId().toString(),
 			name <- 'AndJoin' + tAndJoin.id,
-			succ <- tConnection,
+			succ <- tNodeConnection,
 			diagram <- tUCMmap
-		),
-		tConnection: Urn!NodeConnection()
+		)
 	do{
 		tAndJoin;
 	}
@@ -536,13 +536,13 @@ rule createAndJoin(tUCMmap: Urn!UCMmap, predNode: Turn!PathNode){
 
 rule createConnect(tUCMmap: Urn!UCMmap){
 	to
+		tNodeConnection: Urn!NodeConnection(),
 		tConnect: Urn!Connect(
 			id <- thisModule.nextId().toString(),
 			name <- 'Connect' + tConnect.id,
-			succ <- tConnection,
+			succ <- tNodeConnection,
 			diagram <- tUCMmap
-		),
-		tConnection: Urn!NodeConnection()
+		)
 	do{
 		tConnect;	
 	}
@@ -1126,16 +1126,13 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 	}
 	to
 		tEmptyPt: Urn!EmptyPoint(
-			name <- vName,
 			id <- vId,
+			name <- vName,
 			diagram <- tUCMmap
 		)
 	do{
-		if (node = OclAny){
-			-- QUESTION: the addSucc() line below was called twice originally; was it intentional?
-			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
-		}
-		else if (asynch){
+		if (node = OclAny or asynch){
+			-- QUESTION: the addSucc() line below was called twice originally in the node = OclAny case; was it intentional?
 			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
 		}
 		
@@ -1472,7 +1469,7 @@ rule Component2Component{
 			contDef <- vRetrievedComponent,
 			parent <- thisModule.getUrnCompRef(s)
 		),
-		tCompLabel: Urn!ComponentLabel
+		tCompLabel: Urn!ComponentLabel()
 	do{
 		if(s.kind.toString() <> 'parent'){
 			if(not s.kind.oclIsUndefined()){
