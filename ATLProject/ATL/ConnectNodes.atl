@@ -6,46 +6,46 @@ create OUT : Urn from IN : Turn;
 -- TODO: determine if this name is appropriate
 rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, previousNode: Urn!PathNode, isTimer: Boolean){
 	using{
-		newPred : Urn!PathNode = OclUndefined;
+		vNewPred : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(previousNode.oclIsTypeOf(Turn!WaitingPlace)){
-			newPred <- thisModule.resolveTemp(previousNode, 'tWtPlace').firstUnconnectedSucc();
+			vNewPred <- thisModule.resolveTemp(previousNode, 'tWtPlace').firstUnconnectedSucc();
 		}
 		else if(previousNode.oclIsTypeOf(Turn!FailurePoint)){
-			newPred <- thisModule.resolveTemp(previousNode, 'tFailPt').firstUnconnectedSucc();
+			vNewPred <- thisModule.resolveTemp(previousNode, 'tFailPt').firstUnconnectedSucc();
 		}
 		else if(not isTimer and previousNode.oclIsTypeOf(Turn!Timer)){
-			newPred <- thisModule.timerMap.get(previousNode).firstUnconnectedSucc();
+			vNewPred <- thisModule.timerMap.get(previousNode).firstUnconnectedSucc();
 		}
 		else if(previousNode.oclIsTypeOf(Turn!Connect)){
 			if(previousNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
 				thisModule.addSucc(tUCMmap.getNode(previousNode.connectsTo.name), thisModule.createNodeConnection());
-				newPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
+				vNewPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
 			}
 			else if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-				newPred <- thisModule.connectMap.get(previousNode).firstUnconnectedSucc(); 
+				vNewPred <- thisModule.connectMap.get(previousNode).firstUnconnectedSucc(); 
 			}
 			else{
-				newPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
+				vNewPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
 			}
 		}
 		else if(isTimer){
 			if(previousNode.oclIsTypeOf(Turn!RespRef)){
-				newPred <- thisModule.resolveTemp(previousNode, 'tRespRef').succ -> select(s|s.target.oclIsUndefined());
+				vNewPred <- thisModule.resolveTemp(previousNode, 'tRespRef').succ -> select(s|s.target.oclIsUndefined());
 			}
 			else {
-				newPred <- tUCMmap.getNode(previousNode.name).firstUnconnectedSucc();
+				vNewPred <- tUCMmap.getNode(previousNode.name).firstUnconnectedSucc();
 			}
 		}
 		else if(previousNode.oclIsTypeOf(Turn!RespRef)){
-			newPred <- thisModule.resolveTemp(previousNode, 'tRespRef').firstUnconnectedSucc();
+			vNewPred <- thisModule.resolveTemp(previousNode, 'tRespRef').firstUnconnectedSucc();
 		}
 		else{
-			newPred <- tUCMmap.getNode(previousNode.name).succ;
+			vNewPred <- tUCMmap.getNode(previousNode.name).succ;
 		}
 		
-		thisModule.addPred(currentNode, newPred);
+		thisModule.addPred(currentNode, vNewPred);
 		OclUndefined; -- RETURN VOID
 	}
 }
@@ -54,8 +54,8 @@ rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 --TODO: name this more precisely
 rule getNodeToConnect(tUCMmap: Urn!UCMmap, currentNode: Turn!PathNode, isCaseOne: Boolean){
 	using{
-		nodeToJoin : Urn!PathNode = OclUndefined;
-		connectedToWaitingPlace : Boolean = 
+		vNodeToJoin : Urn!PathNode = OclUndefined;
+		vConnectedToWaitingPlace : Boolean = 
 			if(currentNode.oclIsTypeOf(Turn!Connect)) then
 				currentNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)
 			else
@@ -63,17 +63,17 @@ rule getNodeToConnect(tUCMmap: Urn!UCMmap, currentNode: Turn!PathNode, isCaseOne
 			endif;
 	}
 	do{
-		if(connectedToWaitingPlace){
-			nodeToJoin <- tUCMmap.getNode(currentNode.connectsTo.name).firstUnconnectedSucc();	
+		if(vConnectedToWaitingPlace){
+			vNodeToJoin <- tUCMmap.getNode(currentNode.connectsTo.name).firstUnconnectedSucc();	
 		}
 		else if(isCaseOne){
-			nodeToJoin <- tUCMmap.getNode(currentNode.name).firstUnconnectedSucc();
+			vNodeToJoin <- tUCMmap.getNode(currentNode.name).firstUnconnectedSucc();
 		}
 		else{
-			nodeToJoin <- tUCMmap.getNode(currentNode.name).succ;
+			vNodeToJoin <- tUCMmap.getNode(currentNode.name).succ;
 		}
 				
-		nodeToJoin; -- RETURN Urn!PathNode
+		vNodeToJoin; -- RETURN Urn!PathNode
 	}
 }
 
@@ -444,34 +444,33 @@ rule handleReferencedStubs(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!Pathbody
 }
 
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: Urn!UCMmap, nextNode: Urn!PathNode){
+	using{
+		vPreviousNode : Turn!PathNode = OclUndefined;
+		vLastNode : Turn!PathNode = pathbody.pathNodes -> last(); -- INIT vLastNode
+	}
 	do{
 		if(not pathbody.pathNodes -> isEmpty()){
-			thisModule.previousNode <- '';
-			
 			for (currentNode in pathbody.pathNodes){
-				
-				if(thisModule.previousNode = ''){
+				if(vPreviousNode.oclIsUndefined()){
 					thisModule.handleFirstNode(tUCMmap, path, currentNode, nextNode);
 				}
 				else{
-					thisModule.handleNode(tUCMmap, pathbody, currentNode, thisModule.previousNode);
+					thisModule.handleNode(tUCMmap, pathbody, currentNode, vPreviousNode);
 				}
 				
-				if(currentNode <> pathbody.pathNodes -> last()){
-					thisModule.previousNode <- currentNode;
+				if(currentNode <> vLastNode){
+					vPreviousNode <- currentNode; -- INIT vPreviousNode
 				}
 			}
-			
-			thisModule.lastNode <- pathbody.pathNodes -> last();
-			
+	
 			if(not pathbody.pathEnd.oclIsUndefined()){
-				thisModule.handleRegularEnds(tUCMmap, pathbody, thisModule.lastNode);
+				thisModule.handleRegularEnds(tUCMmap, pathbody, vLastNode);
 			}
 			else if(not pathbody.referencedEnd.oclIsUndefined()){
-				thisModule.handleReferencedEnds(tUCMmap, pathbody, thisModule.lastNode);
+				thisModule.handleReferencedEnds(tUCMmap, pathbody, vLastNode);
 			}
 			else if(not pathbody.referencedStub.oclIsUndefined()){
-				thisModule.handleReferencedStubs(tUCMmap, pathbody, thisModule.lastNode, thisModule.previousNode);
+				thisModule.handleReferencedStubs(tUCMmap, pathbody, vLastNode, vPreviousNode);
 			}
 		}
 	}
