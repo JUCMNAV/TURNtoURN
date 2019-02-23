@@ -308,22 +308,22 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 --TODO: all calls to this method use the argument "nextPred" as nextNode; verify if this matches the original code
 rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
 	using{
-		succeeded : Boolean = false;	
+		vReferencedEnd : Turn!ReferencedEnd = body.referencedEnd;
 	}
 	do{
-		if(not body.referencedEnd.oclIsUndefined()){
-			if(body.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+		if(not vReferencedEnd.oclIsUndefined()){
+			if(vReferencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(not body.pathNodes -> last().oclIsTypeOf(Turn!Connect)){
-					if(tUCMmap.getNode(body.referencedEnd.name).pred -> collect(s|s.source) -> isEmpty()){
-						thisModule.addPred(tUCMmap.getNode(body.referencedEnd.name), nextNode);
+					if(tUCMmap.getNode(vReferencedEnd.name).pred -> collect(s|s.source) -> isEmpty()){
+						thisModule.addPred(tUCMmap.getNode(vReferencedEnd.name), nextNode);
 					}
 				}
 			}
-			else if(body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-				thisModule.addPred(thisModule.resolveTemp(body.referencedEnd, 'tRespRef'), nextNode);
+			else if(vReferencedEnd.oclIsTypeOf(Turn!RespRef)){
+				thisModule.addPred(thisModule.resolveTemp(vReferencedEnd, 'tRespRef'), nextNode);
 			}
 			else {
-				thisModule.addPred(tUCMmap.getNode(body.referencedEnd.name), nextNode);
+				thisModule.addPred(tUCMmap.getNode(vReferencedEnd.name), nextNode);
 			}
 		}
 		else if(not body.referencedStub.oclIsUndefined()){
@@ -862,43 +862,49 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 }
 
 rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
-	do{
+	using{
 		--create stubInPathCounter also...
-		thisModule.stubOutPathCounter <- 1;
+		vStubOutPathPosition : Integer = 1; -- INIT vStubOutPathPosition
+		vPathEnd : Turn!RegularEnd = OclUndefined;
+		vFinishedConnection : Boolean = OclUndefined;
+		vCurrentSuccessorToStub : Turn!PathNode = OclUndefined;
+		vPreviousNode : Turn!PathNode = OclUndefined;
+		vCurrentNode : Turn!PathNode = OclUndefined;
+	}
+	do{
+		vStubOutPathPosition <- 1;
 		for(outPath in stubObj.outPaths -> flatten()){
-			--successor currently under consideration
-			thisModule.currentSuccessorToStub <- thisModule.stubMap.get(stubObj).succ -> at(thisModule.stubOutPathCounter);
+			vCurrentSuccessorToStub <- thisModule.stubMap.get(stubObj).succ -> at(vStubOutPathPosition);
 			
 			--if no pathNodes exist
 			if(outPath.path.pathNodes -> isEmpty()){
-				thisModule.pathEnd <- outPath.path.pathEnd;
+				-- INIT vPathEnd
+				vPathEnd <- outPath.path.pathEnd;
 				
-				if(not thisModule.pathEnd.oclIsUndefined()){
-					thisModule.finishedConnection < thisModule.connectPathEndToNextNode(tUCMmap, thisModule.pathEnd, thisModule.currentSuccessorToStub);
+				if(not vPathEnd.oclIsUndefined()){
+					vFinishedConnection <- thisModule.connectPathEndToNextNode(tUCMmap, vPathEnd, vCurrentSuccessorToStub); -- INIT vFinishedConnection
 					
-					if(not thisModule.finishedConnection){
+					if(not vFinishedConnection){
 						if (not outPath.path.referencedEnd.oclIsUndefined()){
-							thisModule.addPred(tUCMmap.getNode(outPath.path.referencedEnd.name), thisModule.currentSuccessorToStub);
+							thisModule.addPred(tUCMmap.getNode(outPath.path.referencedEnd.name), vCurrentSuccessorToStub);
 						}
 						else { 
-							thisModule.addPred(tUCMmap.getNode(thisModule.pathend.name), thisModule.currentSuccessorToStub);
+							thisModule.addPred(tUCMmap.getNode(vPathEnd.name), vCurrentSuccessorToStub);
 						}
 					}
 					
-					if(thisModule.pathend.oclIsTypeOf(Turn!OrFork)){
-						thisModule.connectOrForkNodes(thisModule.pathend, tUCMmap);
+					if(vPathEnd.oclIsTypeOf(Turn!OrFork)){
+						thisModule.connectOrForkNodes(vPathEnd, tUCMmap);
 					}
-					else if(thisModule.pathend.oclIsTypeOf(Turn!AndFork)){
-						thisModule.createAndForkNodes(thisModule.pathend, tUCMmap);
+					else if(vPathEnd.oclIsTypeOf(Turn!AndFork)){
+						thisModule.createAndForkNodes(vPathEnd, tUCMmap);
 					}
 				}
 			}
 			--if pathNodes exist
 			else{
-				thisModule.previousNode <- '';
-
 				for(node in outPath.path.pathNodes){
-					if(thisModule.previousNode = ''){
+					if(vPreviousNode.oclIsUndefined()){
 						if(node.oclIsTypeOf(Turn!RespRef)){
 							thisModule.nextUnconnectedRef <- thisModule.getResponsibility(node.name).respRefs -> select(r|r.diagram.name=tUCMmap.name) -> flatten() -> any(ref|ref.pred -> isEmpty());
 							thisModule.addPred(thisModule.nextUnconnectedRef, thisModule.currentSucessorToStub);
@@ -908,23 +914,22 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 						}
 					}
 					else{
-						thisModule.currentNode <- '';
-						
-						if(node.oclIsTypeOf(Turn!RespRef)){
-							thisModule.currentNode <- thisModule.resolveTemp(node, 'tRespRef');	
+					-- INIT vCurrentNode	
+					if(node.oclIsTypeOf(Turn!RespRef)){
+							vCurrentNode <- thisModule.resolveTemp(node, 'tRespRef');	
 						}
 						else{
-							thisModule.currentNode <- tUCMmap.getNode(node.name);	
+							vCurrentNode <- tUCMmap.getNode(node.name);	
 						}
 						
 						if(thisModule.previousNode.oclIsTypeOf(Turn!RespRef)){
-							thisModule.addPred(thisModule.currentNode, thisModule.resolveTemp(thisModule.previousNode, 'tRespRef').firstUnconnectedSucc());	
+							thisModule.addPred(vCurrentNode, thisModule.resolveTemp(thisModule.previousNode, 'tRespRef').firstUnconnectedSucc());	
 						}
 						else{
-							thisModule.addPred(thisModule.currentNode, tUCMmap.getNode(thisModule.previousNode.name).succ);
+							thisModule.addPred(vCurrentNode, tUCMmap.getNode(thisModule.previousNode.name).succ);
 						}
 					}
-					thisModule.previousNode <- node;
+					vPreviousNode <- node; -- INIT vPreviousNode
 				}
 
 				if(not outPath.pathNodes -> empty()) {
@@ -936,7 +941,7 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 					}
 				}
 			}
-			thisModule.stubOutPathCounter <- thisModule.stubOutPathCounter.inc();
+			vStubOutPathPosition <- vStubOutPathPosition.inc();
 		}	
 	}
 }
@@ -1094,6 +1099,7 @@ rule createTimer(tUCMmap: Urn!UCMmap, timerObj: Turn!Timer){
 				thisModule.collectRegularEnds(tUCMmap, Sequence{timerObj.timeoutPath});
 				
 				if(not timerObj.timeoutPath.referencedStub.oclIsUndefined()){
+					--QUESTION: thisModule.nextNode isn't defined anywhere; what should it be?
 					thisModule.next <- thisModule.nextNode.firstUnconnectedSucc();
 				}
 				else{
@@ -1112,8 +1118,8 @@ rule createTimer(tUCMmap: Urn!UCMmap, timerObj: Turn!Timer){
 
 rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean){
 	using{
-		vId: Integer = thisModule.nextId().toString();
-		vName: String = 
+		vId : Integer = thisModule.nextId().toString();
+		vName : String = 
 			if (node <> OclAny) then
 				if(asynch) then
 					'AsynchConnectTimer#'+node.name
@@ -1123,19 +1129,21 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 			else
 				'EmptyPoint'+vId
 			endif;
+		vSuccessor : Urn!NodeConnection =
+			if(node = OclAny or asynch) then
+				Sequence{thisModule.createNodeConnection()}
+			else
+				OclUndefined
+			endif;
 	}
 	to
 		tEmptyPt: Urn!EmptyPoint(
 			id <- vId,
 			name <- vName,
-			diagram <- tUCMmap
+			diagram <- tUCMmap,
+			succ <- vSuccessor
 		)
 	do{
-		if (node = OclAny or asynch){
-			-- QUESTION: the addSucc() line below was called twice originally in the node = OclAny case; was it intentional?
-			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
-		}
-		
 		tEmptyPt;	
 	}
 }
@@ -1235,20 +1243,22 @@ rule Belief2Belief {
 
 rule Contribution2Contribution{
 	from 
-		s: Turn!Contribution (not (s.link.type.toString() = 'belief'))
+		s: Turn!Contribution (s.link.type.toString() <> 'belief')
 	using{
 		vIsQuantitativeContribution : Boolean = s.contribution.toString().equals('undefined');
-		vQuantitativeContribution : Integer =
-			if(vIsQuantitativeContribution) then
-				s.quantitativeContribution
-			else
-				OclUndefined
-			endif;
+	
 		vContribution : String =
 			if(vIsQuantitativeContribution) then
 				thisModule.contributionNumberToKeyword(s.quantitativeContribution)
 			else
 				s.contribution.toString().capitalize()
+			endif;
+
+		vQuantitativeContribution : Integer =
+			if(vIsQuantitativeContribution) then
+				s.quantitativeContribution
+			else
+				OclUndefined
 			endif;
 	}
 	to 
@@ -1452,7 +1462,7 @@ rule Component2Component{
 	from 
 		s:Turn!ComponentRef
 	using{
-		vExistingComponent : Urn!Component = Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name);
+		vExistingComponent : Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name);
 		vRetrievedComponent : Urn!Component =
 			if(vExistingComponent.oclIsUndefined()) then
 				thisModule.createComponent(s)
@@ -1725,7 +1735,8 @@ rule InBinding2InBinding{
 			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
 				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
 			}
-			else{
+			--TODO: this should be an "else" rather than an "else if"; the if is a temporary workaround
+			else if(thisModule.stubMap.get(s.binding.stubParam.stub)){
 				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
 			}
 		}
@@ -1753,7 +1764,8 @@ rule OutBinding2OutBinding{
 			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
 				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
 			}
-			else{
+			--TODO: this should be an "else" rather than an "else if"; the if is a temporary workaround
+			else if(not thisModule.stubMap.get(s.bindings.stubParam.stub).oclIsUndefined()){
 				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
 			}
 		}
