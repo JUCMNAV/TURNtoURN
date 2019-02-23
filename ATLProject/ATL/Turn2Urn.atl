@@ -432,9 +432,7 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 		thisModule.connectPathEndToNextNode(tUCMmap, vBody.pathEnd, vNextPred);
 		
 		if(vBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-			-- TODO (COMMENTED OUT): I get the error that there is no property pred on the item responsibility; I can't think of any ways to rseolve that here
-			-- QUESTION: Is this perhaps a logic error? I've commented it out for now
-			-- thisModule.addPred(thisModule.getResponsibility(vBody.referencedEnd.name), thisModule.nextPred);
+			thisModule.addPred(thisModule.getResponsibility(vBody.referencedEnd.name).respRefs -> any(r|r.diagram.name=tUCMmap.name), thisModule.nextPred);
 		}
 		else{
 			thisModule.connectReferencedEndToNextNode(tUCMmap, vBody, vNextPred);
