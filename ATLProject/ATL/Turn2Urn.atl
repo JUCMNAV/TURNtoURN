@@ -1012,6 +1012,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		
 		thisModule.useBacklinksToConnectOrFork(obj.pbody, tAndFork);
 		tUCMmap.nodes <- tUCMmap.nodes -> including(tAndFork);
+		tAndFork;
 	}
 }
 
@@ -1133,13 +1134,14 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 			diagram <- tUCMmap
 		)
 	do{
-		if (node <> OclAny and asynch){
-			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
-		}
-		else if (node = OclAny){
+		if (node = OclAny){
 			-- QUESTION: the addSucc() line below was called twice originally; was it intentional?
 			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
 		}
+		else if (asynch){
+			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
+		}
+		
 		tEmptyPt;	
 	}
 }
@@ -1241,7 +1243,19 @@ rule Contribution2Contribution{
 	from 
 		s: Turn!Contribution (not (s.link.type.toString() = 'belief'))
 	using{
-			
+		vIsQuantitativeContribution : Boolean = s.contribution.toString().equals('undefined');
+		vQuantitativeContribution : Integer =
+			if(vIsQuantitativeContribution) then
+				s.quantitativeContribution
+			else
+				OclUndefined
+			endif;
+		vContribution : String =
+			if(vIsQuantitativeContribution) then
+				thisModule.contributionNumberToKeyword(s.quantitativeContribution)
+			else
+				s.contribution.toString().capitalize()
+			endif;
 	}
 	to 
 		tCont: Urn!Contribution (
@@ -1249,22 +1263,14 @@ rule Contribution2Contribution{
 			name <- s.turnGetLongestName(),
 		 	dest <- thisModule.resolveTemp(s.dest, 'tIntElem'),
 			refs <- tLinkRef,
-	 		correlation <- s.correlation
+	 		correlation <- s.correlation,
+			contribution <- vContribution,
+			quantitativeContribution <- vQuantitativeContribution
 		),
 		tLinkRef: Urn!LinkRef (
 			link <- tCont,
 			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
 		)
-	do{
-		--Added because the default value in enum is considered always.
-		if(s.contribution.toString().equals('undefined')){
-			tCont.quantitativeContribution <- s.quantitativeContribution;
-			tCont.contribution <- thisModule.contributionNumberToKeyword(s.quantitativeContribution);
-		}
-		else{
-			tCont.contribution <- s.contribution.toString().capitalize();
-		}
-	}
 }
 	
 rule Decomposition2Decomposition{
