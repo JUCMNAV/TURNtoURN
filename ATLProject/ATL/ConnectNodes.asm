@@ -278,19 +278,18 @@
 		<constant value="J.+(J):J"/>
 		<constant value="23"/>
 		<constant value="EmptyPoint"/>
-		<constant value="8"/>
 		<constant value="NodeConnection"/>
 		<constant value="Urn"/>
+		<constant value="8"/>
 		<constant value="9"/>
 		<constant value="10"/>
 		<constant value="11"/>
-		<constant value="12"/>
 		<constant value="id"/>
 		<constant value="diagram"/>
 		<constant value="pred"/>
-		<constant value="134"/>
-		<constant value="124"/>
-		<constant value="149"/>
+		<constant value="121"/>
+		<constant value="123"/>
+		<constant value="J.including(JJ):J"/>
 		<constant value="84:32-84:43"/>
 		<constant value="84:32-84:54"/>
 		<constant value="84:67-84:77"/>
@@ -333,54 +332,39 @@
 		<constant value="107:4-107:22"/>
 		<constant value="108:12-108:28"/>
 		<constant value="108:4-108:28"/>
-		<constant value="111:15-111:23"/>
-		<constant value="111:3-111:24"/>
-		<constant value="113:10-113:26"/>
-		<constant value="113:6-113:26"/>
-		<constant value="117:11-117:23"/>
-		<constant value="117:36-117:48"/>
-		<constant value="117:11-117:49"/>
-		<constant value="118:11-118:21"/>
-		<constant value="118:11-118:32"/>
-		<constant value="118:37-118:49"/>
-		<constant value="118:37-118:60"/>
-		<constant value="118:11-118:61"/>
-		<constant value="118:11-118:78"/>
-		<constant value="118:7-118:78"/>
-		<constant value="119:5-119:15"/>
-		<constant value="119:24-119:34"/>
-		<constant value="119:24-119:45"/>
-		<constant value="119:50-119:62"/>
-		<constant value="119:50-119:73"/>
-		<constant value="119:24-119:74"/>
-		<constant value="119:76-119:84"/>
-		<constant value="119:76-119:89"/>
-		<constant value="119:5-119:91"/>
-		<constant value="118:4-120:5"/>
-		<constant value="117:8-121:4"/>
-		<constant value="114:4-114:14"/>
-		<constant value="114:23-114:30"/>
-		<constant value="114:39-114:50"/>
-		<constant value="114:39-114:61"/>
-		<constant value="114:39-114:66"/>
-		<constant value="114:23-114:67"/>
-		<constant value="114:69-114:77"/>
-		<constant value="114:69-114:82"/>
-		<constant value="114:4-114:84"/>
-		<constant value="115:16-115:23"/>
-		<constant value="115:32-115:43"/>
-		<constant value="115:32-115:54"/>
-		<constant value="115:32-115:59"/>
-		<constant value="115:16-115:60"/>
-		<constant value="115:4-115:61"/>
-		<constant value="113:3-121:4"/>
-		<constant value="123:3-123:13"/>
-		<constant value="123:22-123:30"/>
-		<constant value="123:32-123:36"/>
-		<constant value="123:3-123:38"/>
-		<constant value="124:3-124:11"/>
-		<constant value="124:3-124:12"/>
-		<constant value="110:2-125:3"/>
+		<constant value="111:6-111:22"/>
+		<constant value="115:4-115:14"/>
+		<constant value="115:23-115:30"/>
+		<constant value="115:39-115:50"/>
+		<constant value="115:39-115:61"/>
+		<constant value="115:39-115:66"/>
+		<constant value="115:23-115:67"/>
+		<constant value="115:69-115:77"/>
+		<constant value="115:69-115:82"/>
+		<constant value="115:4-115:84"/>
+		<constant value="116:16-116:23"/>
+		<constant value="116:32-116:43"/>
+		<constant value="116:32-116:54"/>
+		<constant value="116:32-116:59"/>
+		<constant value="116:16-116:60"/>
+		<constant value="116:4-116:61"/>
+		<constant value="112:16-112:24"/>
+		<constant value="112:4-112:25"/>
+		<constant value="111:3-117:4"/>
+		<constant value="118:3-118:13"/>
+		<constant value="118:22-118:30"/>
+		<constant value="118:32-118:39"/>
+		<constant value="118:3-118:41"/>
+		<constant value="119:3-119:13"/>
+		<constant value="119:28-119:38"/>
+		<constant value="119:28-119:49"/>
+		<constant value="119:60-119:71"/>
+		<constant value="119:73-119:81"/>
+		<constant value="119:28-119:82"/>
+		<constant value="119:3-119:83"/>
+		<constant value="120:3-120:11"/>
+		<constant value="120:3-120:12"/>
+		<constant value="110:2-121:3"/>
 		<constant value="tNodeConnection1"/>
 		<constant value="tConnect"/>
 		<constant value="tNodeConnection2"/>
@@ -389,7 +373,6 @@
 		<constant value="vEmptyPtId"/>
 		<constant value="vName"/>
 		<constant value="vNewNode"/>
-		<constant value="ITEM"/>
 		<constant value="handleForkLogic"/>
 		<constant value="And"/>
 		<constant value="J.=(J):J"/>
@@ -407,741 +390,725 @@
 		<constant value="nextConnectingNode"/>
 		<constant value="42"/>
 		<constant value="48"/>
-		<constant value="127"/>
+		<constant value="111"/>
 		<constant value="81"/>
 		<constant value="71"/>
 		<constant value="J.createTimer(JJ):J"/>
-		<constant value="126"/>
-		<constant value="105"/>
+		<constant value="110"/>
+		<constant value="101"/>
 		<constant value="90"/>
-		<constant value="104"/>
+		<constant value="100"/>
 		<constant value="J.first():J"/>
-		<constant value="J.handleConnectNode(JJJJ):J"/>
+		<constant value="J.handleConnectNode(JJJ):J"/>
 		<constant value="connect"/>
-		<constant value="118"/>
-		<constant value="J.including(JJ):J"/>
-		<constant value="136"/>
-		<constant value="143"/>
-		<constant value="155"/>
-		<constant value="132:6-132:10"/>
-		<constant value="132:13-132:18"/>
-		<constant value="132:6-132:18"/>
-		<constant value="135:11-135:15"/>
-		<constant value="135:18-135:22"/>
-		<constant value="135:11-135:22"/>
-		<constant value="136:4-136:14"/>
-		<constant value="136:29-136:39"/>
-		<constant value="136:29-136:49"/>
-		<constant value="136:4-136:50"/>
-		<constant value="135:8-140:4"/>
-		<constant value="133:4-133:14"/>
-		<constant value="133:29-133:39"/>
-		<constant value="133:29-133:50"/>
-		<constant value="133:4-133:51"/>
-		<constant value="132:3-140:4"/>
-		<constant value="142:3-142:13"/>
-		<constant value="142:27-142:32"/>
-		<constant value="142:3-142:33"/>
-		<constant value="145:10-145:18"/>
-		<constant value="145:10-145:35"/>
-		<constant value="145:6-145:35"/>
-		<constant value="146:7-146:15"/>
-		<constant value="146:19-146:21"/>
-		<constant value="146:7-146:21"/>
-		<constant value="147:5-147:15"/>
-		<constant value="147:38-147:46"/>
-		<constant value="147:5-147:47"/>
-		<constant value="148:5-148:15"/>
-		<constant value="148:29-148:33"/>
-		<constant value="148:5-148:34"/>
-		<constant value="146:4-149:5"/>
-		<constant value="145:3-150:4"/>
-		<constant value="152:10-152:20"/>
-		<constant value="152:10-152:30"/>
-		<constant value="152:6-152:30"/>
-		<constant value="153:4-153:14"/>
-		<constant value="153:37-153:47"/>
-		<constant value="153:37-153:58"/>
-		<constant value="153:63-153:67"/>
-		<constant value="153:37-153:68"/>
-		<constant value="153:4-153:69"/>
-		<constant value="152:3-154:4"/>
-		<constant value="156:6-156:15"/>
-		<constant value="156:28-156:40"/>
-		<constant value="156:6-156:41"/>
-		<constant value="159:11-159:20"/>
-		<constant value="159:33-159:45"/>
-		<constant value="159:11-159:46"/>
-		<constant value="171:7-171:16"/>
-		<constant value="171:29-171:39"/>
-		<constant value="171:7-171:40"/>
-		<constant value="172:5-172:15"/>
-		<constant value="172:28-172:35"/>
-		<constant value="172:37-172:46"/>
-		<constant value="172:5-172:48"/>
-		<constant value="171:4-173:5"/>
-		<constant value="174:4-174:14"/>
-		<constant value="174:23-174:30"/>
-		<constant value="174:39-174:48"/>
-		<constant value="174:39-174:53"/>
-		<constant value="174:23-174:54"/>
-		<constant value="174:56-174:66"/>
-		<constant value="174:56-174:85"/>
-		<constant value="174:56-174:108"/>
-		<constant value="174:4-174:110"/>
-		<constant value="161:7-161:11"/>
-		<constant value="161:14-161:19"/>
-		<constant value="161:7-161:19"/>
-		<constant value="164:12-164:16"/>
-		<constant value="164:19-164:23"/>
-		<constant value="164:12-164:23"/>
-		<constant value="165:5-165:15"/>
-		<constant value="165:27-165:37"/>
-		<constant value="165:56-165:63"/>
-		<constant value="165:65-165:74"/>
-		<constant value="165:76-165:88"/>
-		<constant value="165:90-165:100"/>
-		<constant value="165:90-165:119"/>
-		<constant value="165:90-165:124"/>
-		<constant value="165:90-165:135"/>
-		<constant value="165:27-165:136"/>
-		<constant value="165:5-165:137"/>
-		<constant value="164:9-166:5"/>
-		<constant value="162:5-162:15"/>
-		<constant value="162:27-162:37"/>
-		<constant value="162:56-162:63"/>
-		<constant value="162:65-162:74"/>
-		<constant value="162:76-162:88"/>
-		<constant value="162:90-162:100"/>
-		<constant value="162:90-162:119"/>
-		<constant value="162:90-162:142"/>
-		<constant value="162:27-162:143"/>
-		<constant value="162:5-162:144"/>
-		<constant value="161:4-166:5"/>
+		<constant value="120"/>
+		<constant value="127"/>
+		<constant value="128:6-128:10"/>
+		<constant value="128:13-128:18"/>
+		<constant value="128:6-128:18"/>
+		<constant value="131:11-131:15"/>
+		<constant value="131:18-131:22"/>
+		<constant value="131:11-131:22"/>
+		<constant value="132:4-132:14"/>
+		<constant value="132:29-132:39"/>
+		<constant value="132:29-132:49"/>
+		<constant value="132:4-132:50"/>
+		<constant value="131:8-136:4"/>
+		<constant value="129:4-129:14"/>
+		<constant value="129:29-129:39"/>
+		<constant value="129:29-129:50"/>
+		<constant value="129:4-129:51"/>
+		<constant value="128:3-136:4"/>
+		<constant value="138:3-138:13"/>
+		<constant value="138:27-138:32"/>
+		<constant value="138:3-138:33"/>
+		<constant value="141:10-141:18"/>
+		<constant value="141:10-141:35"/>
+		<constant value="141:6-141:35"/>
+		<constant value="142:7-142:15"/>
+		<constant value="142:19-142:21"/>
+		<constant value="142:7-142:21"/>
+		<constant value="143:5-143:15"/>
+		<constant value="143:38-143:46"/>
+		<constant value="143:5-143:47"/>
+		<constant value="144:5-144:15"/>
+		<constant value="144:29-144:33"/>
+		<constant value="144:5-144:34"/>
+		<constant value="142:4-145:5"/>
+		<constant value="141:3-146:4"/>
+		<constant value="148:10-148:20"/>
+		<constant value="148:10-148:30"/>
+		<constant value="148:6-148:30"/>
+		<constant value="149:4-149:14"/>
+		<constant value="149:37-149:47"/>
+		<constant value="149:37-149:58"/>
+		<constant value="149:63-149:67"/>
+		<constant value="149:37-149:68"/>
+		<constant value="149:4-149:69"/>
+		<constant value="148:3-150:4"/>
+		<constant value="152:6-152:15"/>
+		<constant value="152:28-152:40"/>
+		<constant value="152:6-152:41"/>
+		<constant value="155:11-155:20"/>
+		<constant value="155:33-155:45"/>
+		<constant value="155:11-155:46"/>
+		<constant value="165:7-165:16"/>
+		<constant value="165:29-165:39"/>
+		<constant value="165:7-165:40"/>
+		<constant value="166:5-166:15"/>
+		<constant value="166:28-166:35"/>
+		<constant value="166:37-166:46"/>
+		<constant value="166:5-166:48"/>
+		<constant value="165:4-167:5"/>
 		<constant value="168:4-168:14"/>
-		<constant value="168:29-168:39"/>
-		<constant value="168:29-168:50"/>
-		<constant value="168:61-168:70"/>
-		<constant value="168:72-168:82"/>
-		<constant value="168:72-168:90"/>
-		<constant value="168:29-168:91"/>
-		<constant value="168:4-168:92"/>
-		<constant value="159:8-175:4"/>
-		<constant value="157:4-157:14"/>
-		<constant value="157:23-157:33"/>
-		<constant value="157:46-157:55"/>
-		<constant value="157:57-157:67"/>
-		<constant value="157:23-157:68"/>
-		<constant value="157:70-157:80"/>
-		<constant value="157:70-157:99"/>
-		<constant value="157:70-157:122"/>
-		<constant value="157:4-157:124"/>
-		<constant value="156:3-175:4"/>
-		<constant value="178:6-178:15"/>
-		<constant value="178:28-178:38"/>
-		<constant value="178:6-178:39"/>
-		<constant value="179:4-179:14"/>
-		<constant value="179:23-179:30"/>
-		<constant value="179:39-179:48"/>
-		<constant value="179:39-179:53"/>
-		<constant value="179:23-179:54"/>
-		<constant value="179:56-179:66"/>
-		<constant value="179:56-179:77"/>
-		<constant value="179:82-179:86"/>
-		<constant value="179:56-179:87"/>
-		<constant value="179:56-179:92"/>
-		<constant value="179:56-179:103"/>
-		<constant value="179:4-179:105"/>
-		<constant value="178:3-180:4"/>
-		<constant value="131:2-181:3"/>
+		<constant value="168:23-168:30"/>
+		<constant value="168:39-168:48"/>
+		<constant value="168:39-168:53"/>
+		<constant value="168:23-168:54"/>
+		<constant value="168:56-168:66"/>
+		<constant value="168:56-168:85"/>
+		<constant value="168:56-168:108"/>
+		<constant value="168:4-168:110"/>
+		<constant value="157:7-157:11"/>
+		<constant value="157:14-157:19"/>
+		<constant value="157:7-157:19"/>
+		<constant value="160:12-160:16"/>
+		<constant value="160:19-160:23"/>
+		<constant value="160:12-160:23"/>
+		<constant value="161:5-161:15"/>
+		<constant value="161:27-161:37"/>
+		<constant value="161:56-161:63"/>
+		<constant value="161:65-161:74"/>
+		<constant value="161:76-161:86"/>
+		<constant value="161:76-161:105"/>
+		<constant value="161:76-161:110"/>
+		<constant value="161:76-161:121"/>
+		<constant value="161:27-161:122"/>
+		<constant value="161:5-161:123"/>
+		<constant value="160:9-162:5"/>
+		<constant value="158:5-158:15"/>
+		<constant value="158:27-158:37"/>
+		<constant value="158:56-158:63"/>
+		<constant value="158:65-158:74"/>
+		<constant value="158:76-158:86"/>
+		<constant value="158:76-158:105"/>
+		<constant value="158:76-158:128"/>
+		<constant value="158:27-158:129"/>
+		<constant value="158:5-158:130"/>
+		<constant value="157:4-162:5"/>
+		<constant value="155:8-169:4"/>
+		<constant value="153:4-153:14"/>
+		<constant value="153:23-153:33"/>
+		<constant value="153:46-153:55"/>
+		<constant value="153:57-153:67"/>
+		<constant value="153:23-153:68"/>
+		<constant value="153:70-153:80"/>
+		<constant value="153:70-153:99"/>
+		<constant value="153:70-153:122"/>
+		<constant value="153:4-153:124"/>
+		<constant value="152:3-169:4"/>
+		<constant value="172:6-172:15"/>
+		<constant value="172:28-172:38"/>
+		<constant value="172:6-172:39"/>
+		<constant value="173:4-173:14"/>
+		<constant value="173:23-173:30"/>
+		<constant value="173:39-173:48"/>
+		<constant value="173:39-173:53"/>
+		<constant value="173:23-173:54"/>
+		<constant value="173:56-173:66"/>
+		<constant value="173:56-173:77"/>
+		<constant value="173:82-173:86"/>
+		<constant value="173:56-173:87"/>
+		<constant value="173:56-173:92"/>
+		<constant value="173:56-173:103"/>
+		<constant value="173:4-173:105"/>
+		<constant value="172:3-174:4"/>
+		<constant value="127:2-175:3"/>
 		<constant value="path"/>
 		<constant value="firstNode"/>
 		<constant value="nextNode"/>
 		<constant value="case"/>
 		<constant value="handleFirstNode"/>
 		<constant value="Path"/>
-		<constant value="240"/>
+		<constant value="228"/>
 		<constant value="OrFork"/>
-		<constant value="232"/>
+		<constant value="220"/>
 		<constant value="OrJoin"/>
+		<constant value="135"/>
 		<constant value="AndFork"/>
 		<constant value="stubMap"/>
-		<constant value="128"/>
+		<constant value="103"/>
 		<constant value="93"/>
 		<constant value="83"/>
 		<constant value="73"/>
 		<constant value="82"/>
 		<constant value="92"/>
-		<constant value="114"/>
-		<constant value="138"/>
+		<constant value="102"/>
+		<constant value="126"/>
+		<constant value="134"/>
 		<constant value="J.handleForkLogic(JJJJJ):J"/>
-		<constant value="231"/>
-		<constant value="157"/>
-		<constant value="214"/>
+		<constant value="219"/>
+		<constant value="145"/>
+		<constant value="202"/>
 		<constant value="J.getResponsibility(J):J"/>
 		<constant value="respRefs"/>
-		<constant value="177"/>
+		<constant value="165"/>
 		<constant value="J.isEmpty():J"/>
-		<constant value="181"/>
-		<constant value="202"/>
+		<constant value="169"/>
+		<constant value="190"/>
 		<constant value="CJ.asSequence():QJ"/>
-		<constant value="219"/>
-		<constant value="239"/>
-		<constant value="423"/>
-		<constant value="startPoint"/>
-		<constant value="413"/>
+		<constant value="207"/>
+		<constant value="227"/>
 		<constant value="399"/>
-		<constant value="377"/>
-		<constant value="297"/>
-		<constant value="287"/>
-		<constant value="296"/>
-		<constant value="376"/>
+		<constant value="startPoint"/>
+		<constant value="389"/>
+		<constant value="375"/>
+		<constant value="365"/>
+		<constant value="285"/>
+		<constant value="275"/>
+		<constant value="284"/>
+		<constant value="364"/>
 		<constant value="nodes"/>
-		<constant value="317"/>
-		<constant value="332"/>
-		<constant value="352"/>
+		<constant value="305"/>
+		<constant value="320"/>
+		<constant value="340"/>
 		<constant value="J.includes(J):J"/>
-		<constant value="369"/>
-		<constant value="398"/>
-		<constant value="412"/>
-		<constant value="187:6-187:10"/>
-		<constant value="187:23-187:32"/>
-		<constant value="187:6-187:33"/>
-		<constant value="216:11-216:15"/>
-		<constant value="216:28-216:39"/>
-		<constant value="216:11-216:40"/>
-		<constant value="219:12-219:16"/>
-		<constant value="219:29-219:39"/>
-		<constant value="219:12-219:40"/>
-		<constant value="233:11-233:15"/>
-		<constant value="233:28-233:40"/>
-		<constant value="233:11-233:41"/>
-		<constant value="237:4-237:14"/>
-		<constant value="237:30-237:40"/>
-		<constant value="237:30-237:48"/>
-		<constant value="237:53-237:57"/>
-		<constant value="237:30-237:58"/>
-		<constant value="237:4-237:59"/>
-		<constant value="239:7-239:16"/>
-		<constant value="239:29-239:41"/>
-		<constant value="239:7-239:42"/>
-		<constant value="242:12-242:21"/>
-		<constant value="242:34-242:44"/>
-		<constant value="242:12-242:45"/>
-		<constant value="245:12-245:21"/>
-		<constant value="245:34-245:46"/>
-		<constant value="245:12-245:47"/>
-		<constant value="249:12-249:21"/>
-		<constant value="249:34-249:51"/>
-		<constant value="249:12-249:52"/>
-		<constant value="252:12-252:21"/>
-		<constant value="252:34-252:51"/>
-		<constant value="252:12-252:52"/>
-		<constant value="256:5-256:15"/>
-		<constant value="256:24-256:31"/>
-		<constant value="256:40-256:49"/>
-		<constant value="256:40-256:54"/>
-		<constant value="256:24-256:55"/>
-		<constant value="256:57-256:64"/>
-		<constant value="256:73-256:77"/>
-		<constant value="256:73-256:82"/>
-		<constant value="256:57-256:83"/>
-		<constant value="256:57-256:88"/>
-		<constant value="256:57-256:99"/>
-		<constant value="256:5-256:101"/>
-		<constant value="253:5-253:15"/>
-		<constant value="253:24-253:34"/>
-		<constant value="253:47-253:56"/>
-		<constant value="253:58-253:67"/>
-		<constant value="253:24-253:68"/>
-		<constant value="253:70-253:80"/>
-		<constant value="253:70-253:92"/>
-		<constant value="253:70-253:115"/>
-		<constant value="253:5-253:117"/>
-		<constant value="252:9-257:5"/>
-		<constant value="250:5-250:15"/>
-		<constant value="250:24-250:34"/>
-		<constant value="250:47-250:56"/>
-		<constant value="250:58-250:68"/>
-		<constant value="250:24-250:69"/>
-		<constant value="250:71-250:81"/>
-		<constant value="250:71-250:93"/>
-		<constant value="250:71-250:116"/>
-		<constant value="250:5-250:118"/>
-		<constant value="249:9-257:5"/>
-		<constant value="246:5-246:15"/>
-		<constant value="246:27-246:37"/>
-		<constant value="246:56-246:63"/>
-		<constant value="246:65-246:74"/>
-		<constant value="246:76-246:88"/>
-		<constant value="246:90-246:100"/>
-		<constant value="246:90-246:112"/>
-		<constant value="246:90-246:135"/>
-		<constant value="246:27-246:136"/>
-		<constant value="246:5-246:137"/>
-		<constant value="247:5-247:15"/>
-		<constant value="247:30-247:40"/>
-		<constant value="247:30-247:51"/>
-		<constant value="247:62-247:71"/>
-		<constant value="247:73-247:83"/>
-		<constant value="247:73-247:91"/>
-		<constant value="247:30-247:92"/>
-		<constant value="247:5-247:93"/>
-		<constant value="245:9-257:5"/>
-		<constant value="243:5-243:15"/>
-		<constant value="243:24-243:34"/>
-		<constant value="243:47-243:54"/>
-		<constant value="243:56-243:65"/>
-		<constant value="243:24-243:66"/>
-		<constant value="243:68-243:75"/>
-		<constant value="243:84-243:88"/>
-		<constant value="243:84-243:93"/>
-		<constant value="243:68-243:94"/>
-		<constant value="243:68-243:99"/>
-		<constant value="243:68-243:110"/>
-		<constant value="243:5-243:112"/>
-		<constant value="242:9-257:5"/>
-		<constant value="240:5-240:15"/>
-		<constant value="240:24-240:34"/>
-		<constant value="240:47-240:56"/>
-		<constant value="240:58-240:68"/>
-		<constant value="240:24-240:69"/>
-		<constant value="240:71-240:81"/>
-		<constant value="240:71-240:93"/>
-		<constant value="240:71-240:98"/>
-		<constant value="240:71-240:109"/>
-		<constant value="240:5-240:111"/>
-		<constant value="239:4-257:5"/>
-		<constant value="234:4-234:14"/>
-		<constant value="234:31-234:38"/>
-		<constant value="234:40-234:44"/>
-		<constant value="234:46-234:55"/>
-		<constant value="234:57-234:65"/>
-		<constant value="234:67-234:72"/>
-		<constant value="234:4-234:74"/>
-		<constant value="233:8-258:4"/>
-		<constant value="220:4-220:14"/>
-		<constant value="220:28-220:33"/>
-		<constant value="220:4-220:34"/>
-		<constant value="222:7-222:16"/>
-		<constant value="222:29-222:41"/>
-		<constant value="222:7-222:42"/>
-		<constant value="223:8-223:18"/>
-		<constant value="223:37-223:46"/>
-		<constant value="223:37-223:51"/>
-		<constant value="223:8-223:52"/>
-		<constant value="223:8-223:61"/>
-		<constant value="223:74-223:75"/>
-		<constant value="223:74-223:83"/>
-		<constant value="223:74-223:88"/>
-		<constant value="223:89-223:96"/>
-		<constant value="223:89-223:101"/>
-		<constant value="223:74-223:101"/>
-		<constant value="223:8-223:102"/>
-		<constant value="223:8-223:115"/>
-		<constant value="224:6-224:16"/>
-		<constant value="224:26-224:36"/>
-		<constant value="224:55-224:64"/>
-		<constant value="224:55-224:69"/>
-		<constant value="224:26-224:70"/>
-		<constant value="224:26-224:79"/>
-		<constant value="224:89-224:90"/>
-		<constant value="224:89-224:98"/>
-		<constant value="224:89-224:103"/>
-		<constant value="224:104-224:111"/>
-		<constant value="224:104-224:116"/>
-		<constant value="224:89-224:116"/>
-		<constant value="224:26-224:117"/>
-		<constant value="224:120-224:127"/>
-		<constant value="224:136-224:140"/>
-		<constant value="224:136-224:145"/>
-		<constant value="224:120-224:146"/>
-		<constant value="224:120-224:151"/>
-		<constant value="224:6-224:153"/>
-		<constant value="225:6-225:16"/>
-		<constant value="225:30-225:34"/>
-		<constant value="225:6-225:35"/>
-		<constant value="223:5-226:6"/>
-		<constant value="222:4-227:5"/>
-		<constant value="229:11-229:21"/>
-		<constant value="229:11-229:31"/>
-		<constant value="229:7-229:31"/>
-		<constant value="230:5-230:15"/>
-		<constant value="230:24-230:31"/>
-		<constant value="230:40-230:49"/>
-		<constant value="230:40-230:54"/>
-		<constant value="230:24-230:55"/>
-		<constant value="230:57-230:64"/>
-		<constant value="230:73-230:77"/>
-		<constant value="230:73-230:82"/>
-		<constant value="230:57-230:83"/>
-		<constant value="230:57-230:88"/>
-		<constant value="230:57-230:99"/>
-		<constant value="230:5-230:101"/>
-		<constant value="229:4-231:5"/>
-		<constant value="219:8-258:4"/>
-		<constant value="217:4-217:14"/>
-		<constant value="217:31-217:38"/>
-		<constant value="217:40-217:44"/>
-		<constant value="217:46-217:55"/>
-		<constant value="217:57-217:65"/>
-		<constant value="217:67-217:71"/>
-		<constant value="217:4-217:73"/>
-		<constant value="216:8-258:4"/>
-		<constant value="188:4-188:14"/>
-		<constant value="188:29-188:36"/>
-		<constant value="188:45-188:49"/>
-		<constant value="188:45-188:60"/>
-		<constant value="188:45-188:65"/>
-		<constant value="188:29-188:66"/>
-		<constant value="188:4-188:67"/>
-		<constant value="190:7-190:16"/>
-		<constant value="190:29-190:41"/>
-		<constant value="190:7-190:42"/>
-		<constant value="193:12-193:21"/>
-		<constant value="193:34-193:44"/>
-		<constant value="193:12-193:45"/>
-		<constant value="197:12-197:21"/>
-		<constant value="197:34-197:46"/>
-		<constant value="197:12-197:47"/>
-		<constant value="201:12-201:21"/>
-		<constant value="201:34-201:51"/>
-		<constant value="201:12-201:52"/>
-		<constant value="209:12-209:21"/>
-		<constant value="209:34-209:51"/>
-		<constant value="209:12-209:52"/>
-		<constant value="213:5-213:15"/>
-		<constant value="213:24-213:31"/>
-		<constant value="213:40-213:49"/>
-		<constant value="213:40-213:54"/>
-		<constant value="213:24-213:55"/>
-		<constant value="213:57-213:67"/>
-		<constant value="213:57-213:78"/>
-		<constant value="213:57-213:83"/>
-		<constant value="213:5-213:85"/>
-		<constant value="210:5-210:15"/>
-		<constant value="210:24-210:34"/>
-		<constant value="210:47-210:56"/>
-		<constant value="210:58-210:67"/>
-		<constant value="210:24-210:68"/>
-		<constant value="210:70-210:80"/>
-		<constant value="210:70-210:91"/>
-		<constant value="210:70-210:96"/>
-		<constant value="210:5-210:98"/>
-		<constant value="209:9-214:5"/>
+		<constant value="357"/>
+		<constant value="374"/>
+		<constant value="388"/>
+		<constant value="181:6-181:10"/>
+		<constant value="181:23-181:32"/>
+		<constant value="181:6-181:33"/>
+		<constant value="209:11-209:15"/>
+		<constant value="209:28-209:39"/>
+		<constant value="209:11-209:40"/>
+		<constant value="212:12-212:16"/>
+		<constant value="212:29-212:39"/>
+		<constant value="212:12-212:40"/>
+		<constant value="226:11-226:15"/>
+		<constant value="226:28-226:40"/>
+		<constant value="226:11-226:41"/>
+		<constant value="230:4-230:14"/>
+		<constant value="230:30-230:40"/>
+		<constant value="230:30-230:48"/>
+		<constant value="230:53-230:57"/>
+		<constant value="230:30-230:58"/>
+		<constant value="230:4-230:59"/>
+		<constant value="232:7-232:16"/>
+		<constant value="232:29-232:41"/>
+		<constant value="232:7-232:42"/>
+		<constant value="235:12-235:21"/>
+		<constant value="235:34-235:44"/>
+		<constant value="235:12-235:45"/>
+		<constant value="238:12-238:21"/>
+		<constant value="238:34-238:46"/>
+		<constant value="238:12-238:47"/>
+		<constant value="241:12-241:21"/>
+		<constant value="241:34-241:51"/>
+		<constant value="241:12-241:52"/>
+		<constant value="244:12-244:21"/>
+		<constant value="244:34-244:51"/>
+		<constant value="244:12-244:52"/>
+		<constant value="248:5-248:15"/>
+		<constant value="248:24-248:31"/>
+		<constant value="248:40-248:49"/>
+		<constant value="248:40-248:54"/>
+		<constant value="248:24-248:55"/>
+		<constant value="248:57-248:64"/>
+		<constant value="248:73-248:77"/>
+		<constant value="248:73-248:82"/>
+		<constant value="248:57-248:83"/>
+		<constant value="248:57-248:88"/>
+		<constant value="248:57-248:99"/>
+		<constant value="248:5-248:101"/>
+		<constant value="245:5-245:15"/>
+		<constant value="245:24-245:34"/>
+		<constant value="245:47-245:56"/>
+		<constant value="245:58-245:67"/>
+		<constant value="245:24-245:68"/>
+		<constant value="245:70-245:80"/>
+		<constant value="245:70-245:92"/>
+		<constant value="245:70-245:115"/>
+		<constant value="245:5-245:117"/>
+		<constant value="244:9-249:5"/>
+		<constant value="242:5-242:15"/>
+		<constant value="242:24-242:34"/>
+		<constant value="242:47-242:56"/>
+		<constant value="242:58-242:68"/>
+		<constant value="242:24-242:69"/>
+		<constant value="242:71-242:81"/>
+		<constant value="242:71-242:93"/>
+		<constant value="242:71-242:116"/>
+		<constant value="242:5-242:118"/>
+		<constant value="241:9-249:5"/>
+		<constant value="239:5-239:15"/>
+		<constant value="239:27-239:37"/>
+		<constant value="239:56-239:63"/>
+		<constant value="239:65-239:74"/>
+		<constant value="239:76-239:86"/>
+		<constant value="239:76-239:98"/>
+		<constant value="239:76-239:121"/>
+		<constant value="239:27-239:122"/>
+		<constant value="239:5-239:123"/>
+		<constant value="238:9-249:5"/>
+		<constant value="236:5-236:15"/>
+		<constant value="236:24-236:34"/>
+		<constant value="236:47-236:54"/>
+		<constant value="236:56-236:65"/>
+		<constant value="236:24-236:66"/>
+		<constant value="236:68-236:75"/>
+		<constant value="236:84-236:88"/>
+		<constant value="236:84-236:93"/>
+		<constant value="236:68-236:94"/>
+		<constant value="236:68-236:99"/>
+		<constant value="236:68-236:110"/>
+		<constant value="236:5-236:112"/>
+		<constant value="235:9-249:5"/>
+		<constant value="233:5-233:15"/>
+		<constant value="233:24-233:34"/>
+		<constant value="233:47-233:56"/>
+		<constant value="233:58-233:68"/>
+		<constant value="233:24-233:69"/>
+		<constant value="233:71-233:81"/>
+		<constant value="233:71-233:93"/>
+		<constant value="233:71-233:98"/>
+		<constant value="233:71-233:109"/>
+		<constant value="233:5-233:111"/>
+		<constant value="232:4-249:5"/>
+		<constant value="227:4-227:14"/>
+		<constant value="227:31-227:38"/>
+		<constant value="227:40-227:44"/>
+		<constant value="227:46-227:55"/>
+		<constant value="227:57-227:65"/>
+		<constant value="227:67-227:72"/>
+		<constant value="227:4-227:74"/>
+		<constant value="226:8-250:4"/>
+		<constant value="213:4-213:14"/>
+		<constant value="213:28-213:33"/>
+		<constant value="213:4-213:34"/>
+		<constant value="215:7-215:16"/>
+		<constant value="215:29-215:41"/>
+		<constant value="215:7-215:42"/>
+		<constant value="216:8-216:18"/>
+		<constant value="216:37-216:46"/>
+		<constant value="216:37-216:51"/>
+		<constant value="216:8-216:52"/>
+		<constant value="216:8-216:61"/>
+		<constant value="216:74-216:75"/>
+		<constant value="216:74-216:83"/>
+		<constant value="216:74-216:88"/>
+		<constant value="216:89-216:96"/>
+		<constant value="216:89-216:101"/>
+		<constant value="216:74-216:101"/>
+		<constant value="216:8-216:102"/>
+		<constant value="216:8-216:115"/>
+		<constant value="217:6-217:16"/>
+		<constant value="217:26-217:36"/>
+		<constant value="217:55-217:64"/>
+		<constant value="217:55-217:69"/>
+		<constant value="217:26-217:70"/>
+		<constant value="217:26-217:79"/>
+		<constant value="217:89-217:90"/>
+		<constant value="217:89-217:98"/>
+		<constant value="217:89-217:103"/>
+		<constant value="217:104-217:111"/>
+		<constant value="217:104-217:116"/>
+		<constant value="217:89-217:116"/>
+		<constant value="217:26-217:117"/>
+		<constant value="217:120-217:127"/>
+		<constant value="217:136-217:140"/>
+		<constant value="217:136-217:145"/>
+		<constant value="217:120-217:146"/>
+		<constant value="217:120-217:151"/>
+		<constant value="217:6-217:153"/>
+		<constant value="218:6-218:16"/>
+		<constant value="218:30-218:34"/>
+		<constant value="218:6-218:35"/>
+		<constant value="216:5-219:6"/>
+		<constant value="215:4-220:5"/>
+		<constant value="222:11-222:21"/>
+		<constant value="222:11-222:31"/>
+		<constant value="222:7-222:31"/>
+		<constant value="223:5-223:15"/>
+		<constant value="223:24-223:31"/>
+		<constant value="223:40-223:49"/>
+		<constant value="223:40-223:54"/>
+		<constant value="223:24-223:55"/>
+		<constant value="223:57-223:64"/>
+		<constant value="223:73-223:77"/>
+		<constant value="223:73-223:82"/>
+		<constant value="223:57-223:83"/>
+		<constant value="223:57-223:88"/>
+		<constant value="223:57-223:99"/>
+		<constant value="223:5-223:101"/>
+		<constant value="222:4-224:5"/>
+		<constant value="212:8-250:4"/>
+		<constant value="210:4-210:14"/>
+		<constant value="210:31-210:38"/>
+		<constant value="210:40-210:44"/>
+		<constant value="210:46-210:55"/>
+		<constant value="210:57-210:65"/>
+		<constant value="210:67-210:71"/>
+		<constant value="210:4-210:73"/>
+		<constant value="209:8-250:4"/>
+		<constant value="182:4-182:14"/>
+		<constant value="182:29-182:36"/>
+		<constant value="182:45-182:49"/>
+		<constant value="182:45-182:60"/>
+		<constant value="182:45-182:65"/>
+		<constant value="182:29-182:66"/>
+		<constant value="182:4-182:67"/>
+		<constant value="184:7-184:16"/>
+		<constant value="184:29-184:41"/>
+		<constant value="184:7-184:42"/>
+		<constant value="187:12-187:21"/>
+		<constant value="187:34-187:44"/>
+		<constant value="187:12-187:45"/>
+		<constant value="191:12-191:21"/>
+		<constant value="191:34-191:46"/>
+		<constant value="191:12-191:47"/>
+		<constant value="194:12-194:21"/>
+		<constant value="194:34-194:51"/>
+		<constant value="194:12-194:52"/>
 		<constant value="202:12-202:21"/>
-		<constant value="202:12-202:29"/>
-		<constant value="202:12-202:46"/>
-		<constant value="202:8-202:46"/>
-		<constant value="202:55-202:62"/>
-		<constant value="202:55-202:68"/>
-		<constant value="202:81-202:82"/>
-		<constant value="202:95-202:109"/>
-		<constant value="202:81-202:110"/>
-		<constant value="202:55-202:111"/>
-		<constant value="202:55-202:124"/>
-		<constant value="202:51-202:124"/>
-		<constant value="202:8-202:124"/>
-		<constant value="206:6-206:16"/>
-		<constant value="206:25-206:35"/>
-		<constant value="206:48-206:57"/>
-		<constant value="206:59-206:69"/>
-		<constant value="206:25-206:70"/>
-		<constant value="206:72-206:82"/>
-		<constant value="206:72-206:93"/>
-		<constant value="206:72-206:98"/>
-		<constant value="206:6-206:100"/>
-		<constant value="203:6-203:16"/>
-		<constant value="203:25-203:32"/>
-		<constant value="203:25-203:38"/>
-		<constant value="203:51-203:52"/>
-		<constant value="203:65-203:79"/>
-		<constant value="203:51-203:80"/>
-		<constant value="203:25-203:81"/>
-		<constant value="203:93-203:96"/>
-		<constant value="203:93-203:101"/>
-		<constant value="203:114-203:124"/>
-		<constant value="203:114-203:135"/>
-		<constant value="203:140-203:149"/>
-		<constant value="203:140-203:157"/>
-		<constant value="203:114-203:158"/>
-		<constant value="203:114-203:163"/>
-		<constant value="203:114-203:174"/>
-		<constant value="203:93-203:175"/>
-		<constant value="203:25-203:176"/>
-		<constant value="203:178-203:188"/>
-		<constant value="203:178-203:199"/>
-		<constant value="203:178-203:204"/>
-		<constant value="203:6-203:206"/>
-		<constant value="202:5-207:6"/>
-		<constant value="201:9-214:5"/>
-		<constant value="198:5-198:15"/>
-		<constant value="198:27-198:37"/>
-		<constant value="198:56-198:63"/>
-		<constant value="198:65-198:74"/>
-		<constant value="198:76-198:88"/>
-		<constant value="198:90-198:100"/>
-		<constant value="198:90-198:111"/>
-		<constant value="198:90-198:134"/>
-		<constant value="198:27-198:135"/>
-		<constant value="198:5-198:136"/>
-		<constant value="199:5-199:15"/>
-		<constant value="199:30-199:40"/>
-		<constant value="199:30-199:51"/>
-		<constant value="199:62-199:71"/>
-		<constant value="199:73-199:83"/>
-		<constant value="199:73-199:91"/>
-		<constant value="199:30-199:92"/>
-		<constant value="199:5-199:93"/>
-		<constant value="197:9-214:5"/>
-		<constant value="194:5-194:15"/>
-		<constant value="194:28-194:35"/>
-		<constant value="194:37-194:46"/>
-		<constant value="194:5-194:48"/>
-		<constant value="195:5-195:15"/>
-		<constant value="195:24-195:34"/>
-		<constant value="195:24-195:43"/>
-		<constant value="195:48-195:57"/>
-		<constant value="195:24-195:58"/>
-		<constant value="195:60-195:70"/>
-		<constant value="195:60-195:81"/>
-		<constant value="195:60-195:86"/>
-		<constant value="195:5-195:88"/>
-		<constant value="193:9-214:5"/>
-		<constant value="191:5-191:15"/>
-		<constant value="191:24-191:34"/>
-		<constant value="191:47-191:56"/>
-		<constant value="191:58-191:68"/>
-		<constant value="191:24-191:69"/>
-		<constant value="191:71-191:81"/>
-		<constant value="191:71-191:92"/>
-		<constant value="191:71-191:97"/>
-		<constant value="191:71-191:108"/>
-		<constant value="191:5-191:110"/>
-		<constant value="190:4-214:5"/>
-		<constant value="187:3-258:4"/>
-		<constant value="186:2-259:3"/>
+		<constant value="202:34-202:51"/>
+		<constant value="202:12-202:52"/>
+		<constant value="206:5-206:15"/>
+		<constant value="206:24-206:31"/>
+		<constant value="206:40-206:49"/>
+		<constant value="206:40-206:54"/>
+		<constant value="206:24-206:55"/>
+		<constant value="206:57-206:67"/>
+		<constant value="206:57-206:78"/>
+		<constant value="206:57-206:83"/>
+		<constant value="206:5-206:85"/>
+		<constant value="203:5-203:15"/>
+		<constant value="203:24-203:34"/>
+		<constant value="203:47-203:56"/>
+		<constant value="203:58-203:67"/>
+		<constant value="203:24-203:68"/>
+		<constant value="203:70-203:80"/>
+		<constant value="203:70-203:91"/>
+		<constant value="203:70-203:96"/>
+		<constant value="203:5-203:98"/>
+		<constant value="202:9-207:5"/>
+		<constant value="195:12-195:21"/>
+		<constant value="195:12-195:29"/>
+		<constant value="195:12-195:46"/>
+		<constant value="195:8-195:46"/>
+		<constant value="195:55-195:62"/>
+		<constant value="195:55-195:68"/>
+		<constant value="195:81-195:82"/>
+		<constant value="195:95-195:109"/>
+		<constant value="195:81-195:110"/>
+		<constant value="195:55-195:111"/>
+		<constant value="195:55-195:124"/>
+		<constant value="195:51-195:124"/>
+		<constant value="195:8-195:124"/>
+		<constant value="199:6-199:16"/>
+		<constant value="199:25-199:35"/>
+		<constant value="199:48-199:57"/>
+		<constant value="199:59-199:69"/>
+		<constant value="199:25-199:70"/>
+		<constant value="199:72-199:82"/>
+		<constant value="199:72-199:93"/>
+		<constant value="199:72-199:98"/>
+		<constant value="199:6-199:100"/>
+		<constant value="196:6-196:16"/>
+		<constant value="196:25-196:32"/>
+		<constant value="196:25-196:38"/>
+		<constant value="196:51-196:52"/>
+		<constant value="196:65-196:79"/>
+		<constant value="196:51-196:80"/>
+		<constant value="196:25-196:81"/>
+		<constant value="196:93-196:96"/>
+		<constant value="196:93-196:101"/>
+		<constant value="196:114-196:124"/>
+		<constant value="196:114-196:135"/>
+		<constant value="196:140-196:149"/>
+		<constant value="196:140-196:157"/>
+		<constant value="196:114-196:158"/>
+		<constant value="196:114-196:163"/>
+		<constant value="196:114-196:174"/>
+		<constant value="196:93-196:175"/>
+		<constant value="196:25-196:176"/>
+		<constant value="196:178-196:188"/>
+		<constant value="196:178-196:199"/>
+		<constant value="196:178-196:204"/>
+		<constant value="196:6-196:206"/>
+		<constant value="195:5-200:6"/>
+		<constant value="194:9-207:5"/>
+		<constant value="192:5-192:15"/>
+		<constant value="192:27-192:37"/>
+		<constant value="192:56-192:63"/>
+		<constant value="192:65-192:74"/>
+		<constant value="192:76-192:86"/>
+		<constant value="192:76-192:97"/>
+		<constant value="192:76-192:120"/>
+		<constant value="192:27-192:121"/>
+		<constant value="192:5-192:122"/>
+		<constant value="191:9-207:5"/>
+		<constant value="188:5-188:15"/>
+		<constant value="188:28-188:35"/>
+		<constant value="188:37-188:46"/>
+		<constant value="188:5-188:48"/>
+		<constant value="189:5-189:15"/>
+		<constant value="189:24-189:34"/>
+		<constant value="189:24-189:43"/>
+		<constant value="189:48-189:57"/>
+		<constant value="189:24-189:58"/>
+		<constant value="189:60-189:70"/>
+		<constant value="189:60-189:81"/>
+		<constant value="189:60-189:86"/>
+		<constant value="189:5-189:88"/>
+		<constant value="187:9-207:5"/>
+		<constant value="185:5-185:15"/>
+		<constant value="185:24-185:34"/>
+		<constant value="185:47-185:56"/>
+		<constant value="185:58-185:68"/>
+		<constant value="185:24-185:69"/>
+		<constant value="185:71-185:81"/>
+		<constant value="185:71-185:92"/>
+		<constant value="185:71-185:97"/>
+		<constant value="185:71-185:108"/>
+		<constant value="185:5-185:110"/>
+		<constant value="184:4-207:5"/>
+		<constant value="181:3-250:4"/>
+		<constant value="180:2-251:3"/>
 		<constant value="r"/>
 		<constant value="n"/>
 		<constant value="ept"/>
 		<constant value="handleNode"/>
-		<constant value="244"/>
-		<constant value="233"/>
-		<constant value="222"/>
-		<constant value="211"/>
-		<constant value="103"/>
+		<constant value="261"/>
+		<constant value="250"/>
+		<constant value="239"/>
+		<constant value="138"/>
+		<constant value="104"/>
 		<constant value="69"/>
 		<constant value="79"/>
 		<constant value="137"/>
 		<constant value="J.allRespDefsMatching(J):J"/>
 		<constant value="J.flatten():J"/>
-		<constant value="135"/>
-		<constant value="210"/>
 		<constant value="170"/>
 		<constant value="161"/>
-		<constant value="169"/>
 		<constant value="193"/>
 		<constant value="188"/>
-		<constant value="221"/>
+		<constant value="208"/>
+		<constant value="217"/>
+		<constant value="238"/>
 		<constant value="J.processNode(JJJJJ):J"/>
-		<constant value="243"/>
-		<constant value="254"/>
-		<constant value="264:6-264:17"/>
-		<constant value="264:30-264:47"/>
-		<constant value="264:6-264:48"/>
-		<constant value="267:11-267:22"/>
-		<constant value="267:35-267:52"/>
-		<constant value="267:11-267:53"/>
+		<constant value="249"/>
+		<constant value="260"/>
+		<constant value="271"/>
+		<constant value="256:6-256:17"/>
+		<constant value="256:30-256:47"/>
+		<constant value="256:6-256:48"/>
+		<constant value="259:11-259:22"/>
+		<constant value="259:35-259:52"/>
+		<constant value="259:11-259:53"/>
+		<constant value="262:11-262:22"/>
+		<constant value="262:35-262:47"/>
+		<constant value="262:11-262:48"/>
+		<constant value="266:11-266:22"/>
+		<constant value="266:35-266:45"/>
+		<constant value="266:11-266:46"/>
 		<constant value="270:11-270:22"/>
 		<constant value="270:35-270:47"/>
 		<constant value="270:11-270:48"/>
-		<constant value="274:11-274:22"/>
-		<constant value="274:35-274:45"/>
-		<constant value="274:11-274:46"/>
-		<constant value="278:11-278:22"/>
-		<constant value="278:35-278:47"/>
-		<constant value="278:11-278:48"/>
-		<constant value="296:11-296:23"/>
-		<constant value="296:36-296:48"/>
-		<constant value="296:11-296:49"/>
-		<constant value="299:12-299:24"/>
-		<constant value="299:37-299:49"/>
-		<constant value="299:12-299:50"/>
-		<constant value="311:4-311:14"/>
-		<constant value="311:23-311:30"/>
-		<constant value="311:39-311:50"/>
-		<constant value="311:39-311:55"/>
-		<constant value="311:23-311:56"/>
-		<constant value="311:58-311:65"/>
-		<constant value="311:74-311:86"/>
-		<constant value="311:74-311:91"/>
-		<constant value="311:58-311:92"/>
-		<constant value="311:58-311:97"/>
-		<constant value="311:4-311:99"/>
-		<constant value="300:7-300:19"/>
-		<constant value="300:7-300:30"/>
-		<constant value="300:43-300:53"/>
-		<constant value="300:7-300:54"/>
-		<constant value="304:8-304:20"/>
-		<constant value="304:8-304:31"/>
-		<constant value="304:44-304:59"/>
-		<constant value="304:8-304:60"/>
-		<constant value="305:6-305:16"/>
-		<constant value="305:25-305:32"/>
-		<constant value="305:41-305:53"/>
-		<constant value="305:41-305:64"/>
-		<constant value="305:41-305:69"/>
-		<constant value="305:25-305:70"/>
-		<constant value="305:25-305:75"/>
-		<constant value="305:77-305:87"/>
-		<constant value="305:77-305:110"/>
-		<constant value="305:6-305:112"/>
-		<constant value="304:5-306:6"/>
-		<constant value="307:5-307:15"/>
-		<constant value="307:24-307:31"/>
-		<constant value="307:40-307:51"/>
-		<constant value="307:40-307:56"/>
-		<constant value="307:24-307:57"/>
-		<constant value="307:59-307:66"/>
-		<constant value="307:75-307:87"/>
-		<constant value="307:75-307:98"/>
-		<constant value="307:75-307:103"/>
-		<constant value="307:59-307:104"/>
-		<constant value="307:59-307:127"/>
-		<constant value="307:5-307:129"/>
-		<constant value="301:5-301:15"/>
-		<constant value="301:24-301:31"/>
-		<constant value="301:40-301:51"/>
-		<constant value="301:40-301:56"/>
-		<constant value="301:24-301:57"/>
-		<constant value="301:59-301:69"/>
-		<constant value="301:59-301:80"/>
-		<constant value="301:85-301:97"/>
-		<constant value="301:59-301:98"/>
-		<constant value="301:59-301:121"/>
-		<constant value="301:5-301:123"/>
-		<constant value="300:4-308:5"/>
-		<constant value="299:8-312:4"/>
-		<constant value="297:4-297:14"/>
-		<constant value="297:23-297:30"/>
-		<constant value="297:39-297:50"/>
-		<constant value="297:39-297:55"/>
-		<constant value="297:23-297:56"/>
-		<constant value="297:58-297:65"/>
-		<constant value="297:86-297:98"/>
-		<constant value="297:86-297:103"/>
-		<constant value="297:58-297:104"/>
-		<constant value="297:118-297:119"/>
-		<constant value="297:118-297:124"/>
-		<constant value="297:58-297:125"/>
-		<constant value="297:58-297:138"/>
-		<constant value="297:151-297:152"/>
-		<constant value="297:151-297:159"/>
-		<constant value="297:151-297:176"/>
-		<constant value="297:58-297:177"/>
-		<constant value="297:4-297:179"/>
-		<constant value="296:8-312:4"/>
-		<constant value="279:4-279:14"/>
-		<constant value="279:23-279:25"/>
-		<constant value="279:4-279:26"/>
-		<constant value="281:7-281:19"/>
-		<constant value="281:32-281:44"/>
-		<constant value="281:7-281:45"/>
-		<constant value="284:12-284:24"/>
-		<constant value="284:37-284:49"/>
-		<constant value="284:12-284:50"/>
-		<constant value="288:5-288:15"/>
-		<constant value="288:24-288:31"/>
-		<constant value="288:40-288:52"/>
-		<constant value="288:40-288:57"/>
-		<constant value="288:24-288:58"/>
-		<constant value="288:24-288:63"/>
-		<constant value="288:5-288:64"/>
-		<constant value="285:5-285:15"/>
-		<constant value="285:24-285:31"/>
-		<constant value="285:40-285:52"/>
-		<constant value="285:40-285:63"/>
-		<constant value="285:40-285:68"/>
-		<constant value="285:24-285:69"/>
-		<constant value="285:24-285:92"/>
-		<constant value="285:5-285:93"/>
-		<constant value="284:9-289:5"/>
-		<constant value="282:5-282:15"/>
-		<constant value="282:24-282:31"/>
-		<constant value="282:52-282:64"/>
-		<constant value="282:52-282:69"/>
-		<constant value="282:24-282:70"/>
-		<constant value="282:84-282:85"/>
-		<constant value="282:84-282:90"/>
-		<constant value="282:84-282:107"/>
-		<constant value="282:80-282:107"/>
-		<constant value="282:24-282:108"/>
-		<constant value="282:24-282:113"/>
-		<constant value="282:5-282:114"/>
-		<constant value="281:4-289:5"/>
-		<constant value="291:4-291:14"/>
-		<constant value="291:26-291:36"/>
-		<constant value="291:55-291:62"/>
-		<constant value="291:64-291:75"/>
-		<constant value="291:77-291:89"/>
-		<constant value="291:91-291:101"/>
-		<constant value="291:91-291:106"/>
-		<constant value="291:26-291:107"/>
-		<constant value="291:4-291:108"/>
+		<constant value="292:11-292:23"/>
+		<constant value="292:36-292:48"/>
+		<constant value="292:11-292:49"/>
+		<constant value="295:12-295:24"/>
+		<constant value="295:37-295:49"/>
+		<constant value="295:12-295:50"/>
+		<constant value="307:4-307:14"/>
+		<constant value="307:23-307:30"/>
+		<constant value="307:39-307:50"/>
+		<constant value="307:39-307:55"/>
+		<constant value="307:23-307:56"/>
+		<constant value="307:58-307:65"/>
+		<constant value="307:74-307:86"/>
+		<constant value="307:74-307:91"/>
+		<constant value="307:58-307:92"/>
+		<constant value="307:58-307:97"/>
+		<constant value="307:4-307:99"/>
+		<constant value="296:7-296:19"/>
+		<constant value="296:7-296:30"/>
+		<constant value="296:43-296:53"/>
+		<constant value="296:7-296:54"/>
+		<constant value="300:8-300:20"/>
+		<constant value="300:8-300:31"/>
+		<constant value="300:44-300:59"/>
+		<constant value="300:8-300:60"/>
+		<constant value="301:6-301:16"/>
+		<constant value="301:25-301:32"/>
+		<constant value="301:41-301:53"/>
+		<constant value="301:41-301:64"/>
+		<constant value="301:41-301:69"/>
+		<constant value="301:25-301:70"/>
+		<constant value="301:25-301:75"/>
+		<constant value="301:77-301:87"/>
+		<constant value="301:77-301:110"/>
+		<constant value="301:6-301:112"/>
+		<constant value="300:5-302:6"/>
+		<constant value="303:5-303:15"/>
+		<constant value="303:24-303:31"/>
+		<constant value="303:40-303:51"/>
+		<constant value="303:40-303:56"/>
+		<constant value="303:24-303:57"/>
+		<constant value="303:59-303:66"/>
+		<constant value="303:75-303:87"/>
+		<constant value="303:75-303:98"/>
+		<constant value="303:75-303:103"/>
+		<constant value="303:59-303:104"/>
+		<constant value="303:59-303:127"/>
+		<constant value="303:5-303:129"/>
+		<constant value="297:5-297:15"/>
+		<constant value="297:24-297:31"/>
+		<constant value="297:40-297:51"/>
+		<constant value="297:40-297:56"/>
+		<constant value="297:24-297:57"/>
+		<constant value="297:59-297:69"/>
+		<constant value="297:59-297:80"/>
+		<constant value="297:85-297:97"/>
+		<constant value="297:59-297:98"/>
+		<constant value="297:59-297:121"/>
+		<constant value="297:5-297:123"/>
+		<constant value="296:4-304:5"/>
+		<constant value="295:8-308:4"/>
 		<constant value="293:4-293:14"/>
-		<constant value="293:29-293:39"/>
-		<constant value="293:29-293:50"/>
-		<constant value="293:61-293:72"/>
-		<constant value="293:74-293:84"/>
-		<constant value="293:74-293:92"/>
-		<constant value="293:29-293:93"/>
-		<constant value="293:4-293:94"/>
-		<constant value="278:8-312:4"/>
-		<constant value="275:4-275:14"/>
-		<constant value="275:27-275:34"/>
-		<constant value="275:36-275:44"/>
-		<constant value="275:46-275:56"/>
-		<constant value="275:69-275:76"/>
-		<constant value="275:78-275:89"/>
-		<constant value="275:46-275:90"/>
-		<constant value="275:92-275:104"/>
-		<constant value="275:106-275:110"/>
-		<constant value="275:4-275:112"/>
-		<constant value="274:8-312:4"/>
+		<constant value="293:23-293:30"/>
+		<constant value="293:39-293:50"/>
+		<constant value="293:39-293:55"/>
+		<constant value="293:23-293:56"/>
+		<constant value="293:58-293:65"/>
+		<constant value="293:86-293:98"/>
+		<constant value="293:86-293:103"/>
+		<constant value="293:58-293:104"/>
+		<constant value="293:118-293:119"/>
+		<constant value="293:118-293:124"/>
+		<constant value="293:58-293:125"/>
+		<constant value="293:58-293:138"/>
+		<constant value="293:151-293:152"/>
+		<constant value="293:151-293:159"/>
+		<constant value="293:151-293:176"/>
+		<constant value="293:58-293:177"/>
+		<constant value="293:4-293:179"/>
+		<constant value="292:8-308:4"/>
 		<constant value="271:4-271:14"/>
-		<constant value="271:27-271:34"/>
-		<constant value="271:36-271:44"/>
-		<constant value="271:46-271:56"/>
-		<constant value="271:69-271:80"/>
-		<constant value="271:82-271:92"/>
-		<constant value="271:46-271:93"/>
-		<constant value="271:95-271:107"/>
-		<constant value="271:109-271:114"/>
-		<constant value="271:4-271:116"/>
-		<constant value="270:8-312:4"/>
-		<constant value="268:4-268:14"/>
-		<constant value="268:27-268:34"/>
-		<constant value="268:36-268:44"/>
-		<constant value="268:46-268:56"/>
-		<constant value="268:69-268:80"/>
-		<constant value="268:82-268:91"/>
-		<constant value="268:46-268:92"/>
-		<constant value="268:94-268:106"/>
-		<constant value="268:108-268:113"/>
-		<constant value="268:4-268:115"/>
-		<constant value="267:8-312:4"/>
-		<constant value="265:4-265:14"/>
-		<constant value="265:27-265:34"/>
-		<constant value="265:36-265:44"/>
-		<constant value="265:46-265:56"/>
-		<constant value="265:69-265:80"/>
-		<constant value="265:82-265:92"/>
-		<constant value="265:46-265:93"/>
-		<constant value="265:95-265:107"/>
-		<constant value="265:109-265:114"/>
-		<constant value="265:4-265:116"/>
-		<constant value="264:3-312:4"/>
-		<constant value="263:2-313:3"/>
+		<constant value="271:23-271:25"/>
+		<constant value="271:4-271:26"/>
+		<constant value="273:7-273:19"/>
+		<constant value="273:32-273:44"/>
+		<constant value="273:7-273:45"/>
+		<constant value="276:12-276:24"/>
+		<constant value="276:37-276:49"/>
+		<constant value="276:12-276:50"/>
+		<constant value="280:5-280:15"/>
+		<constant value="280:24-280:31"/>
+		<constant value="280:40-280:52"/>
+		<constant value="280:40-280:57"/>
+		<constant value="280:24-280:58"/>
+		<constant value="280:24-280:63"/>
+		<constant value="280:5-280:64"/>
+		<constant value="277:5-277:15"/>
+		<constant value="277:24-277:31"/>
+		<constant value="277:40-277:52"/>
+		<constant value="277:40-277:63"/>
+		<constant value="277:40-277:68"/>
+		<constant value="277:24-277:69"/>
+		<constant value="277:24-277:92"/>
+		<constant value="277:5-277:93"/>
+		<constant value="276:9-281:5"/>
+		<constant value="274:5-274:15"/>
+		<constant value="274:24-274:31"/>
+		<constant value="274:52-274:64"/>
+		<constant value="274:52-274:69"/>
+		<constant value="274:24-274:70"/>
+		<constant value="274:84-274:85"/>
+		<constant value="274:84-274:90"/>
+		<constant value="274:84-274:107"/>
+		<constant value="274:80-274:107"/>
+		<constant value="274:24-274:108"/>
+		<constant value="274:24-274:113"/>
+		<constant value="274:5-274:114"/>
+		<constant value="273:4-281:5"/>
+		<constant value="283:4-283:14"/>
+		<constant value="283:26-283:36"/>
+		<constant value="283:55-283:62"/>
+		<constant value="283:64-283:75"/>
+		<constant value="283:77-283:87"/>
+		<constant value="283:77-283:92"/>
+		<constant value="283:26-283:93"/>
+		<constant value="283:4-283:94"/>
+		<constant value="285:7-285:19"/>
+		<constant value="285:32-285:44"/>
+		<constant value="285:7-285:45"/>
+		<constant value="286:12-286:22"/>
+		<constant value="286:12-286:33"/>
+		<constant value="286:38-286:50"/>
+		<constant value="286:38-286:61"/>
+		<constant value="286:12-286:62"/>
+		<constant value="286:12-286:79"/>
+		<constant value="286:8-286:79"/>
+		<constant value="287:6-287:16"/>
+		<constant value="287:25-287:35"/>
+		<constant value="287:25-287:46"/>
+		<constant value="287:51-287:63"/>
+		<constant value="287:51-287:74"/>
+		<constant value="287:25-287:75"/>
+		<constant value="287:77-287:87"/>
+		<constant value="287:77-287:95"/>
+		<constant value="287:77-287:100"/>
+		<constant value="287:6-287:102"/>
+		<constant value="286:5-288:6"/>
+		<constant value="285:4-289:5"/>
+		<constant value="270:8-308:4"/>
+		<constant value="267:4-267:14"/>
+		<constant value="267:27-267:34"/>
+		<constant value="267:36-267:44"/>
+		<constant value="267:46-267:56"/>
+		<constant value="267:69-267:76"/>
+		<constant value="267:78-267:89"/>
+		<constant value="267:46-267:90"/>
+		<constant value="267:92-267:104"/>
+		<constant value="267:106-267:110"/>
+		<constant value="267:4-267:112"/>
+		<constant value="266:8-308:4"/>
+		<constant value="263:4-263:14"/>
+		<constant value="263:27-263:34"/>
+		<constant value="263:36-263:44"/>
+		<constant value="263:46-263:56"/>
+		<constant value="263:69-263:80"/>
+		<constant value="263:82-263:92"/>
+		<constant value="263:46-263:93"/>
+		<constant value="263:95-263:107"/>
+		<constant value="263:109-263:114"/>
+		<constant value="263:4-263:116"/>
+		<constant value="262:8-308:4"/>
+		<constant value="260:4-260:14"/>
+		<constant value="260:27-260:34"/>
+		<constant value="260:36-260:44"/>
+		<constant value="260:46-260:56"/>
+		<constant value="260:69-260:80"/>
+		<constant value="260:82-260:91"/>
+		<constant value="260:46-260:92"/>
+		<constant value="260:94-260:106"/>
+		<constant value="260:108-260:113"/>
+		<constant value="260:4-260:115"/>
+		<constant value="259:8-308:4"/>
+		<constant value="257:4-257:14"/>
+		<constant value="257:27-257:34"/>
+		<constant value="257:36-257:44"/>
+		<constant value="257:46-257:56"/>
+		<constant value="257:69-257:80"/>
+		<constant value="257:82-257:92"/>
+		<constant value="257:46-257:93"/>
+		<constant value="257:95-257:107"/>
+		<constant value="257:109-257:114"/>
+		<constant value="257:4-257:116"/>
+		<constant value="256:3-308:4"/>
+		<constant value="255:2-309:3"/>
 		<constant value="handleRegularEnds"/>
 		<constant value="291"/>
 		<constant value="pathEnd"/>
@@ -1155,9 +1122,9 @@
 		<constant value="J.getNodeToConnect(JJJ):J"/>
 		<constant value="72"/>
 		<constant value="98"/>
-		<constant value="111"/>
 		<constant value="290"/>
 		<constant value="163"/>
+		<constant value="155"/>
 		<constant value="162"/>
 		<constant value="280"/>
 		<constant value="205"/>
@@ -1166,9 +1133,7 @@
 		<constant value="196"/>
 		<constant value="204"/>
 		<constant value="225"/>
-		<constant value="238"/>
 		<constant value="258"/>
-		<constant value="275"/>
 		<constant value="regularEnd"/>
 		<constant value="350"/>
 		<constant value="336"/>
@@ -8340,6 +8305,7 @@
 		<constant value="300:2-367:3"/>
 =======
 		<constant value="335"/>
+<<<<<<< HEAD
 		<constant value="318:6-318:17"/>
 		<constant value="318:30-318:42"/>
 		<constant value="318:6-318:43"/>
@@ -8877,10 +8843,281 @@
 		<constant value="318:3-383:4"/>
 		<constant value="317:2-384:3"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+		<constant value="314:6-314:17"/>
+		<constant value="314:30-314:42"/>
+		<constant value="314:6-314:43"/>
+		<constant value="328:11-328:19"/>
+		<constant value="328:11-328:27"/>
+		<constant value="328:40-328:64"/>
+		<constant value="328:11-328:65"/>
+		<constant value="363:11-363:19"/>
+		<constant value="363:11-363:27"/>
+		<constant value="363:40-363:51"/>
+		<constant value="363:11-363:52"/>
+		<constant value="366:11-366:19"/>
+		<constant value="366:11-366:27"/>
+		<constant value="366:40-366:52"/>
+		<constant value="366:11-366:53"/>
+		<constant value="369:11-369:19"/>
+		<constant value="369:11-369:27"/>
+		<constant value="369:40-369:49"/>
+		<constant value="369:11-369:50"/>
+		<constant value="370:7-370:18"/>
+		<constant value="370:31-370:41"/>
+		<constant value="370:7-370:42"/>
+		<constant value="373:12-373:23"/>
+		<constant value="373:36-373:45"/>
+		<constant value="373:12-373:46"/>
+		<constant value="377:5-377:15"/>
+		<constant value="377:24-377:34"/>
+		<constant value="377:24-377:42"/>
+		<constant value="377:47-377:55"/>
+		<constant value="377:47-377:63"/>
+		<constant value="377:24-377:64"/>
+		<constant value="377:66-377:76"/>
+		<constant value="377:94-377:101"/>
+		<constant value="377:103-377:114"/>
+		<constant value="377:116-377:120"/>
+		<constant value="377:66-377:121"/>
+		<constant value="377:5-377:123"/>
+		<constant value="374:5-374:15"/>
+		<constant value="374:24-374:34"/>
+		<constant value="374:24-374:42"/>
+		<constant value="374:47-374:55"/>
+		<constant value="374:47-374:63"/>
+		<constant value="374:24-374:64"/>
+		<constant value="374:66-374:76"/>
+		<constant value="374:66-374:84"/>
+		<constant value="374:89-374:100"/>
+		<constant value="374:66-374:101"/>
+		<constant value="374:66-374:124"/>
+		<constant value="374:5-374:126"/>
+		<constant value="373:9-378:5"/>
+		<constant value="371:5-371:15"/>
+		<constant value="371:24-371:34"/>
+		<constant value="371:24-371:42"/>
+		<constant value="371:47-371:55"/>
+		<constant value="371:47-371:63"/>
+		<constant value="371:24-371:64"/>
+		<constant value="371:66-371:76"/>
+		<constant value="371:66-371:85"/>
+		<constant value="371:90-371:101"/>
+		<constant value="371:66-371:102"/>
+		<constant value="371:66-371:125"/>
+		<constant value="371:5-371:127"/>
+		<constant value="370:4-378:5"/>
+		<constant value="369:8-379:4"/>
+		<constant value="367:4-367:14"/>
+		<constant value="367:23-367:33"/>
+		<constant value="367:23-367:44"/>
+		<constant value="367:49-367:57"/>
+		<constant value="367:49-367:65"/>
+		<constant value="367:23-367:66"/>
+		<constant value="367:68-367:78"/>
+		<constant value="367:96-367:103"/>
+		<constant value="367:105-367:116"/>
+		<constant value="367:118-367:122"/>
+		<constant value="367:68-367:123"/>
+		<constant value="367:4-367:125"/>
+		<constant value="366:8-379:4"/>
+		<constant value="364:4-364:14"/>
+		<constant value="364:23-364:33"/>
+		<constant value="364:23-364:43"/>
+		<constant value="364:48-364:56"/>
+		<constant value="364:48-364:64"/>
+		<constant value="364:23-364:65"/>
+		<constant value="364:67-364:77"/>
+		<constant value="364:95-364:102"/>
+		<constant value="364:104-364:115"/>
+		<constant value="364:117-364:121"/>
+		<constant value="364:67-364:122"/>
+		<constant value="364:4-364:124"/>
+		<constant value="363:8-379:4"/>
+		<constant value="329:4-329:14"/>
+		<constant value="329:26-329:28"/>
+		<constant value="329:4-329:29"/>
+		<constant value="331:11-331:22"/>
+		<constant value="331:35-331:47"/>
+		<constant value="331:11-331:48"/>
+		<constant value="331:7-331:48"/>
+		<constant value="350:12-350:23"/>
+		<constant value="350:12-350:34"/>
+		<constant value="350:47-350:57"/>
+		<constant value="350:12-350:58"/>
+		<constant value="355:8-355:19"/>
+		<constant value="355:8-355:30"/>
+		<constant value="355:43-355:58"/>
+		<constant value="355:8-355:59"/>
+		<constant value="356:6-356:16"/>
+		<constant value="356:25-356:32"/>
+		<constant value="356:41-356:52"/>
+		<constant value="356:41-356:63"/>
+		<constant value="356:41-356:68"/>
+		<constant value="356:25-356:69"/>
+		<constant value="356:71-356:81"/>
+		<constant value="356:71-356:104"/>
+		<constant value="356:6-356:106"/>
+		<constant value="355:5-357:6"/>
+		<constant value="358:5-358:15"/>
+		<constant value="358:27-358:34"/>
+		<constant value="358:43-358:54"/>
+		<constant value="358:43-358:65"/>
+		<constant value="358:43-358:70"/>
+		<constant value="358:27-358:71"/>
+		<constant value="358:27-358:94"/>
+		<constant value="358:5-358:95"/>
+		<constant value="351:5-351:15"/>
+		<constant value="351:27-351:37"/>
+		<constant value="351:27-351:48"/>
+		<constant value="351:53-351:64"/>
+		<constant value="351:27-351:65"/>
+		<constant value="351:27-351:88"/>
+		<constant value="351:5-351:89"/>
+		<constant value="350:9-359:5"/>
+		<constant value="332:8-332:19"/>
+		<constant value="332:32-332:49"/>
+		<constant value="332:8-332:50"/>
+		<constant value="340:13-340:24"/>
+		<constant value="340:37-340:54"/>
+		<constant value="340:13-340:55"/>
+		<constant value="343:13-343:24"/>
+		<constant value="343:37-343:47"/>
+		<constant value="343:13-343:48"/>
+		<constant value="347:6-347:16"/>
+		<constant value="347:28-347:35"/>
+		<constant value="347:44-347:55"/>
+		<constant value="347:44-347:60"/>
+		<constant value="347:28-347:61"/>
+		<constant value="347:28-347:84"/>
+		<constant value="347:6-347:85"/>
+		<constant value="344:6-344:16"/>
+		<constant value="344:28-344:38"/>
+		<constant value="344:28-344:47"/>
+		<constant value="344:52-344:63"/>
+		<constant value="344:28-344:64"/>
+		<constant value="344:28-344:87"/>
+		<constant value="344:6-344:88"/>
+		<constant value="343:10-348:6"/>
+		<constant value="341:6-341:16"/>
+		<constant value="341:28-341:38"/>
+		<constant value="341:51-341:62"/>
+		<constant value="341:64-341:73"/>
+		<constant value="341:28-341:74"/>
+		<constant value="341:28-341:97"/>
+		<constant value="341:6-341:98"/>
+		<constant value="340:10-348:6"/>
+		<constant value="333:13-333:24"/>
+		<constant value="333:13-333:32"/>
+		<constant value="333:13-333:49"/>
+		<constant value="333:9-333:49"/>
+		<constant value="333:58-333:65"/>
+		<constant value="333:58-333:71"/>
+		<constant value="333:84-333:85"/>
+		<constant value="333:98-333:112"/>
+		<constant value="333:84-333:113"/>
+		<constant value="333:58-333:114"/>
+		<constant value="333:58-333:127"/>
+		<constant value="333:54-333:127"/>
+		<constant value="333:9-333:127"/>
+		<constant value="337:7-337:17"/>
+		<constant value="337:29-337:39"/>
+		<constant value="337:52-337:63"/>
+		<constant value="337:65-337:75"/>
+		<constant value="337:29-337:76"/>
+		<constant value="337:29-337:99"/>
+		<constant value="337:7-337:100"/>
+		<constant value="334:7-334:17"/>
+		<constant value="334:29-334:36"/>
+		<constant value="334:29-334:42"/>
+		<constant value="334:55-334:56"/>
+		<constant value="334:69-334:83"/>
+		<constant value="334:55-334:84"/>
+		<constant value="334:29-334:85"/>
+		<constant value="334:97-334:100"/>
+		<constant value="334:97-334:105"/>
+		<constant value="334:118-334:128"/>
+		<constant value="334:118-334:139"/>
+		<constant value="334:144-334:155"/>
+		<constant value="334:144-334:163"/>
+		<constant value="334:118-334:164"/>
+		<constant value="334:118-334:169"/>
+		<constant value="334:118-334:180"/>
+		<constant value="334:97-334:181"/>
+		<constant value="334:29-334:182"/>
+		<constant value="334:29-334:205"/>
+		<constant value="334:7-334:206"/>
+		<constant value="333:6-338:7"/>
+		<constant value="332:5-348:6"/>
+		<constant value="331:4-359:5"/>
+		<constant value="361:4-361:14"/>
+		<constant value="361:23-361:30"/>
+		<constant value="361:39-361:47"/>
+		<constant value="361:39-361:55"/>
+		<constant value="361:39-361:66"/>
+		<constant value="361:39-361:71"/>
+		<constant value="361:23-361:72"/>
+		<constant value="361:74-361:84"/>
+		<constant value="361:74-361:92"/>
+		<constant value="361:4-361:94"/>
+		<constant value="328:8-379:4"/>
+		<constant value="315:4-315:14"/>
+		<constant value="315:27-315:37"/>
+		<constant value="315:50-315:61"/>
+		<constant value="315:63-315:73"/>
+		<constant value="315:27-315:74"/>
+		<constant value="315:27-315:97"/>
+		<constant value="315:4-315:98"/>
+		<constant value="318:7-318:15"/>
+		<constant value="318:7-318:23"/>
+		<constant value="318:36-318:60"/>
+		<constant value="318:7-318:61"/>
+		<constant value="318:66-318:77"/>
+		<constant value="318:90-318:102"/>
+		<constant value="318:66-318:103"/>
+		<constant value="318:7-318:103"/>
+		<constant value="321:13-321:21"/>
+		<constant value="321:13-321:29"/>
+		<constant value="321:42-321:51"/>
+		<constant value="321:13-321:52"/>
+		<constant value="325:5-325:15"/>
+		<constant value="325:41-325:48"/>
+		<constant value="325:50-325:58"/>
+		<constant value="325:50-325:66"/>
+		<constant value="325:68-325:78"/>
+		<constant value="325:68-325:87"/>
+		<constant value="325:5-325:89"/>
+		<constant value="322:5-322:15"/>
+		<constant value="322:24-322:34"/>
+		<constant value="322:24-322:42"/>
+		<constant value="322:47-322:55"/>
+		<constant value="322:47-322:63"/>
+		<constant value="322:24-322:64"/>
+		<constant value="322:66-322:76"/>
+		<constant value="322:66-322:85"/>
+		<constant value="322:5-322:87"/>
+		<constant value="321:9-326:5"/>
+		<constant value="319:5-319:15"/>
+		<constant value="319:24-319:31"/>
+		<constant value="319:40-319:48"/>
+		<constant value="319:40-319:56"/>
+		<constant value="319:40-319:67"/>
+		<constant value="319:40-319:72"/>
+		<constant value="319:24-319:73"/>
+		<constant value="319:75-319:82"/>
+		<constant value="319:91-319:102"/>
+		<constant value="319:91-319:113"/>
+		<constant value="319:91-319:118"/>
+		<constant value="319:75-319:119"/>
+		<constant value="319:75-319:124"/>
+		<constant value="319:5-319:126"/>
+		<constant value="318:4-326:5"/>
+		<constant value="314:3-379:4"/>
+		<constant value="313:2-380:3"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 		<constant value="handleReferencedEnds"/>
+		<constant value="136"/>
 		<constant value="referencedEnd"/>
-		<constant value="123"/>
-		<constant value="110"/>
 		<constant value="97"/>
 		<constant value="source"/>
 		<constant value="64"/>
@@ -9648,15 +9885,19 @@
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
 		<constant value="96"/>
 		<constant value="122"/>
+		<constant value="332"/>
 		<constant value="298"/>
 		<constant value="266"/>
 		<constant value="234"/>
 		<constant value="199"/>
+		<constant value="233"/>
 		<constant value="J.firstRespDefMatching(J):J"/>
+		<constant value="231"/>
 		<constant value="265"/>
-		<constant value="260"/>
+		<constant value="297"/>
 		<constant value="292"/>
 		<constant value="330"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 		<constant value="370:6-370:17"/>
 		<constant value="370:30-370:42"/>
@@ -10179,6 +10420,236 @@
 		<constant value="389:3-430:4"/>
 		<constant value="388:2-431:3"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+		<constant value="385:6-385:17"/>
+		<constant value="385:30-385:42"/>
+		<constant value="385:6-385:43"/>
+		<constant value="402:11-402:19"/>
+		<constant value="402:11-402:33"/>
+		<constant value="402:46-402:57"/>
+		<constant value="402:11-402:58"/>
+		<constant value="405:11-405:19"/>
+		<constant value="405:11-405:33"/>
+		<constant value="405:46-405:58"/>
+		<constant value="405:11-405:59"/>
+		<constant value="408:11-408:19"/>
+		<constant value="408:11-408:33"/>
+		<constant value="408:46-408:58"/>
+		<constant value="408:11-408:59"/>
+		<constant value="412:4-412:14"/>
+		<constant value="412:28-412:33"/>
+		<constant value="412:4-412:34"/>
+		<constant value="414:7-414:15"/>
+		<constant value="414:7-414:29"/>
+		<constant value="414:42-414:66"/>
+		<constant value="414:7-414:67"/>
+		<constant value="415:12-415:23"/>
+		<constant value="415:36-415:48"/>
+		<constant value="415:12-415:49"/>
+		<constant value="415:8-415:49"/>
+		<constant value="416:9-416:16"/>
+		<constant value="416:25-416:33"/>
+		<constant value="416:25-416:47"/>
+		<constant value="416:25-416:52"/>
+		<constant value="416:9-416:53"/>
+		<constant value="416:9-416:58"/>
+		<constant value="416:72-416:73"/>
+		<constant value="416:72-416:80"/>
+		<constant value="416:9-416:81"/>
+		<constant value="416:9-416:94"/>
+		<constant value="417:7-417:17"/>
+		<constant value="417:26-417:33"/>
+		<constant value="417:42-417:50"/>
+		<constant value="417:42-417:64"/>
+		<constant value="417:42-417:69"/>
+		<constant value="417:26-417:70"/>
+		<constant value="417:72-417:79"/>
+		<constant value="417:88-417:99"/>
+		<constant value="417:88-417:104"/>
+		<constant value="417:72-417:105"/>
+		<constant value="417:72-417:110"/>
+		<constant value="417:7-417:112"/>
+		<constant value="418:7-418:17"/>
+		<constant value="418:31-418:35"/>
+		<constant value="418:7-418:36"/>
+		<constant value="416:6-419:7"/>
+		<constant value="415:5-420:6"/>
+		<constant value="414:4-421:5"/>
+		<constant value="423:11-423:21"/>
+		<constant value="423:11-423:31"/>
+		<constant value="423:7-423:31"/>
+		<constant value="424:5-424:15"/>
+		<constant value="424:24-424:31"/>
+		<constant value="424:40-424:48"/>
+		<constant value="424:40-424:62"/>
+		<constant value="424:40-424:67"/>
+		<constant value="424:24-424:68"/>
+		<constant value="424:70-424:80"/>
+		<constant value="424:98-424:105"/>
+		<constant value="424:107-424:118"/>
+		<constant value="424:120-424:125"/>
+		<constant value="424:70-424:126"/>
+		<constant value="424:5-424:128"/>
+		<constant value="423:4-425:5"/>
+		<constant value="409:4-409:14"/>
+		<constant value="409:23-409:33"/>
+		<constant value="409:46-409:54"/>
+		<constant value="409:46-409:68"/>
+		<constant value="409:69-409:79"/>
+		<constant value="409:23-409:80"/>
+		<constant value="409:82-409:92"/>
+		<constant value="409:110-409:117"/>
+		<constant value="409:119-409:130"/>
+		<constant value="409:132-409:136"/>
+		<constant value="409:82-409:137"/>
+		<constant value="409:4-409:139"/>
+		<constant value="408:8-426:4"/>
+		<constant value="406:4-406:14"/>
+		<constant value="406:23-406:33"/>
+		<constant value="406:23-406:44"/>
+		<constant value="406:49-406:57"/>
+		<constant value="406:49-406:71"/>
+		<constant value="406:23-406:72"/>
+		<constant value="406:74-406:81"/>
+		<constant value="406:90-406:101"/>
+		<constant value="406:90-406:106"/>
+		<constant value="406:74-406:107"/>
+		<constant value="406:74-406:130"/>
+		<constant value="406:4-406:132"/>
+		<constant value="405:8-426:4"/>
+		<constant value="403:4-403:14"/>
+		<constant value="403:23-403:33"/>
+		<constant value="403:23-403:43"/>
+		<constant value="403:48-403:56"/>
+		<constant value="403:48-403:70"/>
+		<constant value="403:23-403:71"/>
+		<constant value="403:73-403:80"/>
+		<constant value="403:89-403:100"/>
+		<constant value="403:89-403:105"/>
+		<constant value="403:73-403:106"/>
+		<constant value="403:73-403:129"/>
+		<constant value="403:4-403:131"/>
+		<constant value="402:8-426:4"/>
+		<constant value="386:7-386:15"/>
+		<constant value="386:7-386:29"/>
+		<constant value="386:42-386:66"/>
+		<constant value="386:7-386:67"/>
+		<constant value="389:13-389:21"/>
+		<constant value="389:13-389:35"/>
+		<constant value="389:48-389:59"/>
+		<constant value="389:13-389:60"/>
+		<constant value="392:13-392:21"/>
+		<constant value="392:13-392:35"/>
+		<constant value="392:48-392:60"/>
+		<constant value="392:13-392:61"/>
+		<constant value="395:13-395:21"/>
+		<constant value="395:13-395:35"/>
+		<constant value="395:48-395:60"/>
+		<constant value="395:13-395:61"/>
+		<constant value="399:5-399:15"/>
+		<constant value="399:24-399:31"/>
+		<constant value="399:40-399:48"/>
+		<constant value="399:40-399:62"/>
+		<constant value="399:40-399:67"/>
+		<constant value="399:24-399:68"/>
+		<constant value="399:70-399:77"/>
+		<constant value="399:98-399:109"/>
+		<constant value="399:98-399:114"/>
+		<constant value="399:70-399:115"/>
+		<constant value="399:129-399:130"/>
+		<constant value="399:129-399:135"/>
+		<constant value="399:70-399:136"/>
+		<constant value="399:70-399:149"/>
+		<constant value="399:162-399:163"/>
+		<constant value="399:162-399:170"/>
+		<constant value="399:162-399:187"/>
+		<constant value="399:70-399:188"/>
+		<constant value="399:5-399:190"/>
+		<constant value="396:5-396:15"/>
+		<constant value="396:24-396:31"/>
+		<constant value="396:53-396:61"/>
+		<constant value="396:53-396:75"/>
+		<constant value="396:53-396:80"/>
+		<constant value="396:24-396:81"/>
+		<constant value="396:83-396:90"/>
+		<constant value="396:111-396:122"/>
+		<constant value="396:111-396:127"/>
+		<constant value="396:83-396:128"/>
+		<constant value="396:142-396:143"/>
+		<constant value="396:142-396:148"/>
+		<constant value="396:83-396:149"/>
+		<constant value="396:83-396:162"/>
+		<constant value="396:175-396:176"/>
+		<constant value="396:175-396:183"/>
+		<constant value="396:175-396:200"/>
+		<constant value="396:83-396:201"/>
+		<constant value="396:5-396:203"/>
+		<constant value="395:9-400:5"/>
+		<constant value="393:5-393:15"/>
+		<constant value="393:24-393:34"/>
+		<constant value="393:24-393:45"/>
+		<constant value="393:50-393:58"/>
+		<constant value="393:50-393:66"/>
+		<constant value="393:24-393:67"/>
+		<constant value="393:69-393:79"/>
+		<constant value="393:98-393:109"/>
+		<constant value="393:98-393:114"/>
+		<constant value="393:69-393:115"/>
+		<constant value="393:69-393:124"/>
+		<constant value="393:134-393:135"/>
+		<constant value="393:134-393:143"/>
+		<constant value="393:134-393:148"/>
+		<constant value="393:151-393:158"/>
+		<constant value="393:151-393:163"/>
+		<constant value="393:134-393:163"/>
+		<constant value="393:69-393:164"/>
+		<constant value="393:69-393:169"/>
+		<constant value="393:5-393:171"/>
+		<constant value="392:9-400:5"/>
+		<constant value="390:5-390:15"/>
+		<constant value="390:24-390:34"/>
+		<constant value="390:24-390:44"/>
+		<constant value="390:49-390:57"/>
+		<constant value="390:49-390:65"/>
+		<constant value="390:24-390:66"/>
+		<constant value="390:68-390:78"/>
+		<constant value="390:97-390:108"/>
+		<constant value="390:97-390:113"/>
+		<constant value="390:68-390:114"/>
+		<constant value="390:68-390:123"/>
+		<constant value="390:133-390:134"/>
+		<constant value="390:133-390:142"/>
+		<constant value="390:133-390:147"/>
+		<constant value="390:150-390:157"/>
+		<constant value="390:150-390:162"/>
+		<constant value="390:133-390:162"/>
+		<constant value="390:68-390:163"/>
+		<constant value="390:68-390:168"/>
+		<constant value="390:5-390:170"/>
+		<constant value="389:9-400:5"/>
+		<constant value="387:5-387:15"/>
+		<constant value="387:24-387:31"/>
+		<constant value="387:40-387:48"/>
+		<constant value="387:40-387:62"/>
+		<constant value="387:40-387:67"/>
+		<constant value="387:24-387:68"/>
+		<constant value="387:70-387:77"/>
+		<constant value="387:98-387:109"/>
+		<constant value="387:98-387:114"/>
+		<constant value="387:70-387:115"/>
+		<constant value="387:129-387:130"/>
+		<constant value="387:129-387:135"/>
+		<constant value="387:70-387:136"/>
+		<constant value="387:70-387:149"/>
+		<constant value="387:162-387:163"/>
+		<constant value="387:162-387:170"/>
+		<constant value="387:162-387:187"/>
+		<constant value="387:70-387:188"/>
+		<constant value="387:5-387:190"/>
+		<constant value="386:4-400:5"/>
+		<constant value="385:3-426:4"/>
+		<constant value="384:2-427:3"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 		<constant value="handleReferencedStubs"/>
 		<constant value="referencedStub"/>
 		<constant value="J.size():J"/>
@@ -10191,116 +10662,116 @@
 		<constant value="129"/>
 		<constant value="113"/>
 		<constant value="J.processReferencedStub(JJJ):J"/>
-		<constant value="436:6-436:17"/>
-		<constant value="436:30-436:42"/>
-		<constant value="436:6-436:43"/>
-		<constant value="448:11-448:18"/>
-		<constant value="448:27-448:35"/>
-		<constant value="448:27-448:50"/>
-		<constant value="448:27-448:55"/>
-		<constant value="448:11-448:56"/>
-		<constant value="448:11-448:61"/>
-		<constant value="448:11-448:71"/>
-		<constant value="448:75-448:83"/>
-		<constant value="448:75-448:89"/>
-		<constant value="448:11-448:89"/>
-		<constant value="458:4-458:14"/>
-		<constant value="458:23-458:30"/>
-		<constant value="458:39-458:47"/>
-		<constant value="458:39-458:62"/>
-		<constant value="458:39-458:67"/>
-		<constant value="458:23-458:68"/>
-		<constant value="458:70-458:80"/>
-		<constant value="458:98-458:105"/>
-		<constant value="458:107-458:118"/>
-		<constant value="458:120-458:125"/>
-		<constant value="458:70-458:126"/>
-		<constant value="458:4-458:128"/>
-		<constant value="449:4-449:14"/>
-		<constant value="449:28-449:35"/>
-		<constant value="449:44-449:52"/>
-		<constant value="449:44-449:67"/>
-		<constant value="449:44-449:72"/>
-		<constant value="449:28-449:73"/>
-		<constant value="449:28-449:78"/>
-		<constant value="449:28-449:89"/>
-		<constant value="449:28-449:96"/>
-		<constant value="449:4-449:97"/>
-		<constant value="451:4-451:14"/>
-		<constant value="451:29-451:39"/>
-		<constant value="451:57-451:64"/>
-		<constant value="451:66-451:77"/>
-		<constant value="451:79-451:84"/>
-		<constant value="451:29-451:85"/>
-		<constant value="451:4-451:86"/>
-		<constant value="453:4-453:14"/>
-		<constant value="453:25-453:35"/>
-		<constant value="453:49-453:56"/>
-		<constant value="453:58-453:68"/>
-		<constant value="453:58-453:79"/>
-		<constant value="453:25-453:80"/>
-		<constant value="453:4-453:81"/>
+		<constant value="432:6-432:17"/>
+		<constant value="432:30-432:42"/>
+		<constant value="432:6-432:43"/>
+		<constant value="444:11-444:18"/>
+		<constant value="444:27-444:35"/>
+		<constant value="444:27-444:50"/>
+		<constant value="444:27-444:55"/>
+		<constant value="444:11-444:56"/>
+		<constant value="444:11-444:61"/>
+		<constant value="444:11-444:71"/>
+		<constant value="444:75-444:83"/>
+		<constant value="444:75-444:89"/>
+		<constant value="444:11-444:89"/>
 		<constant value="454:4-454:14"/>
-		<constant value="454:23-454:33"/>
-		<constant value="454:23-454:40"/>
-		<constant value="454:42-454:52"/>
-		<constant value="454:42-454:62"/>
-		<constant value="454:42-454:67"/>
-		<constant value="454:4-454:69"/>
-		<constant value="455:4-455:14"/>
-		<constant value="455:23-455:30"/>
-		<constant value="455:39-455:47"/>
-		<constant value="455:39-455:62"/>
-		<constant value="455:39-455:67"/>
-		<constant value="455:23-455:68"/>
-		<constant value="455:70-455:80"/>
-		<constant value="455:70-455:87"/>
-		<constant value="455:70-455:92"/>
-		<constant value="455:4-455:94"/>
-		<constant value="448:8-459:4"/>
-		<constant value="437:4-437:14"/>
-		<constant value="437:27-437:29"/>
-		<constant value="437:4-437:30"/>
-		<constant value="439:7-439:14"/>
-		<constant value="439:23-439:31"/>
-		<constant value="439:23-439:46"/>
-		<constant value="439:23-439:51"/>
-		<constant value="439:7-439:52"/>
-		<constant value="439:7-439:57"/>
-		<constant value="439:7-439:67"/>
-		<constant value="439:71-439:79"/>
-		<constant value="439:71-439:85"/>
-		<constant value="439:7-439:85"/>
-		<constant value="443:5-443:15"/>
-		<constant value="443:28-443:35"/>
-		<constant value="443:56-443:67"/>
-		<constant value="443:56-443:72"/>
-		<constant value="443:28-443:73"/>
-		<constant value="443:87-443:88"/>
-		<constant value="443:87-443:93"/>
-		<constant value="443:28-443:94"/>
-		<constant value="443:28-443:107"/>
-		<constant value="443:120-443:121"/>
-		<constant value="443:120-443:128"/>
-		<constant value="443:120-443:145"/>
-		<constant value="443:28-443:146"/>
-		<constant value="443:5-443:147"/>
-		<constant value="440:5-440:15"/>
-		<constant value="440:28-440:35"/>
-		<constant value="440:57-440:68"/>
-		<constant value="440:57-440:73"/>
-		<constant value="440:28-440:74"/>
-		<constant value="440:28-440:79"/>
-		<constant value="440:5-440:80"/>
-		<constant value="439:4-444:5"/>
-		<constant value="446:4-446:14"/>
-		<constant value="446:37-446:44"/>
-		<constant value="446:46-446:54"/>
-		<constant value="446:56-446:66"/>
-		<constant value="446:56-446:75"/>
-		<constant value="446:4-446:77"/>
-		<constant value="436:3-459:4"/>
-		<constant value="435:2-460:3"/>
+		<constant value="454:23-454:30"/>
+		<constant value="454:39-454:47"/>
+		<constant value="454:39-454:62"/>
+		<constant value="454:39-454:67"/>
+		<constant value="454:23-454:68"/>
+		<constant value="454:70-454:80"/>
+		<constant value="454:98-454:105"/>
+		<constant value="454:107-454:118"/>
+		<constant value="454:120-454:125"/>
+		<constant value="454:70-454:126"/>
+		<constant value="454:4-454:128"/>
+		<constant value="445:4-445:14"/>
+		<constant value="445:28-445:35"/>
+		<constant value="445:44-445:52"/>
+		<constant value="445:44-445:67"/>
+		<constant value="445:44-445:72"/>
+		<constant value="445:28-445:73"/>
+		<constant value="445:28-445:78"/>
+		<constant value="445:28-445:89"/>
+		<constant value="445:28-445:96"/>
+		<constant value="445:4-445:97"/>
+		<constant value="447:4-447:14"/>
+		<constant value="447:29-447:39"/>
+		<constant value="447:57-447:64"/>
+		<constant value="447:66-447:77"/>
+		<constant value="447:79-447:84"/>
+		<constant value="447:29-447:85"/>
+		<constant value="447:4-447:86"/>
+		<constant value="449:4-449:14"/>
+		<constant value="449:25-449:35"/>
+		<constant value="449:49-449:56"/>
+		<constant value="449:58-449:68"/>
+		<constant value="449:58-449:79"/>
+		<constant value="449:25-449:80"/>
+		<constant value="449:4-449:81"/>
+		<constant value="450:4-450:14"/>
+		<constant value="450:23-450:33"/>
+		<constant value="450:23-450:40"/>
+		<constant value="450:42-450:52"/>
+		<constant value="450:42-450:62"/>
+		<constant value="450:42-450:67"/>
+		<constant value="450:4-450:69"/>
+		<constant value="451:4-451:14"/>
+		<constant value="451:23-451:30"/>
+		<constant value="451:39-451:47"/>
+		<constant value="451:39-451:62"/>
+		<constant value="451:39-451:67"/>
+		<constant value="451:23-451:68"/>
+		<constant value="451:70-451:80"/>
+		<constant value="451:70-451:87"/>
+		<constant value="451:70-451:92"/>
+		<constant value="451:4-451:94"/>
+		<constant value="444:8-455:4"/>
+		<constant value="433:4-433:14"/>
+		<constant value="433:27-433:29"/>
+		<constant value="433:4-433:30"/>
+		<constant value="435:7-435:14"/>
+		<constant value="435:23-435:31"/>
+		<constant value="435:23-435:46"/>
+		<constant value="435:23-435:51"/>
+		<constant value="435:7-435:52"/>
+		<constant value="435:7-435:57"/>
+		<constant value="435:7-435:67"/>
+		<constant value="435:71-435:79"/>
+		<constant value="435:71-435:85"/>
+		<constant value="435:7-435:85"/>
+		<constant value="439:5-439:15"/>
+		<constant value="439:28-439:35"/>
+		<constant value="439:56-439:67"/>
+		<constant value="439:56-439:72"/>
+		<constant value="439:28-439:73"/>
+		<constant value="439:87-439:88"/>
+		<constant value="439:87-439:93"/>
+		<constant value="439:28-439:94"/>
+		<constant value="439:28-439:107"/>
+		<constant value="439:120-439:121"/>
+		<constant value="439:120-439:128"/>
+		<constant value="439:120-439:145"/>
+		<constant value="439:28-439:146"/>
+		<constant value="439:5-439:147"/>
+		<constant value="436:5-436:15"/>
+		<constant value="436:28-436:35"/>
+		<constant value="436:57-436:68"/>
+		<constant value="436:57-436:73"/>
+		<constant value="436:28-436:74"/>
+		<constant value="436:28-436:79"/>
+		<constant value="436:5-436:80"/>
+		<constant value="435:4-440:5"/>
+		<constant value="442:4-442:14"/>
+		<constant value="442:37-442:44"/>
+		<constant value="442:46-442:54"/>
+		<constant value="442:56-442:66"/>
+		<constant value="442:56-442:75"/>
+		<constant value="442:4-442:77"/>
+		<constant value="432:3-455:4"/>
+		<constant value="431:2-456:3"/>
 		<constant value="connectNodes"/>
 		<constant value="pathNodes"/>
 		<constant value="J.handleNode(JJJJ):J"/>
@@ -10311,6 +10782,7 @@
 		<constant value="J.handleReferencedStubs(JJJJ):J"/>
 		<constant value="J.handleReferencedEnds(JJJ):J"/>
 		<constant value="J.handleRegularEnds(JJJ):J"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -10721,6 +11193,87 @@
 		<constant value="465:3-493:4"/>
 		<constant value="464:2-494:3"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+		<constant value="461:10-461:18"/>
+		<constant value="461:10-461:28"/>
+		<constant value="461:10-461:41"/>
+		<constant value="461:6-461:41"/>
+		<constant value="462:4-462:14"/>
+		<constant value="462:31-462:33"/>
+		<constant value="462:4-462:34"/>
+		<constant value="464:24-464:32"/>
+		<constant value="464:24-464:42"/>
+		<constant value="466:8-466:18"/>
+		<constant value="466:8-466:31"/>
+		<constant value="466:34-466:36"/>
+		<constant value="466:8-466:36"/>
+		<constant value="470:6-470:16"/>
+		<constant value="470:28-470:35"/>
+		<constant value="470:37-470:45"/>
+		<constant value="470:47-470:58"/>
+		<constant value="470:60-470:70"/>
+		<constant value="470:60-470:83"/>
+		<constant value="470:6-470:85"/>
+		<constant value="467:6-467:16"/>
+		<constant value="467:33-467:40"/>
+		<constant value="467:42-467:46"/>
+		<constant value="467:48-467:59"/>
+		<constant value="467:61-467:69"/>
+		<constant value="467:6-467:71"/>
+		<constant value="466:5-471:6"/>
+		<constant value="473:8-473:19"/>
+		<constant value="473:23-473:31"/>
+		<constant value="473:23-473:41"/>
+		<constant value="473:23-473:51"/>
+		<constant value="473:8-473:51"/>
+		<constant value="474:6-474:16"/>
+		<constant value="474:33-474:44"/>
+		<constant value="474:6-474:45"/>
+		<constant value="473:5-475:6"/>
+		<constant value="464:4-476:5"/>
+		<constant value="478:4-478:14"/>
+		<constant value="478:27-478:35"/>
+		<constant value="478:27-478:45"/>
+		<constant value="478:27-478:55"/>
+		<constant value="478:4-478:56"/>
+		<constant value="480:11-480:19"/>
+		<constant value="480:11-480:27"/>
+		<constant value="480:11-480:44"/>
+		<constant value="480:7-480:44"/>
+		<constant value="483:16-483:24"/>
+		<constant value="483:16-483:38"/>
+		<constant value="483:16-483:55"/>
+		<constant value="483:12-483:55"/>
+		<constant value="486:16-486:24"/>
+		<constant value="486:16-486:39"/>
+		<constant value="486:16-486:56"/>
+		<constant value="486:12-486:56"/>
+		<constant value="487:5-487:15"/>
+		<constant value="487:38-487:45"/>
+		<constant value="487:47-487:55"/>
+		<constant value="487:57-487:67"/>
+		<constant value="487:57-487:76"/>
+		<constant value="487:78-487:88"/>
+		<constant value="487:78-487:101"/>
+		<constant value="487:5-487:103"/>
+		<constant value="486:9-488:5"/>
+		<constant value="484:5-484:15"/>
+		<constant value="484:37-484:44"/>
+		<constant value="484:46-484:54"/>
+		<constant value="484:56-484:66"/>
+		<constant value="484:56-484:75"/>
+		<constant value="484:5-484:77"/>
+		<constant value="483:9-488:5"/>
+		<constant value="481:5-481:15"/>
+		<constant value="481:34-481:41"/>
+		<constant value="481:43-481:51"/>
+		<constant value="481:53-481:63"/>
+		<constant value="481:53-481:72"/>
+		<constant value="481:5-481:74"/>
+		<constant value="480:4-488:5"/>
+		<constant value="461:3-489:4"/>
+		<constant value="460:2-490:3"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 	</cp>
 	<field name="1" type="2"/>
 	<field name="3" type="4"/>
@@ -11270,7 +11823,6 @@
 			<parameter name="19" type="4"/>
 			<parameter name="29" type="4"/>
 			<parameter name="42" type="4"/>
-			<parameter name="43" type="4"/>
 		</parameters>
 		<code>
 			<load arg="29"/>
@@ -11279,12 +11831,12 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<store arg="44"/>
+			<store arg="43"/>
 			<getasm/>
 			<call arg="270"/>
 			<call arg="271"/>
-			<store arg="46"/>
-			<load arg="44"/>
+			<store arg="44"/>
+			<load arg="43"/>
 			<call arg="53"/>
 			<if arg="272"/>
 			<push arg="273"/>
@@ -11294,45 +11846,45 @@
 			<call arg="274"/>
 			<goto arg="275"/>
 			<push arg="276"/>
-			<load arg="46"/>
+			<load arg="44"/>
 			<call arg="274"/>
-			<store arg="70"/>
+			<store arg="46"/>
 			<push arg="28"/>
 			<push arg="8"/>
 			<new/>
 			<call arg="45"/>
-			<store arg="277"/>
+			<store arg="70"/>
+			<push arg="277"/>
 			<push arg="278"/>
-			<push arg="279"/>
+			<new/>
+			<store arg="279"/>
+			<push arg="57"/>
+			<push arg="278"/>
 			<new/>
 			<store arg="280"/>
-			<push arg="57"/>
-			<push arg="279"/>
+			<push arg="277"/>
+			<push arg="278"/>
 			<new/>
 			<store arg="281"/>
+			<push arg="276"/>
 			<push arg="278"/>
-			<push arg="279"/>
 			<new/>
 			<store arg="282"/>
-			<push arg="276"/>
-			<push arg="279"/>
-			<new/>
-			<store arg="283"/>
-			<load arg="280"/>
+			<load arg="279"/>
 			<pop/>
-			<load arg="281"/>
+			<load arg="280"/>
 			<dup/>
 			<getasm/>
 			<getasm/>
 			<call arg="270"/>
 			<call arg="271"/>
 			<call arg="30"/>
-			<set arg="284"/>
+			<set arg="283"/>
 			<dup/>
 			<getasm/>
 			<push arg="57"/>
-			<load arg="281"/>
-			<get arg="284"/>
+			<load arg="280"/>
+			<get arg="283"/>
 			<call arg="274"/>
 			<call arg="30"/>
 			<set arg="38"/>
@@ -11340,203 +11892,168 @@
 			<getasm/>
 			<load arg="19"/>
 			<call arg="30"/>
-			<set arg="285"/>
+			<set arg="284"/>
 			<dup/>
 			<getasm/>
-			<load arg="280"/>
+			<load arg="279"/>
 			<call arg="30"/>
 			<set arg="63"/>
 			<dup/>
 			<getasm/>
-			<load arg="282"/>
+			<load arg="281"/>
 			<call arg="30"/>
-			<set arg="286"/>
+			<set arg="285"/>
+			<pop/>
+			<load arg="281"/>
 			<pop/>
 			<load arg="282"/>
-			<pop/>
-			<load arg="283"/>
+			<dup/>
+			<getasm/>
+			<load arg="44"/>
+			<call arg="30"/>
+			<set arg="283"/>
 			<dup/>
 			<getasm/>
 			<load arg="46"/>
-			<call arg="30"/>
-			<set arg="284"/>
-			<dup/>
-			<getasm/>
-			<load arg="70"/>
 			<call arg="30"/>
 			<set arg="38"/>
 			<dup/>
 			<getasm/>
 			<load arg="19"/>
 			<call arg="30"/>
-			<set arg="285"/>
+			<set arg="284"/>
 			<dup/>
 			<getasm/>
-			<load arg="282"/>
+			<load arg="281"/>
 			<call arg="30"/>
 			<set arg="63"/>
 			<pop/>
-			<load arg="283"/>
-			<store arg="277"/>
-			<load arg="44"/>
-			<call arg="53"/>
-			<if arg="287"/>
-			<load arg="42"/>
-			<push arg="57"/>
-			<push arg="48"/>
-			<findme/>
-			<call arg="49"/>
-			<if arg="81"/>
-			<goto arg="56"/>
-			<getasm/>
-			<get arg="82"/>
-			<load arg="42"/>
-			<get arg="77"/>
-			<call arg="83"/>
-			<call arg="72"/>
-			<call arg="53"/>
-			<if arg="288"/>
-			<goto arg="56"/>
-			<getasm/>
-			<getasm/>
-			<get arg="82"/>
-			<load arg="42"/>
-			<get arg="77"/>
-			<call arg="83"/>
-			<load arg="281"/>
-			<get arg="63"/>
-			<pcall arg="92"/>
-			<goto arg="289"/>
-			<getasm/>
-			<load arg="19"/>
-			<load arg="29"/>
-			<get arg="77"/>
-			<get arg="38"/>
-			<call arg="62"/>
-			<load arg="281"/>
-			<get arg="63"/>
-			<pcall arg="92"/>
-			<load arg="19"/>
-			<load arg="29"/>
-			<get arg="77"/>
-			<get arg="38"/>
-			<call arg="62"/>
-			<store arg="277"/>
-			<getasm/>
-			<load arg="277"/>
 			<load arg="43"/>
+			<if arg="286"/>
+			<getasm/>
+			<load arg="19"/>
+			<load arg="29"/>
+			<get arg="77"/>
+			<get arg="38"/>
+			<call arg="62"/>
+			<load arg="280"/>
+			<get arg="63"/>
 			<pcall arg="92"/>
-			<load arg="281"/>
+			<load arg="19"/>
+			<load arg="29"/>
+			<get arg="77"/>
+			<get arg="38"/>
+			<call arg="62"/>
+			<store arg="70"/>
+			<goto arg="287"/>
+			<load arg="282"/>
+			<store arg="70"/>
+			<getasm/>
+			<load arg="70"/>
+			<load arg="42"/>
+			<pcall arg="92"/>
+			<getasm/>
+			<getasm/>
+			<get arg="82"/>
+			<load arg="29"/>
+			<load arg="280"/>
+			<call arg="288"/>
+			<set arg="82"/>
+			<load arg="280"/>
 		</code>
 		<linenumbertable>
-			<lne id="290" begin="0" end="0"/>
-			<lne id="291" begin="0" end="1"/>
-			<lne id="292" begin="2" end="4"/>
-			<lne id="293" begin="0" end="5"/>
-			<lne id="294" begin="7" end="7"/>
-			<lne id="295" begin="7" end="8"/>
-			<lne id="296" begin="7" end="9"/>
-			<lne id="297" begin="11" end="11"/>
-			<lne id="298" begin="11" end="12"/>
-			<lne id="299" begin="14" end="14"/>
-			<lne id="300" begin="15" end="15"/>
-			<lne id="301" begin="15" end="16"/>
-			<lne id="302" begin="15" end="17"/>
-			<lne id="303" begin="14" end="18"/>
-			<lne id="304" begin="20" end="20"/>
-			<lne id="305" begin="21" end="21"/>
-			<lne id="306" begin="20" end="22"/>
-			<lne id="307" begin="11" end="22"/>
-			<lne id="308" begin="24" end="27"/>
-			<lne id="309" begin="50" end="50"/>
-			<lne id="310" begin="50" end="51"/>
-			<lne id="311" begin="50" end="52"/>
-			<lne id="312" begin="48" end="54"/>
-			<lne id="313" begin="57" end="57"/>
-			<lne id="314" begin="58" end="58"/>
-			<lne id="315" begin="58" end="59"/>
-			<lne id="316" begin="57" end="60"/>
-			<lne id="317" begin="55" end="62"/>
-			<lne id="318" begin="65" end="65"/>
-			<lne id="319" begin="63" end="67"/>
-			<lne id="320" begin="70" end="70"/>
-			<lne id="321" begin="68" end="72"/>
-			<lne id="322" begin="75" end="75"/>
-			<lne id="323" begin="73" end="77"/>
-			<lne id="324" begin="84" end="84"/>
-			<lne id="325" begin="82" end="86"/>
-			<lne id="326" begin="89" end="89"/>
-			<lne id="327" begin="87" end="91"/>
-			<lne id="328" begin="94" end="94"/>
-			<lne id="329" begin="92" end="96"/>
-			<lne id="330" begin="99" end="99"/>
-			<lne id="331" begin="97" end="101"/>
-			<lne id="332" begin="103" end="103"/>
-			<lne id="333" begin="103" end="104"/>
-			<lne id="334" begin="105" end="105"/>
-			<lne id="335" begin="105" end="106"/>
-			<lne id="336" begin="108" end="108"/>
-			<lne id="337" begin="109" end="111"/>
-			<lne id="338" begin="108" end="112"/>
-			<lne id="339" begin="115" end="115"/>
-			<lne id="340" begin="115" end="116"/>
-			<lne id="341" begin="117" end="117"/>
-			<lne id="342" begin="117" end="118"/>
-			<lne id="343" begin="115" end="119"/>
-			<lne id="344" begin="115" end="120"/>
-			<lne id="345" begin="115" end="121"/>
-			<lne id="346" begin="124" end="124"/>
-			<lne id="347" begin="125" end="125"/>
-			<lne id="348" begin="125" end="126"/>
-			<lne id="349" begin="127" end="127"/>
-			<lne id="350" begin="127" end="128"/>
-			<lne id="351" begin="125" end="129"/>
-			<lne id="352" begin="130" end="130"/>
-			<lne id="353" begin="130" end="131"/>
-			<lne id="354" begin="124" end="132"/>
-			<lne id="355" begin="115" end="132"/>
-			<lne id="356" begin="108" end="132"/>
-			<lne id="357" begin="134" end="134"/>
-			<lne id="358" begin="135" end="135"/>
-			<lne id="359" begin="136" end="136"/>
-			<lne id="360" begin="136" end="137"/>
-			<lne id="361" begin="136" end="138"/>
-			<lne id="362" begin="135" end="139"/>
-			<lne id="363" begin="140" end="140"/>
-			<lne id="364" begin="140" end="141"/>
-			<lne id="365" begin="134" end="142"/>
-			<lne id="366" begin="143" end="143"/>
-			<lne id="367" begin="144" end="144"/>
-			<lne id="368" begin="144" end="145"/>
-			<lne id="369" begin="144" end="146"/>
-			<lne id="370" begin="143" end="147"/>
-			<lne id="371" begin="143" end="148"/>
-			<lne id="372" begin="105" end="148"/>
-			<lne id="373" begin="149" end="149"/>
-			<lne id="374" begin="150" end="150"/>
-			<lne id="375" begin="151" end="151"/>
-			<lne id="376" begin="149" end="152"/>
-			<lne id="377" begin="153" end="153"/>
-			<lne id="378" begin="153" end="153"/>
-			<lne id="379" begin="103" end="153"/>
+			<lne id="289" begin="0" end="0"/>
+			<lne id="290" begin="0" end="1"/>
+			<lne id="291" begin="2" end="4"/>
+			<lne id="292" begin="0" end="5"/>
+			<lne id="293" begin="7" end="7"/>
+			<lne id="294" begin="7" end="8"/>
+			<lne id="295" begin="7" end="9"/>
+			<lne id="296" begin="11" end="11"/>
+			<lne id="297" begin="11" end="12"/>
+			<lne id="298" begin="14" end="14"/>
+			<lne id="299" begin="15" end="15"/>
+			<lne id="300" begin="15" end="16"/>
+			<lne id="301" begin="15" end="17"/>
+			<lne id="302" begin="14" end="18"/>
+			<lne id="303" begin="20" end="20"/>
+			<lne id="304" begin="21" end="21"/>
+			<lne id="305" begin="20" end="22"/>
+			<lne id="306" begin="11" end="22"/>
+			<lne id="307" begin="24" end="27"/>
+			<lne id="308" begin="50" end="50"/>
+			<lne id="309" begin="50" end="51"/>
+			<lne id="310" begin="50" end="52"/>
+			<lne id="311" begin="48" end="54"/>
+			<lne id="312" begin="57" end="57"/>
+			<lne id="313" begin="58" end="58"/>
+			<lne id="314" begin="58" end="59"/>
+			<lne id="315" begin="57" end="60"/>
+			<lne id="316" begin="55" end="62"/>
+			<lne id="317" begin="65" end="65"/>
+			<lne id="318" begin="63" end="67"/>
+			<lne id="319" begin="70" end="70"/>
+			<lne id="320" begin="68" end="72"/>
+			<lne id="321" begin="75" end="75"/>
+			<lne id="322" begin="73" end="77"/>
+			<lne id="323" begin="84" end="84"/>
+			<lne id="324" begin="82" end="86"/>
+			<lne id="325" begin="89" end="89"/>
+			<lne id="326" begin="87" end="91"/>
+			<lne id="327" begin="94" end="94"/>
+			<lne id="328" begin="92" end="96"/>
+			<lne id="329" begin="99" end="99"/>
+			<lne id="330" begin="97" end="101"/>
+			<lne id="331" begin="103" end="103"/>
+			<lne id="332" begin="105" end="105"/>
+			<lne id="333" begin="106" end="106"/>
+			<lne id="334" begin="107" end="107"/>
+			<lne id="335" begin="107" end="108"/>
+			<lne id="336" begin="107" end="109"/>
+			<lne id="337" begin="106" end="110"/>
+			<lne id="338" begin="111" end="111"/>
+			<lne id="339" begin="111" end="112"/>
+			<lne id="340" begin="105" end="113"/>
+			<lne id="341" begin="114" end="114"/>
+			<lne id="342" begin="115" end="115"/>
+			<lne id="343" begin="115" end="116"/>
+			<lne id="344" begin="115" end="117"/>
+			<lne id="345" begin="114" end="118"/>
+			<lne id="346" begin="114" end="119"/>
+			<lne id="347" begin="121" end="121"/>
+			<lne id="348" begin="121" end="122"/>
+			<lne id="349" begin="103" end="122"/>
+			<lne id="350" begin="123" end="123"/>
+			<lne id="351" begin="124" end="124"/>
+			<lne id="352" begin="125" end="125"/>
+			<lne id="353" begin="123" end="126"/>
+			<lne id="354" begin="127" end="127"/>
+			<lne id="355" begin="128" end="128"/>
+			<lne id="356" begin="128" end="129"/>
+			<lne id="357" begin="130" end="130"/>
+			<lne id="358" begin="131" end="131"/>
+			<lne id="359" begin="128" end="132"/>
+			<lne id="360" begin="127" end="133"/>
+			<lne id="361" begin="134" end="134"/>
+			<lne id="362" begin="134" end="134"/>
+			<lne id="363" begin="103" end="134"/>
 		</linenumbertable>
 		<localvariabletable>
-			<lve slot="9" name="380" begin="32" end="153"/>
-			<lve slot="10" name="381" begin="36" end="153"/>
-			<lve slot="11" name="382" begin="40" end="153"/>
-			<lve slot="12" name="383" begin="44" end="153"/>
-			<lve slot="5" name="384" begin="6" end="153"/>
-			<lve slot="6" name="385" begin="10" end="153"/>
-			<lve slot="7" name="386" begin="23" end="153"/>
-			<lve slot="8" name="387" begin="28" end="153"/>
-			<lve slot="0" name="17" begin="0" end="153"/>
-			<lve slot="1" name="217" begin="0" end="153"/>
-			<lve slot="2" name="219" begin="0" end="153"/>
-			<lve slot="3" name="220" begin="0" end="153"/>
-			<lve slot="4" name="388" begin="0" end="153"/>
+			<lve slot="8" name="364" begin="32" end="134"/>
+			<lve slot="9" name="365" begin="36" end="134"/>
+			<lve slot="10" name="366" begin="40" end="134"/>
+			<lve slot="11" name="367" begin="44" end="134"/>
+			<lve slot="4" name="368" begin="6" end="134"/>
+			<lve slot="5" name="369" begin="10" end="134"/>
+			<lve slot="6" name="370" begin="23" end="134"/>
+			<lve slot="7" name="371" begin="28" end="134"/>
+			<lve slot="0" name="17" begin="0" end="134"/>
+			<lve slot="1" name="217" begin="0" end="134"/>
+			<lve slot="2" name="219" begin="0" end="134"/>
+			<lve slot="3" name="216" begin="0" end="134"/>
 		</localvariabletable>
 	</operation>
-	<operation name="389">
+	<operation name="372">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -11547,139 +12064,123 @@
 		</parameters>
 		<code>
 			<load arg="44"/>
-			<push arg="390"/>
-			<call arg="391"/>
+			<push arg="373"/>
+			<call arg="374"/>
 			<if arg="223"/>
 			<load arg="44"/>
-			<push arg="392"/>
-			<call arg="391"/>
+			<push arg="375"/>
+			<call arg="374"/>
 			<if arg="280"/>
-			<goto arg="393"/>
+			<goto arg="376"/>
 			<getasm/>
 			<getasm/>
-			<get arg="394"/>
-			<set arg="395"/>
+			<get arg="377"/>
+			<set arg="378"/>
 			<goto arg="21"/>
 			<getasm/>
 			<getasm/>
-			<get arg="396"/>
-			<set arg="395"/>
+			<get arg="379"/>
+			<set arg="378"/>
 			<getasm/>
 			<pushf/>
-			<set arg="397"/>
+			<set arg="380"/>
 			<load arg="43"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="398"/>
-			<goto arg="399"/>
+			<if arg="381"/>
+			<goto arg="382"/>
 			<load arg="43"/>
-			<push arg="400"/>
-			<call arg="401"/>
-			<if arg="402"/>
-			<goto arg="399"/>
+			<push arg="383"/>
+			<call arg="384"/>
+			<if arg="385"/>
+			<goto arg="382"/>
 			<getasm/>
 			<load arg="43"/>
-			<set arg="403"/>
+			<set arg="386"/>
 			<getasm/>
 			<pusht/>
-			<set arg="397"/>
+			<set arg="380"/>
 			<getasm/>
-			<get arg="397"/>
+			<get arg="380"/>
 			<call arg="53"/>
-			<if arg="404"/>
-			<goto arg="405"/>
+			<if arg="387"/>
+			<goto arg="388"/>
 			<getasm/>
 			<getasm/>
-			<get arg="395"/>
+			<get arg="378"/>
 			<load arg="29"/>
 			<call arg="83"/>
-			<set arg="403"/>
+			<set arg="386"/>
 			<load arg="42"/>
 			<push arg="60"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="406"/>
+			<if arg="389"/>
 			<load arg="42"/>
 			<push arg="57"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="407"/>
+			<if arg="390"/>
 			<load arg="42"/>
 			<push arg="54"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
 			<if arg="69"/>
-			<goto arg="408"/>
+			<goto arg="391"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<pcall arg="409"/>
+			<pcall arg="392"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<getasm/>
-			<get arg="403"/>
+			<get arg="386"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="410"/>
+			<goto arg="393"/>
 			<load arg="44"/>
-			<push arg="390"/>
-			<call arg="391"/>
-			<if arg="411"/>
+			<push arg="373"/>
+			<call arg="374"/>
+			<if arg="394"/>
 			<load arg="44"/>
-			<push arg="392"/>
-			<call arg="391"/>
-			<if arg="412"/>
-			<goto arg="413"/>
+			<push arg="375"/>
+			<call arg="374"/>
+			<if arg="395"/>
+			<goto arg="396"/>
 			<getasm/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<push arg="28"/>
-			<push arg="8"/>
-			<new/>
-			<call arg="45"/>
 			<getasm/>
-			<get arg="403"/>
+			<get arg="386"/>
 			<get arg="63"/>
-			<call arg="414"/>
-			<call arg="415"/>
-			<set arg="416"/>
-			<goto arg="417"/>
+			<call arg="397"/>
+			<call arg="398"/>
+			<set arg="399"/>
+			<goto arg="393"/>
 			<getasm/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<push arg="28"/>
-			<push arg="8"/>
-			<new/>
-			<call arg="45"/>
 			<getasm/>
-			<get arg="403"/>
+			<get arg="386"/>
 			<call arg="67"/>
-			<call arg="415"/>
-			<set arg="416"/>
-			<getasm/>
-			<getasm/>
-			<get arg="82"/>
-			<load arg="42"/>
-			<getasm/>
-			<get arg="416"/>
-			<call arg="418"/>
-			<set arg="82"/>
-			<goto arg="419"/>
+			<call arg="398"/>
+			<set arg="399"/>
+			<goto arg="400"/>
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
 			<push arg="65"/>
 			<call arg="66"/>
 			<getasm/>
-			<get arg="403"/>
+			<get arg="386"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
 			<load arg="42"/>
@@ -11687,164 +12188,154 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="420"/>
-			<goto arg="421"/>
+			<if arg="401"/>
+			<goto arg="86"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<getasm/>
-			<get arg="395"/>
+			<get arg="378"/>
 			<load arg="29"/>
 			<call arg="83"/>
 			<get arg="63"/>
-			<call arg="414"/>
+			<call arg="397"/>
 			<pcall arg="92"/>
 		</code>
 		<linenumbertable>
-			<lne id="422" begin="0" end="0"/>
-			<lne id="423" begin="1" end="1"/>
-			<lne id="424" begin="0" end="2"/>
-			<lne id="425" begin="4" end="4"/>
-			<lne id="426" begin="5" end="5"/>
-			<lne id="427" begin="4" end="6"/>
-			<lne id="428" begin="9" end="9"/>
-			<lne id="429" begin="10" end="10"/>
-			<lne id="430" begin="10" end="11"/>
-			<lne id="431" begin="9" end="12"/>
-			<lne id="432" begin="4" end="12"/>
-			<lne id="433" begin="14" end="14"/>
-			<lne id="434" begin="15" end="15"/>
-			<lne id="435" begin="15" end="16"/>
-			<lne id="436" begin="14" end="17"/>
-			<lne id="437" begin="0" end="17"/>
-			<lne id="438" begin="18" end="18"/>
-			<lne id="439" begin="19" end="19"/>
-			<lne id="440" begin="18" end="20"/>
-			<lne id="441" begin="21" end="21"/>
-			<lne id="442" begin="21" end="22"/>
-			<lne id="443" begin="21" end="23"/>
-			<lne id="444" begin="26" end="26"/>
-			<lne id="445" begin="27" end="27"/>
-			<lne id="446" begin="26" end="28"/>
-			<lne id="447" begin="31" end="31"/>
-			<lne id="448" begin="32" end="32"/>
-			<lne id="449" begin="31" end="33"/>
-			<lne id="450" begin="34" end="34"/>
-			<lne id="451" begin="35" end="35"/>
-			<lne id="452" begin="34" end="36"/>
-			<lne id="453" begin="26" end="36"/>
-			<lne id="454" begin="21" end="36"/>
-			<lne id="455" begin="37" end="37"/>
-			<lne id="456" begin="37" end="38"/>
-			<lne id="457" begin="37" end="39"/>
-			<lne id="458" begin="42" end="42"/>
-			<lne id="459" begin="43" end="43"/>
-			<lne id="460" begin="43" end="44"/>
-			<lne id="461" begin="45" end="45"/>
-			<lne id="462" begin="43" end="46"/>
-			<lne id="463" begin="42" end="47"/>
-			<lne id="464" begin="37" end="47"/>
-			<lne id="465" begin="48" end="48"/>
-			<lne id="466" begin="49" end="51"/>
-			<lne id="467" begin="48" end="52"/>
-			<lne id="468" begin="54" end="54"/>
-			<lne id="469" begin="55" end="57"/>
-			<lne id="470" begin="54" end="58"/>
-			<lne id="471" begin="60" end="60"/>
-			<lne id="472" begin="61" end="63"/>
-			<lne id="473" begin="60" end="64"/>
-			<lne id="474" begin="67" end="67"/>
-			<lne id="475" begin="68" end="68"/>
-			<lne id="476" begin="69" end="69"/>
-			<lne id="477" begin="67" end="70"/>
-			<lne id="478" begin="60" end="70"/>
-			<lne id="479" begin="71" end="71"/>
-			<lne id="480" begin="72" end="72"/>
-			<lne id="481" begin="73" end="73"/>
-			<lne id="482" begin="73" end="74"/>
-			<lne id="483" begin="72" end="75"/>
-			<lne id="484" begin="76" end="76"/>
-			<lne id="485" begin="76" end="77"/>
-			<lne id="486" begin="76" end="78"/>
-			<lne id="487" begin="71" end="79"/>
-			<lne id="488" begin="81" end="81"/>
-			<lne id="489" begin="82" end="82"/>
-			<lne id="490" begin="81" end="83"/>
-			<lne id="491" begin="85" end="85"/>
-			<lne id="492" begin="86" end="86"/>
-			<lne id="493" begin="85" end="87"/>
-			<lne id="494" begin="90" end="90"/>
-			<lne id="495" begin="91" end="91"/>
-			<lne id="496" begin="92" end="92"/>
-			<lne id="497" begin="93" end="93"/>
-			<lne id="498" begin="94" end="97"/>
-			<lne id="499" begin="98" end="98"/>
-			<lne id="500" begin="98" end="99"/>
-			<lne id="501" begin="98" end="100"/>
-			<lne id="502" begin="98" end="101"/>
-			<lne id="503" begin="91" end="102"/>
-			<lne id="504" begin="90" end="103"/>
-			<lne id="505" begin="85" end="103"/>
-			<lne id="506" begin="105" end="105"/>
-			<lne id="507" begin="106" end="106"/>
-			<lne id="508" begin="107" end="107"/>
-			<lne id="509" begin="108" end="108"/>
-			<lne id="510" begin="109" end="112"/>
-			<lne id="511" begin="113" end="113"/>
-			<lne id="512" begin="113" end="114"/>
-			<lne id="513" begin="113" end="115"/>
-			<lne id="514" begin="106" end="116"/>
-			<lne id="515" begin="105" end="117"/>
-			<lne id="516" begin="81" end="117"/>
-			<lne id="517" begin="118" end="118"/>
-			<lne id="518" begin="119" end="119"/>
-			<lne id="519" begin="119" end="120"/>
-			<lne id="520" begin="121" end="121"/>
-			<lne id="521" begin="122" end="122"/>
-			<lne id="522" begin="122" end="123"/>
-			<lne id="523" begin="119" end="124"/>
-			<lne id="524" begin="118" end="125"/>
-			<lne id="525" begin="54" end="125"/>
-			<lne id="526" begin="127" end="127"/>
-			<lne id="527" begin="128" end="128"/>
-			<lne id="528" begin="129" end="129"/>
-			<lne id="529" begin="130" end="130"/>
-			<lne id="530" begin="128" end="131"/>
-			<lne id="531" begin="132" end="132"/>
-			<lne id="532" begin="132" end="133"/>
-			<lne id="533" begin="132" end="134"/>
-			<lne id="534" begin="127" end="135"/>
-			<lne id="535" begin="48" end="135"/>
-			<lne id="536" begin="136" end="136"/>
-			<lne id="537" begin="137" end="139"/>
-			<lne id="538" begin="136" end="140"/>
-			<lne id="539" begin="143" end="143"/>
-			<lne id="540" begin="144" end="144"/>
-			<lne id="541" begin="145" end="145"/>
-			<lne id="542" begin="145" end="146"/>
-			<lne id="543" begin="144" end="147"/>
-			<lne id="544" begin="148" end="148"/>
-			<lne id="545" begin="148" end="149"/>
-			<lne id="546" begin="150" end="150"/>
-			<lne id="547" begin="148" end="151"/>
-			<lne id="548" begin="148" end="152"/>
-			<lne id="549" begin="148" end="153"/>
-			<lne id="550" begin="143" end="154"/>
-			<lne id="551" begin="136" end="154"/>
-			<lne id="552" begin="0" end="154"/>
+			<lne id="402" begin="0" end="0"/>
+			<lne id="403" begin="1" end="1"/>
+			<lne id="404" begin="0" end="2"/>
+			<lne id="405" begin="4" end="4"/>
+			<lne id="406" begin="5" end="5"/>
+			<lne id="407" begin="4" end="6"/>
+			<lne id="408" begin="9" end="9"/>
+			<lne id="409" begin="10" end="10"/>
+			<lne id="410" begin="10" end="11"/>
+			<lne id="411" begin="9" end="12"/>
+			<lne id="412" begin="4" end="12"/>
+			<lne id="413" begin="14" end="14"/>
+			<lne id="414" begin="15" end="15"/>
+			<lne id="415" begin="15" end="16"/>
+			<lne id="416" begin="14" end="17"/>
+			<lne id="417" begin="0" end="17"/>
+			<lne id="418" begin="18" end="18"/>
+			<lne id="419" begin="19" end="19"/>
+			<lne id="420" begin="18" end="20"/>
+			<lne id="421" begin="21" end="21"/>
+			<lne id="422" begin="21" end="22"/>
+			<lne id="423" begin="21" end="23"/>
+			<lne id="424" begin="26" end="26"/>
+			<lne id="425" begin="27" end="27"/>
+			<lne id="426" begin="26" end="28"/>
+			<lne id="427" begin="31" end="31"/>
+			<lne id="428" begin="32" end="32"/>
+			<lne id="429" begin="31" end="33"/>
+			<lne id="430" begin="34" end="34"/>
+			<lne id="431" begin="35" end="35"/>
+			<lne id="432" begin="34" end="36"/>
+			<lne id="433" begin="26" end="36"/>
+			<lne id="434" begin="21" end="36"/>
+			<lne id="435" begin="37" end="37"/>
+			<lne id="436" begin="37" end="38"/>
+			<lne id="437" begin="37" end="39"/>
+			<lne id="438" begin="42" end="42"/>
+			<lne id="439" begin="43" end="43"/>
+			<lne id="440" begin="43" end="44"/>
+			<lne id="441" begin="45" end="45"/>
+			<lne id="442" begin="43" end="46"/>
+			<lne id="443" begin="42" end="47"/>
+			<lne id="444" begin="37" end="47"/>
+			<lne id="445" begin="48" end="48"/>
+			<lne id="446" begin="49" end="51"/>
+			<lne id="447" begin="48" end="52"/>
+			<lne id="448" begin="54" end="54"/>
+			<lne id="449" begin="55" end="57"/>
+			<lne id="450" begin="54" end="58"/>
+			<lne id="451" begin="60" end="60"/>
+			<lne id="452" begin="61" end="63"/>
+			<lne id="453" begin="60" end="64"/>
+			<lne id="454" begin="67" end="67"/>
+			<lne id="455" begin="68" end="68"/>
+			<lne id="456" begin="69" end="69"/>
+			<lne id="457" begin="67" end="70"/>
+			<lne id="458" begin="60" end="70"/>
+			<lne id="459" begin="71" end="71"/>
+			<lne id="460" begin="72" end="72"/>
+			<lne id="461" begin="73" end="73"/>
+			<lne id="462" begin="73" end="74"/>
+			<lne id="463" begin="72" end="75"/>
+			<lne id="464" begin="76" end="76"/>
+			<lne id="465" begin="76" end="77"/>
+			<lne id="466" begin="76" end="78"/>
+			<lne id="467" begin="71" end="79"/>
+			<lne id="468" begin="81" end="81"/>
+			<lne id="469" begin="82" end="82"/>
+			<lne id="470" begin="81" end="83"/>
+			<lne id="471" begin="85" end="85"/>
+			<lne id="472" begin="86" end="86"/>
+			<lne id="473" begin="85" end="87"/>
+			<lne id="474" begin="90" end="90"/>
+			<lne id="475" begin="91" end="91"/>
+			<lne id="476" begin="92" end="92"/>
+			<lne id="477" begin="93" end="93"/>
+			<lne id="478" begin="94" end="94"/>
+			<lne id="479" begin="94" end="95"/>
+			<lne id="480" begin="94" end="96"/>
+			<lne id="481" begin="94" end="97"/>
+			<lne id="482" begin="91" end="98"/>
+			<lne id="483" begin="90" end="99"/>
+			<lne id="484" begin="85" end="99"/>
+			<lne id="485" begin="101" end="101"/>
+			<lne id="486" begin="102" end="102"/>
+			<lne id="487" begin="103" end="103"/>
+			<lne id="488" begin="104" end="104"/>
+			<lne id="489" begin="105" end="105"/>
+			<lne id="490" begin="105" end="106"/>
+			<lne id="491" begin="105" end="107"/>
+			<lne id="492" begin="102" end="108"/>
+			<lne id="493" begin="101" end="109"/>
+			<lne id="494" begin="81" end="109"/>
+			<lne id="495" begin="54" end="109"/>
+			<lne id="496" begin="111" end="111"/>
+			<lne id="497" begin="112" end="112"/>
+			<lne id="498" begin="113" end="113"/>
+			<lne id="499" begin="114" end="114"/>
+			<lne id="500" begin="112" end="115"/>
+			<lne id="501" begin="116" end="116"/>
+			<lne id="502" begin="116" end="117"/>
+			<lne id="503" begin="116" end="118"/>
+			<lne id="504" begin="111" end="119"/>
+			<lne id="505" begin="48" end="119"/>
+			<lne id="506" begin="120" end="120"/>
+			<lne id="507" begin="121" end="123"/>
+			<lne id="508" begin="120" end="124"/>
+			<lne id="509" begin="127" end="127"/>
+			<lne id="510" begin="128" end="128"/>
+			<lne id="511" begin="129" end="129"/>
+			<lne id="512" begin="129" end="130"/>
+			<lne id="513" begin="128" end="131"/>
+			<lne id="514" begin="132" end="132"/>
+			<lne id="515" begin="132" end="133"/>
+			<lne id="516" begin="134" end="134"/>
+			<lne id="517" begin="132" end="135"/>
+			<lne id="518" begin="132" end="136"/>
+			<lne id="519" begin="132" end="137"/>
+			<lne id="520" begin="127" end="138"/>
+			<lne id="521" begin="120" end="138"/>
+			<lne id="522" begin="0" end="138"/>
 		</linenumbertable>
 		<localvariabletable>
-			<lve slot="0" name="17" begin="0" end="154"/>
-			<lve slot="1" name="217" begin="0" end="154"/>
-			<lve slot="2" name="553" begin="0" end="154"/>
-			<lve slot="3" name="554" begin="0" end="154"/>
-			<lve slot="4" name="555" begin="0" end="154"/>
-			<lve slot="5" name="556" begin="0" end="154"/>
+			<lve slot="0" name="17" begin="0" end="138"/>
+			<lve slot="1" name="217" begin="0" end="138"/>
+			<lve slot="2" name="523" begin="0" end="138"/>
+			<lve slot="3" name="524" begin="0" end="138"/>
+			<lve slot="4" name="525" begin="0" end="138"/>
+			<lve slot="5" name="526" begin="0" end="138"/>
 		</localvariabletable>
 	</operation>
-	<operation name="557">
+	<operation name="527">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -11854,32 +12345,32 @@
 		</parameters>
 		<code>
 			<load arg="29"/>
-			<push arg="558"/>
+			<push arg="528"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="559"/>
+			<if arg="529"/>
 			<load arg="29"/>
-			<push arg="560"/>
+			<push arg="530"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="561"/>
+			<if arg="531"/>
 			<load arg="29"/>
-			<push arg="562"/>
-			<push arg="279"/>
+			<push arg="532"/>
+			<push arg="278"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="50"/>
+			<if arg="533"/>
 			<load arg="29"/>
-			<push arg="563"/>
+			<push arg="534"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="86"/>
+			<if arg="401"/>
 			<getasm/>
 			<getasm/>
-			<get arg="564"/>
+			<get arg="535"/>
 			<load arg="29"/>
 			<call arg="83"/>
 			<set arg="219"/>
@@ -11888,31 +12379,31 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="565"/>
+			<if arg="79"/>
 			<load arg="42"/>
 			<push arg="54"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="81"/>
+			<if arg="536"/>
 			<load arg="42"/>
 			<push arg="57"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="566"/>
+			<if arg="537"/>
 			<load arg="42"/>
 			<push arg="47"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="567"/>
+			<if arg="538"/>
 			<load arg="42"/>
 			<push arg="51"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="568"/>
+			<if arg="539"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
@@ -11923,9 +12414,9 @@
 			<get arg="38"/>
 			<call arg="62"/>
 			<get arg="63"/>
-			<call arg="414"/>
+			<call arg="397"/>
 			<pcall arg="92"/>
-			<goto arg="569"/>
+			<goto arg="540"/>
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
@@ -11935,7 +12426,7 @@
 			<get arg="219"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="570"/>
+			<goto arg="541"/>
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
@@ -11945,42 +12436,30 @@
 			<get arg="219"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="571"/>
+			<goto arg="542"/>
 			<getasm/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<push arg="28"/>
-			<push arg="8"/>
-			<new/>
-			<call arg="45"/>
 			<getasm/>
 			<get arg="219"/>
 			<call arg="67"/>
-			<call arg="415"/>
-			<set arg="416"/>
-			<getasm/>
-			<getasm/>
-			<get arg="82"/>
-			<load arg="42"/>
-			<getasm/>
-			<get arg="416"/>
-			<call arg="418"/>
-			<set arg="82"/>
-			<goto arg="406"/>
+			<call arg="398"/>
+			<set arg="399"/>
+			<goto arg="81"/>
 			<getasm/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<call arg="409"/>
+			<call arg="392"/>
 			<load arg="19"/>
 			<load arg="29"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<get arg="63"/>
-			<call arg="414"/>
+			<call arg="397"/>
 			<pcall arg="92"/>
-			<goto arg="572"/>
+			<goto arg="543"/>
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
@@ -11989,51 +12468,51 @@
 			<getasm/>
 			<get arg="219"/>
 			<get arg="63"/>
-			<call arg="414"/>
+			<call arg="397"/>
 			<pcall arg="92"/>
-			<goto arg="88"/>
+			<goto arg="544"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
 			<load arg="42"/>
 			<load arg="43"/>
-			<push arg="390"/>
-			<pcall arg="573"/>
-			<goto arg="574"/>
+			<push arg="373"/>
+			<pcall arg="545"/>
+			<goto arg="546"/>
 			<getasm/>
 			<pushf/>
-			<set arg="397"/>
+			<set arg="380"/>
 			<load arg="42"/>
 			<push arg="60"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="575"/>
-			<goto arg="576"/>
+			<if arg="547"/>
+			<goto arg="548"/>
 			<push arg="28"/>
 			<push arg="8"/>
 			<new/>
 			<getasm/>
 			<load arg="42"/>
 			<get arg="38"/>
-			<call arg="577"/>
-			<get arg="578"/>
+			<call arg="549"/>
+			<get arg="550"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
-			<get arg="285"/>
+			<get arg="284"/>
 			<get arg="38"/>
 			<load arg="19"/>
 			<get arg="38"/>
-			<call arg="391"/>
+			<call arg="374"/>
 			<call arg="73"/>
-			<if arg="579"/>
+			<if arg="551"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="580"/>
-			<if arg="581"/>
-			<goto arg="576"/>
+			<call arg="552"/>
+			<if arg="553"/>
+			<goto arg="548"/>
 			<getasm/>
 			<push arg="28"/>
 			<push arg="8"/>
@@ -12041,22 +12520,22 @@
 			<getasm/>
 			<load arg="42"/>
 			<get arg="38"/>
-			<call arg="577"/>
-			<get arg="578"/>
+			<call arg="549"/>
+			<get arg="550"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
-			<get arg="285"/>
+			<get arg="284"/>
 			<get arg="38"/>
 			<load arg="19"/>
 			<get arg="38"/>
-			<call arg="391"/>
+			<call arg="374"/>
 			<call arg="73"/>
-			<if arg="582"/>
+			<if arg="554"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="583"/>
+			<call arg="555"/>
 			<call arg="45"/>
 			<load arg="19"/>
 			<load arg="29"/>
@@ -12066,12 +12545,12 @@
 			<pcall arg="92"/>
 			<getasm/>
 			<pusht/>
-			<set arg="397"/>
+			<set arg="380"/>
 			<getasm/>
-			<get arg="397"/>
+			<get arg="380"/>
 			<call arg="53"/>
-			<if arg="584"/>
-			<goto arg="574"/>
+			<if arg="556"/>
+			<goto arg="546"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
@@ -12082,109 +12561,109 @@
 			<get arg="38"/>
 			<call arg="62"/>
 			<get arg="63"/>
-			<call arg="414"/>
+			<call arg="397"/>
 			<pcall arg="92"/>
-			<goto arg="585"/>
+			<goto arg="557"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
 			<load arg="42"/>
 			<load arg="43"/>
-			<push arg="392"/>
-			<pcall arg="573"/>
-			<goto arg="586"/>
+			<push arg="375"/>
+			<pcall arg="545"/>
+			<goto arg="558"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<get arg="38"/>
 			<call arg="62"/>
-			<set arg="587"/>
+			<set arg="559"/>
 			<load arg="42"/>
 			<push arg="60"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="588"/>
+			<if arg="560"/>
 			<load arg="42"/>
 			<push arg="54"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="589"/>
+			<if arg="561"/>
 			<load arg="42"/>
 			<push arg="57"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="590"/>
+			<if arg="562"/>
 			<load arg="42"/>
 			<push arg="47"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="591"/>
+			<if arg="563"/>
 			<load arg="42"/>
 			<push arg="51"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="592"/>
+			<if arg="564"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<getasm/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="593"/>
+			<goto arg="565"/>
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
 			<push arg="89"/>
 			<call arg="66"/>
 			<getasm/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="594"/>
+			<goto arg="566"/>
 			<load arg="42"/>
-			<get arg="416"/>
+			<get arg="399"/>
 			<call arg="72"/>
 			<call arg="53"/>
 			<push arg="28"/>
 			<push arg="8"/>
 			<new/>
 			<load arg="19"/>
-			<get arg="595"/>
+			<get arg="567"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
 			<push arg="276"/>
-			<push arg="279"/>
+			<push arg="278"/>
 			<findme/>
 			<call arg="49"/>
 			<call arg="73"/>
-			<if arg="596"/>
+			<if arg="568"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="580"/>
+			<call arg="552"/>
 			<call arg="53"/>
 			<call arg="55"/>
-			<if arg="597"/>
+			<if arg="569"/>
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
 			<push arg="91"/>
 			<call arg="66"/>
 			<getasm/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="594"/>
+			<goto arg="566"/>
 			<getasm/>
 			<push arg="28"/>
 			<push arg="8"/>
@@ -12193,16 +12672,16 @@
 			<push arg="8"/>
 			<new/>
 			<load arg="19"/>
-			<get arg="595"/>
+			<get arg="567"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
 			<push arg="276"/>
-			<push arg="279"/>
+			<push arg="278"/>
 			<findme/>
 			<call arg="49"/>
 			<call arg="73"/>
-			<if arg="598"/>
+			<if arg="570"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
@@ -12213,49 +12692,37 @@
 			<getasm/>
 			<get arg="82"/>
 			<load arg="42"/>
-			<get arg="416"/>
+			<get arg="399"/>
 			<call arg="83"/>
-			<get arg="286"/>
-			<call arg="414"/>
-			<call arg="599"/>
+			<get arg="285"/>
+			<call arg="397"/>
+			<call arg="571"/>
 			<call arg="73"/>
-			<if arg="600"/>
+			<if arg="572"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="583"/>
+			<call arg="555"/>
 			<call arg="45"/>
 			<getasm/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="601"/>
+			<goto arg="573"/>
 			<getasm/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<push arg="28"/>
-			<push arg="8"/>
-			<new/>
-			<call arg="45"/>
 			<getasm/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<call arg="67"/>
-			<call arg="415"/>
-			<set arg="416"/>
-			<getasm/>
-			<getasm/>
-			<get arg="82"/>
-			<load arg="42"/>
-			<getasm/>
-			<get arg="416"/>
-			<call arg="418"/>
-			<set arg="82"/>
-			<goto arg="602"/>
+			<call arg="398"/>
+			<set arg="399"/>
+			<goto arg="574"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<pcall arg="409"/>
+			<pcall arg="392"/>
 			<getasm/>
 			<getasm/>
 			<get arg="87"/>
@@ -12318,10 +12785,10 @@
 =======
 			<call arg="83"/>
 			<getasm/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="586"/>
+			<goto arg="558"/>
 			<getasm/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<getasm/>
@@ -12329,8 +12796,9 @@
 			<push arg="65"/>
 			<call arg="66"/>
 			<getasm/>
-			<get arg="587"/>
+			<get arg="559"/>
 			<get arg="63"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 			<pushi arg="19"/>
@@ -12417,342 +12885,327 @@
 =======
 			<call arg="414"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="397"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<pcall arg="92"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 		</code>
 		<linenumbertable>
-			<lne id="603" begin="0" end="0"/>
-			<lne id="604" begin="1" end="3"/>
-			<lne id="605" begin="0" end="4"/>
-			<lne id="606" begin="6" end="6"/>
-			<lne id="607" begin="7" end="9"/>
-			<lne id="608" begin="6" end="10"/>
-			<lne id="609" begin="12" end="12"/>
-			<lne id="610" begin="13" end="15"/>
-			<lne id="611" begin="12" end="16"/>
-			<lne id="612" begin="18" end="18"/>
-			<lne id="613" begin="19" end="21"/>
-			<lne id="614" begin="18" end="22"/>
-			<lne id="615" begin="24" end="24"/>
-			<lne id="616" begin="25" end="25"/>
-			<lne id="617" begin="25" end="26"/>
-			<lne id="618" begin="27" end="27"/>
-			<lne id="619" begin="25" end="28"/>
-			<lne id="620" begin="24" end="29"/>
-			<lne id="621" begin="30" end="30"/>
-			<lne id="622" begin="31" end="33"/>
-			<lne id="623" begin="30" end="34"/>
-			<lne id="624" begin="36" end="36"/>
-			<lne id="625" begin="37" end="39"/>
-			<lne id="626" begin="36" end="40"/>
-			<lne id="627" begin="42" end="42"/>
-			<lne id="628" begin="43" end="45"/>
-			<lne id="629" begin="42" end="46"/>
-			<lne id="630" begin="48" end="48"/>
-			<lne id="631" begin="49" end="51"/>
-			<lne id="632" begin="48" end="52"/>
-			<lne id="633" begin="54" end="54"/>
-			<lne id="634" begin="55" end="57"/>
-			<lne id="635" begin="54" end="58"/>
-			<lne id="636" begin="60" end="60"/>
-			<lne id="637" begin="61" end="61"/>
-			<lne id="638" begin="62" end="62"/>
-			<lne id="639" begin="62" end="63"/>
-			<lne id="640" begin="61" end="64"/>
-			<lne id="641" begin="65" end="65"/>
-			<lne id="642" begin="66" end="66"/>
-			<lne id="643" begin="66" end="67"/>
-			<lne id="644" begin="65" end="68"/>
-			<lne id="645" begin="65" end="69"/>
-			<lne id="646" begin="65" end="70"/>
-			<lne id="647" begin="60" end="71"/>
-			<lne id="648" begin="73" end="73"/>
-			<lne id="649" begin="74" end="74"/>
-			<lne id="650" begin="75" end="75"/>
-			<lne id="651" begin="76" end="76"/>
-			<lne id="652" begin="74" end="77"/>
-			<lne id="653" begin="78" end="78"/>
-			<lne id="654" begin="78" end="79"/>
-			<lne id="655" begin="78" end="80"/>
-			<lne id="656" begin="73" end="81"/>
-			<lne id="657" begin="54" end="81"/>
-			<lne id="658" begin="83" end="83"/>
-			<lne id="659" begin="84" end="84"/>
-			<lne id="660" begin="85" end="85"/>
-			<lne id="661" begin="86" end="86"/>
-			<lne id="662" begin="84" end="87"/>
-			<lne id="663" begin="88" end="88"/>
-			<lne id="664" begin="88" end="89"/>
-			<lne id="665" begin="88" end="90"/>
-			<lne id="666" begin="83" end="91"/>
-			<lne id="667" begin="48" end="91"/>
-			<lne id="668" begin="93" end="93"/>
-			<lne id="669" begin="94" end="94"/>
-			<lne id="670" begin="95" end="95"/>
-			<lne id="671" begin="96" end="96"/>
-			<lne id="672" begin="97" end="100"/>
-			<lne id="673" begin="101" end="101"/>
-			<lne id="674" begin="101" end="102"/>
-			<lne id="675" begin="101" end="103"/>
-			<lne id="676" begin="94" end="104"/>
-			<lne id="677" begin="93" end="105"/>
-			<lne id="678" begin="106" end="106"/>
-			<lne id="679" begin="107" end="107"/>
-			<lne id="680" begin="107" end="108"/>
-			<lne id="681" begin="109" end="109"/>
-			<lne id="682" begin="110" end="110"/>
-			<lne id="683" begin="110" end="111"/>
-			<lne id="684" begin="107" end="112"/>
-			<lne id="685" begin="106" end="113"/>
-			<lne id="686" begin="42" end="113"/>
-			<lne id="687" begin="115" end="115"/>
-			<lne id="688" begin="116" end="116"/>
-			<lne id="689" begin="117" end="117"/>
-			<lne id="690" begin="118" end="118"/>
-			<lne id="691" begin="116" end="119"/>
-			<lne id="692" begin="120" end="120"/>
-			<lne id="693" begin="121" end="121"/>
-			<lne id="694" begin="121" end="122"/>
-			<lne id="695" begin="120" end="123"/>
-			<lne id="696" begin="120" end="124"/>
-			<lne id="697" begin="120" end="125"/>
-			<lne id="698" begin="115" end="126"/>
-			<lne id="699" begin="36" end="126"/>
-			<lne id="700" begin="128" end="128"/>
-			<lne id="701" begin="129" end="129"/>
-			<lne id="702" begin="130" end="130"/>
-			<lne id="703" begin="131" end="131"/>
-			<lne id="704" begin="129" end="132"/>
-			<lne id="705" begin="133" end="133"/>
-			<lne id="706" begin="133" end="134"/>
-			<lne id="707" begin="133" end="135"/>
-			<lne id="708" begin="133" end="136"/>
-			<lne id="709" begin="128" end="137"/>
-			<lne id="710" begin="30" end="137"/>
-			<lne id="711" begin="139" end="139"/>
-			<lne id="712" begin="140" end="140"/>
-			<lne id="713" begin="141" end="141"/>
-			<lne id="714" begin="142" end="142"/>
-			<lne id="715" begin="143" end="143"/>
-			<lne id="716" begin="144" end="144"/>
-			<lne id="717" begin="139" end="145"/>
-			<lne id="718" begin="18" end="145"/>
-			<lne id="719" begin="147" end="147"/>
-			<lne id="720" begin="148" end="148"/>
-			<lne id="721" begin="147" end="149"/>
-			<lne id="722" begin="150" end="150"/>
-			<lne id="723" begin="151" end="153"/>
-			<lne id="724" begin="150" end="154"/>
-			<lne id="725" begin="160" end="160"/>
-			<lne id="726" begin="161" end="161"/>
-			<lne id="727" begin="161" end="162"/>
-			<lne id="728" begin="160" end="163"/>
-			<lne id="729" begin="160" end="164"/>
-			<lne id="730" begin="167" end="167"/>
-			<lne id="731" begin="167" end="168"/>
-			<lne id="732" begin="167" end="169"/>
-			<lne id="733" begin="170" end="170"/>
-			<lne id="734" begin="170" end="171"/>
-			<lne id="735" begin="167" end="172"/>
-			<lne id="736" begin="157" end="177"/>
-			<lne id="737" begin="157" end="178"/>
-			<lne id="738" begin="181" end="181"/>
-			<lne id="739" begin="185" end="185"/>
-			<lne id="740" begin="186" end="186"/>
-			<lne id="741" begin="186" end="187"/>
-			<lne id="742" begin="185" end="188"/>
-			<lne id="743" begin="185" end="189"/>
-			<lne id="744" begin="192" end="192"/>
-			<lne id="745" begin="192" end="193"/>
-			<lne id="746" begin="192" end="194"/>
-			<lne id="747" begin="195" end="195"/>
-			<lne id="748" begin="195" end="196"/>
-			<lne id="749" begin="192" end="197"/>
-			<lne id="750" begin="182" end="204"/>
-			<lne id="751" begin="205" end="205"/>
-			<lne id="752" begin="206" end="206"/>
-			<lne id="753" begin="206" end="207"/>
-			<lne id="754" begin="205" end="208"/>
-			<lne id="755" begin="205" end="209"/>
-			<lne id="756" begin="181" end="210"/>
-			<lne id="757" begin="211" end="211"/>
-			<lne id="758" begin="212" end="212"/>
-			<lne id="759" begin="211" end="213"/>
-			<lne id="760" begin="157" end="213"/>
-			<lne id="761" begin="150" end="213"/>
-			<lne id="762" begin="214" end="214"/>
-			<lne id="763" begin="214" end="215"/>
-			<lne id="764" begin="214" end="216"/>
-			<lne id="765" begin="219" end="219"/>
-			<lne id="766" begin="220" end="220"/>
-			<lne id="767" begin="221" end="221"/>
-			<lne id="768" begin="221" end="222"/>
-			<lne id="769" begin="220" end="223"/>
-			<lne id="770" begin="224" end="224"/>
-			<lne id="771" begin="225" end="225"/>
-			<lne id="772" begin="225" end="226"/>
-			<lne id="773" begin="224" end="227"/>
-			<lne id="774" begin="224" end="228"/>
-			<lne id="775" begin="224" end="229"/>
-			<lne id="776" begin="219" end="230"/>
-			<lne id="777" begin="214" end="230"/>
-			<lne id="778" begin="12" end="230"/>
-			<lne id="779" begin="232" end="232"/>
-			<lne id="780" begin="233" end="233"/>
-			<lne id="781" begin="234" end="234"/>
-			<lne id="782" begin="235" end="235"/>
-			<lne id="783" begin="236" end="236"/>
-			<lne id="784" begin="237" end="237"/>
-			<lne id="785" begin="232" end="238"/>
-			<lne id="786" begin="6" end="238"/>
-			<lne id="787" begin="240" end="240"/>
-			<lne id="788" begin="241" end="241"/>
-			<lne id="789" begin="242" end="242"/>
-			<lne id="790" begin="242" end="243"/>
-			<lne id="791" begin="242" end="244"/>
-			<lne id="792" begin="241" end="245"/>
-			<lne id="793" begin="240" end="246"/>
-			<lne id="794" begin="247" end="247"/>
-			<lne id="795" begin="248" end="250"/>
-			<lne id="796" begin="247" end="251"/>
-			<lne id="797" begin="253" end="253"/>
-			<lne id="798" begin="254" end="256"/>
-			<lne id="799" begin="253" end="257"/>
-			<lne id="800" begin="259" end="259"/>
-			<lne id="801" begin="260" end="262"/>
-			<lne id="802" begin="259" end="263"/>
-			<lne id="803" begin="265" end="265"/>
-			<lne id="804" begin="266" end="268"/>
-			<lne id="805" begin="265" end="269"/>
-			<lne id="806" begin="271" end="271"/>
-			<lne id="807" begin="272" end="274"/>
-			<lne id="808" begin="271" end="275"/>
-			<lne id="809" begin="277" end="277"/>
-			<lne id="810" begin="278" end="278"/>
-			<lne id="811" begin="279" end="279"/>
-			<lne id="812" begin="279" end="280"/>
-			<lne id="813" begin="278" end="281"/>
-			<lne id="814" begin="282" end="282"/>
-			<lne id="815" begin="282" end="283"/>
-			<lne id="816" begin="282" end="284"/>
-			<lne id="817" begin="277" end="285"/>
-			<lne id="818" begin="287" end="287"/>
-			<lne id="819" begin="288" end="288"/>
-			<lne id="820" begin="289" end="289"/>
-			<lne id="821" begin="290" end="290"/>
-			<lne id="822" begin="288" end="291"/>
-			<lne id="823" begin="292" end="292"/>
-			<lne id="824" begin="292" end="293"/>
-			<lne id="825" begin="292" end="294"/>
-			<lne id="826" begin="287" end="295"/>
-			<lne id="827" begin="271" end="295"/>
-			<lne id="828" begin="297" end="297"/>
-			<lne id="829" begin="297" end="298"/>
-			<lne id="830" begin="297" end="299"/>
-			<lne id="831" begin="297" end="300"/>
-			<lne id="832" begin="304" end="304"/>
-			<lne id="833" begin="304" end="305"/>
-			<lne id="834" begin="308" end="308"/>
-			<lne id="835" begin="309" end="311"/>
-			<lne id="836" begin="308" end="312"/>
-			<lne id="837" begin="301" end="317"/>
-			<lne id="838" begin="301" end="318"/>
-			<lne id="839" begin="301" end="319"/>
-			<lne id="840" begin="297" end="320"/>
-			<lne id="841" begin="322" end="322"/>
-			<lne id="842" begin="323" end="323"/>
-			<lne id="843" begin="324" end="324"/>
-			<lne id="844" begin="325" end="325"/>
-			<lne id="845" begin="323" end="326"/>
-			<lne id="846" begin="327" end="327"/>
-			<lne id="847" begin="327" end="328"/>
-			<lne id="848" begin="327" end="329"/>
-			<lne id="849" begin="322" end="330"/>
-			<lne id="850" begin="332" end="332"/>
-			<lne id="851" begin="339" end="339"/>
-			<lne id="852" begin="339" end="340"/>
-			<lne id="853" begin="343" end="343"/>
-			<lne id="854" begin="344" end="346"/>
-			<lne id="855" begin="343" end="347"/>
-			<lne id="856" begin="336" end="352"/>
-			<lne id="857" begin="355" end="355"/>
-			<lne id="858" begin="355" end="356"/>
-			<lne id="859" begin="357" end="357"/>
-			<lne id="860" begin="357" end="358"/>
-			<lne id="861" begin="359" end="359"/>
-			<lne id="862" begin="359" end="360"/>
-			<lne id="863" begin="357" end="361"/>
-			<lne id="864" begin="357" end="362"/>
-			<lne id="865" begin="357" end="363"/>
-			<lne id="866" begin="355" end="364"/>
-			<lne id="867" begin="333" end="371"/>
-			<lne id="868" begin="372" end="372"/>
-			<lne id="869" begin="372" end="373"/>
-			<lne id="870" begin="372" end="374"/>
-			<lne id="871" begin="332" end="375"/>
-			<lne id="872" begin="297" end="375"/>
-			<lne id="873" begin="265" end="375"/>
-			<lne id="874" begin="377" end="377"/>
-			<lne id="875" begin="378" end="378"/>
-			<lne id="876" begin="379" end="379"/>
-			<lne id="877" begin="380" end="380"/>
-			<lne id="878" begin="381" end="384"/>
-			<lne id="879" begin="385" end="385"/>
-			<lne id="880" begin="385" end="386"/>
-			<lne id="881" begin="385" end="387"/>
-			<lne id="882" begin="378" end="388"/>
-			<lne id="883" begin="377" end="389"/>
-			<lne id="884" begin="390" end="390"/>
-			<lne id="885" begin="391" end="391"/>
-			<lne id="886" begin="391" end="392"/>
-			<lne id="887" begin="393" end="393"/>
-			<lne id="888" begin="394" end="394"/>
-			<lne id="889" begin="394" end="395"/>
-			<lne id="890" begin="391" end="396"/>
-			<lne id="891" begin="390" end="397"/>
-			<lne id="892" begin="259" end="397"/>
-			<lne id="893" begin="399" end="399"/>
-			<lne id="894" begin="400" end="400"/>
-			<lne id="895" begin="401" end="401"/>
-			<lne id="896" begin="399" end="402"/>
-			<lne id="897" begin="403" end="403"/>
-			<lne id="898" begin="404" end="404"/>
-			<lne id="899" begin="404" end="405"/>
-			<lne id="900" begin="406" end="406"/>
-			<lne id="901" begin="404" end="407"/>
-			<lne id="902" begin="408" end="408"/>
-			<lne id="903" begin="408" end="409"/>
-			<lne id="904" begin="408" end="410"/>
-			<lne id="905" begin="403" end="411"/>
-			<lne id="906" begin="253" end="411"/>
-			<lne id="907" begin="413" end="413"/>
-			<lne id="908" begin="414" end="414"/>
-			<lne id="909" begin="415" end="415"/>
-			<lne id="910" begin="416" end="416"/>
-			<lne id="911" begin="414" end="417"/>
-			<lne id="912" begin="418" end="418"/>
-			<lne id="913" begin="418" end="419"/>
-			<lne id="914" begin="418" end="420"/>
-			<lne id="915" begin="418" end="421"/>
-			<lne id="916" begin="413" end="422"/>
-			<lne id="917" begin="247" end="422"/>
-			<lne id="918" begin="0" end="422"/>
-			<lne id="919" begin="0" end="422"/>
+			<lne id="575" begin="0" end="0"/>
+			<lne id="576" begin="1" end="3"/>
+			<lne id="577" begin="0" end="4"/>
+			<lne id="578" begin="6" end="6"/>
+			<lne id="579" begin="7" end="9"/>
+			<lne id="580" begin="6" end="10"/>
+			<lne id="581" begin="12" end="12"/>
+			<lne id="582" begin="13" end="15"/>
+			<lne id="583" begin="12" end="16"/>
+			<lne id="584" begin="18" end="18"/>
+			<lne id="585" begin="19" end="21"/>
+			<lne id="586" begin="18" end="22"/>
+			<lne id="587" begin="24" end="24"/>
+			<lne id="588" begin="25" end="25"/>
+			<lne id="589" begin="25" end="26"/>
+			<lne id="590" begin="27" end="27"/>
+			<lne id="591" begin="25" end="28"/>
+			<lne id="592" begin="24" end="29"/>
+			<lne id="593" begin="30" end="30"/>
+			<lne id="594" begin="31" end="33"/>
+			<lne id="595" begin="30" end="34"/>
+			<lne id="596" begin="36" end="36"/>
+			<lne id="597" begin="37" end="39"/>
+			<lne id="598" begin="36" end="40"/>
+			<lne id="599" begin="42" end="42"/>
+			<lne id="600" begin="43" end="45"/>
+			<lne id="601" begin="42" end="46"/>
+			<lne id="602" begin="48" end="48"/>
+			<lne id="603" begin="49" end="51"/>
+			<lne id="604" begin="48" end="52"/>
+			<lne id="605" begin="54" end="54"/>
+			<lne id="606" begin="55" end="57"/>
+			<lne id="607" begin="54" end="58"/>
+			<lne id="608" begin="60" end="60"/>
+			<lne id="609" begin="61" end="61"/>
+			<lne id="610" begin="62" end="62"/>
+			<lne id="611" begin="62" end="63"/>
+			<lne id="612" begin="61" end="64"/>
+			<lne id="613" begin="65" end="65"/>
+			<lne id="614" begin="66" end="66"/>
+			<lne id="615" begin="66" end="67"/>
+			<lne id="616" begin="65" end="68"/>
+			<lne id="617" begin="65" end="69"/>
+			<lne id="618" begin="65" end="70"/>
+			<lne id="619" begin="60" end="71"/>
+			<lne id="620" begin="73" end="73"/>
+			<lne id="621" begin="74" end="74"/>
+			<lne id="622" begin="75" end="75"/>
+			<lne id="623" begin="76" end="76"/>
+			<lne id="624" begin="74" end="77"/>
+			<lne id="625" begin="78" end="78"/>
+			<lne id="626" begin="78" end="79"/>
+			<lne id="627" begin="78" end="80"/>
+			<lne id="628" begin="73" end="81"/>
+			<lne id="629" begin="54" end="81"/>
+			<lne id="630" begin="83" end="83"/>
+			<lne id="631" begin="84" end="84"/>
+			<lne id="632" begin="85" end="85"/>
+			<lne id="633" begin="86" end="86"/>
+			<lne id="634" begin="84" end="87"/>
+			<lne id="635" begin="88" end="88"/>
+			<lne id="636" begin="88" end="89"/>
+			<lne id="637" begin="88" end="90"/>
+			<lne id="638" begin="83" end="91"/>
+			<lne id="639" begin="48" end="91"/>
+			<lne id="640" begin="93" end="93"/>
+			<lne id="641" begin="94" end="94"/>
+			<lne id="642" begin="95" end="95"/>
+			<lne id="643" begin="96" end="96"/>
+			<lne id="644" begin="97" end="97"/>
+			<lne id="645" begin="97" end="98"/>
+			<lne id="646" begin="97" end="99"/>
+			<lne id="647" begin="94" end="100"/>
+			<lne id="648" begin="93" end="101"/>
+			<lne id="649" begin="42" end="101"/>
+			<lne id="650" begin="103" end="103"/>
+			<lne id="651" begin="104" end="104"/>
+			<lne id="652" begin="105" end="105"/>
+			<lne id="653" begin="106" end="106"/>
+			<lne id="654" begin="104" end="107"/>
+			<lne id="655" begin="108" end="108"/>
+			<lne id="656" begin="109" end="109"/>
+			<lne id="657" begin="109" end="110"/>
+			<lne id="658" begin="108" end="111"/>
+			<lne id="659" begin="108" end="112"/>
+			<lne id="660" begin="108" end="113"/>
+			<lne id="661" begin="103" end="114"/>
+			<lne id="662" begin="36" end="114"/>
+			<lne id="663" begin="116" end="116"/>
+			<lne id="664" begin="117" end="117"/>
+			<lne id="665" begin="118" end="118"/>
+			<lne id="666" begin="119" end="119"/>
+			<lne id="667" begin="117" end="120"/>
+			<lne id="668" begin="121" end="121"/>
+			<lne id="669" begin="121" end="122"/>
+			<lne id="670" begin="121" end="123"/>
+			<lne id="671" begin="121" end="124"/>
+			<lne id="672" begin="116" end="125"/>
+			<lne id="673" begin="30" end="125"/>
+			<lne id="674" begin="127" end="127"/>
+			<lne id="675" begin="128" end="128"/>
+			<lne id="676" begin="129" end="129"/>
+			<lne id="677" begin="130" end="130"/>
+			<lne id="678" begin="131" end="131"/>
+			<lne id="679" begin="132" end="132"/>
+			<lne id="680" begin="127" end="133"/>
+			<lne id="681" begin="18" end="133"/>
+			<lne id="682" begin="135" end="135"/>
+			<lne id="683" begin="136" end="136"/>
+			<lne id="684" begin="135" end="137"/>
+			<lne id="685" begin="138" end="138"/>
+			<lne id="686" begin="139" end="141"/>
+			<lne id="687" begin="138" end="142"/>
+			<lne id="688" begin="148" end="148"/>
+			<lne id="689" begin="149" end="149"/>
+			<lne id="690" begin="149" end="150"/>
+			<lne id="691" begin="148" end="151"/>
+			<lne id="692" begin="148" end="152"/>
+			<lne id="693" begin="155" end="155"/>
+			<lne id="694" begin="155" end="156"/>
+			<lne id="695" begin="155" end="157"/>
+			<lne id="696" begin="158" end="158"/>
+			<lne id="697" begin="158" end="159"/>
+			<lne id="698" begin="155" end="160"/>
+			<lne id="699" begin="145" end="165"/>
+			<lne id="700" begin="145" end="166"/>
+			<lne id="701" begin="169" end="169"/>
+			<lne id="702" begin="173" end="173"/>
+			<lne id="703" begin="174" end="174"/>
+			<lne id="704" begin="174" end="175"/>
+			<lne id="705" begin="173" end="176"/>
+			<lne id="706" begin="173" end="177"/>
+			<lne id="707" begin="180" end="180"/>
+			<lne id="708" begin="180" end="181"/>
+			<lne id="709" begin="180" end="182"/>
+			<lne id="710" begin="183" end="183"/>
+			<lne id="711" begin="183" end="184"/>
+			<lne id="712" begin="180" end="185"/>
+			<lne id="713" begin="170" end="192"/>
+			<lne id="714" begin="193" end="193"/>
+			<lne id="715" begin="194" end="194"/>
+			<lne id="716" begin="194" end="195"/>
+			<lne id="717" begin="193" end="196"/>
+			<lne id="718" begin="193" end="197"/>
+			<lne id="719" begin="169" end="198"/>
+			<lne id="720" begin="199" end="199"/>
+			<lne id="721" begin="200" end="200"/>
+			<lne id="722" begin="199" end="201"/>
+			<lne id="723" begin="145" end="201"/>
+			<lne id="724" begin="138" end="201"/>
+			<lne id="725" begin="202" end="202"/>
+			<lne id="726" begin="202" end="203"/>
+			<lne id="727" begin="202" end="204"/>
+			<lne id="728" begin="207" end="207"/>
+			<lne id="729" begin="208" end="208"/>
+			<lne id="730" begin="209" end="209"/>
+			<lne id="731" begin="209" end="210"/>
+			<lne id="732" begin="208" end="211"/>
+			<lne id="733" begin="212" end="212"/>
+			<lne id="734" begin="213" end="213"/>
+			<lne id="735" begin="213" end="214"/>
+			<lne id="736" begin="212" end="215"/>
+			<lne id="737" begin="212" end="216"/>
+			<lne id="738" begin="212" end="217"/>
+			<lne id="739" begin="207" end="218"/>
+			<lne id="740" begin="202" end="218"/>
+			<lne id="741" begin="12" end="218"/>
+			<lne id="742" begin="220" end="220"/>
+			<lne id="743" begin="221" end="221"/>
+			<lne id="744" begin="222" end="222"/>
+			<lne id="745" begin="223" end="223"/>
+			<lne id="746" begin="224" end="224"/>
+			<lne id="747" begin="225" end="225"/>
+			<lne id="748" begin="220" end="226"/>
+			<lne id="749" begin="6" end="226"/>
+			<lne id="750" begin="228" end="228"/>
+			<lne id="751" begin="229" end="229"/>
+			<lne id="752" begin="230" end="230"/>
+			<lne id="753" begin="230" end="231"/>
+			<lne id="754" begin="230" end="232"/>
+			<lne id="755" begin="229" end="233"/>
+			<lne id="756" begin="228" end="234"/>
+			<lne id="757" begin="235" end="235"/>
+			<lne id="758" begin="236" end="238"/>
+			<lne id="759" begin="235" end="239"/>
+			<lne id="760" begin="241" end="241"/>
+			<lne id="761" begin="242" end="244"/>
+			<lne id="762" begin="241" end="245"/>
+			<lne id="763" begin="247" end="247"/>
+			<lne id="764" begin="248" end="250"/>
+			<lne id="765" begin="247" end="251"/>
+			<lne id="766" begin="253" end="253"/>
+			<lne id="767" begin="254" end="256"/>
+			<lne id="768" begin="253" end="257"/>
+			<lne id="769" begin="259" end="259"/>
+			<lne id="770" begin="260" end="262"/>
+			<lne id="771" begin="259" end="263"/>
+			<lne id="772" begin="265" end="265"/>
+			<lne id="773" begin="266" end="266"/>
+			<lne id="774" begin="267" end="267"/>
+			<lne id="775" begin="267" end="268"/>
+			<lne id="776" begin="266" end="269"/>
+			<lne id="777" begin="270" end="270"/>
+			<lne id="778" begin="270" end="271"/>
+			<lne id="779" begin="270" end="272"/>
+			<lne id="780" begin="265" end="273"/>
+			<lne id="781" begin="275" end="275"/>
+			<lne id="782" begin="276" end="276"/>
+			<lne id="783" begin="277" end="277"/>
+			<lne id="784" begin="278" end="278"/>
+			<lne id="785" begin="276" end="279"/>
+			<lne id="786" begin="280" end="280"/>
+			<lne id="787" begin="280" end="281"/>
+			<lne id="788" begin="280" end="282"/>
+			<lne id="789" begin="275" end="283"/>
+			<lne id="790" begin="259" end="283"/>
+			<lne id="791" begin="285" end="285"/>
+			<lne id="792" begin="285" end="286"/>
+			<lne id="793" begin="285" end="287"/>
+			<lne id="794" begin="285" end="288"/>
+			<lne id="795" begin="292" end="292"/>
+			<lne id="796" begin="292" end="293"/>
+			<lne id="797" begin="296" end="296"/>
+			<lne id="798" begin="297" end="299"/>
+			<lne id="799" begin="296" end="300"/>
+			<lne id="800" begin="289" end="305"/>
+			<lne id="801" begin="289" end="306"/>
+			<lne id="802" begin="289" end="307"/>
+			<lne id="803" begin="285" end="308"/>
+			<lne id="804" begin="310" end="310"/>
+			<lne id="805" begin="311" end="311"/>
+			<lne id="806" begin="312" end="312"/>
+			<lne id="807" begin="313" end="313"/>
+			<lne id="808" begin="311" end="314"/>
+			<lne id="809" begin="315" end="315"/>
+			<lne id="810" begin="315" end="316"/>
+			<lne id="811" begin="315" end="317"/>
+			<lne id="812" begin="310" end="318"/>
+			<lne id="813" begin="320" end="320"/>
+			<lne id="814" begin="327" end="327"/>
+			<lne id="815" begin="327" end="328"/>
+			<lne id="816" begin="331" end="331"/>
+			<lne id="817" begin="332" end="334"/>
+			<lne id="818" begin="331" end="335"/>
+			<lne id="819" begin="324" end="340"/>
+			<lne id="820" begin="343" end="343"/>
+			<lne id="821" begin="343" end="344"/>
+			<lne id="822" begin="345" end="345"/>
+			<lne id="823" begin="345" end="346"/>
+			<lne id="824" begin="347" end="347"/>
+			<lne id="825" begin="347" end="348"/>
+			<lne id="826" begin="345" end="349"/>
+			<lne id="827" begin="345" end="350"/>
+			<lne id="828" begin="345" end="351"/>
+			<lne id="829" begin="343" end="352"/>
+			<lne id="830" begin="321" end="359"/>
+			<lne id="831" begin="360" end="360"/>
+			<lne id="832" begin="360" end="361"/>
+			<lne id="833" begin="360" end="362"/>
+			<lne id="834" begin="320" end="363"/>
+			<lne id="835" begin="285" end="363"/>
+			<lne id="836" begin="253" end="363"/>
+			<lne id="837" begin="365" end="365"/>
+			<lne id="838" begin="366" end="366"/>
+			<lne id="839" begin="367" end="367"/>
+			<lne id="840" begin="368" end="368"/>
+			<lne id="841" begin="369" end="369"/>
+			<lne id="842" begin="369" end="370"/>
+			<lne id="843" begin="369" end="371"/>
+			<lne id="844" begin="366" end="372"/>
+			<lne id="845" begin="365" end="373"/>
+			<lne id="846" begin="247" end="373"/>
+			<lne id="847" begin="375" end="375"/>
+			<lne id="848" begin="376" end="376"/>
+			<lne id="849" begin="377" end="377"/>
+			<lne id="850" begin="375" end="378"/>
+			<lne id="851" begin="379" end="379"/>
+			<lne id="852" begin="380" end="380"/>
+			<lne id="853" begin="380" end="381"/>
+			<lne id="854" begin="382" end="382"/>
+			<lne id="855" begin="380" end="383"/>
+			<lne id="856" begin="384" end="384"/>
+			<lne id="857" begin="384" end="385"/>
+			<lne id="858" begin="384" end="386"/>
+			<lne id="859" begin="379" end="387"/>
+			<lne id="860" begin="241" end="387"/>
+			<lne id="861" begin="389" end="389"/>
+			<lne id="862" begin="390" end="390"/>
+			<lne id="863" begin="391" end="391"/>
+			<lne id="864" begin="392" end="392"/>
+			<lne id="865" begin="390" end="393"/>
+			<lne id="866" begin="394" end="394"/>
+			<lne id="867" begin="394" end="395"/>
+			<lne id="868" begin="394" end="396"/>
+			<lne id="869" begin="394" end="397"/>
+			<lne id="870" begin="389" end="398"/>
+			<lne id="871" begin="235" end="398"/>
+			<lne id="872" begin="0" end="398"/>
+			<lne id="873" begin="0" end="398"/>
 		</linenumbertable>
 		<localvariabletable>
-			<lve slot="5" name="920" begin="166" end="176"/>
-			<lve slot="5" name="920" begin="191" end="201"/>
-			<lve slot="5" name="921" begin="307" end="316"/>
-			<lve slot="5" name="921" begin="342" end="351"/>
-			<lve slot="5" name="922" begin="354" end="368"/>
-			<lve slot="0" name="17" begin="0" end="422"/>
-			<lve slot="1" name="217" begin="0" end="422"/>
-			<lve slot="2" name="553" begin="0" end="422"/>
-			<lve slot="3" name="554" begin="0" end="422"/>
-			<lve slot="4" name="555" begin="0" end="422"/>
+			<lve slot="5" name="874" begin="154" end="164"/>
+			<lve slot="5" name="874" begin="179" end="189"/>
+			<lve slot="5" name="875" begin="295" end="304"/>
+			<lve slot="5" name="875" begin="330" end="339"/>
+			<lve slot="5" name="876" begin="342" end="356"/>
+			<lve slot="0" name="17" begin="0" end="398"/>
+			<lve slot="1" name="217" begin="0" end="398"/>
+			<lve slot="2" name="523" begin="0" end="398"/>
+			<lve slot="3" name="524" begin="0" end="398"/>
+			<lve slot="4" name="525" begin="0" end="398"/>
 		</localvariabletable>
 	</operation>
-	<operation name="923">
+	<operation name="877">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -12766,31 +13219,31 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="924"/>
+			<if arg="878"/>
 			<load arg="42"/>
 			<push arg="51"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="925"/>
+			<if arg="879"/>
 			<load arg="42"/>
 			<push arg="60"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="926"/>
+			<if arg="880"/>
 			<load arg="42"/>
 			<push arg="54"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="927"/>
+			<if arg="529"/>
 			<load arg="42"/>
 			<push arg="57"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="572"/>
+			<if arg="881"/>
 			<load arg="43"/>
 <<<<<<< HEAD
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
@@ -12825,7 +13278,7 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="413"/>
+			<if arg="882"/>
 			<load arg="43"/>
 			<push arg="57"/>
 			<push arg="48"/>
@@ -12844,7 +13297,7 @@
 			<call arg="62"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="928"/>
+			<goto arg="536"/>
 			<load arg="43"/>
 <<<<<<< HEAD
 			<get arg="80"/>
@@ -12990,6 +13443,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<if arg="970"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
@@ -13007,14 +13461,17 @@
 =======
 			<if arg="570"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="541"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="43"/>
 			<get arg="77"/>
 			<push arg="78"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="929"/>
-			<goto arg="930"/>
+			<if arg="883"/>
+			<goto arg="884"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="43"/>
@@ -13056,7 +13513,7 @@
 			<call arg="62"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="928"/>
+			<goto arg="536"/>
 			<getasm/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<load arg="19"/>
@@ -13306,7 +13763,7 @@
 			<call arg="83"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="931"/>
+			<goto arg="885"/>
 			<getasm/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<load arg="19"/>
@@ -13323,21 +13780,21 @@
 			<load arg="19"/>
 			<load arg="43"/>
 			<get arg="38"/>
-			<call arg="932"/>
+			<call arg="886"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
 			<get arg="63"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="933"/>
+			<call arg="887"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
 			<get arg="71"/>
 			<call arg="72"/>
 			<call arg="73"/>
-			<if arg="934"/>
+			<if arg="533"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
@@ -13573,6 +14030,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<goto arg="975"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
@@ -13590,15 +14048,18 @@
 =======
 			<goto arg="935"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="557"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
-			<push arg="400"/>
-			<set arg="286"/>
+			<push arg="383"/>
+			<set arg="285"/>
 			<load arg="43"/>
 			<push arg="60"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="936"/>
+			<if arg="888"/>
 			<load arg="43"/>
 <<<<<<< HEAD
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
@@ -13736,8 +14197,12 @@
 			<new/>
 =======
 			<call arg="49"/>
+<<<<<<< HEAD
 			<if arg="937"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="889"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<get arg="566"/>
 			<get arg="68"/>
@@ -13751,8 +14216,8 @@
 =======
 			<call arg="62"/>
 			<get arg="63"/>
-			<set arg="286"/>
-			<goto arg="938"/>
+			<set arg="285"/>
+			<goto arg="553"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="43"/>
@@ -13784,6 +14249,7 @@
 			<enditerate/>
 			<call arg="66"/>
 			<call arg="67"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 			<set arg="69"/>
@@ -13826,6 +14292,10 @@
 			<set arg="609"/>
 			<goto arg="953"/>
 >>>>>>> be59b34... Removed almost all cases of tUCMmap.mergeNodes by simplifying logic; updated collectReferencedEnds and UCMmap2UCMmap to add nodes to tUCMmap which should capture many of the nodes that were previously lost. Updated README with new concerns
+=======
+			<set arg="285"/>
+			<goto arg="890"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<load arg="19"/>
 			<load arg="43"/>
@@ -14085,22 +14555,22 @@
 			<load arg="19"/>
 			<load arg="43"/>
 			<get arg="38"/>
-			<call arg="932"/>
+			<call arg="886"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
-			<get arg="286"/>
+			<get arg="285"/>
 			<call arg="72"/>
 			<call arg="53"/>
 			<call arg="73"/>
-			<if arg="940"/>
+			<if arg="891"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="583"/>
+			<call arg="555"/>
 			<call arg="45"/>
 			<get arg="63"/>
-			<set arg="286"/>
+			<set arg="285"/>
 			<getasm/>
 >>>>>>> 9ec4268... Reworked ConnectNodes to use tUCMmap.getNode(node); also fixed a minor in handleConnectNode
 			<getasm/>
@@ -14372,14 +14842,30 @@
 =======
 			<load arg="19"/>
 			<load arg="42"/>
-			<load arg="43"/>
 			<getasm/>
-			<get arg="286"/>
-			<call arg="415"/>
-			<set arg="416"/>
+			<get arg="285"/>
+			<call arg="398"/>
+			<set arg="399"/>
+			<load arg="43"/>
+			<push arg="57"/>
+			<push arg="48"/>
+			<findme/>
+			<call arg="49"/>
+			<if arg="892"/>
+			<goto arg="557"/>
+			<getasm/>
+			<get arg="82"/>
+			<load arg="43"/>
+			<get arg="77"/>
+			<call arg="83"/>
+			<call arg="72"/>
+			<call arg="53"/>
+			<if arg="893"/>
+			<goto arg="557"/>
 			<getasm/>
 			<getasm/>
 			<get arg="82"/>
+<<<<<<< HEAD
 			<load arg="42"/>
 <<<<<<< HEAD
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
@@ -14433,17 +14919,27 @@
 			<set arg="82"/>
 			<goto arg="941"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<load arg="43"/>
+			<get arg="77"/>
+			<call arg="83"/>
+			<getasm/>
+			<get arg="399"/>
+			<get arg="63"/>
+			<pcall arg="92"/>
+			<goto arg="894"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
-			<call arg="409"/>
+			<call arg="392"/>
 			<load arg="43"/>
 			<pusht/>
-			<pcall arg="942"/>
-			<goto arg="561"/>
+			<pcall arg="895"/>
+			<goto arg="896"/>
 			<getasm/>
 <<<<<<< HEAD
 			<get arg="707"/>
@@ -14469,8 +14965,8 @@
 			<call arg="66"/>
 			<load arg="43"/>
 			<pushf/>
-			<pcall arg="942"/>
-			<goto arg="943"/>
+			<pcall arg="895"/>
+			<goto arg="897"/>
 			<getasm/>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -14615,8 +15111,8 @@
 			<call arg="66"/>
 			<load arg="43"/>
 			<pushf/>
-			<pcall arg="942"/>
-			<goto arg="944"/>
+			<pcall arg="895"/>
+			<goto arg="898"/>
 			<getasm/>
 			<load arg="19"/>
 <<<<<<< HEAD
@@ -14656,218 +15152,231 @@
 			<call arg="66"/>
 			<load arg="43"/>
 			<pushf/>
-			<pcall arg="942"/>
+			<pcall arg="895"/>
 		</code>
 		<linenumbertable>
-			<lne id="945" begin="0" end="0"/>
-			<lne id="946" begin="1" end="3"/>
-			<lne id="947" begin="0" end="4"/>
-			<lne id="948" begin="6" end="6"/>
-			<lne id="949" begin="7" end="9"/>
-			<lne id="950" begin="6" end="10"/>
-			<lne id="951" begin="12" end="12"/>
-			<lne id="952" begin="13" end="15"/>
-			<lne id="953" begin="12" end="16"/>
-			<lne id="954" begin="18" end="18"/>
-			<lne id="955" begin="19" end="21"/>
-			<lne id="956" begin="18" end="22"/>
-			<lne id="957" begin="24" end="24"/>
-			<lne id="958" begin="25" end="27"/>
-			<lne id="959" begin="24" end="28"/>
-			<lne id="960" begin="30" end="30"/>
-			<lne id="961" begin="31" end="33"/>
-			<lne id="962" begin="30" end="34"/>
-			<lne id="963" begin="36" end="36"/>
-			<lne id="964" begin="37" end="39"/>
-			<lne id="965" begin="36" end="40"/>
-			<lne id="966" begin="42" end="42"/>
-			<lne id="967" begin="43" end="43"/>
-			<lne id="968" begin="44" end="44"/>
-			<lne id="969" begin="44" end="45"/>
-			<lne id="970" begin="43" end="46"/>
-			<lne id="971" begin="47" end="47"/>
-			<lne id="972" begin="48" end="48"/>
-			<lne id="973" begin="48" end="49"/>
-			<lne id="974" begin="47" end="50"/>
-			<lne id="975" begin="47" end="51"/>
-			<lne id="976" begin="42" end="52"/>
-			<lne id="977" begin="54" end="54"/>
-			<lne id="978" begin="54" end="55"/>
-			<lne id="979" begin="56" end="58"/>
-			<lne id="980" begin="54" end="59"/>
-			<lne id="981" begin="61" end="61"/>
-			<lne id="982" begin="61" end="62"/>
-			<lne id="983" begin="63" end="65"/>
-			<lne id="984" begin="61" end="66"/>
-			<lne id="985" begin="69" end="69"/>
-			<lne id="986" begin="70" end="70"/>
-			<lne id="987" begin="71" end="71"/>
-			<lne id="988" begin="71" end="72"/>
-			<lne id="989" begin="71" end="73"/>
-			<lne id="990" begin="70" end="74"/>
-			<lne id="991" begin="70" end="75"/>
-			<lne id="992" begin="76" end="76"/>
-			<lne id="993" begin="76" end="77"/>
-			<lne id="994" begin="69" end="78"/>
-			<lne id="995" begin="61" end="78"/>
-			<lne id="996" begin="79" end="79"/>
-			<lne id="997" begin="80" end="80"/>
-			<lne id="998" begin="81" end="81"/>
-			<lne id="999" begin="81" end="82"/>
-			<lne id="1000" begin="80" end="83"/>
-			<lne id="1001" begin="84" end="84"/>
-			<lne id="1002" begin="85" end="85"/>
-			<lne id="1003" begin="85" end="86"/>
-			<lne id="1004" begin="85" end="87"/>
-			<lne id="1005" begin="84" end="88"/>
-			<lne id="1006" begin="84" end="89"/>
-			<lne id="1007" begin="79" end="90"/>
-			<lne id="1008" begin="92" end="92"/>
-			<lne id="1009" begin="93" end="93"/>
-			<lne id="1010" begin="94" end="94"/>
-			<lne id="1011" begin="94" end="95"/>
-			<lne id="1012" begin="93" end="96"/>
-			<lne id="1013" begin="97" end="97"/>
-			<lne id="1014" begin="97" end="98"/>
-			<lne id="1015" begin="99" end="99"/>
-			<lne id="1016" begin="97" end="100"/>
-			<lne id="1017" begin="97" end="101"/>
-			<lne id="1018" begin="92" end="102"/>
-			<lne id="1019" begin="54" end="102"/>
-			<lne id="1020" begin="36" end="102"/>
-			<lne id="1021" begin="104" end="104"/>
-			<lne id="1022" begin="105" end="105"/>
-			<lne id="1023" begin="106" end="106"/>
-			<lne id="1024" begin="106" end="107"/>
-			<lne id="1025" begin="105" end="108"/>
-			<lne id="1026" begin="115" end="115"/>
-			<lne id="1027" begin="116" end="116"/>
-			<lne id="1028" begin="116" end="117"/>
-			<lne id="1029" begin="115" end="118"/>
-			<lne id="1030" begin="121" end="121"/>
-			<lne id="1031" begin="121" end="122"/>
-			<lne id="1032" begin="112" end="124"/>
-			<lne id="1033" begin="112" end="125"/>
-			<lne id="1034" begin="128" end="128"/>
-			<lne id="1035" begin="128" end="129"/>
-			<lne id="1036" begin="128" end="130"/>
-			<lne id="1037" begin="109" end="135"/>
-			<lne id="1038" begin="104" end="136"/>
-			<lne id="1039" begin="30" end="136"/>
-			<lne id="1040" begin="138" end="138"/>
-			<lne id="1041" begin="139" end="139"/>
-			<lne id="1042" begin="138" end="140"/>
-			<lne id="1043" begin="141" end="141"/>
-			<lne id="1044" begin="142" end="144"/>
-			<lne id="1045" begin="141" end="145"/>
-			<lne id="1046" begin="147" end="147"/>
-			<lne id="1047" begin="148" end="150"/>
-			<lne id="1048" begin="147" end="151"/>
-			<lne id="1049" begin="153" end="153"/>
-			<lne id="1050" begin="154" end="154"/>
-			<lne id="1051" begin="155" end="155"/>
-			<lne id="1052" begin="155" end="156"/>
-			<lne id="1053" begin="154" end="157"/>
-			<lne id="1054" begin="154" end="158"/>
-			<lne id="1055" begin="153" end="159"/>
-			<lne id="1056" begin="161" end="161"/>
-			<lne id="1057" begin="162" end="162"/>
-			<lne id="1058" begin="163" end="163"/>
-			<lne id="1059" begin="163" end="164"/>
-			<lne id="1060" begin="163" end="165"/>
-			<lne id="1061" begin="162" end="166"/>
-			<lne id="1062" begin="162" end="167"/>
-			<lne id="1063" begin="161" end="168"/>
-			<lne id="1064" begin="147" end="168"/>
-			<lne id="1065" begin="170" end="170"/>
-			<lne id="1066" begin="174" end="174"/>
-			<lne id="1067" begin="175" end="175"/>
-			<lne id="1068" begin="175" end="176"/>
-			<lne id="1069" begin="174" end="177"/>
-			<lne id="1070" begin="180" end="180"/>
-			<lne id="1071" begin="180" end="181"/>
-			<lne id="1072" begin="180" end="182"/>
-			<lne id="1073" begin="180" end="183"/>
-			<lne id="1074" begin="171" end="190"/>
-			<lne id="1075" begin="171" end="191"/>
-			<lne id="1076" begin="170" end="192"/>
-			<lne id="1077" begin="141" end="192"/>
-			<lne id="1078" begin="193" end="193"/>
-			<lne id="1079" begin="194" end="194"/>
-			<lne id="1080" begin="195" end="195"/>
-			<lne id="1081" begin="196" end="196"/>
-			<lne id="1082" begin="197" end="197"/>
-			<lne id="1083" begin="198" end="198"/>
-			<lne id="1084" begin="198" end="199"/>
-			<lne id="1085" begin="194" end="200"/>
-			<lne id="1086" begin="193" end="201"/>
-			<lne id="1087" begin="202" end="202"/>
-			<lne id="1088" begin="203" end="203"/>
-			<lne id="1089" begin="203" end="204"/>
-			<lne id="1090" begin="205" end="205"/>
-			<lne id="1091" begin="206" end="206"/>
-			<lne id="1092" begin="206" end="207"/>
-			<lne id="1093" begin="203" end="208"/>
-			<lne id="1094" begin="202" end="209"/>
-			<lne id="1095" begin="24" end="209"/>
-			<lne id="1096" begin="211" end="211"/>
-			<lne id="1097" begin="212" end="212"/>
-			<lne id="1098" begin="213" end="213"/>
-			<lne id="1099" begin="214" end="214"/>
-			<lne id="1100" begin="215" end="215"/>
-			<lne id="1101" begin="216" end="216"/>
-			<lne id="1102" begin="214" end="217"/>
-			<lne id="1103" begin="218" end="218"/>
-			<lne id="1104" begin="219" end="219"/>
-			<lne id="1105" begin="211" end="220"/>
-			<lne id="1106" begin="18" end="220"/>
-			<lne id="1107" begin="222" end="222"/>
-			<lne id="1108" begin="223" end="223"/>
-			<lne id="1109" begin="224" end="224"/>
-			<lne id="1110" begin="225" end="225"/>
-			<lne id="1111" begin="226" end="226"/>
-			<lne id="1112" begin="227" end="227"/>
-			<lne id="1113" begin="225" end="228"/>
-			<lne id="1114" begin="229" end="229"/>
-			<lne id="1115" begin="230" end="230"/>
-			<lne id="1116" begin="222" end="231"/>
-			<lne id="1117" begin="12" end="231"/>
-			<lne id="1118" begin="233" end="233"/>
-			<lne id="1119" begin="234" end="234"/>
-			<lne id="1120" begin="235" end="235"/>
-			<lne id="1121" begin="236" end="236"/>
-			<lne id="1122" begin="237" end="237"/>
-			<lne id="1123" begin="238" end="238"/>
-			<lne id="1124" begin="236" end="239"/>
-			<lne id="1125" begin="240" end="240"/>
-			<lne id="1126" begin="241" end="241"/>
-			<lne id="1127" begin="233" end="242"/>
-			<lne id="1128" begin="6" end="242"/>
-			<lne id="1129" begin="244" end="244"/>
-			<lne id="1130" begin="245" end="245"/>
-			<lne id="1131" begin="246" end="246"/>
-			<lne id="1132" begin="247" end="247"/>
-			<lne id="1133" begin="248" end="248"/>
-			<lne id="1134" begin="249" end="249"/>
-			<lne id="1135" begin="247" end="250"/>
-			<lne id="1136" begin="251" end="251"/>
-			<lne id="1137" begin="252" end="252"/>
-			<lne id="1138" begin="244" end="253"/>
-			<lne id="1139" begin="0" end="253"/>
-			<lne id="1140" begin="0" end="253"/>
+			<lne id="899" begin="0" end="0"/>
+			<lne id="900" begin="1" end="3"/>
+			<lne id="901" begin="0" end="4"/>
+			<lne id="902" begin="6" end="6"/>
+			<lne id="903" begin="7" end="9"/>
+			<lne id="904" begin="6" end="10"/>
+			<lne id="905" begin="12" end="12"/>
+			<lne id="906" begin="13" end="15"/>
+			<lne id="907" begin="12" end="16"/>
+			<lne id="908" begin="18" end="18"/>
+			<lne id="909" begin="19" end="21"/>
+			<lne id="910" begin="18" end="22"/>
+			<lne id="911" begin="24" end="24"/>
+			<lne id="912" begin="25" end="27"/>
+			<lne id="913" begin="24" end="28"/>
+			<lne id="914" begin="30" end="30"/>
+			<lne id="915" begin="31" end="33"/>
+			<lne id="916" begin="30" end="34"/>
+			<lne id="917" begin="36" end="36"/>
+			<lne id="918" begin="37" end="39"/>
+			<lne id="919" begin="36" end="40"/>
+			<lne id="920" begin="42" end="42"/>
+			<lne id="921" begin="43" end="43"/>
+			<lne id="922" begin="44" end="44"/>
+			<lne id="923" begin="44" end="45"/>
+			<lne id="924" begin="43" end="46"/>
+			<lne id="925" begin="47" end="47"/>
+			<lne id="926" begin="48" end="48"/>
+			<lne id="927" begin="48" end="49"/>
+			<lne id="928" begin="47" end="50"/>
+			<lne id="929" begin="47" end="51"/>
+			<lne id="930" begin="42" end="52"/>
+			<lne id="931" begin="54" end="54"/>
+			<lne id="932" begin="54" end="55"/>
+			<lne id="933" begin="56" end="58"/>
+			<lne id="934" begin="54" end="59"/>
+			<lne id="935" begin="61" end="61"/>
+			<lne id="936" begin="61" end="62"/>
+			<lne id="937" begin="63" end="65"/>
+			<lne id="938" begin="61" end="66"/>
+			<lne id="939" begin="69" end="69"/>
+			<lne id="940" begin="70" end="70"/>
+			<lne id="941" begin="71" end="71"/>
+			<lne id="942" begin="71" end="72"/>
+			<lne id="943" begin="71" end="73"/>
+			<lne id="944" begin="70" end="74"/>
+			<lne id="945" begin="70" end="75"/>
+			<lne id="946" begin="76" end="76"/>
+			<lne id="947" begin="76" end="77"/>
+			<lne id="948" begin="69" end="78"/>
+			<lne id="949" begin="61" end="78"/>
+			<lne id="950" begin="79" end="79"/>
+			<lne id="951" begin="80" end="80"/>
+			<lne id="952" begin="81" end="81"/>
+			<lne id="953" begin="81" end="82"/>
+			<lne id="954" begin="80" end="83"/>
+			<lne id="955" begin="84" end="84"/>
+			<lne id="956" begin="85" end="85"/>
+			<lne id="957" begin="85" end="86"/>
+			<lne id="958" begin="85" end="87"/>
+			<lne id="959" begin="84" end="88"/>
+			<lne id="960" begin="84" end="89"/>
+			<lne id="961" begin="79" end="90"/>
+			<lne id="962" begin="92" end="92"/>
+			<lne id="963" begin="93" end="93"/>
+			<lne id="964" begin="94" end="94"/>
+			<lne id="965" begin="94" end="95"/>
+			<lne id="966" begin="93" end="96"/>
+			<lne id="967" begin="97" end="97"/>
+			<lne id="968" begin="97" end="98"/>
+			<lne id="969" begin="99" end="99"/>
+			<lne id="970" begin="97" end="100"/>
+			<lne id="971" begin="97" end="101"/>
+			<lne id="972" begin="92" end="102"/>
+			<lne id="973" begin="54" end="102"/>
+			<lne id="974" begin="36" end="102"/>
+			<lne id="975" begin="104" end="104"/>
+			<lne id="976" begin="105" end="105"/>
+			<lne id="977" begin="106" end="106"/>
+			<lne id="978" begin="106" end="107"/>
+			<lne id="979" begin="105" end="108"/>
+			<lne id="980" begin="115" end="115"/>
+			<lne id="981" begin="116" end="116"/>
+			<lne id="982" begin="116" end="117"/>
+			<lne id="983" begin="115" end="118"/>
+			<lne id="984" begin="121" end="121"/>
+			<lne id="985" begin="121" end="122"/>
+			<lne id="986" begin="112" end="124"/>
+			<lne id="987" begin="112" end="125"/>
+			<lne id="988" begin="128" end="128"/>
+			<lne id="989" begin="128" end="129"/>
+			<lne id="990" begin="128" end="130"/>
+			<lne id="991" begin="109" end="135"/>
+			<lne id="992" begin="104" end="136"/>
+			<lne id="993" begin="30" end="136"/>
+			<lne id="994" begin="138" end="138"/>
+			<lne id="995" begin="139" end="139"/>
+			<lne id="996" begin="138" end="140"/>
+			<lne id="997" begin="141" end="141"/>
+			<lne id="998" begin="142" end="144"/>
+			<lne id="999" begin="141" end="145"/>
+			<lne id="1000" begin="147" end="147"/>
+			<lne id="1001" begin="148" end="150"/>
+			<lne id="1002" begin="147" end="151"/>
+			<lne id="1003" begin="153" end="153"/>
+			<lne id="1004" begin="154" end="154"/>
+			<lne id="1005" begin="155" end="155"/>
+			<lne id="1006" begin="155" end="156"/>
+			<lne id="1007" begin="154" end="157"/>
+			<lne id="1008" begin="154" end="158"/>
+			<lne id="1009" begin="153" end="159"/>
+			<lne id="1010" begin="161" end="161"/>
+			<lne id="1011" begin="162" end="162"/>
+			<lne id="1012" begin="163" end="163"/>
+			<lne id="1013" begin="163" end="164"/>
+			<lne id="1014" begin="163" end="165"/>
+			<lne id="1015" begin="162" end="166"/>
+			<lne id="1016" begin="162" end="167"/>
+			<lne id="1017" begin="161" end="168"/>
+			<lne id="1018" begin="147" end="168"/>
+			<lne id="1019" begin="170" end="170"/>
+			<lne id="1020" begin="174" end="174"/>
+			<lne id="1021" begin="175" end="175"/>
+			<lne id="1022" begin="175" end="176"/>
+			<lne id="1023" begin="174" end="177"/>
+			<lne id="1024" begin="180" end="180"/>
+			<lne id="1025" begin="180" end="181"/>
+			<lne id="1026" begin="180" end="182"/>
+			<lne id="1027" begin="180" end="183"/>
+			<lne id="1028" begin="171" end="190"/>
+			<lne id="1029" begin="171" end="191"/>
+			<lne id="1030" begin="170" end="192"/>
+			<lne id="1031" begin="141" end="192"/>
+			<lne id="1032" begin="193" end="193"/>
+			<lne id="1033" begin="194" end="194"/>
+			<lne id="1034" begin="195" end="195"/>
+			<lne id="1035" begin="196" end="196"/>
+			<lne id="1036" begin="197" end="197"/>
+			<lne id="1037" begin="197" end="198"/>
+			<lne id="1038" begin="194" end="199"/>
+			<lne id="1039" begin="193" end="200"/>
+			<lne id="1040" begin="201" end="201"/>
+			<lne id="1041" begin="202" end="204"/>
+			<lne id="1042" begin="201" end="205"/>
+			<lne id="1043" begin="208" end="208"/>
+			<lne id="1044" begin="208" end="209"/>
+			<lne id="1045" begin="210" end="210"/>
+			<lne id="1046" begin="210" end="211"/>
+			<lne id="1047" begin="208" end="212"/>
+			<lne id="1048" begin="208" end="213"/>
+			<lne id="1049" begin="208" end="214"/>
+			<lne id="1050" begin="217" end="217"/>
+			<lne id="1051" begin="218" end="218"/>
+			<lne id="1052" begin="218" end="219"/>
+			<lne id="1053" begin="220" end="220"/>
+			<lne id="1054" begin="220" end="221"/>
+			<lne id="1055" begin="218" end="222"/>
+			<lne id="1056" begin="223" end="223"/>
+			<lne id="1057" begin="223" end="224"/>
+			<lne id="1058" begin="223" end="225"/>
+			<lne id="1059" begin="217" end="226"/>
+			<lne id="1060" begin="208" end="226"/>
+			<lne id="1061" begin="201" end="226"/>
+			<lne id="1062" begin="24" end="226"/>
+			<lne id="1063" begin="228" end="228"/>
+			<lne id="1064" begin="229" end="229"/>
+			<lne id="1065" begin="230" end="230"/>
+			<lne id="1066" begin="231" end="231"/>
+			<lne id="1067" begin="232" end="232"/>
+			<lne id="1068" begin="233" end="233"/>
+			<lne id="1069" begin="231" end="234"/>
+			<lne id="1070" begin="235" end="235"/>
+			<lne id="1071" begin="236" end="236"/>
+			<lne id="1072" begin="228" end="237"/>
+			<lne id="1073" begin="18" end="237"/>
+			<lne id="1074" begin="239" end="239"/>
+			<lne id="1075" begin="240" end="240"/>
+			<lne id="1076" begin="241" end="241"/>
+			<lne id="1077" begin="242" end="242"/>
+			<lne id="1078" begin="243" end="243"/>
+			<lne id="1079" begin="244" end="244"/>
+			<lne id="1080" begin="242" end="245"/>
+			<lne id="1081" begin="246" end="246"/>
+			<lne id="1082" begin="247" end="247"/>
+			<lne id="1083" begin="239" end="248"/>
+			<lne id="1084" begin="12" end="248"/>
+			<lne id="1085" begin="250" end="250"/>
+			<lne id="1086" begin="251" end="251"/>
+			<lne id="1087" begin="252" end="252"/>
+			<lne id="1088" begin="253" end="253"/>
+			<lne id="1089" begin="254" end="254"/>
+			<lne id="1090" begin="255" end="255"/>
+			<lne id="1091" begin="253" end="256"/>
+			<lne id="1092" begin="257" end="257"/>
+			<lne id="1093" begin="258" end="258"/>
+			<lne id="1094" begin="250" end="259"/>
+			<lne id="1095" begin="6" end="259"/>
+			<lne id="1096" begin="261" end="261"/>
+			<lne id="1097" begin="262" end="262"/>
+			<lne id="1098" begin="263" end="263"/>
+			<lne id="1099" begin="264" end="264"/>
+			<lne id="1100" begin="265" end="265"/>
+			<lne id="1101" begin="266" end="266"/>
+			<lne id="1102" begin="264" end="267"/>
+			<lne id="1103" begin="268" end="268"/>
+			<lne id="1104" begin="269" end="269"/>
+			<lne id="1105" begin="261" end="270"/>
+			<lne id="1106" begin="0" end="270"/>
+			<lne id="1107" begin="0" end="270"/>
 		</linenumbertable>
 		<localvariabletable>
 			<lve slot="5" name="215" begin="120" end="123"/>
 			<lve slot="5" name="215" begin="127" end="134"/>
 			<lve slot="5" name="215" begin="179" end="187"/>
-			<lve slot="0" name="17" begin="0" end="253"/>
-			<lve slot="1" name="217" begin="0" end="253"/>
-			<lve slot="2" name="218" begin="0" end="253"/>
-			<lve slot="3" name="219" begin="0" end="253"/>
-			<lve slot="4" name="220" begin="0" end="253"/>
+			<lve slot="0" name="17" begin="0" end="270"/>
+			<lve slot="1" name="217" begin="0" end="270"/>
+			<lve slot="2" name="218" begin="0" end="270"/>
+			<lve slot="3" name="219" begin="0" end="270"/>
+			<lve slot="4" name="220" begin="0" end="270"/>
 		</localvariabletable>
 	</operation>
-	<operation name="1141">
+	<operation name="1108">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -14962,60 +15471,61 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1142"/>
+			<if arg="1109"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<push arg="1144"/>
+			<get arg="1110"/>
+			<push arg="1111"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1145"/>
+			<if arg="1112"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<push arg="560"/>
+			<get arg="1110"/>
+			<push arg="530"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1146"/>
+			<if arg="1113"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<push arg="563"/>
+			<get arg="1110"/>
+			<push arg="534"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
 			<if arg="68"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<push arg="1147"/>
+			<get arg="1110"/>
+			<push arg="1114"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1148"/>
-			<goto arg="1149"/>
+			<if arg="1115"/>
+			<goto arg="1116"/>
 			<load arg="42"/>
 			<push arg="54"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="568"/>
+			<if arg="539"/>
 			<load arg="42"/>
-			<push arg="1147"/>
+			<push arg="1114"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1150"/>
+			<if arg="1117"/>
 			<getasm/>
 			<getasm/>
-			<get arg="564"/>
+			<get arg="535"/>
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<pusht/>
-			<call arg="1151"/>
+			<call arg="1118"/>
 			<pcall arg="92"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -15070,21 +15580,27 @@
 			<getasm/>
 			<get arg="564"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="1119"/>
+			<getasm/>
+			<getasm/>
+			<get arg="535"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<getasm/>
-			<get arg="564"/>
+			<get arg="535"/>
 			<load arg="42"/>
 			<call arg="83"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="1149"/>
+			<goto arg="1116"/>
 			<getasm/>
 			<getasm/>
-			<get arg="564"/>
+			<get arg="535"/>
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<getasm/>
 			<get arg="87"/>
@@ -15092,6 +15608,7 @@
 			<call arg="83"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -15119,11 +15636,15 @@
 =======
 			<goto arg="1153"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="1120"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 <<<<<<< HEAD
 			<get arg="472"/>
 >>>>>>> ff13d30... Returned some code to the file. Note that the current version breaks on compilation in all cases except for resource.turn. My next task will be verifying the code to make it work correctly
 			<getasm/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 			<get arg="400"/>
@@ -15133,28 +15654,32 @@
 =======
 			<get arg="396"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<get arg="379"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<pusht/>
-			<call arg="1151"/>
+			<call arg="1118"/>
 			<pcall arg="92"/>
-			<goto arg="1154"/>
+			<goto arg="389"/>
 			<getasm/>
 			<getasm/>
-			<get arg="394"/>
+			<get arg="377"/>
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<pusht/>
-			<call arg="1151"/>
+			<call arg="1118"/>
 			<pcall arg="92"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -15208,8 +15733,11 @@
 			<new/>
 =======
 			<goto arg="1155"/>
+=======
+			<goto arg="1121"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
-			<push arg="400"/>
+			<push arg="383"/>
 			<set arg="216"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
 			<load arg="42"/>
@@ -15225,13 +15753,14 @@
 			<findme/>
 			<call arg="49"/>
 			<call arg="53"/>
-			<if arg="1156"/>
+			<if arg="1122"/>
 			<load arg="42"/>
 			<get arg="77"/>
 			<push arg="54"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -15246,13 +15775,16 @@
 			<load arg="42"/>
 =======
 			<if arg="421"/>
+=======
+			<if arg="1123"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="42"/>
 			<get arg="77"/>
 			<push arg="78"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="931"/>
+			<if arg="885"/>
 			<goto arg="88"/>
 			<getasm/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
@@ -15309,7 +15841,7 @@
 			<call arg="62"/>
 			<call arg="67"/>
 			<set arg="216"/>
-			<goto arg="1157"/>
+			<goto arg="1124"/>
 			<getasm/>
 			<getasm/>
 			<get arg="82"/>
@@ -15327,6 +15859,7 @@
 >>>>>>> 0cc6999... Changes to connectAndForkNodes, connectOrForkNodes, connectOrForkEndPoints to have 'using' blocks; some spacing changes to improve syntax consistency; changes to both classes to remove all instances of thisModule.counter
 =======
 			<set arg="216"/>
+<<<<<<< HEAD
 			<goto arg="1158"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
 			<load arg="42"/>
@@ -25706,12 +26239,21 @@
 			<call arg="49"/>
 			<if arg="1159"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="1125"/>
+			<load arg="42"/>
+			<push arg="47"/>
+			<push arg="48"/>
+			<findme/>
+			<call arg="49"/>
+			<if arg="1126"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="42"/>
 			<push arg="51"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1160"/>
+			<if arg="1127"/>
 			<load arg="42"/>
 >>>>>>> 0cc6999... Changes to connectAndForkNodes, connectOrForkNodes, connectOrForkEndPoints to have 'using' blocks; some spacing changes to improve syntax consistency; changes to both classes to remove all instances of thisModule.counter
 			<push arg="54"/>
@@ -25784,6 +26326,7 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -26500,6 +27043,9 @@
 			<get arg="732"/>
 =======
 			<goto arg="788"/>
+=======
+			<if arg="1128"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<get arg="458"/>
 			<load arg="19"/>
@@ -26638,6 +27184,7 @@
 			<call arg="67"/>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<get arg="68"/>
 			<set arg="69"/>
 <<<<<<< HEAD
@@ -26668,6 +27215,10 @@
 =======
 			<goto arg="693"/>
 >>>>>>> 4199fe2... Modified some logic in paces where variables were being overwrote just after beind defined; started introducing consistency in the order of how items are retrieved by their name
+=======
+			<set arg="216"/>
+			<goto arg="1129"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<get arg="415"/>
 			<get arg="82"/>
@@ -26689,6 +27240,7 @@
 >>>>>>> 0cc6999... Changes to connectAndForkNodes, connectOrForkNodes, connectOrForkEndPoints to have 'using' blocks; some spacing changes to improve syntax consistency; changes to both classes to remove all instances of thisModule.counter
 =======
 			<set arg="216"/>
+<<<<<<< HEAD
 			<goto arg="1163"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
 			<getasm/>
@@ -26718,6 +27270,9 @@
 			<if arg="697"/>
 			<goto arg="693"/>
 >>>>>>> 4199fe2... Modified some logic in paces where variables were being overwrote just after beind defined; started introducing consistency in the order of how items are retrieved by their name
+=======
+			<goto arg="1130"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<get arg="529"/>
 			<load arg="19"/>
@@ -26778,9 +27333,9 @@
 			<call arg="66"/>
 			<call arg="67"/>
 			<set arg="216"/>
-			<goto arg="1158"/>
+			<goto arg="1125"/>
 			<load arg="42"/>
-			<get arg="416"/>
+			<get arg="399"/>
 			<call arg="72"/>
 			<call arg="53"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
@@ -26788,23 +27343,23 @@
 			<push arg="8"/>
 			<new/>
 			<load arg="19"/>
-			<get arg="595"/>
+			<get arg="567"/>
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
 			<push arg="276"/>
-			<push arg="279"/>
+			<push arg="278"/>
 			<findme/>
 			<call arg="49"/>
 			<call arg="73"/>
-			<if arg="1164"/>
+			<if arg="1131"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="580"/>
+			<call arg="552"/>
 			<call arg="53"/>
 			<call arg="55"/>
-			<if arg="1165"/>
+			<if arg="894"/>
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
@@ -26881,8 +27436,12 @@
 >>>>>>> 0cc6999... Changes to connectAndForkNodes, connectOrForkNodes, connectOrForkEndPoints to have 'using' blocks; some spacing changes to improve syntax consistency; changes to both classes to remove all instances of thisModule.counter
 =======
 			<set arg="216"/>
+<<<<<<< HEAD
 			<goto arg="1158"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="1125"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<push arg="28"/>
@@ -26974,6 +27533,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<get arg="668"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 =======
@@ -26993,15 +27553,18 @@
 =======
 			<get arg="595"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<get arg="567"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<iterate/>
 			<store arg="44"/>
 			<load arg="44"/>
 			<push arg="276"/>
-			<push arg="279"/>
+			<push arg="278"/>
 			<findme/>
 			<call arg="49"/>
 			<call arg="73"/>
-			<if arg="1166"/>
+			<if arg="1132"/>
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
@@ -27012,12 +27575,13 @@
 			<getasm/>
 			<get arg="82"/>
 			<load arg="42"/>
-			<get arg="416"/>
+			<get arg="399"/>
 			<call arg="83"/>
-			<get arg="286"/>
-			<call arg="414"/>
-			<call arg="599"/>
+			<get arg="285"/>
+			<call arg="397"/>
+			<call arg="571"/>
 			<call arg="73"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -27162,18 +27726,21 @@
 =======
 			<if arg="1167"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="564"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="44"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="583"/>
+			<call arg="555"/>
 			<call arg="45"/>
 			<call arg="67"/>
 			<set arg="216"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<get arg="1168"/>
+			<get arg="1110"/>
+			<get arg="1133"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<getasm/>
@@ -27223,18 +27790,22 @@
 =======
 			<get arg="216"/>
 			<pcall arg="92"/>
+<<<<<<< HEAD
 			<goto arg="1169"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="1134"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<getasm/>
 			<load arg="42"/>
 			<push arg="65"/>
 			<call arg="66"/>
 			<call arg="67"/>
-			<set arg="555"/>
+			<set arg="525"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<push arg="1144"/>
+			<get arg="1110"/>
+			<push arg="1111"/>
 			<push arg="48"/>
 			<findme/>
 <<<<<<< HEAD
@@ -27343,37 +27914,37 @@
 			<findme/>
 			<call arg="49"/>
 			<call arg="55"/>
-			<if arg="1170"/>
+			<if arg="1135"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<push arg="1147"/>
+			<get arg="1110"/>
+			<push arg="1114"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1171"/>
+			<if arg="1136"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<getasm/>
-			<get arg="555"/>
-			<pcall arg="1172"/>
-			<goto arg="1173"/>
+			<get arg="525"/>
+			<pcall arg="1137"/>
+			<goto arg="1138"/>
 			<getasm/>
 			<getasm/>
-			<get arg="564"/>
+			<get arg="535"/>
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<getasm/>
-			<get arg="555"/>
+			<get arg="525"/>
 			<pcall arg="92"/>
-			<goto arg="1169"/>
+			<goto arg="1134"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1143"/>
-			<get arg="1168"/>
+			<get arg="1110"/>
+			<get arg="1133"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<load arg="19"/>
@@ -27385,289 +27956,289 @@
 			<pcall arg="92"/>
 		</code>
 		<linenumbertable>
-			<lne id="1174" begin="0" end="0"/>
-			<lne id="1175" begin="1" end="3"/>
-			<lne id="1176" begin="0" end="4"/>
-			<lne id="1177" begin="6" end="6"/>
-			<lne id="1178" begin="6" end="7"/>
-			<lne id="1179" begin="8" end="10"/>
-			<lne id="1180" begin="6" end="11"/>
-			<lne id="1181" begin="13" end="13"/>
-			<lne id="1182" begin="13" end="14"/>
-			<lne id="1183" begin="15" end="17"/>
-			<lne id="1184" begin="13" end="18"/>
-			<lne id="1185" begin="20" end="20"/>
-			<lne id="1186" begin="20" end="21"/>
-			<lne id="1187" begin="22" end="24"/>
-			<lne id="1188" begin="20" end="25"/>
-			<lne id="1189" begin="27" end="27"/>
-			<lne id="1190" begin="27" end="28"/>
-			<lne id="1191" begin="29" end="31"/>
-			<lne id="1192" begin="27" end="32"/>
-			<lne id="1193" begin="35" end="35"/>
-			<lne id="1194" begin="36" end="38"/>
-			<lne id="1195" begin="35" end="39"/>
-			<lne id="1196" begin="41" end="41"/>
-			<lne id="1197" begin="42" end="44"/>
-			<lne id="1198" begin="41" end="45"/>
-			<lne id="1199" begin="47" end="47"/>
-			<lne id="1200" begin="48" end="48"/>
-			<lne id="1201" begin="48" end="49"/>
-			<lne id="1202" begin="50" end="50"/>
-			<lne id="1203" begin="50" end="51"/>
-			<lne id="1204" begin="48" end="52"/>
-			<lne id="1205" begin="53" end="53"/>
-			<lne id="1206" begin="54" end="54"/>
-			<lne id="1207" begin="55" end="55"/>
-			<lne id="1208" begin="56" end="56"/>
-			<lne id="1209" begin="53" end="57"/>
-			<lne id="1210" begin="47" end="58"/>
-			<lne id="1211" begin="60" end="60"/>
-			<lne id="1212" begin="61" end="61"/>
-			<lne id="1213" begin="61" end="62"/>
-			<lne id="1214" begin="63" end="63"/>
-			<lne id="1215" begin="63" end="64"/>
-			<lne id="1216" begin="61" end="65"/>
-			<lne id="1217" begin="66" end="66"/>
-			<lne id="1218" begin="66" end="67"/>
-			<lne id="1219" begin="68" end="68"/>
-			<lne id="1220" begin="66" end="69"/>
-			<lne id="1221" begin="66" end="70"/>
-			<lne id="1222" begin="60" end="71"/>
-			<lne id="1223" begin="41" end="71"/>
-			<lne id="1224" begin="73" end="73"/>
-			<lne id="1225" begin="74" end="74"/>
-			<lne id="1226" begin="74" end="75"/>
-			<lne id="1227" begin="76" end="76"/>
-			<lne id="1228" begin="76" end="77"/>
-			<lne id="1229" begin="74" end="78"/>
-			<lne id="1230" begin="79" end="79"/>
-			<lne id="1231" begin="79" end="80"/>
-			<lne id="1232" begin="81" end="81"/>
-			<lne id="1233" begin="79" end="82"/>
-			<lne id="1234" begin="79" end="83"/>
-			<lne id="1235" begin="73" end="84"/>
-			<lne id="1236" begin="35" end="84"/>
-			<lne id="1237" begin="27" end="84"/>
-			<lne id="1238" begin="86" end="86"/>
-			<lne id="1239" begin="87" end="87"/>
-			<lne id="1240" begin="87" end="88"/>
-			<lne id="1241" begin="89" end="89"/>
-			<lne id="1242" begin="89" end="90"/>
-			<lne id="1243" begin="87" end="91"/>
-			<lne id="1244" begin="92" end="92"/>
-			<lne id="1245" begin="93" end="93"/>
-			<lne id="1246" begin="94" end="94"/>
-			<lne id="1247" begin="95" end="95"/>
-			<lne id="1248" begin="92" end="96"/>
-			<lne id="1249" begin="86" end="97"/>
-			<lne id="1250" begin="20" end="97"/>
-			<lne id="1251" begin="99" end="99"/>
-			<lne id="1252" begin="100" end="100"/>
-			<lne id="1253" begin="100" end="101"/>
-			<lne id="1254" begin="102" end="102"/>
-			<lne id="1255" begin="102" end="103"/>
-			<lne id="1256" begin="100" end="104"/>
-			<lne id="1257" begin="105" end="105"/>
-			<lne id="1258" begin="106" end="106"/>
-			<lne id="1259" begin="107" end="107"/>
-			<lne id="1260" begin="108" end="108"/>
-			<lne id="1261" begin="105" end="109"/>
-			<lne id="1262" begin="99" end="110"/>
-			<lne id="1263" begin="13" end="110"/>
-			<lne id="1264" begin="112" end="112"/>
-			<lne id="1265" begin="113" end="113"/>
-			<lne id="1266" begin="112" end="114"/>
-			<lne id="1267" begin="115" end="115"/>
-			<lne id="1268" begin="116" end="118"/>
-			<lne id="1269" begin="115" end="119"/>
-			<lne id="1270" begin="115" end="120"/>
-			<lne id="1271" begin="122" end="122"/>
-			<lne id="1272" begin="122" end="123"/>
-			<lne id="1273" begin="124" end="126"/>
-			<lne id="1274" begin="122" end="127"/>
-			<lne id="1275" begin="129" end="129"/>
-			<lne id="1276" begin="129" end="130"/>
-			<lne id="1277" begin="131" end="133"/>
-			<lne id="1278" begin="129" end="134"/>
-			<lne id="1279" begin="137" end="137"/>
-			<lne id="1280" begin="138" end="138"/>
-			<lne id="1281" begin="139" end="139"/>
-			<lne id="1282" begin="139" end="140"/>
-			<lne id="1283" begin="139" end="141"/>
-			<lne id="1284" begin="138" end="142"/>
-			<lne id="1285" begin="143" end="143"/>
-			<lne id="1286" begin="143" end="144"/>
-			<lne id="1287" begin="137" end="145"/>
-			<lne id="1288" begin="129" end="145"/>
-			<lne id="1289" begin="146" end="146"/>
-			<lne id="1290" begin="147" end="147"/>
-			<lne id="1291" begin="148" end="148"/>
-			<lne id="1292" begin="148" end="149"/>
-			<lne id="1293" begin="148" end="150"/>
-			<lne id="1294" begin="147" end="151"/>
-			<lne id="1295" begin="147" end="152"/>
-			<lne id="1296" begin="146" end="153"/>
-			<lne id="1297" begin="155" end="155"/>
-			<lne id="1298" begin="156" end="156"/>
-			<lne id="1299" begin="156" end="157"/>
-			<lne id="1300" begin="158" end="158"/>
-			<lne id="1301" begin="156" end="159"/>
-			<lne id="1302" begin="156" end="160"/>
-			<lne id="1303" begin="155" end="161"/>
-			<lne id="1304" begin="122" end="161"/>
-			<lne id="1305" begin="163" end="163"/>
-			<lne id="1306" begin="164" end="166"/>
-			<lne id="1307" begin="163" end="167"/>
-			<lne id="1308" begin="169" end="169"/>
-			<lne id="1309" begin="170" end="172"/>
-			<lne id="1310" begin="169" end="173"/>
-			<lne id="1311" begin="175" end="175"/>
-			<lne id="1312" begin="176" end="178"/>
-			<lne id="1313" begin="175" end="179"/>
-			<lne id="1314" begin="181" end="181"/>
-			<lne id="1315" begin="182" end="182"/>
-			<lne id="1316" begin="183" end="183"/>
-			<lne id="1317" begin="183" end="184"/>
-			<lne id="1318" begin="182" end="185"/>
-			<lne id="1319" begin="182" end="186"/>
-			<lne id="1320" begin="181" end="187"/>
-			<lne id="1321" begin="189" end="189"/>
-			<lne id="1322" begin="190" end="190"/>
-			<lne id="1323" begin="190" end="191"/>
-			<lne id="1324" begin="192" end="192"/>
-			<lne id="1325" begin="190" end="193"/>
-			<lne id="1326" begin="190" end="194"/>
-			<lne id="1327" begin="189" end="195"/>
-			<lne id="1328" begin="175" end="195"/>
-			<lne id="1329" begin="197" end="197"/>
-			<lne id="1330" begin="198" end="198"/>
-			<lne id="1331" begin="199" end="199"/>
-			<lne id="1332" begin="200" end="200"/>
-			<lne id="1333" begin="198" end="201"/>
-			<lne id="1334" begin="198" end="202"/>
-			<lne id="1335" begin="197" end="203"/>
-			<lne id="1336" begin="169" end="203"/>
-			<lne id="1337" begin="205" end="205"/>
-			<lne id="1338" begin="205" end="206"/>
-			<lne id="1339" begin="205" end="207"/>
-			<lne id="1340" begin="205" end="208"/>
-			<lne id="1341" begin="212" end="212"/>
-			<lne id="1342" begin="212" end="213"/>
-			<lne id="1343" begin="216" end="216"/>
-			<lne id="1344" begin="217" end="219"/>
-			<lne id="1345" begin="216" end="220"/>
-			<lne id="1346" begin="209" end="225"/>
-			<lne id="1347" begin="209" end="226"/>
-			<lne id="1348" begin="209" end="227"/>
-			<lne id="1349" begin="205" end="228"/>
-			<lne id="1350" begin="230" end="230"/>
-			<lne id="1351" begin="231" end="231"/>
-			<lne id="1352" begin="232" end="232"/>
-			<lne id="1353" begin="233" end="233"/>
-			<lne id="1354" begin="231" end="234"/>
-			<lne id="1355" begin="231" end="235"/>
-			<lne id="1356" begin="230" end="236"/>
-			<lne id="1357" begin="238" end="238"/>
-			<lne id="1358" begin="245" end="245"/>
-			<lne id="1359" begin="245" end="246"/>
-			<lne id="1360" begin="249" end="249"/>
-			<lne id="1361" begin="250" end="252"/>
-			<lne id="1362" begin="249" end="253"/>
-			<lne id="1363" begin="242" end="258"/>
-			<lne id="1364" begin="261" end="261"/>
-			<lne id="1365" begin="261" end="262"/>
-			<lne id="1366" begin="263" end="263"/>
-			<lne id="1367" begin="263" end="264"/>
-			<lne id="1368" begin="265" end="265"/>
-			<lne id="1369" begin="265" end="266"/>
-			<lne id="1370" begin="263" end="267"/>
-			<lne id="1371" begin="263" end="268"/>
-			<lne id="1372" begin="263" end="269"/>
-			<lne id="1373" begin="261" end="270"/>
-			<lne id="1374" begin="239" end="277"/>
-			<lne id="1375" begin="239" end="278"/>
-			<lne id="1376" begin="238" end="279"/>
-			<lne id="1377" begin="205" end="279"/>
-			<lne id="1378" begin="163" end="279"/>
-			<lne id="1379" begin="115" end="279"/>
-			<lne id="1380" begin="280" end="280"/>
-			<lne id="1381" begin="281" end="281"/>
-			<lne id="1382" begin="282" end="282"/>
-			<lne id="1383" begin="282" end="283"/>
-			<lne id="1384" begin="282" end="284"/>
-			<lne id="1385" begin="282" end="285"/>
-			<lne id="1386" begin="281" end="286"/>
-			<lne id="1387" begin="287" end="287"/>
-			<lne id="1388" begin="287" end="288"/>
-			<lne id="1389" begin="280" end="289"/>
-			<lne id="1390" begin="6" end="289"/>
-			<lne id="1391" begin="291" end="291"/>
-			<lne id="1392" begin="292" end="292"/>
-			<lne id="1393" begin="293" end="293"/>
-			<lne id="1394" begin="294" end="294"/>
-			<lne id="1395" begin="292" end="295"/>
-			<lne id="1396" begin="292" end="296"/>
-			<lne id="1397" begin="291" end="297"/>
-			<lne id="1398" begin="298" end="298"/>
-			<lne id="1399" begin="298" end="299"/>
-			<lne id="1400" begin="300" end="302"/>
-			<lne id="1401" begin="298" end="303"/>
-			<lne id="1402" begin="304" end="304"/>
-			<lne id="1403" begin="305" end="307"/>
-			<lne id="1404" begin="304" end="308"/>
-			<lne id="1405" begin="298" end="309"/>
-			<lne id="1406" begin="311" end="311"/>
-			<lne id="1407" begin="311" end="312"/>
-			<lne id="1408" begin="313" end="315"/>
-			<lne id="1409" begin="311" end="316"/>
-			<lne id="1410" begin="318" end="318"/>
-			<lne id="1411" begin="319" end="319"/>
-			<lne id="1412" begin="320" end="320"/>
-			<lne id="1413" begin="320" end="321"/>
-			<lne id="1414" begin="322" end="322"/>
-			<lne id="1415" begin="322" end="323"/>
-			<lne id="1416" begin="318" end="324"/>
-			<lne id="1417" begin="326" end="326"/>
-			<lne id="1418" begin="327" end="327"/>
-			<lne id="1419" begin="327" end="328"/>
-			<lne id="1420" begin="329" end="329"/>
-			<lne id="1421" begin="329" end="330"/>
-			<lne id="1422" begin="327" end="331"/>
-			<lne id="1423" begin="332" end="332"/>
-			<lne id="1424" begin="332" end="333"/>
-			<lne id="1425" begin="326" end="334"/>
-			<lne id="1426" begin="311" end="334"/>
-			<lne id="1427" begin="336" end="336"/>
-			<lne id="1428" begin="337" end="337"/>
-			<lne id="1429" begin="338" end="338"/>
-			<lne id="1430" begin="338" end="339"/>
-			<lne id="1431" begin="338" end="340"/>
-			<lne id="1432" begin="338" end="341"/>
-			<lne id="1433" begin="337" end="342"/>
-			<lne id="1434" begin="343" end="343"/>
-			<lne id="1435" begin="344" end="344"/>
-			<lne id="1436" begin="344" end="345"/>
-			<lne id="1437" begin="344" end="346"/>
-			<lne id="1438" begin="343" end="347"/>
-			<lne id="1439" begin="343" end="348"/>
-			<lne id="1440" begin="336" end="349"/>
-			<lne id="1441" begin="298" end="349"/>
-			<lne id="1442" begin="0" end="349"/>
-			<lne id="1443" begin="0" end="349"/>
+			<lne id="1139" begin="0" end="0"/>
+			<lne id="1140" begin="1" end="3"/>
+			<lne id="1141" begin="0" end="4"/>
+			<lne id="1142" begin="6" end="6"/>
+			<lne id="1143" begin="6" end="7"/>
+			<lne id="1144" begin="8" end="10"/>
+			<lne id="1145" begin="6" end="11"/>
+			<lne id="1146" begin="13" end="13"/>
+			<lne id="1147" begin="13" end="14"/>
+			<lne id="1148" begin="15" end="17"/>
+			<lne id="1149" begin="13" end="18"/>
+			<lne id="1150" begin="20" end="20"/>
+			<lne id="1151" begin="20" end="21"/>
+			<lne id="1152" begin="22" end="24"/>
+			<lne id="1153" begin="20" end="25"/>
+			<lne id="1154" begin="27" end="27"/>
+			<lne id="1155" begin="27" end="28"/>
+			<lne id="1156" begin="29" end="31"/>
+			<lne id="1157" begin="27" end="32"/>
+			<lne id="1158" begin="35" end="35"/>
+			<lne id="1159" begin="36" end="38"/>
+			<lne id="1160" begin="35" end="39"/>
+			<lne id="1161" begin="41" end="41"/>
+			<lne id="1162" begin="42" end="44"/>
+			<lne id="1163" begin="41" end="45"/>
+			<lne id="1164" begin="47" end="47"/>
+			<lne id="1165" begin="48" end="48"/>
+			<lne id="1166" begin="48" end="49"/>
+			<lne id="1167" begin="50" end="50"/>
+			<lne id="1168" begin="50" end="51"/>
+			<lne id="1169" begin="48" end="52"/>
+			<lne id="1170" begin="53" end="53"/>
+			<lne id="1171" begin="54" end="54"/>
+			<lne id="1172" begin="55" end="55"/>
+			<lne id="1173" begin="56" end="56"/>
+			<lne id="1174" begin="53" end="57"/>
+			<lne id="1175" begin="47" end="58"/>
+			<lne id="1176" begin="60" end="60"/>
+			<lne id="1177" begin="61" end="61"/>
+			<lne id="1178" begin="61" end="62"/>
+			<lne id="1179" begin="63" end="63"/>
+			<lne id="1180" begin="63" end="64"/>
+			<lne id="1181" begin="61" end="65"/>
+			<lne id="1182" begin="66" end="66"/>
+			<lne id="1183" begin="66" end="67"/>
+			<lne id="1184" begin="68" end="68"/>
+			<lne id="1185" begin="66" end="69"/>
+			<lne id="1186" begin="66" end="70"/>
+			<lne id="1187" begin="60" end="71"/>
+			<lne id="1188" begin="41" end="71"/>
+			<lne id="1189" begin="73" end="73"/>
+			<lne id="1190" begin="74" end="74"/>
+			<lne id="1191" begin="74" end="75"/>
+			<lne id="1192" begin="76" end="76"/>
+			<lne id="1193" begin="76" end="77"/>
+			<lne id="1194" begin="74" end="78"/>
+			<lne id="1195" begin="79" end="79"/>
+			<lne id="1196" begin="79" end="80"/>
+			<lne id="1197" begin="81" end="81"/>
+			<lne id="1198" begin="79" end="82"/>
+			<lne id="1199" begin="79" end="83"/>
+			<lne id="1200" begin="73" end="84"/>
+			<lne id="1201" begin="35" end="84"/>
+			<lne id="1202" begin="27" end="84"/>
+			<lne id="1203" begin="86" end="86"/>
+			<lne id="1204" begin="87" end="87"/>
+			<lne id="1205" begin="87" end="88"/>
+			<lne id="1206" begin="89" end="89"/>
+			<lne id="1207" begin="89" end="90"/>
+			<lne id="1208" begin="87" end="91"/>
+			<lne id="1209" begin="92" end="92"/>
+			<lne id="1210" begin="93" end="93"/>
+			<lne id="1211" begin="94" end="94"/>
+			<lne id="1212" begin="95" end="95"/>
+			<lne id="1213" begin="92" end="96"/>
+			<lne id="1214" begin="86" end="97"/>
+			<lne id="1215" begin="20" end="97"/>
+			<lne id="1216" begin="99" end="99"/>
+			<lne id="1217" begin="100" end="100"/>
+			<lne id="1218" begin="100" end="101"/>
+			<lne id="1219" begin="102" end="102"/>
+			<lne id="1220" begin="102" end="103"/>
+			<lne id="1221" begin="100" end="104"/>
+			<lne id="1222" begin="105" end="105"/>
+			<lne id="1223" begin="106" end="106"/>
+			<lne id="1224" begin="107" end="107"/>
+			<lne id="1225" begin="108" end="108"/>
+			<lne id="1226" begin="105" end="109"/>
+			<lne id="1227" begin="99" end="110"/>
+			<lne id="1228" begin="13" end="110"/>
+			<lne id="1229" begin="112" end="112"/>
+			<lne id="1230" begin="113" end="113"/>
+			<lne id="1231" begin="112" end="114"/>
+			<lne id="1232" begin="115" end="115"/>
+			<lne id="1233" begin="116" end="118"/>
+			<lne id="1234" begin="115" end="119"/>
+			<lne id="1235" begin="115" end="120"/>
+			<lne id="1236" begin="122" end="122"/>
+			<lne id="1237" begin="122" end="123"/>
+			<lne id="1238" begin="124" end="126"/>
+			<lne id="1239" begin="122" end="127"/>
+			<lne id="1240" begin="129" end="129"/>
+			<lne id="1241" begin="129" end="130"/>
+			<lne id="1242" begin="131" end="133"/>
+			<lne id="1243" begin="129" end="134"/>
+			<lne id="1244" begin="137" end="137"/>
+			<lne id="1245" begin="138" end="138"/>
+			<lne id="1246" begin="139" end="139"/>
+			<lne id="1247" begin="139" end="140"/>
+			<lne id="1248" begin="139" end="141"/>
+			<lne id="1249" begin="138" end="142"/>
+			<lne id="1250" begin="143" end="143"/>
+			<lne id="1251" begin="143" end="144"/>
+			<lne id="1252" begin="137" end="145"/>
+			<lne id="1253" begin="129" end="145"/>
+			<lne id="1254" begin="146" end="146"/>
+			<lne id="1255" begin="147" end="147"/>
+			<lne id="1256" begin="148" end="148"/>
+			<lne id="1257" begin="148" end="149"/>
+			<lne id="1258" begin="148" end="150"/>
+			<lne id="1259" begin="147" end="151"/>
+			<lne id="1260" begin="147" end="152"/>
+			<lne id="1261" begin="146" end="153"/>
+			<lne id="1262" begin="155" end="155"/>
+			<lne id="1263" begin="156" end="156"/>
+			<lne id="1264" begin="156" end="157"/>
+			<lne id="1265" begin="158" end="158"/>
+			<lne id="1266" begin="156" end="159"/>
+			<lne id="1267" begin="156" end="160"/>
+			<lne id="1268" begin="155" end="161"/>
+			<lne id="1269" begin="122" end="161"/>
+			<lne id="1270" begin="163" end="163"/>
+			<lne id="1271" begin="164" end="166"/>
+			<lne id="1272" begin="163" end="167"/>
+			<lne id="1273" begin="169" end="169"/>
+			<lne id="1274" begin="170" end="172"/>
+			<lne id="1275" begin="169" end="173"/>
+			<lne id="1276" begin="175" end="175"/>
+			<lne id="1277" begin="176" end="178"/>
+			<lne id="1278" begin="175" end="179"/>
+			<lne id="1279" begin="181" end="181"/>
+			<lne id="1280" begin="182" end="182"/>
+			<lne id="1281" begin="183" end="183"/>
+			<lne id="1282" begin="183" end="184"/>
+			<lne id="1283" begin="182" end="185"/>
+			<lne id="1284" begin="182" end="186"/>
+			<lne id="1285" begin="181" end="187"/>
+			<lne id="1286" begin="189" end="189"/>
+			<lne id="1287" begin="190" end="190"/>
+			<lne id="1288" begin="190" end="191"/>
+			<lne id="1289" begin="192" end="192"/>
+			<lne id="1290" begin="190" end="193"/>
+			<lne id="1291" begin="190" end="194"/>
+			<lne id="1292" begin="189" end="195"/>
+			<lne id="1293" begin="175" end="195"/>
+			<lne id="1294" begin="197" end="197"/>
+			<lne id="1295" begin="198" end="198"/>
+			<lne id="1296" begin="199" end="199"/>
+			<lne id="1297" begin="200" end="200"/>
+			<lne id="1298" begin="198" end="201"/>
+			<lne id="1299" begin="198" end="202"/>
+			<lne id="1300" begin="197" end="203"/>
+			<lne id="1301" begin="169" end="203"/>
+			<lne id="1302" begin="205" end="205"/>
+			<lne id="1303" begin="205" end="206"/>
+			<lne id="1304" begin="205" end="207"/>
+			<lne id="1305" begin="205" end="208"/>
+			<lne id="1306" begin="212" end="212"/>
+			<lne id="1307" begin="212" end="213"/>
+			<lne id="1308" begin="216" end="216"/>
+			<lne id="1309" begin="217" end="219"/>
+			<lne id="1310" begin="216" end="220"/>
+			<lne id="1311" begin="209" end="225"/>
+			<lne id="1312" begin="209" end="226"/>
+			<lne id="1313" begin="209" end="227"/>
+			<lne id="1314" begin="205" end="228"/>
+			<lne id="1315" begin="230" end="230"/>
+			<lne id="1316" begin="231" end="231"/>
+			<lne id="1317" begin="232" end="232"/>
+			<lne id="1318" begin="233" end="233"/>
+			<lne id="1319" begin="231" end="234"/>
+			<lne id="1320" begin="231" end="235"/>
+			<lne id="1321" begin="230" end="236"/>
+			<lne id="1322" begin="238" end="238"/>
+			<lne id="1323" begin="245" end="245"/>
+			<lne id="1324" begin="245" end="246"/>
+			<lne id="1325" begin="249" end="249"/>
+			<lne id="1326" begin="250" end="252"/>
+			<lne id="1327" begin="249" end="253"/>
+			<lne id="1328" begin="242" end="258"/>
+			<lne id="1329" begin="261" end="261"/>
+			<lne id="1330" begin="261" end="262"/>
+			<lne id="1331" begin="263" end="263"/>
+			<lne id="1332" begin="263" end="264"/>
+			<lne id="1333" begin="265" end="265"/>
+			<lne id="1334" begin="265" end="266"/>
+			<lne id="1335" begin="263" end="267"/>
+			<lne id="1336" begin="263" end="268"/>
+			<lne id="1337" begin="263" end="269"/>
+			<lne id="1338" begin="261" end="270"/>
+			<lne id="1339" begin="239" end="277"/>
+			<lne id="1340" begin="239" end="278"/>
+			<lne id="1341" begin="238" end="279"/>
+			<lne id="1342" begin="205" end="279"/>
+			<lne id="1343" begin="163" end="279"/>
+			<lne id="1344" begin="115" end="279"/>
+			<lne id="1345" begin="280" end="280"/>
+			<lne id="1346" begin="281" end="281"/>
+			<lne id="1347" begin="282" end="282"/>
+			<lne id="1348" begin="282" end="283"/>
+			<lne id="1349" begin="282" end="284"/>
+			<lne id="1350" begin="282" end="285"/>
+			<lne id="1351" begin="281" end="286"/>
+			<lne id="1352" begin="287" end="287"/>
+			<lne id="1353" begin="287" end="288"/>
+			<lne id="1354" begin="280" end="289"/>
+			<lne id="1355" begin="6" end="289"/>
+			<lne id="1356" begin="291" end="291"/>
+			<lne id="1357" begin="292" end="292"/>
+			<lne id="1358" begin="293" end="293"/>
+			<lne id="1359" begin="294" end="294"/>
+			<lne id="1360" begin="292" end="295"/>
+			<lne id="1361" begin="292" end="296"/>
+			<lne id="1362" begin="291" end="297"/>
+			<lne id="1363" begin="298" end="298"/>
+			<lne id="1364" begin="298" end="299"/>
+			<lne id="1365" begin="300" end="302"/>
+			<lne id="1366" begin="298" end="303"/>
+			<lne id="1367" begin="304" end="304"/>
+			<lne id="1368" begin="305" end="307"/>
+			<lne id="1369" begin="304" end="308"/>
+			<lne id="1370" begin="298" end="309"/>
+			<lne id="1371" begin="311" end="311"/>
+			<lne id="1372" begin="311" end="312"/>
+			<lne id="1373" begin="313" end="315"/>
+			<lne id="1374" begin="311" end="316"/>
+			<lne id="1375" begin="318" end="318"/>
+			<lne id="1376" begin="319" end="319"/>
+			<lne id="1377" begin="320" end="320"/>
+			<lne id="1378" begin="320" end="321"/>
+			<lne id="1379" begin="322" end="322"/>
+			<lne id="1380" begin="322" end="323"/>
+			<lne id="1381" begin="318" end="324"/>
+			<lne id="1382" begin="326" end="326"/>
+			<lne id="1383" begin="327" end="327"/>
+			<lne id="1384" begin="327" end="328"/>
+			<lne id="1385" begin="329" end="329"/>
+			<lne id="1386" begin="329" end="330"/>
+			<lne id="1387" begin="327" end="331"/>
+			<lne id="1388" begin="332" end="332"/>
+			<lne id="1389" begin="332" end="333"/>
+			<lne id="1390" begin="326" end="334"/>
+			<lne id="1391" begin="311" end="334"/>
+			<lne id="1392" begin="336" end="336"/>
+			<lne id="1393" begin="337" end="337"/>
+			<lne id="1394" begin="338" end="338"/>
+			<lne id="1395" begin="338" end="339"/>
+			<lne id="1396" begin="338" end="340"/>
+			<lne id="1397" begin="338" end="341"/>
+			<lne id="1398" begin="337" end="342"/>
+			<lne id="1399" begin="343" end="343"/>
+			<lne id="1400" begin="344" end="344"/>
+			<lne id="1401" begin="344" end="345"/>
+			<lne id="1402" begin="344" end="346"/>
+			<lne id="1403" begin="343" end="347"/>
+			<lne id="1404" begin="343" end="348"/>
+			<lne id="1405" begin="336" end="349"/>
+			<lne id="1406" begin="298" end="349"/>
+			<lne id="1407" begin="0" end="349"/>
+			<lne id="1408" begin="0" end="349"/>
 		</linenumbertable>
 		<localvariabletable>
-			<lve slot="5" name="921" begin="215" end="224"/>
-			<lve slot="5" name="921" begin="248" end="257"/>
-			<lve slot="5" name="922" begin="260" end="274"/>
+			<lve slot="5" name="875" begin="215" end="224"/>
+			<lve slot="5" name="875" begin="248" end="257"/>
+			<lve slot="5" name="876" begin="260" end="274"/>
 			<lve slot="0" name="17" begin="0" end="349"/>
 			<lve slot="1" name="217" begin="0" end="349"/>
 			<lve slot="2" name="218" begin="0" end="349"/>
 			<lve slot="3" name="219" begin="0" end="349"/>
-			<lve slot="4" name="555" begin="0" end="349"/>
+			<lve slot="4" name="525" begin="0" end="349"/>
 		</localvariabletable>
 	</operation>
-	<operation name="1444">
+	<operation name="1409">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -27680,10 +28251,10 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="419"/>
+			<if arg="1410"/>
 			<load arg="29"/>
-			<get arg="1445"/>
-			<push arg="560"/>
+			<get arg="1411"/>
+			<push arg="530"/>
 			<push arg="48"/>
 			<findme/>
 <<<<<<< HEAD
@@ -27868,6 +28439,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<if arg="1493"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
@@ -27885,15 +28457,18 @@
 =======
 			<if arg="1446"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="287"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="29"/>
-			<get arg="1445"/>
-			<push arg="563"/>
+			<get arg="1411"/>
+			<push arg="534"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1447"/>
+			<if arg="393"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<push arg="60"/>
 			<push arg="48"/>
 			<findme/>
@@ -27903,6 +28478,7 @@
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 =======
 			<call arg="49"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -27925,17 +28501,20 @@
 =======
 			<if arg="1448"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="1412"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<pushf/>
-			<set arg="397"/>
+			<set arg="380"/>
 			<load arg="29"/>
-			<get arg="1445"/>
-			<push arg="1144"/>
+			<get arg="1411"/>
+			<push arg="1111"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
 			<if arg="227"/>
-			<goto arg="930"/>
+			<goto arg="884"/>
 			<load arg="42"/>
 			<push arg="57"/>
 			<push arg="48"/>
@@ -27943,29 +28522,29 @@
 			<call arg="49"/>
 			<call arg="53"/>
 			<if arg="228"/>
-			<goto arg="930"/>
+			<goto arg="884"/>
 			<push arg="28"/>
 			<push arg="8"/>
 			<new/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<get arg="38"/>
 			<call arg="62"/>
-			<get arg="286"/>
+			<get arg="285"/>
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
-			<get arg="1449"/>
+			<get arg="1413"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="580"/>
-			<if arg="1450"/>
-			<goto arg="930"/>
+			<call arg="552"/>
+			<if arg="1414"/>
+			<goto arg="884"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<load arg="19"/>
@@ -27976,38 +28555,38 @@
 			<pcall arg="92"/>
 			<getasm/>
 			<pusht/>
-			<set arg="397"/>
+			<set arg="380"/>
 			<getasm/>
-			<get arg="397"/>
+			<get arg="380"/>
 			<call arg="53"/>
 			<if arg="74"/>
-			<goto arg="1451"/>
+			<goto arg="1415"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<pushf/>
-			<call arg="1151"/>
+			<call arg="1118"/>
 			<pcall arg="92"/>
 			<goto arg="80"/>
 			<getasm/>
 			<getasm/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<push arg="65"/>
 			<call arg="66"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<pusht/>
-			<call arg="1151"/>
+			<call arg="1118"/>
 			<pcall arg="92"/>
-			<goto arg="1452"/>
+			<goto arg="1416"/>
 			<getasm/>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -28294,9 +28873,9 @@
 			<goto arg="1626"/>
 =======
 			<getasm/>
-			<get arg="396"/>
+			<get arg="379"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<call arg="83"/>
 			<load arg="19"/>
 			<load arg="42"/>
@@ -28304,13 +28883,13 @@
 			<call arg="62"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="934"/>
+			<goto arg="533"/>
 			<getasm/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<getasm/>
-			<get arg="394"/>
+			<get arg="377"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<call arg="83"/>
 			<load arg="19"/>
 			<load arg="42"/>
@@ -28482,25 +29061,25 @@
 			<call arg="62"/>
 			<call arg="67"/>
 			<pcall arg="92"/>
-			<goto arg="597"/>
+			<goto arg="1417"/>
 			<load arg="29"/>
-			<get arg="1445"/>
-			<push arg="1144"/>
+			<get arg="1411"/>
+			<push arg="1111"/>
 			<push arg="48"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<findme/>
 			<call arg="49"/>
-			<if arg="1453"/>
+			<if arg="1418"/>
 			<load arg="29"/>
-			<get arg="1445"/>
-			<push arg="560"/>
+			<get arg="1411"/>
+			<push arg="530"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1454"/>
+			<if arg="1419"/>
 			<load arg="29"/>
-			<get arg="1445"/>
-			<push arg="563"/>
+			<get arg="1411"/>
+			<push arg="534"/>
 			<push arg="48"/>
 			<findme/>
 <<<<<<< HEAD
@@ -28555,6 +29134,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<if arg="1504"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
@@ -28572,16 +29152,20 @@
 =======
 			<if arg="1455"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="1420"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<push arg="60"/>
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1456"/>
+			<if arg="1421"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -28748,6 +29332,9 @@
 =======
 			<get arg="1445"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<get arg="1411"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<get arg="38"/>
 			<call arg="62"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
@@ -28760,6 +29347,7 @@
 			<load arg="19"/>
 			<load arg="42"/>
 			<get arg="38"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -28892,6 +29480,9 @@
 =======
 			<call arg="932"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="886"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
@@ -28899,14 +29490,14 @@
 			<call arg="75"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<enditerate/>
-			<call arg="933"/>
+			<call arg="887"/>
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
 			<get arg="71"/>
 			<call arg="72"/>
 			<call arg="73"/>
-			<if arg="1162"/>
+			<if arg="1129"/>
 			<load arg="43"/>
 <<<<<<< HEAD
 			<call arg="71"/>
@@ -28916,13 +29507,13 @@
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<enditerate/>
 			<pcall arg="92"/>
-			<goto arg="925"/>
+			<goto arg="1422"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<get arg="38"/>
-			<call arg="1457"/>
+			<call arg="1423"/>
 			<push arg="28"/>
 			<push arg="8"/>
 			<new/>
@@ -29655,8 +30246,12 @@
 			<load arg="19"/>
 			<load arg="42"/>
 			<get arg="38"/>
+<<<<<<< HEAD
 			<call arg="932"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="886"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
@@ -29664,17 +30259,22 @@
 			<call arg="75"/>
 			<enditerate/>
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<call arg="939"/>
 >>>>>>> 0cc6999... Changes to connectAndForkNodes, connectOrForkNodes, connectOrForkEndPoints to have 'using' blocks; some spacing changes to improve syntax consistency; changes to both classes to remove all instances of thisModule.counter
 =======
 			<call arg="933"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="887"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
 			<get arg="71"/>
 			<call arg="72"/>
 			<call arg="73"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -29697,6 +30297,9 @@
 =======
 			<if arg="574"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="1424"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="43"/>
 			<call arg="75"/>
 			<enditerate/>
@@ -29733,6 +30336,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<goto arg="1509"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
@@ -29750,11 +30354,14 @@
 =======
 			<goto arg="1458"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="1425"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<getasm/>
-			<get arg="396"/>
+			<get arg="379"/>
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<push arg="28"/>
 			<push arg="8"/>
@@ -29830,6 +30437,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<call arg="673"/>
 			<get arg="674"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
@@ -29857,13 +30465,18 @@
 			<call arg="577"/>
 			<get arg="578"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="549"/>
+			<get arg="550"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
-			<get arg="285"/>
+			<get arg="284"/>
 			<get arg="38"/>
 			<load arg="19"/>
 			<get arg="38"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -30137,15 +30750,19 @@
 =======
 			<call arg="391"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="374"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<call arg="73"/>
-			<if arg="1459"/>
+			<if arg="897"/>
 			<load arg="43"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="583"/>
+			<call arg="555"/>
 			<call arg="45"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -30168,11 +30785,14 @@
 =======
 			<goto arg="591"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<goto arg="1426"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<getasm/>
-			<get arg="394"/>
+			<get arg="377"/>
 			<load arg="29"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="83"/>
 			<push arg="28"/>
 			<push arg="8"/>
@@ -30248,6 +30868,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<call arg="673"/>
 			<get arg="674"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
@@ -30275,19 +30896,24 @@
 			<call arg="577"/>
 			<get arg="578"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="549"/>
+			<get arg="550"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
-			<get arg="285"/>
+			<get arg="284"/>
 			<get arg="38"/>
 			<load arg="19"/>
 			<get arg="38"/>
-			<call arg="391"/>
+			<call arg="374"/>
 			<call arg="73"/>
-			<if arg="1460"/>
+			<if arg="1427"/>
 			<load arg="43"/>
 			<call arg="75"/>
 			<enditerate/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -30398,16 +31024,19 @@
 >>>>>>> 0cc6999... Changes to connectAndForkNodes, connectOrForkNodes, connectOrForkEndPoints to have 'using' blocks; some spacing changes to improve syntax consistency; changes to both classes to remove all instances of thisModule.counter
 =======
 			<call arg="583"/>
+=======
+			<call arg="555"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<call arg="45"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="597"/>
+			<goto arg="1417"/>
 			<getasm/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<get arg="38"/>
 <<<<<<< HEAD
 			<call arg="60"/>
@@ -30622,6 +31251,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<call arg="1054"/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<iterate/>
@@ -30647,6 +31277,9 @@
 =======
 			<call arg="932"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<call arg="886"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
@@ -30654,7 +31287,7 @@
 			<call arg="75"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<enditerate/>
-			<call arg="933"/>
+			<call arg="887"/>
 			<iterate/>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -30770,6 +31403,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<if arg="1513"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
@@ -30787,6 +31421,9 @@
 =======
 			<if arg="1461"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="1428"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="43"/>
 			<call arg="75"/>
 			<enditerate/>
@@ -31113,234 +31750,234 @@
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 		</code>
 		<linenumbertable>
-			<lne id="1462" begin="0" end="0"/>
-			<lne id="1463" begin="1" end="3"/>
-			<lne id="1464" begin="0" end="4"/>
-			<lne id="1465" begin="6" end="6"/>
-			<lne id="1466" begin="6" end="7"/>
-			<lne id="1467" begin="8" end="10"/>
-			<lne id="1468" begin="6" end="11"/>
-			<lne id="1469" begin="13" end="13"/>
-			<lne id="1470" begin="13" end="14"/>
-			<lne id="1471" begin="15" end="17"/>
-			<lne id="1472" begin="13" end="18"/>
-			<lne id="1473" begin="20" end="20"/>
-			<lne id="1474" begin="20" end="21"/>
-			<lne id="1475" begin="22" end="24"/>
-			<lne id="1476" begin="20" end="25"/>
-			<lne id="1477" begin="27" end="27"/>
-			<lne id="1478" begin="28" end="28"/>
-			<lne id="1479" begin="27" end="29"/>
-			<lne id="1480" begin="30" end="30"/>
-			<lne id="1481" begin="30" end="31"/>
-			<lne id="1482" begin="32" end="34"/>
-			<lne id="1483" begin="30" end="35"/>
-			<lne id="1484" begin="38" end="38"/>
-			<lne id="1485" begin="39" end="41"/>
-			<lne id="1486" begin="38" end="42"/>
-			<lne id="1487" begin="38" end="43"/>
-			<lne id="1488" begin="49" end="49"/>
-			<lne id="1489" begin="50" end="50"/>
-			<lne id="1490" begin="50" end="51"/>
-			<lne id="1491" begin="50" end="52"/>
-			<lne id="1492" begin="49" end="53"/>
-			<lne id="1493" begin="49" end="54"/>
-			<lne id="1494" begin="57" end="57"/>
-			<lne id="1495" begin="57" end="58"/>
-			<lne id="1496" begin="46" end="60"/>
-			<lne id="1497" begin="46" end="61"/>
-			<lne id="1498" begin="64" end="64"/>
-			<lne id="1499" begin="65" end="65"/>
-			<lne id="1500" begin="66" end="66"/>
-			<lne id="1501" begin="66" end="67"/>
-			<lne id="1502" begin="66" end="68"/>
-			<lne id="1503" begin="65" end="69"/>
-			<lne id="1504" begin="70" end="70"/>
-			<lne id="1505" begin="71" end="71"/>
-			<lne id="1506" begin="71" end="72"/>
-			<lne id="1507" begin="70" end="73"/>
-			<lne id="1508" begin="70" end="74"/>
-			<lne id="1509" begin="64" end="75"/>
-			<lne id="1510" begin="76" end="76"/>
-			<lne id="1511" begin="77" end="77"/>
-			<lne id="1512" begin="76" end="78"/>
-			<lne id="1513" begin="46" end="78"/>
-			<lne id="1514" begin="38" end="78"/>
-			<lne id="1515" begin="30" end="78"/>
-			<lne id="1516" begin="79" end="79"/>
-			<lne id="1517" begin="79" end="80"/>
-			<lne id="1518" begin="79" end="81"/>
-			<lne id="1519" begin="84" end="84"/>
-			<lne id="1520" begin="85" end="85"/>
-			<lne id="1521" begin="86" end="86"/>
-			<lne id="1522" begin="86" end="87"/>
-			<lne id="1523" begin="86" end="88"/>
-			<lne id="1524" begin="85" end="89"/>
-			<lne id="1525" begin="90" end="90"/>
-			<lne id="1526" begin="91" end="91"/>
-			<lne id="1527" begin="92" end="92"/>
-			<lne id="1528" begin="93" end="93"/>
-			<lne id="1529" begin="90" end="94"/>
-			<lne id="1530" begin="84" end="95"/>
-			<lne id="1531" begin="79" end="95"/>
-			<lne id="1532" begin="97" end="97"/>
-			<lne id="1533" begin="98" end="98"/>
-			<lne id="1534" begin="99" end="99"/>
-			<lne id="1535" begin="99" end="100"/>
-			<lne id="1536" begin="101" end="101"/>
-			<lne id="1537" begin="98" end="102"/>
-			<lne id="1538" begin="103" end="103"/>
-			<lne id="1539" begin="104" end="104"/>
-			<lne id="1540" begin="105" end="105"/>
-			<lne id="1541" begin="106" end="106"/>
-			<lne id="1542" begin="103" end="107"/>
-			<lne id="1543" begin="97" end="108"/>
-			<lne id="1544" begin="20" end="108"/>
-			<lne id="1545" begin="110" end="110"/>
-			<lne id="1546" begin="111" end="111"/>
-			<lne id="1547" begin="111" end="112"/>
-			<lne id="1548" begin="113" end="113"/>
-			<lne id="1549" begin="113" end="114"/>
-			<lne id="1550" begin="111" end="115"/>
-			<lne id="1551" begin="116" end="116"/>
-			<lne id="1552" begin="117" end="117"/>
-			<lne id="1553" begin="117" end="118"/>
-			<lne id="1554" begin="116" end="119"/>
-			<lne id="1555" begin="116" end="120"/>
-			<lne id="1556" begin="110" end="121"/>
-			<lne id="1557" begin="13" end="121"/>
-			<lne id="1558" begin="123" end="123"/>
-			<lne id="1559" begin="124" end="124"/>
-			<lne id="1560" begin="124" end="125"/>
-			<lne id="1561" begin="126" end="126"/>
-			<lne id="1562" begin="126" end="127"/>
-			<lne id="1563" begin="124" end="128"/>
-			<lne id="1564" begin="129" end="129"/>
-			<lne id="1565" begin="130" end="130"/>
-			<lne id="1566" begin="130" end="131"/>
-			<lne id="1567" begin="129" end="132"/>
-			<lne id="1568" begin="129" end="133"/>
-			<lne id="1569" begin="123" end="134"/>
-			<lne id="1570" begin="6" end="134"/>
-			<lne id="1571" begin="136" end="136"/>
-			<lne id="1572" begin="136" end="137"/>
-			<lne id="1573" begin="138" end="140"/>
-			<lne id="1574" begin="136" end="141"/>
-			<lne id="1575" begin="143" end="143"/>
-			<lne id="1576" begin="143" end="144"/>
-			<lne id="1577" begin="145" end="147"/>
-			<lne id="1578" begin="143" end="148"/>
-			<lne id="1579" begin="150" end="150"/>
-			<lne id="1580" begin="150" end="151"/>
-			<lne id="1581" begin="152" end="154"/>
-			<lne id="1582" begin="150" end="155"/>
-			<lne id="1583" begin="157" end="157"/>
-			<lne id="1584" begin="157" end="158"/>
-			<lne id="1585" begin="159" end="161"/>
-			<lne id="1586" begin="157" end="162"/>
-			<lne id="1587" begin="164" end="164"/>
-			<lne id="1588" begin="165" end="165"/>
-			<lne id="1589" begin="166" end="166"/>
-			<lne id="1590" begin="166" end="167"/>
-			<lne id="1591" begin="166" end="168"/>
-			<lne id="1592" begin="165" end="169"/>
-			<lne id="1593" begin="176" end="176"/>
-			<lne id="1594" begin="177" end="177"/>
-			<lne id="1595" begin="177" end="178"/>
-			<lne id="1596" begin="176" end="179"/>
-			<lne id="1597" begin="182" end="182"/>
-			<lne id="1598" begin="182" end="183"/>
-			<lne id="1599" begin="173" end="185"/>
-			<lne id="1600" begin="173" end="186"/>
-			<lne id="1601" begin="189" end="189"/>
-			<lne id="1602" begin="189" end="190"/>
-			<lne id="1603" begin="189" end="191"/>
-			<lne id="1604" begin="170" end="196"/>
-			<lne id="1605" begin="164" end="197"/>
-			<lne id="1606" begin="199" end="199"/>
-			<lne id="1607" begin="200" end="200"/>
-			<lne id="1608" begin="201" end="201"/>
-			<lne id="1609" begin="201" end="202"/>
-			<lne id="1610" begin="201" end="203"/>
-			<lne id="1611" begin="200" end="204"/>
-			<lne id="1612" begin="211" end="211"/>
-			<lne id="1613" begin="212" end="212"/>
-			<lne id="1614" begin="212" end="213"/>
-			<lne id="1615" begin="211" end="214"/>
-			<lne id="1616" begin="217" end="217"/>
-			<lne id="1617" begin="217" end="218"/>
-			<lne id="1618" begin="208" end="220"/>
-			<lne id="1619" begin="208" end="221"/>
-			<lne id="1620" begin="224" end="224"/>
-			<lne id="1621" begin="224" end="225"/>
-			<lne id="1622" begin="224" end="226"/>
-			<lne id="1623" begin="205" end="231"/>
-			<lne id="1624" begin="199" end="232"/>
-			<lne id="1625" begin="157" end="232"/>
-			<lne id="1626" begin="234" end="234"/>
-			<lne id="1627" begin="235" end="235"/>
-			<lne id="1628" begin="235" end="236"/>
-			<lne id="1629" begin="237" end="237"/>
-			<lne id="1630" begin="237" end="238"/>
-			<lne id="1631" begin="235" end="239"/>
-			<lne id="1632" begin="243" end="243"/>
-			<lne id="1633" begin="244" end="244"/>
-			<lne id="1634" begin="244" end="245"/>
-			<lne id="1635" begin="243" end="246"/>
-			<lne id="1636" begin="243" end="247"/>
-			<lne id="1637" begin="250" end="250"/>
-			<lne id="1638" begin="250" end="251"/>
-			<lne id="1639" begin="250" end="252"/>
-			<lne id="1640" begin="253" end="253"/>
-			<lne id="1641" begin="253" end="254"/>
-			<lne id="1642" begin="250" end="255"/>
-			<lne id="1643" begin="240" end="262"/>
-			<lne id="1644" begin="240" end="263"/>
-			<lne id="1645" begin="234" end="264"/>
-			<lne id="1646" begin="150" end="264"/>
-			<lne id="1647" begin="266" end="266"/>
-			<lne id="1648" begin="267" end="267"/>
-			<lne id="1649" begin="267" end="268"/>
-			<lne id="1650" begin="269" end="269"/>
-			<lne id="1651" begin="269" end="270"/>
-			<lne id="1652" begin="267" end="271"/>
-			<lne id="1653" begin="275" end="275"/>
-			<lne id="1654" begin="276" end="276"/>
-			<lne id="1655" begin="276" end="277"/>
-			<lne id="1656" begin="275" end="278"/>
-			<lne id="1657" begin="275" end="279"/>
-			<lne id="1658" begin="282" end="282"/>
-			<lne id="1659" begin="282" end="283"/>
-			<lne id="1660" begin="282" end="284"/>
-			<lne id="1661" begin="285" end="285"/>
-			<lne id="1662" begin="285" end="286"/>
-			<lne id="1663" begin="282" end="287"/>
-			<lne id="1664" begin="272" end="294"/>
-			<lne id="1665" begin="272" end="295"/>
-			<lne id="1666" begin="266" end="296"/>
-			<lne id="1667" begin="143" end="296"/>
-			<lne id="1668" begin="298" end="298"/>
-			<lne id="1669" begin="299" end="299"/>
-			<lne id="1670" begin="300" end="300"/>
-			<lne id="1671" begin="300" end="301"/>
-			<lne id="1672" begin="300" end="302"/>
-			<lne id="1673" begin="299" end="303"/>
-			<lne id="1674" begin="310" end="310"/>
-			<lne id="1675" begin="311" end="311"/>
-			<lne id="1676" begin="311" end="312"/>
-			<lne id="1677" begin="310" end="313"/>
-			<lne id="1678" begin="316" end="316"/>
-			<lne id="1679" begin="316" end="317"/>
-			<lne id="1680" begin="307" end="319"/>
-			<lne id="1681" begin="307" end="320"/>
-			<lne id="1682" begin="323" end="323"/>
-			<lne id="1683" begin="323" end="324"/>
-			<lne id="1684" begin="323" end="325"/>
-			<lne id="1685" begin="304" end="330"/>
-			<lne id="1686" begin="298" end="331"/>
-			<lne id="1687" begin="136" end="331"/>
-			<lne id="1688" begin="0" end="331"/>
-			<lne id="1689" begin="0" end="331"/>
+			<lne id="1429" begin="0" end="0"/>
+			<lne id="1430" begin="1" end="3"/>
+			<lne id="1431" begin="0" end="4"/>
+			<lne id="1432" begin="6" end="6"/>
+			<lne id="1433" begin="6" end="7"/>
+			<lne id="1434" begin="8" end="10"/>
+			<lne id="1435" begin="6" end="11"/>
+			<lne id="1436" begin="13" end="13"/>
+			<lne id="1437" begin="13" end="14"/>
+			<lne id="1438" begin="15" end="17"/>
+			<lne id="1439" begin="13" end="18"/>
+			<lne id="1440" begin="20" end="20"/>
+			<lne id="1441" begin="20" end="21"/>
+			<lne id="1442" begin="22" end="24"/>
+			<lne id="1443" begin="20" end="25"/>
+			<lne id="1444" begin="27" end="27"/>
+			<lne id="1445" begin="28" end="28"/>
+			<lne id="1446" begin="27" end="29"/>
+			<lne id="1447" begin="30" end="30"/>
+			<lne id="1448" begin="30" end="31"/>
+			<lne id="1449" begin="32" end="34"/>
+			<lne id="1450" begin="30" end="35"/>
+			<lne id="1451" begin="38" end="38"/>
+			<lne id="1452" begin="39" end="41"/>
+			<lne id="1453" begin="38" end="42"/>
+			<lne id="1454" begin="38" end="43"/>
+			<lne id="1455" begin="49" end="49"/>
+			<lne id="1456" begin="50" end="50"/>
+			<lne id="1457" begin="50" end="51"/>
+			<lne id="1458" begin="50" end="52"/>
+			<lne id="1459" begin="49" end="53"/>
+			<lne id="1460" begin="49" end="54"/>
+			<lne id="1461" begin="57" end="57"/>
+			<lne id="1462" begin="57" end="58"/>
+			<lne id="1463" begin="46" end="60"/>
+			<lne id="1464" begin="46" end="61"/>
+			<lne id="1465" begin="64" end="64"/>
+			<lne id="1466" begin="65" end="65"/>
+			<lne id="1467" begin="66" end="66"/>
+			<lne id="1468" begin="66" end="67"/>
+			<lne id="1469" begin="66" end="68"/>
+			<lne id="1470" begin="65" end="69"/>
+			<lne id="1471" begin="70" end="70"/>
+			<lne id="1472" begin="71" end="71"/>
+			<lne id="1473" begin="71" end="72"/>
+			<lne id="1474" begin="70" end="73"/>
+			<lne id="1475" begin="70" end="74"/>
+			<lne id="1476" begin="64" end="75"/>
+			<lne id="1477" begin="76" end="76"/>
+			<lne id="1478" begin="77" end="77"/>
+			<lne id="1479" begin="76" end="78"/>
+			<lne id="1480" begin="46" end="78"/>
+			<lne id="1481" begin="38" end="78"/>
+			<lne id="1482" begin="30" end="78"/>
+			<lne id="1483" begin="79" end="79"/>
+			<lne id="1484" begin="79" end="80"/>
+			<lne id="1485" begin="79" end="81"/>
+			<lne id="1486" begin="84" end="84"/>
+			<lne id="1487" begin="85" end="85"/>
+			<lne id="1488" begin="86" end="86"/>
+			<lne id="1489" begin="86" end="87"/>
+			<lne id="1490" begin="86" end="88"/>
+			<lne id="1491" begin="85" end="89"/>
+			<lne id="1492" begin="90" end="90"/>
+			<lne id="1493" begin="91" end="91"/>
+			<lne id="1494" begin="92" end="92"/>
+			<lne id="1495" begin="93" end="93"/>
+			<lne id="1496" begin="90" end="94"/>
+			<lne id="1497" begin="84" end="95"/>
+			<lne id="1498" begin="79" end="95"/>
+			<lne id="1499" begin="97" end="97"/>
+			<lne id="1500" begin="98" end="98"/>
+			<lne id="1501" begin="99" end="99"/>
+			<lne id="1502" begin="99" end="100"/>
+			<lne id="1503" begin="101" end="101"/>
+			<lne id="1504" begin="98" end="102"/>
+			<lne id="1505" begin="103" end="103"/>
+			<lne id="1506" begin="104" end="104"/>
+			<lne id="1507" begin="105" end="105"/>
+			<lne id="1508" begin="106" end="106"/>
+			<lne id="1509" begin="103" end="107"/>
+			<lne id="1510" begin="97" end="108"/>
+			<lne id="1511" begin="20" end="108"/>
+			<lne id="1512" begin="110" end="110"/>
+			<lne id="1513" begin="111" end="111"/>
+			<lne id="1514" begin="111" end="112"/>
+			<lne id="1515" begin="113" end="113"/>
+			<lne id="1516" begin="113" end="114"/>
+			<lne id="1517" begin="111" end="115"/>
+			<lne id="1518" begin="116" end="116"/>
+			<lne id="1519" begin="117" end="117"/>
+			<lne id="1520" begin="117" end="118"/>
+			<lne id="1521" begin="116" end="119"/>
+			<lne id="1522" begin="116" end="120"/>
+			<lne id="1523" begin="110" end="121"/>
+			<lne id="1524" begin="13" end="121"/>
+			<lne id="1525" begin="123" end="123"/>
+			<lne id="1526" begin="124" end="124"/>
+			<lne id="1527" begin="124" end="125"/>
+			<lne id="1528" begin="126" end="126"/>
+			<lne id="1529" begin="126" end="127"/>
+			<lne id="1530" begin="124" end="128"/>
+			<lne id="1531" begin="129" end="129"/>
+			<lne id="1532" begin="130" end="130"/>
+			<lne id="1533" begin="130" end="131"/>
+			<lne id="1534" begin="129" end="132"/>
+			<lne id="1535" begin="129" end="133"/>
+			<lne id="1536" begin="123" end="134"/>
+			<lne id="1537" begin="6" end="134"/>
+			<lne id="1538" begin="136" end="136"/>
+			<lne id="1539" begin="136" end="137"/>
+			<lne id="1540" begin="138" end="140"/>
+			<lne id="1541" begin="136" end="141"/>
+			<lne id="1542" begin="143" end="143"/>
+			<lne id="1543" begin="143" end="144"/>
+			<lne id="1544" begin="145" end="147"/>
+			<lne id="1545" begin="143" end="148"/>
+			<lne id="1546" begin="150" end="150"/>
+			<lne id="1547" begin="150" end="151"/>
+			<lne id="1548" begin="152" end="154"/>
+			<lne id="1549" begin="150" end="155"/>
+			<lne id="1550" begin="157" end="157"/>
+			<lne id="1551" begin="157" end="158"/>
+			<lne id="1552" begin="159" end="161"/>
+			<lne id="1553" begin="157" end="162"/>
+			<lne id="1554" begin="164" end="164"/>
+			<lne id="1555" begin="165" end="165"/>
+			<lne id="1556" begin="166" end="166"/>
+			<lne id="1557" begin="166" end="167"/>
+			<lne id="1558" begin="166" end="168"/>
+			<lne id="1559" begin="165" end="169"/>
+			<lne id="1560" begin="176" end="176"/>
+			<lne id="1561" begin="177" end="177"/>
+			<lne id="1562" begin="177" end="178"/>
+			<lne id="1563" begin="176" end="179"/>
+			<lne id="1564" begin="182" end="182"/>
+			<lne id="1565" begin="182" end="183"/>
+			<lne id="1566" begin="173" end="185"/>
+			<lne id="1567" begin="173" end="186"/>
+			<lne id="1568" begin="189" end="189"/>
+			<lne id="1569" begin="189" end="190"/>
+			<lne id="1570" begin="189" end="191"/>
+			<lne id="1571" begin="170" end="196"/>
+			<lne id="1572" begin="164" end="197"/>
+			<lne id="1573" begin="199" end="199"/>
+			<lne id="1574" begin="200" end="200"/>
+			<lne id="1575" begin="201" end="201"/>
+			<lne id="1576" begin="201" end="202"/>
+			<lne id="1577" begin="201" end="203"/>
+			<lne id="1578" begin="200" end="204"/>
+			<lne id="1579" begin="211" end="211"/>
+			<lne id="1580" begin="212" end="212"/>
+			<lne id="1581" begin="212" end="213"/>
+			<lne id="1582" begin="211" end="214"/>
+			<lne id="1583" begin="217" end="217"/>
+			<lne id="1584" begin="217" end="218"/>
+			<lne id="1585" begin="208" end="220"/>
+			<lne id="1586" begin="208" end="221"/>
+			<lne id="1587" begin="224" end="224"/>
+			<lne id="1588" begin="224" end="225"/>
+			<lne id="1589" begin="224" end="226"/>
+			<lne id="1590" begin="205" end="231"/>
+			<lne id="1591" begin="199" end="232"/>
+			<lne id="1592" begin="157" end="232"/>
+			<lne id="1593" begin="234" end="234"/>
+			<lne id="1594" begin="235" end="235"/>
+			<lne id="1595" begin="235" end="236"/>
+			<lne id="1596" begin="237" end="237"/>
+			<lne id="1597" begin="237" end="238"/>
+			<lne id="1598" begin="235" end="239"/>
+			<lne id="1599" begin="243" end="243"/>
+			<lne id="1600" begin="244" end="244"/>
+			<lne id="1601" begin="244" end="245"/>
+			<lne id="1602" begin="243" end="246"/>
+			<lne id="1603" begin="243" end="247"/>
+			<lne id="1604" begin="250" end="250"/>
+			<lne id="1605" begin="250" end="251"/>
+			<lne id="1606" begin="250" end="252"/>
+			<lne id="1607" begin="253" end="253"/>
+			<lne id="1608" begin="253" end="254"/>
+			<lne id="1609" begin="250" end="255"/>
+			<lne id="1610" begin="240" end="262"/>
+			<lne id="1611" begin="240" end="263"/>
+			<lne id="1612" begin="234" end="264"/>
+			<lne id="1613" begin="150" end="264"/>
+			<lne id="1614" begin="266" end="266"/>
+			<lne id="1615" begin="267" end="267"/>
+			<lne id="1616" begin="267" end="268"/>
+			<lne id="1617" begin="269" end="269"/>
+			<lne id="1618" begin="269" end="270"/>
+			<lne id="1619" begin="267" end="271"/>
+			<lne id="1620" begin="275" end="275"/>
+			<lne id="1621" begin="276" end="276"/>
+			<lne id="1622" begin="276" end="277"/>
+			<lne id="1623" begin="275" end="278"/>
+			<lne id="1624" begin="275" end="279"/>
+			<lne id="1625" begin="282" end="282"/>
+			<lne id="1626" begin="282" end="283"/>
+			<lne id="1627" begin="282" end="284"/>
+			<lne id="1628" begin="285" end="285"/>
+			<lne id="1629" begin="285" end="286"/>
+			<lne id="1630" begin="282" end="287"/>
+			<lne id="1631" begin="272" end="294"/>
+			<lne id="1632" begin="272" end="295"/>
+			<lne id="1633" begin="266" end="296"/>
+			<lne id="1634" begin="143" end="296"/>
+			<lne id="1635" begin="298" end="298"/>
+			<lne id="1636" begin="299" end="299"/>
+			<lne id="1637" begin="300" end="300"/>
+			<lne id="1638" begin="300" end="301"/>
+			<lne id="1639" begin="300" end="302"/>
+			<lne id="1640" begin="299" end="303"/>
+			<lne id="1641" begin="310" end="310"/>
+			<lne id="1642" begin="311" end="311"/>
+			<lne id="1643" begin="311" end="312"/>
+			<lne id="1644" begin="310" end="313"/>
+			<lne id="1645" begin="316" end="316"/>
+			<lne id="1646" begin="316" end="317"/>
+			<lne id="1647" begin="307" end="319"/>
+			<lne id="1648" begin="307" end="320"/>
+			<lne id="1649" begin="323" end="323"/>
+			<lne id="1650" begin="323" end="324"/>
+			<lne id="1651" begin="323" end="325"/>
+			<lne id="1652" begin="304" end="330"/>
+			<lne id="1653" begin="298" end="331"/>
+			<lne id="1654" begin="136" end="331"/>
+			<lne id="1655" begin="0" end="331"/>
+			<lne id="1656" begin="0" end="331"/>
 		</linenumbertable>
 		<localvariabletable>
 			<lve slot="4" name="215" begin="56" end="59"/>
@@ -31348,8 +31985,8 @@
 			<lve slot="4" name="215" begin="188" end="195"/>
 			<lve slot="4" name="215" begin="216" end="219"/>
 			<lve slot="4" name="215" begin="223" end="230"/>
-			<lve slot="4" name="920" begin="249" end="259"/>
-			<lve slot="4" name="920" begin="281" end="291"/>
+			<lve slot="4" name="874" begin="249" end="259"/>
+			<lve slot="4" name="874" begin="281" end="291"/>
 			<lve slot="4" name="215" begin="315" end="318"/>
 			<lve slot="4" name="215" begin="322" end="329"/>
 			<lve slot="0" name="17" begin="0" end="331"/>
@@ -31358,7 +31995,7 @@
 			<lve slot="3" name="219" begin="0" end="331"/>
 		</localvariabletable>
 	</operation>
-	<operation name="1690">
+	<operation name="1657">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -31372,7 +32009,7 @@
 			<push arg="48"/>
 			<findme/>
 			<call arg="49"/>
-			<if arg="1152"/>
+			<if arg="1119"/>
 			<load arg="19"/>
 <<<<<<< HEAD
 			<get arg="725"/>
@@ -31380,6 +32017,7 @@
 >>>>>>> 129e556... Fixes to code in ConnectNodes to remove some runtime errors
 =======
 			<load arg="29"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -31406,56 +32044,59 @@
 =======
 			<get arg="1691"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<get arg="1658"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<get arg="38"/>
 			<call arg="62"/>
-			<get arg="286"/>
-			<call arg="1692"/>
+			<get arg="285"/>
+			<call arg="1659"/>
 			<load arg="29"/>
-			<get arg="1693"/>
-			<call arg="1694"/>
+			<get arg="1660"/>
+			<call arg="1661"/>
 			<if arg="27"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1691"/>
+			<get arg="1658"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<pushf/>
-			<call arg="1151"/>
+			<call arg="1118"/>
 			<pcall arg="92"/>
-			<goto arg="408"/>
+			<goto arg="391"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1691"/>
+			<get arg="1658"/>
 			<get arg="38"/>
 			<call arg="62"/>
-			<get arg="286"/>
-			<call arg="414"/>
-			<get arg="1449"/>
-			<set arg="1695"/>
+			<get arg="285"/>
+			<call arg="397"/>
+			<get arg="1413"/>
+			<set arg="1662"/>
 			<getasm/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="42"/>
 			<pushf/>
-			<call arg="1151"/>
-			<set arg="1696"/>
+			<call arg="1118"/>
+			<set arg="1663"/>
 			<getasm/>
 			<getasm/>
 			<load arg="19"/>
 			<getasm/>
-			<get arg="1696"/>
-			<call arg="1697"/>
-			<set arg="1698"/>
+			<get arg="1663"/>
+			<call arg="1664"/>
+			<set arg="1665"/>
 			<getasm/>
 			<getasm/>
-			<get arg="1698"/>
+			<get arg="1665"/>
 			<getasm/>
-			<get arg="1695"/>
+			<get arg="1662"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
 			<getasm/>
@@ -31483,25 +32124,26 @@
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1691"/>
+			<get arg="1658"/>
 			<get arg="38"/>
 			<call arg="62"/>
 			<getasm/>
-			<get arg="1698"/>
+			<get arg="1665"/>
 			<get arg="63"/>
 			<pcall arg="92"/>
-			<goto arg="1699"/>
+			<goto arg="1666"/>
 			<getasm/>
-			<push arg="400"/>
-			<set arg="555"/>
+			<push arg="383"/>
+			<set arg="525"/>
 			<load arg="19"/>
 			<load arg="29"/>
-			<get arg="1691"/>
+			<get arg="1658"/>
 			<get arg="38"/>
 			<call arg="62"/>
-			<get arg="286"/>
-			<call arg="1692"/>
+			<get arg="285"/>
+			<call arg="1659"/>
 			<load arg="29"/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -31540,6 +32182,10 @@
 =======
 			<get arg="1693"/>
 			<call arg="1694"/>
+=======
+			<get arg="1660"/>
+			<call arg="1661"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<if arg="79"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
 			<getasm/>
@@ -31553,14 +32199,14 @@
 			<load arg="19"/>
 			<load arg="42"/>
 			<get arg="38"/>
-			<call arg="932"/>
+			<call arg="886"/>
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
 			<get arg="63"/>
 			<call arg="75"/>
 			<enditerate/>
-			<call arg="933"/>
+			<call arg="887"/>
 			<iterate/>
 			<store arg="43"/>
 			<load arg="43"/>
@@ -31763,6 +32409,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<if arg="578"/>
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
@@ -31777,11 +32424,14 @@
 =======
 			<if arg="1700"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<if arg="1667"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<load arg="43"/>
 			<call arg="75"/>
 			<enditerate/>
-			<set arg="555"/>
-			<goto arg="1446"/>
+			<set arg="525"/>
+			<goto arg="287"/>
 			<getasm/>
 			<load arg="19"/>
 <<<<<<< HEAD
@@ -32026,127 +32676,127 @@
 =======
 			<load arg="42"/>
 			<get arg="38"/>
-			<call arg="1457"/>
+			<call arg="1423"/>
 			<get arg="63"/>
-			<set arg="555"/>
+			<set arg="525"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
 			<getasm/>
-			<get arg="555"/>
-			<pcall arg="1701"/>
+			<get arg="525"/>
+			<pcall arg="1668"/>
 		</code>
 		<linenumbertable>
-			<lne id="1702" begin="0" end="0"/>
-			<lne id="1703" begin="1" end="3"/>
-			<lne id="1704" begin="0" end="4"/>
-			<lne id="1705" begin="6" end="6"/>
-			<lne id="1706" begin="7" end="7"/>
-			<lne id="1707" begin="7" end="8"/>
-			<lne id="1708" begin="7" end="9"/>
-			<lne id="1709" begin="6" end="10"/>
-			<lne id="1710" begin="6" end="11"/>
-			<lne id="1711" begin="6" end="12"/>
-			<lne id="1712" begin="13" end="13"/>
-			<lne id="1713" begin="13" end="14"/>
-			<lne id="1714" begin="6" end="15"/>
-			<lne id="1715" begin="17" end="17"/>
-			<lne id="1716" begin="18" end="18"/>
-			<lne id="1717" begin="19" end="19"/>
-			<lne id="1718" begin="19" end="20"/>
-			<lne id="1719" begin="19" end="21"/>
-			<lne id="1720" begin="18" end="22"/>
-			<lne id="1721" begin="23" end="23"/>
-			<lne id="1722" begin="24" end="24"/>
-			<lne id="1723" begin="25" end="25"/>
-			<lne id="1724" begin="26" end="26"/>
-			<lne id="1725" begin="23" end="27"/>
-			<lne id="1726" begin="17" end="28"/>
-			<lne id="1727" begin="30" end="30"/>
-			<lne id="1728" begin="31" end="31"/>
-			<lne id="1729" begin="32" end="32"/>
-			<lne id="1730" begin="32" end="33"/>
-			<lne id="1731" begin="32" end="34"/>
-			<lne id="1732" begin="31" end="35"/>
-			<lne id="1733" begin="31" end="36"/>
-			<lne id="1734" begin="31" end="37"/>
-			<lne id="1735" begin="31" end="38"/>
-			<lne id="1736" begin="30" end="39"/>
-			<lne id="1737" begin="40" end="40"/>
-			<lne id="1738" begin="41" end="41"/>
-			<lne id="1739" begin="42" end="42"/>
-			<lne id="1740" begin="43" end="43"/>
-			<lne id="1741" begin="44" end="44"/>
-			<lne id="1742" begin="41" end="45"/>
-			<lne id="1743" begin="40" end="46"/>
-			<lne id="1744" begin="47" end="47"/>
-			<lne id="1745" begin="48" end="48"/>
-			<lne id="1746" begin="49" end="49"/>
-			<lne id="1747" begin="50" end="50"/>
-			<lne id="1748" begin="50" end="51"/>
-			<lne id="1749" begin="48" end="52"/>
-			<lne id="1750" begin="47" end="53"/>
-			<lne id="1751" begin="54" end="54"/>
-			<lne id="1752" begin="55" end="55"/>
-			<lne id="1753" begin="55" end="56"/>
-			<lne id="1754" begin="57" end="57"/>
-			<lne id="1755" begin="57" end="58"/>
-			<lne id="1756" begin="57" end="59"/>
-			<lne id="1757" begin="54" end="60"/>
-			<lne id="1758" begin="61" end="61"/>
-			<lne id="1759" begin="62" end="62"/>
-			<lne id="1760" begin="63" end="63"/>
-			<lne id="1761" begin="63" end="64"/>
-			<lne id="1762" begin="63" end="65"/>
-			<lne id="1763" begin="62" end="66"/>
-			<lne id="1764" begin="67" end="67"/>
-			<lne id="1765" begin="67" end="68"/>
-			<lne id="1766" begin="67" end="69"/>
-			<lne id="1767" begin="61" end="70"/>
-			<lne id="1768" begin="6" end="70"/>
-			<lne id="1769" begin="72" end="72"/>
-			<lne id="1770" begin="73" end="73"/>
-			<lne id="1771" begin="72" end="74"/>
-			<lne id="1772" begin="75" end="75"/>
-			<lne id="1773" begin="76" end="76"/>
-			<lne id="1774" begin="76" end="77"/>
-			<lne id="1775" begin="76" end="78"/>
-			<lne id="1776" begin="75" end="79"/>
-			<lne id="1777" begin="75" end="80"/>
-			<lne id="1778" begin="75" end="81"/>
-			<lne id="1779" begin="82" end="82"/>
-			<lne id="1780" begin="82" end="83"/>
-			<lne id="1781" begin="75" end="84"/>
-			<lne id="1782" begin="86" end="86"/>
-			<lne id="1783" begin="93" end="93"/>
-			<lne id="1784" begin="94" end="94"/>
-			<lne id="1785" begin="94" end="95"/>
-			<lne id="1786" begin="93" end="96"/>
-			<lne id="1787" begin="99" end="99"/>
-			<lne id="1788" begin="99" end="100"/>
-			<lne id="1789" begin="90" end="102"/>
-			<lne id="1790" begin="90" end="103"/>
-			<lne id="1791" begin="106" end="106"/>
-			<lne id="1792" begin="106" end="107"/>
-			<lne id="1793" begin="106" end="108"/>
-			<lne id="1794" begin="87" end="113"/>
-			<lne id="1795" begin="86" end="114"/>
-			<lne id="1796" begin="116" end="116"/>
-			<lne id="1797" begin="117" end="117"/>
-			<lne id="1798" begin="118" end="118"/>
-			<lne id="1799" begin="118" end="119"/>
-			<lne id="1800" begin="117" end="120"/>
-			<lne id="1801" begin="117" end="121"/>
-			<lne id="1802" begin="116" end="122"/>
-			<lne id="1803" begin="75" end="122"/>
-			<lne id="1804" begin="123" end="123"/>
-			<lne id="1805" begin="124" end="124"/>
-			<lne id="1806" begin="125" end="125"/>
-			<lne id="1807" begin="126" end="126"/>
-			<lne id="1808" begin="126" end="127"/>
-			<lne id="1809" begin="123" end="128"/>
-			<lne id="1810" begin="0" end="128"/>
-			<lne id="1811" begin="0" end="128"/>
+			<lne id="1669" begin="0" end="0"/>
+			<lne id="1670" begin="1" end="3"/>
+			<lne id="1671" begin="0" end="4"/>
+			<lne id="1672" begin="6" end="6"/>
+			<lne id="1673" begin="7" end="7"/>
+			<lne id="1674" begin="7" end="8"/>
+			<lne id="1675" begin="7" end="9"/>
+			<lne id="1676" begin="6" end="10"/>
+			<lne id="1677" begin="6" end="11"/>
+			<lne id="1678" begin="6" end="12"/>
+			<lne id="1679" begin="13" end="13"/>
+			<lne id="1680" begin="13" end="14"/>
+			<lne id="1681" begin="6" end="15"/>
+			<lne id="1682" begin="17" end="17"/>
+			<lne id="1683" begin="18" end="18"/>
+			<lne id="1684" begin="19" end="19"/>
+			<lne id="1685" begin="19" end="20"/>
+			<lne id="1686" begin="19" end="21"/>
+			<lne id="1687" begin="18" end="22"/>
+			<lne id="1688" begin="23" end="23"/>
+			<lne id="1689" begin="24" end="24"/>
+			<lne id="1690" begin="25" end="25"/>
+			<lne id="1691" begin="26" end="26"/>
+			<lne id="1692" begin="23" end="27"/>
+			<lne id="1693" begin="17" end="28"/>
+			<lne id="1694" begin="30" end="30"/>
+			<lne id="1695" begin="31" end="31"/>
+			<lne id="1696" begin="32" end="32"/>
+			<lne id="1697" begin="32" end="33"/>
+			<lne id="1698" begin="32" end="34"/>
+			<lne id="1699" begin="31" end="35"/>
+			<lne id="1700" begin="31" end="36"/>
+			<lne id="1701" begin="31" end="37"/>
+			<lne id="1702" begin="31" end="38"/>
+			<lne id="1703" begin="30" end="39"/>
+			<lne id="1704" begin="40" end="40"/>
+			<lne id="1705" begin="41" end="41"/>
+			<lne id="1706" begin="42" end="42"/>
+			<lne id="1707" begin="43" end="43"/>
+			<lne id="1708" begin="44" end="44"/>
+			<lne id="1709" begin="41" end="45"/>
+			<lne id="1710" begin="40" end="46"/>
+			<lne id="1711" begin="47" end="47"/>
+			<lne id="1712" begin="48" end="48"/>
+			<lne id="1713" begin="49" end="49"/>
+			<lne id="1714" begin="50" end="50"/>
+			<lne id="1715" begin="50" end="51"/>
+			<lne id="1716" begin="48" end="52"/>
+			<lne id="1717" begin="47" end="53"/>
+			<lne id="1718" begin="54" end="54"/>
+			<lne id="1719" begin="55" end="55"/>
+			<lne id="1720" begin="55" end="56"/>
+			<lne id="1721" begin="57" end="57"/>
+			<lne id="1722" begin="57" end="58"/>
+			<lne id="1723" begin="57" end="59"/>
+			<lne id="1724" begin="54" end="60"/>
+			<lne id="1725" begin="61" end="61"/>
+			<lne id="1726" begin="62" end="62"/>
+			<lne id="1727" begin="63" end="63"/>
+			<lne id="1728" begin="63" end="64"/>
+			<lne id="1729" begin="63" end="65"/>
+			<lne id="1730" begin="62" end="66"/>
+			<lne id="1731" begin="67" end="67"/>
+			<lne id="1732" begin="67" end="68"/>
+			<lne id="1733" begin="67" end="69"/>
+			<lne id="1734" begin="61" end="70"/>
+			<lne id="1735" begin="6" end="70"/>
+			<lne id="1736" begin="72" end="72"/>
+			<lne id="1737" begin="73" end="73"/>
+			<lne id="1738" begin="72" end="74"/>
+			<lne id="1739" begin="75" end="75"/>
+			<lne id="1740" begin="76" end="76"/>
+			<lne id="1741" begin="76" end="77"/>
+			<lne id="1742" begin="76" end="78"/>
+			<lne id="1743" begin="75" end="79"/>
+			<lne id="1744" begin="75" end="80"/>
+			<lne id="1745" begin="75" end="81"/>
+			<lne id="1746" begin="82" end="82"/>
+			<lne id="1747" begin="82" end="83"/>
+			<lne id="1748" begin="75" end="84"/>
+			<lne id="1749" begin="86" end="86"/>
+			<lne id="1750" begin="93" end="93"/>
+			<lne id="1751" begin="94" end="94"/>
+			<lne id="1752" begin="94" end="95"/>
+			<lne id="1753" begin="93" end="96"/>
+			<lne id="1754" begin="99" end="99"/>
+			<lne id="1755" begin="99" end="100"/>
+			<lne id="1756" begin="90" end="102"/>
+			<lne id="1757" begin="90" end="103"/>
+			<lne id="1758" begin="106" end="106"/>
+			<lne id="1759" begin="106" end="107"/>
+			<lne id="1760" begin="106" end="108"/>
+			<lne id="1761" begin="87" end="113"/>
+			<lne id="1762" begin="86" end="114"/>
+			<lne id="1763" begin="116" end="116"/>
+			<lne id="1764" begin="117" end="117"/>
+			<lne id="1765" begin="118" end="118"/>
+			<lne id="1766" begin="118" end="119"/>
+			<lne id="1767" begin="117" end="120"/>
+			<lne id="1768" begin="117" end="121"/>
+			<lne id="1769" begin="116" end="122"/>
+			<lne id="1770" begin="75" end="122"/>
+			<lne id="1771" begin="123" end="123"/>
+			<lne id="1772" begin="124" end="124"/>
+			<lne id="1773" begin="125" end="125"/>
+			<lne id="1774" begin="126" end="126"/>
+			<lne id="1775" begin="126" end="127"/>
+			<lne id="1776" begin="123" end="128"/>
+			<lne id="1777" begin="0" end="128"/>
+			<lne id="1778" begin="0" end="128"/>
 		</linenumbertable>
 		<localvariabletable>
 			<lve slot="4" name="215" begin="98" end="101"/>
@@ -32157,7 +32807,7 @@
 			<lve slot="3" name="219" begin="0" end="128"/>
 		</localvariabletable>
 	</operation>
-	<operation name="1812">
+	<operation name="1779">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -32167,12 +32817,13 @@
 		</parameters>
 		<code>
 			<load arg="19"/>
-			<get arg="1813"/>
-			<call arg="580"/>
+			<get arg="1780"/>
+			<call arg="552"/>
 			<call arg="53"/>
 			<if arg="46"/>
 			<goto arg="68"/>
 			<getasm/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 			<push arg="263"/>
@@ -32184,10 +32835,13 @@
 >>>>>>> bc40f44... Wrote the firstUnconnectedSucc and allUnconnectedSucc helpers to simplify some logic; wrote the addSucc and addPred rules to make some logic more easy to read, then replaced occurrences of pred and succ assignments with calls to these rules
 =======
 			<push arg="400"/>
+=======
+			<push arg="383"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<set arg="220"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
 			<load arg="19"/>
-			<get arg="1813"/>
+			<get arg="1780"/>
 			<iterate/>
 			<store arg="44"/>
 			<getasm/>
@@ -32333,10 +32987,16 @@
 >>>>>>> 33640b0... Changes to Turn2Urn: added more variables to UCMmap2UCMmap, using the convention -- INIT (varname) for the lines where the variables are first defined for readability; fixed an issue in createTimer where I missed some logic when refactoring; fixed other logic in createTimer and removed all uses of the nodeCounter global variable from both files
 =======
 			<get arg="220"/>
+<<<<<<< HEAD
 			<push arg="400"/>
 			<call arg="391"/>
 			<if arg="398"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<push arg="383"/>
+			<call arg="374"/>
+			<if arg="381"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 >>>>>>> b30e32a... Fixed a logic error in ConnectNodes handleForkLogic; commented out a line in Turn2Urn that I suspect has a logical error; fixed a logic error in UCMmap2UCMmap; added TODO comments to Turn2Urn; updated README with new tasks
 			<load arg="42"/>
@@ -32404,52 +33064,52 @@
 			<load arg="44"/>
 			<getasm/>
 			<get arg="220"/>
-			<pcall arg="1814"/>
+			<pcall arg="1781"/>
 			<goto arg="226"/>
 			<getasm/>
 			<load arg="42"/>
 			<load arg="29"/>
 			<load arg="44"/>
 			<load arg="43"/>
-			<pcall arg="1815"/>
+			<pcall arg="1782"/>
 			<load arg="44"/>
 			<load arg="19"/>
-			<get arg="1813"/>
-			<call arg="1816"/>
-			<call arg="401"/>
+			<get arg="1780"/>
+			<call arg="1783"/>
+			<call arg="384"/>
 			<if arg="225"/>
-			<goto arg="404"/>
+			<goto arg="387"/>
 			<getasm/>
 			<load arg="44"/>
 			<set arg="220"/>
 			<enditerate/>
 			<getasm/>
 			<load arg="19"/>
-			<get arg="1813"/>
-			<call arg="1816"/>
-			<set arg="1817"/>
+			<get arg="1780"/>
+			<call arg="1783"/>
+			<set arg="1784"/>
 			<load arg="19"/>
-			<get arg="1143"/>
+			<get arg="1110"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1818"/>
+			<if arg="1785"/>
 			<load arg="19"/>
-			<get arg="1445"/>
+			<get arg="1411"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="568"/>
+			<if arg="539"/>
 			<load arg="19"/>
-			<get arg="1691"/>
+			<get arg="1658"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1450"/>
-			<goto arg="1152"/>
+			<if arg="1414"/>
+			<goto arg="1119"/>
 			<getasm/>
 >>>>>>> efdccc2... Major refactoring of ConnectNodes to modularize its segments. These do need to be given better names; I will do so as I debug them. I also cleaned up the code by assuming that some of pathbody.pathNodes -> at(n) were redundant (assuming node == thisModule.currentPathNode in particular). Also changed names of variables in code from xPathNode to xNode as the Path is implied and the shorter name improves readability
 			<load arg="42"/>
 			<load arg="19"/>
 			<getasm/>
-			<get arg="1817"/>
+			<get arg="1784"/>
 			<getasm/>
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -39714,15 +40374,20 @@
 >>>>>>> 0cc6999... Changes to connectAndForkNodes, connectOrForkNodes, connectOrForkEndPoints to have 'using' blocks; some spacing changes to improve syntax consistency; changes to both classes to remove all instances of thisModule.counter
 =======
 			<get arg="220"/>
+<<<<<<< HEAD
 			<pcall arg="1819"/>
 			<goto arg="930"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<pcall arg="1786"/>
+			<goto arg="884"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 			<getasm/>
 			<load arg="42"/>
 			<load arg="19"/>
 			<getasm/>
-			<get arg="1817"/>
-			<pcall arg="1820"/>
+			<get arg="1784"/>
+			<pcall arg="1787"/>
 			<goto arg="68"/>
 			<getasm/>
 <<<<<<< HEAD
@@ -39740,6 +40405,7 @@
 			<load arg="42"/>
 			<load arg="19"/>
 			<getasm/>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -39763,87 +40429,91 @@
 			<get arg="1817"/>
 			<pcall arg="1821"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<get arg="1784"/>
+			<pcall arg="1788"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 		</code>
 		<linenumbertable>
-			<lne id="1822" begin="0" end="0"/>
-			<lne id="1823" begin="0" end="1"/>
-			<lne id="1824" begin="0" end="2"/>
-			<lne id="1825" begin="0" end="3"/>
-			<lne id="1826" begin="6" end="6"/>
-			<lne id="1827" begin="7" end="7"/>
-			<lne id="1828" begin="6" end="8"/>
-			<lne id="1829" begin="9" end="9"/>
-			<lne id="1830" begin="9" end="10"/>
-			<lne id="1831" begin="13" end="13"/>
-			<lne id="1832" begin="13" end="14"/>
-			<lne id="1833" begin="15" end="15"/>
-			<lne id="1834" begin="13" end="16"/>
-			<lne id="1835" begin="18" end="18"/>
-			<lne id="1836" begin="19" end="19"/>
-			<lne id="1837" begin="20" end="20"/>
-			<lne id="1838" begin="21" end="21"/>
-			<lne id="1839" begin="22" end="22"/>
-			<lne id="1840" begin="22" end="23"/>
-			<lne id="1841" begin="18" end="24"/>
-			<lne id="1842" begin="26" end="26"/>
-			<lne id="1843" begin="27" end="27"/>
-			<lne id="1844" begin="28" end="28"/>
-			<lne id="1845" begin="29" end="29"/>
-			<lne id="1846" begin="30" end="30"/>
-			<lne id="1847" begin="26" end="31"/>
-			<lne id="1848" begin="13" end="31"/>
-			<lne id="1849" begin="32" end="32"/>
-			<lne id="1850" begin="33" end="33"/>
-			<lne id="1851" begin="33" end="34"/>
-			<lne id="1852" begin="33" end="35"/>
-			<lne id="1853" begin="32" end="36"/>
-			<lne id="1854" begin="39" end="39"/>
-			<lne id="1855" begin="40" end="40"/>
-			<lne id="1856" begin="39" end="41"/>
-			<lne id="1857" begin="32" end="41"/>
-			<lne id="1858" begin="9" end="42"/>
-			<lne id="1859" begin="43" end="43"/>
-			<lne id="1860" begin="44" end="44"/>
-			<lne id="1861" begin="44" end="45"/>
-			<lne id="1862" begin="44" end="46"/>
-			<lne id="1863" begin="43" end="47"/>
-			<lne id="1864" begin="48" end="48"/>
-			<lne id="1865" begin="48" end="49"/>
-			<lne id="1866" begin="48" end="50"/>
-			<lne id="1867" begin="48" end="51"/>
-			<lne id="1868" begin="53" end="53"/>
-			<lne id="1869" begin="53" end="54"/>
-			<lne id="1870" begin="53" end="55"/>
-			<lne id="1871" begin="53" end="56"/>
-			<lne id="1872" begin="58" end="58"/>
-			<lne id="1873" begin="58" end="59"/>
-			<lne id="1874" begin="58" end="60"/>
-			<lne id="1875" begin="58" end="61"/>
-			<lne id="1876" begin="64" end="64"/>
-			<lne id="1877" begin="65" end="65"/>
-			<lne id="1878" begin="66" end="66"/>
-			<lne id="1879" begin="67" end="67"/>
-			<lne id="1880" begin="67" end="68"/>
-			<lne id="1881" begin="69" end="69"/>
-			<lne id="1882" begin="69" end="70"/>
-			<lne id="1883" begin="64" end="71"/>
-			<lne id="1884" begin="58" end="71"/>
-			<lne id="1885" begin="73" end="73"/>
-			<lne id="1886" begin="74" end="74"/>
-			<lne id="1887" begin="75" end="75"/>
-			<lne id="1888" begin="76" end="76"/>
-			<lne id="1889" begin="76" end="77"/>
-			<lne id="1890" begin="73" end="78"/>
-			<lne id="1891" begin="53" end="78"/>
-			<lne id="1892" begin="80" end="80"/>
-			<lne id="1893" begin="81" end="81"/>
-			<lne id="1894" begin="82" end="82"/>
-			<lne id="1895" begin="83" end="83"/>
-			<lne id="1896" begin="83" end="84"/>
-			<lne id="1897" begin="80" end="85"/>
-			<lne id="1898" begin="48" end="85"/>
-			<lne id="1899" begin="0" end="85"/>
-			<lne id="1900" begin="0" end="85"/>
+			<lne id="1789" begin="0" end="0"/>
+			<lne id="1790" begin="0" end="1"/>
+			<lne id="1791" begin="0" end="2"/>
+			<lne id="1792" begin="0" end="3"/>
+			<lne id="1793" begin="6" end="6"/>
+			<lne id="1794" begin="7" end="7"/>
+			<lne id="1795" begin="6" end="8"/>
+			<lne id="1796" begin="9" end="9"/>
+			<lne id="1797" begin="9" end="10"/>
+			<lne id="1798" begin="13" end="13"/>
+			<lne id="1799" begin="13" end="14"/>
+			<lne id="1800" begin="15" end="15"/>
+			<lne id="1801" begin="13" end="16"/>
+			<lne id="1802" begin="18" end="18"/>
+			<lne id="1803" begin="19" end="19"/>
+			<lne id="1804" begin="20" end="20"/>
+			<lne id="1805" begin="21" end="21"/>
+			<lne id="1806" begin="22" end="22"/>
+			<lne id="1807" begin="22" end="23"/>
+			<lne id="1808" begin="18" end="24"/>
+			<lne id="1809" begin="26" end="26"/>
+			<lne id="1810" begin="27" end="27"/>
+			<lne id="1811" begin="28" end="28"/>
+			<lne id="1812" begin="29" end="29"/>
+			<lne id="1813" begin="30" end="30"/>
+			<lne id="1814" begin="26" end="31"/>
+			<lne id="1815" begin="13" end="31"/>
+			<lne id="1816" begin="32" end="32"/>
+			<lne id="1817" begin="33" end="33"/>
+			<lne id="1818" begin="33" end="34"/>
+			<lne id="1819" begin="33" end="35"/>
+			<lne id="1820" begin="32" end="36"/>
+			<lne id="1821" begin="39" end="39"/>
+			<lne id="1822" begin="40" end="40"/>
+			<lne id="1823" begin="39" end="41"/>
+			<lne id="1824" begin="32" end="41"/>
+			<lne id="1825" begin="9" end="42"/>
+			<lne id="1826" begin="43" end="43"/>
+			<lne id="1827" begin="44" end="44"/>
+			<lne id="1828" begin="44" end="45"/>
+			<lne id="1829" begin="44" end="46"/>
+			<lne id="1830" begin="43" end="47"/>
+			<lne id="1831" begin="48" end="48"/>
+			<lne id="1832" begin="48" end="49"/>
+			<lne id="1833" begin="48" end="50"/>
+			<lne id="1834" begin="48" end="51"/>
+			<lne id="1835" begin="53" end="53"/>
+			<lne id="1836" begin="53" end="54"/>
+			<lne id="1837" begin="53" end="55"/>
+			<lne id="1838" begin="53" end="56"/>
+			<lne id="1839" begin="58" end="58"/>
+			<lne id="1840" begin="58" end="59"/>
+			<lne id="1841" begin="58" end="60"/>
+			<lne id="1842" begin="58" end="61"/>
+			<lne id="1843" begin="64" end="64"/>
+			<lne id="1844" begin="65" end="65"/>
+			<lne id="1845" begin="66" end="66"/>
+			<lne id="1846" begin="67" end="67"/>
+			<lne id="1847" begin="67" end="68"/>
+			<lne id="1848" begin="69" end="69"/>
+			<lne id="1849" begin="69" end="70"/>
+			<lne id="1850" begin="64" end="71"/>
+			<lne id="1851" begin="58" end="71"/>
+			<lne id="1852" begin="73" end="73"/>
+			<lne id="1853" begin="74" end="74"/>
+			<lne id="1854" begin="75" end="75"/>
+			<lne id="1855" begin="76" end="76"/>
+			<lne id="1856" begin="76" end="77"/>
+			<lne id="1857" begin="73" end="78"/>
+			<lne id="1858" begin="53" end="78"/>
+			<lne id="1859" begin="80" end="80"/>
+			<lne id="1860" begin="81" end="81"/>
+			<lne id="1861" begin="82" end="82"/>
+			<lne id="1862" begin="83" end="83"/>
+			<lne id="1863" begin="83" end="84"/>
+			<lne id="1864" begin="80" end="85"/>
+			<lne id="1865" begin="48" end="85"/>
+			<lne id="1866" begin="0" end="85"/>
+			<lne id="1867" begin="0" end="85"/>
 		</linenumbertable>
 		<localvariabletable>
 <<<<<<< HEAD
@@ -40957,10 +41627,14 @@
 			<lve slot="5" name="219" begin="12" end="41"/>
 			<lve slot="0" name="17" begin="0" end="85"/>
 			<lve slot="1" name="218" begin="0" end="85"/>
-			<lve slot="2" name="553" begin="0" end="85"/>
+			<lve slot="2" name="523" begin="0" end="85"/>
 			<lve slot="3" name="217" begin="0" end="85"/>
+<<<<<<< HEAD
 			<lve slot="4" name="555" begin="0" end="85"/>
 >>>>>>> 80a9916... Reworked handleConnectNode to make use of a 'to' section. This makes it much more in the spirit of declarative programming. The order in which ids are assigned has changed but otherwise the logic should have the same effect as before. Also added a 'using' block to getNodeToConnect and to processNode.
+=======
+			<lve slot="4" name="525" begin="0" end="85"/>
+>>>>>>> 98e4bc5... Reworked handleConnectNode to reduce its logic further. I have assumed that the order of predecessors does not matter in this.
 		</localvariabletable>
 	</operation>
 </asm>
