@@ -449,7 +449,7 @@ rule connectTimerNodes(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
 		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
 		if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
 			thisModule.addPred(tUCMmap.getNode(timerObj.timeoutPath.pathNodes -> first().name), tUCMmap.getNode(timerObj.name).succ -> at(2));
-			thisModule.connectNodes(timerObj.timeoutPath, timerObj, tUCMmap, OclAny);
+			thisModule.connectNodes(timerObj.timeoutPath, timerObj, tUCMmap, OclUndefined);
 		}
 		
 		if(vReferencedEnd.oclIsTypeOf(Turn!RespRef)){
