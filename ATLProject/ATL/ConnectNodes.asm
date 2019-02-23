@@ -11250,7 +11250,6 @@
 		<constant value="J.createOrJoin(JJ):J"/>
 		<constant value="orJoin"/>
 		<constant value="128"/>
-		<constant value="J.firstRespDefMatching(J):J"/>
 		<constant value="J.processReferencedStub(JJJ):J"/>
 		<constant value="422:31-422:43"/>
 		<constant value="425:6-425:17"/>
@@ -11344,11 +11343,11 @@
 		<constant value="431:18-431:136"/>
 		<constant value="431:5-431:137"/>
 		<constant value="428:18-428:25"/>
-		<constant value="428:47-428:58"/>
-		<constant value="428:47-428:63"/>
-		<constant value="428:18-428:64"/>
-		<constant value="428:18-428:69"/>
-		<constant value="428:5-428:70"/>
+		<constant value="428:45-428:56"/>
+		<constant value="428:45-428:61"/>
+		<constant value="428:18-428:62"/>
+		<constant value="428:18-428:67"/>
+		<constant value="428:5-428:68"/>
 		<constant value="427:4-432:5"/>
 		<constant value="434:4-434:14"/>
 		<constant value="434:37-434:44"/>
@@ -33972,133 +33971,133 @@
 =======
 			<load arg="42"/>
 			<get arg="38"/>
-			<call arg="1618"/>
+			<call arg="1383"/>
 			<get arg="63"/>
 			<store arg="43"/>
 			<getasm/>
 			<load arg="19"/>
 			<load arg="29"/>
 			<load arg="43"/>
-			<pcall arg="1619"/>
+			<pcall arg="1618"/>
 		</code>
 		<linenumbertable>
-			<lne id="1620" begin="0" end="3"/>
-			<lne id="1621" begin="5" end="5"/>
-			<lne id="1622" begin="6" end="8"/>
-			<lne id="1623" begin="5" end="9"/>
-			<lne id="1624" begin="11" end="11"/>
-			<lne id="1625" begin="12" end="12"/>
-			<lne id="1626" begin="12" end="13"/>
-			<lne id="1627" begin="12" end="14"/>
-			<lne id="1628" begin="11" end="15"/>
-			<lne id="1629" begin="11" end="16"/>
-			<lne id="1630" begin="11" end="17"/>
-			<lne id="1631" begin="18" end="18"/>
-			<lne id="1632" begin="18" end="19"/>
-			<lne id="1633" begin="11" end="20"/>
-			<lne id="1634" begin="22" end="22"/>
-			<lne id="1635" begin="23" end="23"/>
-			<lne id="1636" begin="24" end="24"/>
-			<lne id="1637" begin="24" end="25"/>
-			<lne id="1638" begin="24" end="26"/>
-			<lne id="1639" begin="23" end="27"/>
-			<lne id="1640" begin="28" end="28"/>
-			<lne id="1641" begin="29" end="29"/>
-			<lne id="1642" begin="30" end="30"/>
-			<lne id="1643" begin="31" end="31"/>
-			<lne id="1644" begin="28" end="32"/>
-			<lne id="1645" begin="22" end="33"/>
-			<lne id="1646" begin="35" end="35"/>
-			<lne id="1647" begin="36" end="36"/>
-			<lne id="1648" begin="37" end="37"/>
-			<lne id="1649" begin="37" end="38"/>
-			<lne id="1650" begin="37" end="39"/>
-			<lne id="1651" begin="36" end="40"/>
-			<lne id="1652" begin="36" end="41"/>
-			<lne id="1653" begin="36" end="42"/>
-			<lne id="1654" begin="36" end="43"/>
-			<lne id="1655" begin="35" end="44"/>
-			<lne id="1656" begin="45" end="45"/>
-			<lne id="1657" begin="46" end="46"/>
-			<lne id="1658" begin="47" end="47"/>
-			<lne id="1659" begin="48" end="48"/>
-			<lne id="1660" begin="49" end="49"/>
-			<lne id="1661" begin="46" end="50"/>
-			<lne id="1662" begin="45" end="51"/>
-			<lne id="1663" begin="52" end="52"/>
-			<lne id="1664" begin="53" end="53"/>
-			<lne id="1665" begin="54" end="54"/>
-			<lne id="1666" begin="55" end="55"/>
-			<lne id="1667" begin="55" end="56"/>
-			<lne id="1668" begin="53" end="57"/>
-			<lne id="1669" begin="52" end="58"/>
-			<lne id="1670" begin="59" end="59"/>
-			<lne id="1671" begin="60" end="60"/>
-			<lne id="1672" begin="60" end="61"/>
-			<lne id="1673" begin="62" end="62"/>
-			<lne id="1674" begin="62" end="63"/>
-			<lne id="1675" begin="62" end="64"/>
-			<lne id="1676" begin="59" end="65"/>
-			<lne id="1677" begin="66" end="66"/>
-			<lne id="1678" begin="67" end="67"/>
-			<lne id="1679" begin="68" end="68"/>
-			<lne id="1680" begin="68" end="69"/>
-			<lne id="1681" begin="68" end="70"/>
-			<lne id="1682" begin="67" end="71"/>
-			<lne id="1683" begin="72" end="72"/>
-			<lne id="1684" begin="72" end="73"/>
-			<lne id="1685" begin="72" end="74"/>
-			<lne id="1686" begin="66" end="75"/>
-			<lne id="1687" begin="11" end="75"/>
-			<lne id="1688" begin="77" end="77"/>
-			<lne id="1689" begin="78" end="78"/>
-			<lne id="1690" begin="78" end="79"/>
-			<lne id="1691" begin="78" end="80"/>
-			<lne id="1692" begin="77" end="81"/>
-			<lne id="1693" begin="77" end="82"/>
-			<lne id="1694" begin="77" end="83"/>
-			<lne id="1695" begin="84" end="84"/>
-			<lne id="1696" begin="84" end="85"/>
-			<lne id="1697" begin="77" end="86"/>
-			<lne id="1698" begin="94" end="94"/>
-			<lne id="1699" begin="95" end="95"/>
-			<lne id="1700" begin="95" end="96"/>
-			<lne id="1701" begin="94" end="97"/>
-			<lne id="1702" begin="100" end="100"/>
-			<lne id="1703" begin="100" end="101"/>
-			<lne id="1704" begin="91" end="103"/>
-			<lne id="1705" begin="91" end="104"/>
-			<lne id="1706" begin="107" end="107"/>
-			<lne id="1707" begin="107" end="108"/>
-			<lne id="1708" begin="107" end="109"/>
-			<lne id="1709" begin="88" end="114"/>
-			<lne id="1710" begin="88" end="115"/>
-			<lne id="1711" begin="117" end="117"/>
-			<lne id="1712" begin="118" end="118"/>
-			<lne id="1713" begin="118" end="119"/>
-			<lne id="1714" begin="117" end="120"/>
-			<lne id="1715" begin="117" end="121"/>
-			<lne id="1716" begin="117" end="122"/>
-			<lne id="1717" begin="77" end="122"/>
-			<lne id="1718" begin="123" end="123"/>
-			<lne id="1719" begin="124" end="124"/>
-			<lne id="1720" begin="125" end="125"/>
-			<lne id="1721" begin="126" end="126"/>
-			<lne id="1722" begin="123" end="127"/>
+			<lne id="1619" begin="0" end="3"/>
+			<lne id="1620" begin="5" end="5"/>
+			<lne id="1621" begin="6" end="8"/>
+			<lne id="1622" begin="5" end="9"/>
+			<lne id="1623" begin="11" end="11"/>
+			<lne id="1624" begin="12" end="12"/>
+			<lne id="1625" begin="12" end="13"/>
+			<lne id="1626" begin="12" end="14"/>
+			<lne id="1627" begin="11" end="15"/>
+			<lne id="1628" begin="11" end="16"/>
+			<lne id="1629" begin="11" end="17"/>
+			<lne id="1630" begin="18" end="18"/>
+			<lne id="1631" begin="18" end="19"/>
+			<lne id="1632" begin="11" end="20"/>
+			<lne id="1633" begin="22" end="22"/>
+			<lne id="1634" begin="23" end="23"/>
+			<lne id="1635" begin="24" end="24"/>
+			<lne id="1636" begin="24" end="25"/>
+			<lne id="1637" begin="24" end="26"/>
+			<lne id="1638" begin="23" end="27"/>
+			<lne id="1639" begin="28" end="28"/>
+			<lne id="1640" begin="29" end="29"/>
+			<lne id="1641" begin="30" end="30"/>
+			<lne id="1642" begin="31" end="31"/>
+			<lne id="1643" begin="28" end="32"/>
+			<lne id="1644" begin="22" end="33"/>
+			<lne id="1645" begin="35" end="35"/>
+			<lne id="1646" begin="36" end="36"/>
+			<lne id="1647" begin="37" end="37"/>
+			<lne id="1648" begin="37" end="38"/>
+			<lne id="1649" begin="37" end="39"/>
+			<lne id="1650" begin="36" end="40"/>
+			<lne id="1651" begin="36" end="41"/>
+			<lne id="1652" begin="36" end="42"/>
+			<lne id="1653" begin="36" end="43"/>
+			<lne id="1654" begin="35" end="44"/>
+			<lne id="1655" begin="45" end="45"/>
+			<lne id="1656" begin="46" end="46"/>
+			<lne id="1657" begin="47" end="47"/>
+			<lne id="1658" begin="48" end="48"/>
+			<lne id="1659" begin="49" end="49"/>
+			<lne id="1660" begin="46" end="50"/>
+			<lne id="1661" begin="45" end="51"/>
+			<lne id="1662" begin="52" end="52"/>
+			<lne id="1663" begin="53" end="53"/>
+			<lne id="1664" begin="54" end="54"/>
+			<lne id="1665" begin="55" end="55"/>
+			<lne id="1666" begin="55" end="56"/>
+			<lne id="1667" begin="53" end="57"/>
+			<lne id="1668" begin="52" end="58"/>
+			<lne id="1669" begin="59" end="59"/>
+			<lne id="1670" begin="60" end="60"/>
+			<lne id="1671" begin="60" end="61"/>
+			<lne id="1672" begin="62" end="62"/>
+			<lne id="1673" begin="62" end="63"/>
+			<lne id="1674" begin="62" end="64"/>
+			<lne id="1675" begin="59" end="65"/>
+			<lne id="1676" begin="66" end="66"/>
+			<lne id="1677" begin="67" end="67"/>
+			<lne id="1678" begin="68" end="68"/>
+			<lne id="1679" begin="68" end="69"/>
+			<lne id="1680" begin="68" end="70"/>
+			<lne id="1681" begin="67" end="71"/>
+			<lne id="1682" begin="72" end="72"/>
+			<lne id="1683" begin="72" end="73"/>
+			<lne id="1684" begin="72" end="74"/>
+			<lne id="1685" begin="66" end="75"/>
+			<lne id="1686" begin="11" end="75"/>
+			<lne id="1687" begin="77" end="77"/>
+			<lne id="1688" begin="78" end="78"/>
+			<lne id="1689" begin="78" end="79"/>
+			<lne id="1690" begin="78" end="80"/>
+			<lne id="1691" begin="77" end="81"/>
+			<lne id="1692" begin="77" end="82"/>
+			<lne id="1693" begin="77" end="83"/>
+			<lne id="1694" begin="84" end="84"/>
+			<lne id="1695" begin="84" end="85"/>
+			<lne id="1696" begin="77" end="86"/>
+			<lne id="1697" begin="94" end="94"/>
+			<lne id="1698" begin="95" end="95"/>
+			<lne id="1699" begin="95" end="96"/>
+			<lne id="1700" begin="94" end="97"/>
+			<lne id="1701" begin="100" end="100"/>
+			<lne id="1702" begin="100" end="101"/>
+			<lne id="1703" begin="91" end="103"/>
+			<lne id="1704" begin="91" end="104"/>
+			<lne id="1705" begin="107" end="107"/>
+			<lne id="1706" begin="107" end="108"/>
+			<lne id="1707" begin="107" end="109"/>
+			<lne id="1708" begin="88" end="114"/>
+			<lne id="1709" begin="88" end="115"/>
+			<lne id="1710" begin="117" end="117"/>
+			<lne id="1711" begin="118" end="118"/>
+			<lne id="1712" begin="118" end="119"/>
+			<lne id="1713" begin="117" end="120"/>
+			<lne id="1714" begin="117" end="121"/>
+			<lne id="1715" begin="117" end="122"/>
+			<lne id="1716" begin="77" end="122"/>
+			<lne id="1717" begin="123" end="123"/>
+			<lne id="1718" begin="124" end="124"/>
+			<lne id="1719" begin="125" end="125"/>
+			<lne id="1720" begin="126" end="126"/>
+			<lne id="1721" begin="123" end="127"/>
+			<lne id="1722" begin="5" end="127"/>
 			<lne id="1723" begin="5" end="127"/>
-			<lne id="1724" begin="5" end="127"/>
 		</linenumbertable>
 		<localvariabletable>
 			<lve slot="5" name="215" begin="99" end="102"/>
 			<lve slot="5" name="215" begin="106" end="113"/>
-			<lve slot="4" name="1725" begin="4" end="127"/>
+			<lve slot="4" name="1724" begin="4" end="127"/>
 			<lve slot="0" name="17" begin="0" end="127"/>
 			<lve slot="1" name="217" begin="0" end="127"/>
 			<lve slot="2" name="218" begin="0" end="127"/>
 			<lve slot="3" name="219" begin="0" end="127"/>
 		</localvariabletable>
 	</operation>
-	<operation name="1726">
+	<operation name="1725">
 		<context type="6"/>
 		<parameters>
 			<parameter name="19" type="4"/>
@@ -34113,11 +34112,11 @@
 			<call arg="45"/>
 			<store arg="44"/>
 			<load arg="19"/>
-			<get arg="1727"/>
-			<call arg="1728"/>
+			<get arg="1726"/>
+			<call arg="1727"/>
 			<store arg="46"/>
 			<load arg="19"/>
-			<get arg="1727"/>
+			<get arg="1726"/>
 			<call arg="523"/>
 			<call arg="53"/>
 <<<<<<< HEAD
@@ -34150,7 +34149,7 @@
 			<goto arg="388"/>
 >>>>>>> 2ea2be0... Added 'using' block to connectNodes; fixed naming convention for variables in other methods
 			<load arg="19"/>
-			<get arg="1727"/>
+			<get arg="1726"/>
 			<iterate/>
 <<<<<<< HEAD
 			<store arg="44"/>
@@ -34318,11 +34317,15 @@
 			<load arg="44"/>
 			<call arg="72"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<if arg="1743"/>
 >>>>>>> 2ea2be0... Added 'using' block to connectNodes; fixed naming convention for variables in other methods
 =======
 			<if arg="1729"/>
 >>>>>>> 6ef95d7... Fixed a line in handleFirstNode by replacing .name with .turnGetLongestName(); added 'using' blocks to handleRegularEnds, handleReferencedEnds, handleReferencedStubs, and createStubOutNodes
+=======
+			<if arg="1728"/>
+>>>>>>> 54f5886... Fixed a line in ConnectNode where a method name was incorrect due to a change in Turn2Urn
 			<getasm/>
 >>>>>>> b30e32a... Fixed a logic error in ConnectNodes handleForkLogic; commented out a line in Turn2Urn that I suspect has a logical error; fixed a logic error in UCMmap2UCMmap; added TODO comments to Turn2Urn; updated README with new tasks
 			<load arg="42"/>
@@ -34392,19 +34395,19 @@
 			<load arg="70"/>
 >>>>>>> 2ea2be0... Added 'using' block to connectNodes; fixed naming convention for variables in other methods
 			<load arg="44"/>
-			<pcall arg="1730"/>
+			<pcall arg="1729"/>
 			<goto arg="1611"/>
 			<getasm/>
 			<load arg="42"/>
 			<load arg="29"/>
 			<load arg="70"/>
 			<load arg="43"/>
-			<pcall arg="1731"/>
+			<pcall arg="1730"/>
 			<load arg="70"/>
 			<load arg="46"/>
-			<call arg="1732"/>
+			<call arg="1731"/>
 			<if arg="1087"/>
-			<goto arg="1733"/>
+			<goto arg="1732"/>
 			<load arg="70"/>
 			<store arg="44"/>
 			<enditerate/>
@@ -34412,12 +34415,12 @@
 			<get arg="1082"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1734"/>
+			<if arg="1733"/>
 			<load arg="19"/>
 			<get arg="1369"/>
 			<call arg="72"/>
 			<call arg="53"/>
-			<if arg="1735"/>
+			<if arg="1734"/>
 			<load arg="19"/>
 			<get arg="1607"/>
 			<call arg="72"/>
@@ -41712,6 +41715,7 @@
 			<load arg="46"/>
 			<load arg="44"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<pcall arg="1751"/>
 			<goto arg="1622"/>
 >>>>>>> 2ea2be0... Added 'using' block to connectNodes; fixed naming convention for variables in other methods
@@ -41719,11 +41723,15 @@
 			<pcall arg="1736"/>
 			<goto arg="1737"/>
 >>>>>>> 6ef95d7... Fixed a line in handleFirstNode by replacing .name with .turnGetLongestName(); added 'using' blocks to handleRegularEnds, handleReferencedEnds, handleReferencedStubs, and createStubOutNodes
+=======
+			<pcall arg="1735"/>
+			<goto arg="1736"/>
+>>>>>>> 54f5886... Fixed a line in ConnectNode where a method name was incorrect due to a change in Turn2Urn
 			<getasm/>
 			<load arg="42"/>
 			<load arg="19"/>
 			<load arg="46"/>
-			<pcall arg="1738"/>
+			<pcall arg="1737"/>
 			<goto arg="388"/>
 			<getasm/>
 <<<<<<< HEAD
@@ -41778,78 +41786,82 @@
 =======
 			<load arg="46"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
 			<pcall arg="1753"/>
 >>>>>>> 2ea2be0... Added 'using' block to connectNodes; fixed naming convention for variables in other methods
 =======
 			<pcall arg="1739"/>
 >>>>>>> 6ef95d7... Fixed a line in handleFirstNode by replacing .name with .turnGetLongestName(); added 'using' blocks to handleRegularEnds, handleReferencedEnds, handleReferencedStubs, and createStubOutNodes
+=======
+			<pcall arg="1738"/>
+>>>>>>> 54f5886... Fixed a line in ConnectNode where a method name was incorrect due to a change in Turn2Urn
 		</code>
 		<linenumbertable>
-			<lne id="1740" begin="0" end="3"/>
-			<lne id="1741" begin="5" end="5"/>
-			<lne id="1742" begin="5" end="6"/>
-			<lne id="1743" begin="5" end="7"/>
-			<lne id="1744" begin="9" end="9"/>
-			<lne id="1745" begin="9" end="10"/>
-			<lne id="1746" begin="9" end="11"/>
-			<lne id="1747" begin="9" end="12"/>
-			<lne id="1748" begin="15" end="15"/>
-			<lne id="1749" begin="15" end="16"/>
-			<lne id="1750" begin="19" end="19"/>
-			<lne id="1751" begin="19" end="20"/>
-			<lne id="1752" begin="22" end="22"/>
-			<lne id="1753" begin="23" end="23"/>
-			<lne id="1754" begin="24" end="24"/>
-			<lne id="1755" begin="25" end="25"/>
-			<lne id="1756" begin="26" end="26"/>
-			<lne id="1757" begin="22" end="27"/>
-			<lne id="1758" begin="29" end="29"/>
-			<lne id="1759" begin="30" end="30"/>
-			<lne id="1760" begin="31" end="31"/>
-			<lne id="1761" begin="32" end="32"/>
-			<lne id="1762" begin="33" end="33"/>
-			<lne id="1763" begin="29" end="34"/>
-			<lne id="1764" begin="19" end="34"/>
-			<lne id="1765" begin="35" end="35"/>
-			<lne id="1766" begin="36" end="36"/>
-			<lne id="1767" begin="35" end="37"/>
-			<lne id="1768" begin="40" end="40"/>
-			<lne id="1769" begin="40" end="41"/>
-			<lne id="1770" begin="35" end="41"/>
-			<lne id="1771" begin="15" end="42"/>
-			<lne id="1772" begin="43" end="43"/>
-			<lne id="1773" begin="43" end="44"/>
-			<lne id="1774" begin="43" end="45"/>
-			<lne id="1775" begin="43" end="46"/>
-			<lne id="1776" begin="48" end="48"/>
-			<lne id="1777" begin="48" end="49"/>
-			<lne id="1778" begin="48" end="50"/>
-			<lne id="1779" begin="48" end="51"/>
-			<lne id="1780" begin="53" end="53"/>
-			<lne id="1781" begin="53" end="54"/>
-			<lne id="1782" begin="53" end="55"/>
-			<lne id="1783" begin="53" end="56"/>
-			<lne id="1784" begin="59" end="59"/>
-			<lne id="1785" begin="60" end="60"/>
-			<lne id="1786" begin="61" end="61"/>
-			<lne id="1787" begin="62" end="62"/>
-			<lne id="1788" begin="63" end="63"/>
-			<lne id="1789" begin="59" end="64"/>
-			<lne id="1790" begin="53" end="64"/>
-			<lne id="1791" begin="66" end="66"/>
-			<lne id="1792" begin="67" end="67"/>
-			<lne id="1793" begin="68" end="68"/>
-			<lne id="1794" begin="69" end="69"/>
-			<lne id="1795" begin="66" end="70"/>
-			<lne id="1796" begin="48" end="70"/>
-			<lne id="1797" begin="72" end="72"/>
-			<lne id="1798" begin="73" end="73"/>
-			<lne id="1799" begin="74" end="74"/>
-			<lne id="1800" begin="75" end="75"/>
-			<lne id="1801" begin="72" end="76"/>
-			<lne id="1802" begin="43" end="76"/>
+			<lne id="1739" begin="0" end="3"/>
+			<lne id="1740" begin="5" end="5"/>
+			<lne id="1741" begin="5" end="6"/>
+			<lne id="1742" begin="5" end="7"/>
+			<lne id="1743" begin="9" end="9"/>
+			<lne id="1744" begin="9" end="10"/>
+			<lne id="1745" begin="9" end="11"/>
+			<lne id="1746" begin="9" end="12"/>
+			<lne id="1747" begin="15" end="15"/>
+			<lne id="1748" begin="15" end="16"/>
+			<lne id="1749" begin="19" end="19"/>
+			<lne id="1750" begin="19" end="20"/>
+			<lne id="1751" begin="22" end="22"/>
+			<lne id="1752" begin="23" end="23"/>
+			<lne id="1753" begin="24" end="24"/>
+			<lne id="1754" begin="25" end="25"/>
+			<lne id="1755" begin="26" end="26"/>
+			<lne id="1756" begin="22" end="27"/>
+			<lne id="1757" begin="29" end="29"/>
+			<lne id="1758" begin="30" end="30"/>
+			<lne id="1759" begin="31" end="31"/>
+			<lne id="1760" begin="32" end="32"/>
+			<lne id="1761" begin="33" end="33"/>
+			<lne id="1762" begin="29" end="34"/>
+			<lne id="1763" begin="19" end="34"/>
+			<lne id="1764" begin="35" end="35"/>
+			<lne id="1765" begin="36" end="36"/>
+			<lne id="1766" begin="35" end="37"/>
+			<lne id="1767" begin="40" end="40"/>
+			<lne id="1768" begin="40" end="41"/>
+			<lne id="1769" begin="35" end="41"/>
+			<lne id="1770" begin="15" end="42"/>
+			<lne id="1771" begin="43" end="43"/>
+			<lne id="1772" begin="43" end="44"/>
+			<lne id="1773" begin="43" end="45"/>
+			<lne id="1774" begin="43" end="46"/>
+			<lne id="1775" begin="48" end="48"/>
+			<lne id="1776" begin="48" end="49"/>
+			<lne id="1777" begin="48" end="50"/>
+			<lne id="1778" begin="48" end="51"/>
+			<lne id="1779" begin="53" end="53"/>
+			<lne id="1780" begin="53" end="54"/>
+			<lne id="1781" begin="53" end="55"/>
+			<lne id="1782" begin="53" end="56"/>
+			<lne id="1783" begin="59" end="59"/>
+			<lne id="1784" begin="60" end="60"/>
+			<lne id="1785" begin="61" end="61"/>
+			<lne id="1786" begin="62" end="62"/>
+			<lne id="1787" begin="63" end="63"/>
+			<lne id="1788" begin="59" end="64"/>
+			<lne id="1789" begin="53" end="64"/>
+			<lne id="1790" begin="66" end="66"/>
+			<lne id="1791" begin="67" end="67"/>
+			<lne id="1792" begin="68" end="68"/>
+			<lne id="1793" begin="69" end="69"/>
+			<lne id="1794" begin="66" end="70"/>
+			<lne id="1795" begin="48" end="70"/>
+			<lne id="1796" begin="72" end="72"/>
+			<lne id="1797" begin="73" end="73"/>
+			<lne id="1798" begin="74" end="74"/>
+			<lne id="1799" begin="75" end="75"/>
+			<lne id="1800" begin="72" end="76"/>
+			<lne id="1801" begin="43" end="76"/>
+			<lne id="1802" begin="9" end="76"/>
 			<lne id="1803" begin="9" end="76"/>
-			<lne id="1804" begin="9" end="76"/>
 		</linenumbertable>
 		<localvariabletable>
 <<<<<<< HEAD
@@ -42978,8 +42990,8 @@
 >>>>>>> 61cae0b... Added to the 'using' block for nodeToConnect; removed a thisModule.succeded case as the original logic seemed to imply the else case should be skipped; changed how newNode is passed in to connectNodes to reduce conditionals needed for checking if nextNode exists
 =======
 			<lve slot="7" name="219" begin="18" end="41"/>
-			<lve slot="5" name="1805" begin="4" end="76"/>
-			<lve slot="6" name="1806" begin="8" end="76"/>
+			<lve slot="5" name="1804" begin="4" end="76"/>
+			<lve slot="6" name="1805" begin="8" end="76"/>
 			<lve slot="0" name="17" begin="0" end="76"/>
 			<lve slot="1" name="218" begin="0" end="76"/>
 			<lve slot="2" name="493" begin="0" end="76"/>

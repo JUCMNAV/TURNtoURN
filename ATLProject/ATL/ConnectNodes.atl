@@ -425,7 +425,7 @@ rule handleReferencedStubs(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!Pathbody
 		if(currentNode.oclIsTypeOf(Turn!RespRef)){
 			--INIT vNextNode
 			if(tUCMmap.getNode(pathbody.referencedStub.name).pred -> size() >= pathbody.index){
-				vNextNode <- tUCMmap.firstRespDefMatching(currentNode.name).succ;
+				vNextNode <- tUCMmap.anyRespDefMatching(currentNode.name).succ;
 			}
 			else{
 				vNextNode <- tUCMmap.allRespDefsMatching(currentNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined());
