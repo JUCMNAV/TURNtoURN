@@ -159,82 +159,87 @@ rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklink
 				}
 			}
 		}
-		else {
-			if(pathend.oclIsTypeOf(Turn!OrFork)){
-				thisModule.createOrFork(pathend, tUCMmap);
-			}
-			else if(pathend.oclIsTypeOf(Turn!Stub)){
-				thisModule.createStub(pathend, tUCMmap);
-				thisModule.createStubOutNodes(pathend, tUCMmap);
-			}
-			else if(pathend.oclIsTypeOf(Turn!AndFork)){
-				thisModule.createAndFork(pathend, tUCMmap);
-			}
+		else if(pathend.oclIsTypeOf(Turn!OrFork)){
+			thisModule.createOrFork(pathend, tUCMmap);
+		}
+		else if(pathend.oclIsTypeOf(Turn!Stub)){
+			thisModule.createStub(pathend, tUCMmap);
+			thisModule.createStubOutNodes(pathend, tUCMmap);
+		}
+		else if(pathend.oclIsTypeOf(Turn!AndFork)){
+			thisModule.createAndFork(pathend, tUCMmap);
 		}
 	}
 }
 
 rule getUrnCompRef(obj: OclAny){
+	using{
+		vCompRef : Urn!ComponentRef = OclUndefined;
+	}
 	do{
-		thisModule.compRef <- '';
-		
 		if (not obj.boundTo.oclIsUndefined()) {
 			if (not obj.boundTo.comp.oclIsUndefined()){
-				thisModule.compRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
+				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
 			}
 			else{
-				thisModule.compRef <- thisModule.resolveTemp(obj.boundTo.comp2, 'tCompRef');
+				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp2, 'tCompRef');
 			}
 		}
 		else{
-			thisModule.compRef <- OclUndefined;	
+			vCompRef <- OclUndefined;	
 		}
 		
-		thisModule.compRef;
+		vCompRef;
 	}
 }
 
 --Dictionary. Had to use called rule as elseif is not supported in helpers
 rule contributionNumberToKeyword(quantitativeContribution: Integer){
+	using{
+		vContribution :	String = OclUndefined;
+	}
 	do{
-		thisModule.contribution <- 'Invalid';
-		
 		if (quantitativeContribution <= -1)
-			thisModule.contribution <- 'Hurt';
+			vContribution <- 'Hurt';
 		else if (quantitativeContribution < -49)
-			thisModule.contribution <- 'SomeNegative';
+			vContribution <- 'SomeNegative';
 		else if (quantitativeContribution = -100)
-			thisModule.contribution <- 'Break';
+			vContribution <- 'Break';
 		else if (quantitativeContribution = 0)
-			thisModule.contribution <- 'Unknown';
+			vContribution <- 'Unknown';
 		else if (quantitativeContribution < 50)
-			thisModule.contribution <- 'Help';
+			vContribution <- 'Help';
 		else if (quantitativeContribution <= 99)
-			thisModule.contribution <- 'SomePositive';
+			vContribution <- 'SomePositive';
 		else if (quantitativeContribution = 100)
-			thisModule.contribution <- 'Make';
+			vContribution <- 'Make';
+		else
+			vContribution <- 'Invalid';
 		
-		thisModule.contribution;
+		vContribution;
 	}
 }
 
 rule joinStringSequence(s: String, delim: String){
+	using{
+		vJoinedString : String = ''; -- INIT vJoinedString	
+	}
 	do{
-		thisModule.joinedString <-'';
 		for(currentString in s.content){
-			thisModule.joinedString <- thisModule.joinedString + currentString + delim;	
+			vJoinedString <- vJoinedString + currentString + delim;	
 		}
-		thisModule.joinedString;
+		vJoinedString;
 	}
 }
 
 rule collectReferencedEnds(tUCMmap: Turn!UCMmap, pathNodes: Sequence(Turn!PathNode)){
 	do{
-		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tRespRef')));
-		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tOrJoin')));
-		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tAndJoin')));
-		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tFailPt')));
-		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> flatten() -> collect(r|thisModule.resolveTemp(r,'tWtPlace')));
+		pathNodes <- pathNodes -> flatten();
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tRespRef')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tOrJoin')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tAndJoin')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tFailPt')));
+		tUCMmap.nodes <- tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tWtPlace')));
 	}
 }
 
@@ -280,18 +285,19 @@ rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNo
 }
 
 rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
+	using{
+		vStub : Urn!Stub	= tUCMmap.getNode(body.referencedStub.name);
+	}
 	do{
-		thisModule.stub <- tUCMmap.getNode(body.referencedStub.name);
-		
-		if(thisModule.stub.pred -> size() >= body.index){
+		if(vStub.pred -> size() >= body.index){
 			thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, nextNode);
-			thisModule.firstPred <- thisModule.stub.pred -> first();
+			thisModule.firstPred <- vStub.pred -> first();
 			thisModule.addPred(thisModule.orJoin, nextNode);
 			thisModule.addPred(thisModule.orJoin, thisModule.firstPred.source.succ);
 			nextNode <- thisModule.orJoin.succ;
 		}
 		
-		thisModule.addPred(thisModule.stub, nextNode);
+		thisModule.addPred(vStub, nextNode);
 	}
 }
 
