@@ -142,7 +142,7 @@ rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 
 --TODO: to remove the boolean, take the logic that makes it necessary and withdraw it into places this method is called and the boolean is true
 rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklinks: Boolean){
-	do {
+	do{
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
 			if(tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
 				thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
@@ -261,7 +261,7 @@ rule useBacklinksToConnectOrFork(pathbody: Turn!PathBody, urnNode: OclAny){
 }
 
 rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNode: Urn!PathNode){
-	do {
+	do{
 		thisModule.finishedConnection <- true;
 		
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
@@ -296,10 +296,11 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 			vFirstPred <- vStub.pred -> first(); -- INIT vFirstPred
 			thisModule.addPred(vOrJoin, nextNode);
 			thisModule.addPred(vOrJoin, vFirstPred.source.succ);
-			nextNode <- vOrJoin.succ;
+			thisModule.addPred(vStub, vOrJoin.succ);
 		}
-		
-		thisModule.addPred(vStub, nextNode);
+		else{
+			thisModule.addPred(vStub, nextNode);	
+		}
 	}
 }
 
@@ -355,6 +356,8 @@ rule connectAndForkNodes(pathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 	}
 	do{
 		for(pathbody in pathend.pathbody -> flatten()){
+			
+			--INIT vHasReferencedEnd
 			if(pathbody.referencedEnd.oclIsUndefined()){
 				vHasReferencedEnd <- false;
 			}
@@ -422,6 +425,7 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 		vBody : Turn!PathBody = obj.connectingOrBody; -- INIT vBody
 	}
 	do{
+		--INIT vNextPred
 		if(nextNode.oclIsTypeOf(Urn!OrFork)){
 			vNextPred <- nextNode.succ -> any(s|s.condition.expression=expression);
 		}
@@ -441,17 +445,17 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: U
 }
 
 rule connectTimerNodes(timerObj: Turn!Timer, tUCMmap: Urn!UCMmap){
+	using{
+		vReferencedEnd : Turn!ReferencedEnd = timerObj.timeoutPath.referencedEnd;
+	}
 	do{
 		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
 		if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
-			--THIS WILL ALWAYS BE AT(2)
 			thisModule.addPred(tUCMmap.getNode(timerObj.timeoutPath.pathNodes -> first().name), tUCMmap.getNode(timerObj.name).succ -> at(2));
 			thisModule.connectNodes(timerObj.timeoutPath, timerObj, tUCMmap, OclAny);
 		}
 		
-		thisModule.referencedEnd <- timerObj.timeoutPath.referencedEnd;
-		if(thisModule.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-			--THIS WILL ALWAYS BE AT(2)
+		if(vReferencedEnd.oclIsTypeOf(Turn!RespRef)){
 			thisModule.addPred(thisModule.getResponsibility(thisModule.referencedEnd.name).respRefs -> first(), tUCMmap.getNode(timerObj.name).succ -> at(2));
 		}
 		
@@ -560,19 +564,26 @@ rule createCondition(sourceExpression: String){
 
 rule createNodeConnection(){
 	to
-	 	tNodeConnection: Urn!NodeConnection
+	 	tNodeConnection: Urn!NodeConnection()
 	do{
 		tNodeConnection;
 	}		
 }
 
 rule createOrForkNodeConnection(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
+	using{
+		vCondition: Turn!Condition =
+			if(ref <> OclAny) then
+				thisModule.resolveTemp(ref.condition,'tCondition')
+			else
+				OclUndefined
+			endif;
+	}
 	to
-	 	targetNodeConn: Urn!NodeConnection
+	 	targetNodeConn: Urn!NodeConnection(
+	 		condition <- vCondition	
+	 	)
 	do{
-		if(ref <> OclAny){
-			targetNodeConn.condition <- thisModule.resolveTemp(ref.condition,'tCondition');
-		}
 		targetNodeConn;	
 	}	
 }
@@ -580,7 +591,7 @@ rule createOrForkNodeConnection(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
 --QUESTION: this is just an empty object; it doesn't use the arguments. Should it do something?
 rule createAndForkNodeConnection(ref: Turn!PathBodyNodes, tUCMmap: Urn!UCMmap){
 	to
-	 	targetNodeConn: Urn!NodeConnection
+	 	targetNodeConn: Urn!NodeConnection()
 	do{
 		targetNodeConn;	
 	}	
@@ -607,7 +618,7 @@ rule createLabel(){
 	}
 }
 
-rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
+rule createOrFork(obj: Turn!OrFork, tUCMmap: Urn!UCMmap){
 	to
 		tOrFork: Urn!OrFork (
 			id <- thisModule.nextId().toString(),
@@ -737,18 +748,37 @@ rule createOrFork(obj:Turn!OrFork, tUCMmap: Urn!UCMmap){
 		}
 		
 		thisModule.useBacklinksToConnectOrFork(obj.pbody, tOrFork);
-		
 		tUCMmap.nodes <- tUCMmap.nodes -> including(tOrFork);
+		tOrFork;
 	}
 }
 
 rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
+	using{
+		vIsBlocking : Boolean = stubObj.stubType.toString() = 'blocking';
+		vIsSynchronizing : Boolean =  stubObj.stubType.toString() = 'synchronizing';
+		vBlocking : Boolean = 
+			if(vIsBlocking) then
+				true
+			else
+				OclUndefined
+			endif;
+		vSynchronizing : Boolean = 
+			if(vIsBlocking or vIsSynchronizing) then
+				true
+			else
+				OclUndefined
+			endif;
+		vAllStubs : Sequence(Turn!Stub) = OclUndefined;
+	}
 	to
 		tStub: Urn!Stub (
 			id <- thisModule.nextId().toString(),
 			name <- stubObj.turnGetLongestName(),
 			diagram <- tUCMmap,
 			label <- tNodeLabel,
+			blocking <- vBlocking,
+			synchronization <- vSynchronizing,
 			contRef <- thisModule.getUrnCompRef(stubObj)
 		),
 		tNodeLabel: Urn!NodeLabel()
@@ -758,21 +788,13 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			tStub.bindings <- stubObj.params.plugin -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
 		else{
-			thisModule.existingStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=tUCMmap.name).stubs;
-			tStub.bindings <- thisModule.existingStubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
+			-- TODO: determine if this route is ever entered
+			vAllStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=tUCMmap.name).stubs; -- INIT vAllStubs
+			tStub.bindings <- vAllStubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
-			
-		if(not stubObj.stubType.oclIsUndefined()){
-			if(stubObj.stubType.toString() = 'blocking'){
-				tStub.blocking <- true;
-				tStub.dynamic <- true;
-				tStub.synchronization <- true;
-			}
-			--original of the line below had no braces around the body of this conditional; was this a bug? 
-			else if(stubObj.stubType.toString() = 'synchronizing'){
-				tStub.synchronization <- true;
-				tStub.dynamic <- true;
-			}
+		
+		if(vIsBlocking or vIsSynchronizing){
+			tStub.dynamic <- true;
 		}
 		
 		thisModule.stubMap <- thisModule.stubMap.including(stubObj, tStub);
@@ -1012,27 +1034,29 @@ rule createEndPoint(node: Turn!PathNode, tUCMmap: Urn!UCMmap){
 			postcondition <- vPostcondition
 		)
 	do{
-		if(not(node <> OclAny)){
-			thisModule.addSucc(tEndPoint, thisModule.createNodeConnection());
-		}
-		else if(not node.oclIsTypeOf(Turn!OrFork)){
-			-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we change it)
-			tEndPoint.name <- node.turnGetLongestName();
-			
-			thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
-			
-			if(node.epConnect.pbody.pathNodes -> isEmpty()){
-				--Using backlinks to connect orFork
-				thisModule.currentOrFork <- node.epConnect.pbody.orFork;
-				if(not thisModule.currentOrFork.oclIsUndefined()){
-					thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
-					thisModule.addPred(tEndPoint, thisModule.orForkMap.get(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
-				}
+		if(not node.oclIsTypeOf(Turn!OrFork)){
+			if(node = OclAny){
+				thisModule.addSucc(tEndPoint, thisModule.createNodeConnection());
+			}
+			else{
+				-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we change it)
+				tEndPoint.name <- node.turnGetLongestName();
 				
-				--Using backlinks to connect andFork
-				thisModule.currentAndFork <- node.epConnect.pbody.andFork;
-				if(not thisModule.currentAndFork.oclIsUndefined()){
-					thisModule.addPred(tEndPoint, thisModule.andForkMap.get(thisModule.currentAndFork).firstUnconnectedSucc());
+				thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
+				
+				if(node.epConnect.pbody.pathNodes -> isEmpty()){
+					--Using backlinks to connect orFork
+					thisModule.currentOrFork <- node.epConnect.pbody.orFork;
+					if(not thisModule.currentOrFork.oclIsUndefined()){
+						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
+						thisModule.addPred(tEndPoint, thisModule.orForkMap.get(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
+					}
+					
+					--Using backlinks to connect andFork
+					thisModule.currentAndFork <- node.epConnect.pbody.andFork;
+					if(not thisModule.currentAndFork.oclIsUndefined()){
+						thisModule.addPred(tEndPoint, thisModule.andForkMap.get(thisModule.currentAndFork).firstUnconnectedSucc());
+					}
 				}
 			}
 		}
@@ -1089,26 +1113,32 @@ rule createTimer(tUCMmap: Urn!UCMmap, timerObj: Turn!Timer){
 }
 
 rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean){
+	using{
+		vId: Integer = thisModule.nextId().toString();
+		vName: String = 
+			if (node <> OclAny) then
+				if(asynch) then
+					'AsynchConnectTimer#'+node.name
+				else
+					'SynchConnectTimer#'+node.name
+				endif
+			else
+				'EmptyPoint'+vId
+			endif;
+	}
 	to
 		tEmptyPt: Urn!EmptyPoint(
-			id <- thisModule.nextId().toString(),
+			name <- vName,
+			id <- vId,
 			diagram <- tUCMmap
 		)
 	do{
-		if (node <> OclAny){
-			if(asynch){
-				tEmptyPt.name <- 'AsynchConnectTimer#'+node.name;
-				thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
-			}
-			else{
-				tEmptyPt.name <- 'SynchConnectTimer#'+node.name;
-			}
-		}
-		else{
-			tEmptyPt.name <- 'EmptyPoint'+tEmptyPt.id;
+		if (node <> OclAny and asynch){
 			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
-			-- QUESTION: this is called twice; is it intentional?
-			-- thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
+		}
+		else if (node = OclAny){
+			-- QUESTION: the addSucc() line below was called twice originally; was it intentional?
+			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
 		}
 		tEmptyPt;	
 	}
