@@ -42,6 +42,8 @@
 * Look to see if there is a way to remove any or all map global objects
 * Rename any Urn object variable names to start with a 't' for consistency and clarity and Turn object variable names with an 's'
 * Rename variable names in 'using' blocks with a better convention
+* Write down the return type for each called rule
+* Make all "using" variables start with v, all argument variables with a, source object with s, target object with t
 
 ## ACTIVE TASK
 I am currently refactoring the code until it is at a point I feel is sufficiently readable for me to troubleshoot it. I have significantly improved readability but cannot be sure of functionality. I have likely broken some code along the way, and the current version is broken. However, the original version was also broken, so this should not be an issue.

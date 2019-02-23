@@ -286,15 +286,17 @@ rule connectPathEndToNextNode(tUCMmap: Urn!UCMmap, pathend: Turn!Pathend, nextNo
 
 rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
 	using{
-		vStub : Urn!Stub	= tUCMmap.getNode(body.referencedStub.name);
+		vStub : Urn!Stub = tUCMmap.getNode(body.referencedStub.name);
+		vOrJoin: Urn!OrJoin = OclUndefined;
+		vFirstPred : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(vStub.pred -> size() >= body.index){
-			thisModule.orJoin <- thisModule.createOrJoin(tUCMmap, nextNode);
-			thisModule.firstPred <- vStub.pred -> first();
-			thisModule.addPred(thisModule.orJoin, nextNode);
-			thisModule.addPred(thisModule.orJoin, thisModule.firstPred.source.succ);
-			nextNode <- thisModule.orJoin.succ;
+			vOrJoin <- thisModule.createOrJoin(tUCMmap, nextNode); -- INIT vOrJoin
+			vFirstPred <- vStub.pred -> first();
+			thisModule.addPred(vOrJoin, nextNode);
+			thisModule.addPred(vOrJoin, vFirstPred.source.succ);
+			nextNode <- vOrJoin.succ;
 		}
 		
 		thisModule.addPred(vStub, nextNode);
@@ -304,19 +306,20 @@ rule processReferencedStub(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: 
 --TODO: ensure all arguments in all calls of connectReferencedEnds are actually valid
 --TODO: all calls to this method use the argument "nextPred" as nextNode; verify if this matches the original code
 rule connectReferencedEndToNextNode(tUCMmap: Turn!UCMmap, body: Turn!PathBody, nextNode: Turn!PathNode){
+	using {
+		succeeded : Boolean = false;	
+	}
 	do{
 		if(not body.referencedEnd.oclIsUndefined()){
-			thisModule.succeeded <- false;
-			
 			if(body.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(not body.pathNodes -> last().oclIsTypeOf(Turn!Connect)){
 					if(tUCMmap.getNode(body.referencedEnd.name).pred -> collect(s|s.source) -> isEmpty()){
 						thisModule.addPred(tUCMmap.getNode(body.referencedEnd.name).pred, nextNode);
-						thisModule.succeeded <- true;
+						succeeded <- true;
 					}
 				}
 			}
-			if(not thisModule.succeeded){
+			if(not succeeded){
 				if(body.referencedEnd.oclIsTypeOf(Turn!RespRef)){
 					thisModule.addPred(thisModule.resolveTemp(body.referencedEnd, 'tRespRef'), nextNode);
 				}
@@ -344,35 +347,40 @@ rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
 	}
 }
 
-rule connectAndForkNodes(pathend : Turn!PathEnd, tUCMmap: Urn!UCMmap){
+rule connectAndForkNodes(pathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
+	using{
+		vHasReferencedEnd : Boolean = OclUndefined; -- INIT vHasReferencedEnd
+		vAndFork : Urn!AndFork = thisModule.andForkMap.get(pathend);
+	}
 	do{
 		thisModule.counter <- 1;
 		
 		for(pathbody in pathend.pathbody -> flatten()){
-			thisModule.succeeded <- false;
-			
-			if(not pathbody.referencedEnd.oclIsUndefined()){
-				if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined()){
-					thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter));
-					thisModule.succeeded <- true;
-				}
+			if(pathbody.referencedEnd.oclIsUndefined()){
+				vHasReferencedEnd <- false;
+			}
+			else{
+				vHasReferencedEnd <- not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined();	
 			}
 			
-			if(not thisModule.succeeded){
-				--if pathNodes exist
+			if(vHasReferencedEnd){
+				thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), vAndFork.succ -> at(thisModule.counter));
+			}
+			else{
 				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
 					if(not pathbody.pathNodes -> isEmpty()){
 						-- The method below was missing its last argument, which led to a null pointer error.
 						-- QUESTION: should thisModule.andForkMap.get(pathend) go here? I followed the example of connectOrForkNodes
-						thisModule.connectNodes(pathbody, pathend, tUCMmap, thisModule.andForkMap.get(pathend));
+						thisModule.connectNodes(pathbody, pathend, tUCMmap, vAndFork);
 					}	
-					--if no pathNodes exist
 					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						thisModule.addPred(tUCMmap.getNode(pathbody.pathEnd.regularEnd.name), thisModule.andForkMap.get(pathend).succ -> at(thisModule.counter));
+						--if no pathNodes exist
+						thisModule.addPred(tUCMmap.getNode(pathbody.pathEnd.regularEnd.name), vAndFork.succ -> at(thisModule.counter));
 					}
 				}
 				thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
 			}
+			
 			thisModule.counter <- thisModule.counter.inc();
 		}
 	}
