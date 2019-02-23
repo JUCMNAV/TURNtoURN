@@ -144,17 +144,20 @@ rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklinks: Boolean){
 	do{
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
-				thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
-			}
-			else if (includeBacklinks){
-				thisModule.sEndPoint <- pathend.regularEnd;
-				thisModule.tEndPoint <- tUCMmap.getNode(pathend.regularEnd.name);
-				if(thisModule.sEndPoint.epConnect.pbody.pathNodes -> isEmpty()){
-					if(not thisModule.sEndPoint.epConnect.pbody.orFork.oclIsUndefined()){
-						thisModule.orFork <- thisModule.sEndPoint.epConnect.pbody.orFork;
-						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.orFork.condition.expression, '');
-						thisModule.addPred(thisModule.tEndPoint, thisModule.orForkMap.get(thisModule.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
+			--TODO: condition below is a temporary fix; fix it properly
+			if(not pathend.regularEnd.oclIsUndefined()){
+				if(tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
+					thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
+				}
+				else if (includeBacklinks){
+					thisModule.sEndPoint <- pathend.regularEnd;
+					thisModule.tEndPoint <- tUCMmap.getNode(pathend.regularEnd.name);
+					if(thisModule.sEndPoint.epConnect.pbody.pathNodes -> isEmpty()){
+						if(not thisModule.sEndPoint.epConnect.pbody.orFork.oclIsUndefined()){
+							thisModule.orFork <- thisModule.sEndPoint.epConnect.pbody.orFork;
+							thisModule.condExpression <- thisModule.joinStringSequence(thisModule.orFork.condition.expression, '');
+							thisModule.addPred(thisModule.tEndPoint, thisModule.orForkMap.get(thisModule.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
+						}
 					}
 				}
 			}
@@ -393,7 +396,10 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 		if(not originalPathend.body.oclIsUndefined()){
 			for(pathbody in originalPathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody)){
 				if(not pathbody.referencedEnd.oclIsUndefined()){
-					thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
+					--TODO: if statement below is a temporary fix
+					if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined()){
+						thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
+					}
 				}
 				else{
 					--if pathNodes exist
@@ -1731,21 +1737,29 @@ rule InBinding2InBinding{
 		)
 	do{
 		--QUESTION: does the order in which the if checks are performed matter?
+		--TODO: all the innermost conditionals are a temporary fix; these need to be fixed more properly
 		if(not s.binding.oclIsUndefined()){
 			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+				if(not thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).oclIsUndefined()){
+					tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+				}
 			}
-			--TODO: this should be an "else" rather than an "else if"; the if is a temporary workaround
 			else if(thisModule.stubMap.get(s.binding.stubParam.stub)){
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+				if(not thisModule.stubMap.get(s.binding.stubParam.stub).oclIsUndefined()){
+					tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+				}
 			}
 		}
 		else if(not s.bindings.oclIsUndefined()){
 			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+				if(not thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).oclIsUndefined()){
+					tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+				}
 			}
-			else{
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
+			else if(not thisModule.stubMap.get(s.bindings.stubParam.stub).oclIsUndefined()){
+				if(not thisModule.stubMap.get(s.bindings.stubParam.stub)){
+					tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
+				}
 			}
 		}
 	}
@@ -1760,21 +1774,29 @@ rule OutBinding2OutBinding{
 			endPoint <- thisModule.endPointMap.get(s.mapEnd)
 		)
 	do{ 
+		--TODO: all the innermost conditionals are a temporary fix; these need to be fixed more properly
 		if(not s.bindings.oclIsUndefined()){
 			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+				if(not thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).oclIsUndefined()){
+					tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+				}
 			}
-			--TODO: this should be an "else" rather than an "else if"; the if is a temporary workaround
 			else if(not thisModule.stubMap.get(s.bindings.stubParam.stub).oclIsUndefined()){
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.bindings.stubParam.stub).succ -> at(s.index);
+				if(not thisModule.stubMap.get(s.bindings.stubParam.stub)){
+					tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
+				}
 			}
 		}
 		else if(not s.binding.oclIsUndefined()){
 			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+				if(not thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).oclIsUndefined()){
+					tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+				}
 			}
-			else {
-				tOutBinding.stubExit <- thisModule.stubMap.get(s.binding.stubParam.stub).succ -> at(s.index);
+			else if(thisModule.stubMap.get(s.binding.stubParam.stub)){
+				if(not thisModule.stubMap.get(s.binding.stubParam.stub).oclIsUndefined()){
+					tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+				}
 			}
 		}
 	}
@@ -1868,7 +1890,7 @@ rule UCMmap2UCMmap{
 				thisModule.connectNodes(path.pathBody, path, tUCMmap, OclAny);
 			}
 			
-			thisModule.next <- tUCMmap.getNode(path.startPoint.name).succ;
+			thisModule.next <- tUCMmap.getNode(path.startPoint.turnGetLongestName()).succ;
 			vBody <- path.pathBody; -- INIT vBody
 			
 			if(vBody.pathNodes -> isEmpty()){
