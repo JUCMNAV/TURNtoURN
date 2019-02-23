@@ -5,105 +5,123 @@ create OUT : Urn from IN : Turn;
 --QUESTION: are select(s|s.target = OclUndefined) and any(s|s.target.oclIsUndefined()) equivalent here? i.e., will there only ever be one item with s.target = undefined?
 -- TODO: determine if this name is appropriate
 rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, previousNode: Urn!PathNode, isTimer: Boolean){
+	using{
+		newPred : Urn!PathNode = OclUndefined;
+	}
 	do{
-		thisModule.newPred <- '';
-		
 		if(previousNode.oclIsTypeOf(Turn!WaitingPlace)){
-			thisModule.newPred <- thisModule.resolveTemp(previousNode, 'tWtPlace').firstUnconnectedSucc();
+			newPred <- thisModule.resolveTemp(previousNode, 'tWtPlace').firstUnconnectedSucc();
 		}
 		else if(previousNode.oclIsTypeOf(Turn!FailurePoint)){
-			thisModule.newPred <- thisModule.resolveTemp(previousNode, 'tFailPt').firstUnconnectedSucc();
+			newPred <- thisModule.resolveTemp(previousNode, 'tFailPt').firstUnconnectedSucc();
 		}
 		else if(not isTimer and previousNode.oclIsTypeOf(Turn!Timer)){
-			thisModule.newPred <- thisModule.timerMap.get(previousNode).firstUnconnectedSucc();
+			newPred <- thisModule.timerMap.get(previousNode).firstUnconnectedSucc();
 		}
 		else if(previousNode.oclIsTypeOf(Turn!Connect)){
 			if(previousNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
 				thisModule.addSucc(tUCMmap.getNode(previousNode.connectsTo.name), thisModule.createNodeConnection());
-				thisModule.newPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
+				newPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
 			}
 			else if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-				thisModule.newPred <- thisModule.connectMap.get(previousNode).firstUnconnectedSucc(); 
+				newPred <- thisModule.connectMap.get(previousNode).firstUnconnectedSucc(); 
 			}
 			else{
-				thisModule.newPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
+				newPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
 			}
 		}
 		else if(isTimer){
 			if(previousNode.oclIsTypeOf(Turn!RespRef)){
-				thisModule.newPred <- thisModule.resolveTemp(previousNode, 'tRespRef').succ -> select(s|s.target.oclIsUndefined());
+				newPred <- thisModule.resolveTemp(previousNode, 'tRespRef').succ -> select(s|s.target.oclIsUndefined());
 			}
 			else {
-				thisModule.newPred <- tUCMmap.getNode(previousNode.name).firstUnconnectedSucc();
+				newPred <- tUCMmap.getNode(previousNode.name).firstUnconnectedSucc();
 			}
 		}
 		else if(previousNode.oclIsTypeOf(Turn!RespRef)){
-			thisModule.newPred <- thisModule.resolveTemp(previousNode, 'tRespRef').firstUnconnectedSucc();
+			newPred <- thisModule.resolveTemp(previousNode, 'tRespRef').firstUnconnectedSucc();
 		}
 		else{
-			thisModule.newPred <- tUCMmap.getNode(previousNode.name).succ;
+			newPred <- tUCMmap.getNode(previousNode.name).succ;
 		}
 		
-		thisModule.addPred(currentNode, thisModule.newPred);
+		thisModule.addPred(currentNode, newPred);
+		OclUndefined; -- RETURN VOID
 	}
 }
 
 --I'm using the vague term isCaseOne here as I'm not sure of the difference between the two cases / why it is necessary
 --TODO: name this more precisely
 rule getNodeToConnect(tUCMmap: Urn!UCMmap, currentNode: Turn!PathNode, isCaseOne: Boolean){
+	using{
+		nodeToJoin : Urn!PathNode = OclUndefined;
+		connectedToWaitingPlace : Boolean = false; -- INIT succeeded
+	}
 	do{
-		thisModule.nodeToJoin <- '';
-		
-		thisModule.succeeded <- false;
-		
 		if(currentNode.oclIsTypeOf(Turn!Connect)){
-			if(currentNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
-				thisModule.nodeToJoin <- tUCMmap.getNode(currentNode.connectsTo.name).firstUnconnectedSucc();
-				thisModule.succeeded <- true;
-			}
+			connectedToWaitingPlace <- currentNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace);
 		}
 		
-		if(not thisModule.succeeded){
-			if(isCaseOne){
-				thisModule.nodeToJoin <- tUCMmap.getNode(currentNode.name).firstUnconnectedSucc();
-			}
-			else{
-				thisModule.nodeToJoin <- tUCMmap.getNode(currentNode.name).succ;
-			}
+		if(connectedToWaitingPlace){
+			nodeToJoin <- tUCMmap.getNode(currentNode.connectsTo.name).firstUnconnectedSucc();	
 		}
-		
-		thisModule.nodeToJoin;
+		else if(isCaseOne){
+			nodeToJoin <- tUCMmap.getNode(currentNode.name).firstUnconnectedSucc();
+		}
+		else{
+			nodeToJoin <- tUCMmap.getNode(currentNode.name).succ;
+		}
+				
+		nodeToJoin; -- RETURN Urn!PathNode
 	}
 }
 
 -- QUESTION: determine why we look at the first node, i.e., pathbody.pathNodes -> first(), rather than the last
 -- TODO: determine how the next connecting node is chosen
 -- TODO: determine if this name is appropriate
-rule handleConnectNode(tUCMmap: Urn!UCMmap, NODE: Turn!PathNode, ITEM: OclAny, timerNode: Turn!PathNode){
+rule handleConnectNode(tUCMmap: Urn!UCMmap, currentNode: Turn!PathNode, previousNode: Turn!PathNode, ITEM: OclAny){
+	using{
+		vConnectsToTimer : Boolean = currentNode.connectsTo.oclIsTypeOf(Turn!Timer);
+		vEmptyPtId : Integer = thisModule.nextId().toString();
+		vName : String = 
+			if (not vConnectsToTimer) then
+				'EmptyPoint'+vEmptyPtId
+			else
+				'AsynchConnectTimer#'+currentNode.connectsTo.name
+			endif;
+		vNewNode : Urn!PathNode = OclUndefined;
+	}
+	to
+		tNodeConnection1: Urn!NodeConnection(),
+		tConnect: Urn!Connect(
+			id <- thisModule.nextId().toString(),
+			name <- 'Connect' + tConnect.id,
+			diagram <- tUCMmap,
+			succ <- tNodeConnection1,
+			pred <- tNodeConnection2
+		),
+		tNodeConnection2: Urn!NodeConnection(),
+		tEmptyPt: Urn!EmptyPoint(
+			id <- vEmptyPtId,
+			name <- vName,
+			diagram <- tUCMmap,
+			succ <- tNodeConnection2
+		)
 	do{
-		thisModule.connect <- thisModule.createConnect(tUCMmap);
-
-		if(not NODE.connectsTo.oclIsTypeOf(Turn!Timer)){
-			thisModule.emptyPt <- thisModule.createEmptyPt(tUCMmap, OclAny, true);
-			thisModule.addPred(thisModule.connect, thisModule.emptyPt.succ -> first());
-			
-			thisModule.newNode <- tUCMmap.getNode(NODE.connectsTo.name);
-			thisModule.addPred(thisModule.newNode, thisModule.connect.succ);
+		vNewNode <- tEmptyPt;
+		
+		if(not vConnectsToTimer){
+			thisModule.addPred(tUCMmap.getNode(currentNode.connectsTo.name), tConnect.succ);
+			vNewNode <- tUCMmap.getNode(currentNode.connectsTo.name);
 		}
-		else{
-			thisModule.newNode <- thisModule.createEmptyPt(tUCMmap, NODE.connectsTo, true);
-			thisModule.addPred(thisModule.connect, thisModule.newNode.succ -> first());
-			-- TODO: not sure if this second condition I added avoids trying to connect the first path node or prevents the connect chain from starting up altogether
-			if(timerNode.oclIsTypeOf(Turn!Connect)){
-				if(not thisModule.connectMap.get(timerNode.connectsTo).oclIsUndefined()){
-					thisModule.addPred(thisModule.connectMap.get(timerNode.connectsTo), thisModule.connect.succ);
-				}
+		else if(previousNode.oclIsTypeOf(Turn!Connect)){
+			if(not thisModule.connectMap.get(previousNode.connectsTo).oclIsUndefined()){
+				thisModule.addPred(thisModule.connectMap.get(previousNode.connectsTo), tConnect.succ);
 			}
 		}
 		
-		thisModule.addPred(thisModule.newNode, ITEM);
-		
-		thisModule.connect;
+		thisModule.addPred(vNewNode, ITEM);
+		tConnect;
 	}
 }
 
@@ -141,10 +159,10 @@ rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, firstNode: Turn!Path
 		else if(firstNode.oclIsTypeOf(Turn!Connect)){
 			-- look for asynchronous connect (QUESTION: what does this mean?)
 			if(case = 'And'){ --AND case
-				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.firstUnconnectedSucc(), firstNode);
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, OclUndefined, thisModule.nextConnectingNode.firstUnconnectedSucc());
 			}
 			else if(case = 'Or'){ --OR case
-				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.nextConnectingNode.succ -> first(), OclUndefined);
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, OclUndefined, thisModule.nextConnectingNode.succ -> first());
 			}
 
 			thisModule.connectMap <- thisModule.connectMap.including(firstNode, thisModule.connect);
@@ -177,7 +195,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 				thisModule.addPred(thisModule.timerMap.get(firstNode), thisModule.startPoint.succ);
 			} --with an else
 			else if(firstNode.oclIsTypeOf(Turn!Connect)) {
-				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.startPoint.firstUnconnectedSucc(), OclUndefined);
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, OclUndefined, thisModule.startPoint.firstUnconnectedSucc());
 				thisModule.connectMap <- thisModule.connectMap.including(firstNode, thisModule.connect);
 			}
 			else if(firstNode.oclIsTypeOf(Turn!WaitingPlace)){
@@ -225,7 +243,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 				thisModule.addPred(thisModule.createTimer(tUCMmap, firstNode), tUCMmap.getNode(path.name).succ -> first());
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Connect)){
-				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.currentNode.firstUnconnectedSucc(), firstNode);
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, OclUndefined, thisModule.currentNode.firstUnconnectedSucc());
 				thisModule.connectMap <- thisModule.connectMap.including(firstNode, thisModule.connect);
 			}
 			else if(firstNode.oclIsTypeOf(Turn!WaitingPlace)){
@@ -270,7 +288,8 @@ rule handleNode(tUCMmap: Turn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 				thisModule.pred <- tUCMmap.getNode(previousNode.name).succ;
 			}
 			
-			thisModule.connect <- thisModule.handleConnectNode(tUCMmap, currentNode, thisModule.pred, previousNode);
+			thisModule.connect <- thisModule.handleConnectNode(tUCMmap, currentNode, previousNode, thisModule.pred);
+			
 			thisModule.connectMap <- thisModule.connectMap.including(currentNode, thisModule.connect);
 		}
 		-- DOUBLE CHECK IF THIS IS REQUIRED
