@@ -45,6 +45,21 @@
 * Write down the return type for each called rule
 * Make all "using" variables start with v, all argument variables with a, source object with s, target object with t
 * Put in an INIT (varname) for all initializations for variables for readability
+* Verify ordering of operations that add nodes to tUCMmap in create called rules (e.g., createTimer) is correct
 
 ## ACTIVE TASK
-I am currently refactoring the code until it is at a point I feel is sufficiently readable for me to troubleshoot it. I have significantly improved readability but cannot be sure of functionality. I have likely broken some code along the way, and the current version is broken. However, the original version was also broken, so this should not be an issue.
+I am currently troubleshooting the code to look for issues that cause either incorrect outputs or runtime errors.
+
+## ISSUES
+	* The test StartPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means a StartPoint must exist.
+	* The test EndPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means all PathEnds must have a RegularEnd in them.
+		The specific line in endpoint.xml reads:
+			```<pathBody xsi:type="turn:PathBodyNodes">
+		        <pathEnd xsi:type="turn:EndpointWithConnect"/>
+		      </pathBody>```
+		After noting the above, I looked at startpoint.xml as a point of reference. In that, no StartPoint is created at all. This actually causes the first bug, listed above. That brings three cases to mind:
+			1. EndPointTestNoName should have no EndPointWithConnect to match the behavior shown in StartPointTestNoName
+			2. StartPointTestNoName should have a StartPoint with a RegularEnd with some default name, and so EndPointTestNoName should have the same.
+			3. The EndPointWithConnect without a RegularEnd should be handled somewhere in the code, and StartPointNoName should create a StartPoint with no RegularEnd which is also handled somewhere else in the code.
+	* In some cases, the warning appears that an attribute of the target model cannot be set to a value of the source model. I have replaced all most instances of this with resolveTemps rather than directly using the source model items. Is this correct or was the previous version correct?
+		

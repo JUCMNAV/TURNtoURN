@@ -48,9 +48,6 @@ helper context Turn!URNmodelElement def: metadataExists(param : String) : Boolea
 helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) = 
 	self.actors -> collect(actor|actor.elems) -> flatten();
 
-helper context Turn!UCMmap def: getPathNodes() : Sequence(OclAny) =
-	self.paths -> flatten() -> collect(p|p.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten();
-
 helper context String def : capitalize(): String = self.substring(1,1).toUpper() + self.substring(2, self.size());
 
 helper context Urn!UCMmap def : getNode(turnNodeName: String) : OclAny =
@@ -144,20 +141,17 @@ rule processPathNode(node: OclAny, tUCMmap: Urn!UCMmap){
 rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklinks: Boolean){
 	do{
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-			--TODO: condition below is a temporary fix; fix it properly
-			if(not pathend.regularEnd.oclIsUndefined()){
-				if(tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
-					thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
-				}
-				else if (includeBacklinks){
-					thisModule.sEndPoint <- pathend.regularEnd;
-					thisModule.tEndPoint <- tUCMmap.getNode(pathend.regularEnd.name);
-					if(thisModule.sEndPoint.epConnect.pbody.pathNodes -> isEmpty()){
-						if(not thisModule.sEndPoint.epConnect.pbody.orFork.oclIsUndefined()){
-							thisModule.orFork <- thisModule.sEndPoint.epConnect.pbody.orFork;
-							thisModule.condExpression <- thisModule.joinStringSequence(thisModule.orFork.condition.expression, '');
-							thisModule.addPred(thisModule.tEndPoint, thisModule.orForkMap.get(thisModule.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
-						}
+			if(tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
+				thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
+			}
+			else if (includeBacklinks){
+				thisModule.sEndPoint <- pathend.regularEnd;
+				thisModule.tEndPoint <- tUCMmap.getNode(pathend.regularEnd.name);
+				if(thisModule.sEndPoint.epConnect.pbody.pathNodes -> isEmpty()){
+					if(not thisModule.sEndPoint.epConnect.pbody.orFork.oclIsUndefined()){
+						thisModule.orFork <- thisModule.sEndPoint.epConnect.pbody.orFork;
+						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.orFork.condition.expression, '');
+						thisModule.addPred(thisModule.tEndPoint, thisModule.orForkMap.get(thisModule.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
 					}
 				}
 			}
@@ -396,10 +390,7 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 		if(not originalPathend.body.oclIsUndefined()){
 			for(pathbody in originalPathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody)){
 				if(not pathbody.referencedEnd.oclIsUndefined()){
-					--TODO: if statement below is a temporary fix
-					if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined()){
-						thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
-					}
+					thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
 				}
 				else{
 					--if pathNodes exist
@@ -716,6 +707,7 @@ rule createOrFork(obj: Turn!OrFork, tUCMmap: Urn!UCMmap){
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
 				if(not obj.body.oclIsUndefined()){
+					thisModule.pathBodies <- obj.getPathBodies();
 					if(not obj.body.elseBody.oclIsUndefined()){
 						-- TODO (COMMENTED OUT): thisModule.createdCondition isn't defined; I'm not sure what should go here instead. Try to determine it
 						-- QUESTION: where should the condition come from?
@@ -1075,7 +1067,6 @@ rule createEndPoint(node: Turn!PathNode, tUCMmap: Urn!UCMmap){
 	}
 }
 
---TODO: determine what order the following tasks need to be performed in
 rule createTimer(tUCMmap: Urn!UCMmap, timerObj: Turn!Timer){
 	to
 		tTimer: Urn!Timer (
@@ -1458,7 +1449,7 @@ rule URNlink2URNlink{
 	to 
 		tCon: Urn!URNlink (
 			type <- s.type,
-			--TODO: determine if the assignments below are valid (the second in particular gave a runtime warning as not being possible during 'remaining test cases')
+			-- the pair of items below are URNmodelElements and so exist in both the URN and TURN metamodels
 			fromElem <- s.fromElem,
 			toElem <- s.toElem
 		)
@@ -1498,11 +1489,9 @@ rule Component2Component{
 		
 		tCompRef.contDef.protected <- s.protected;
 		
-		for(elem in s.elements -> including(s.element)){
-			if(elem.oclIsTypeOf(Turn!LongBoundElement)){
-				tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('from',elem.from));
-				tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to',elem.to));
-			}
+		for(elem in (s.elements -> including(s.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
+			tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('from', elem.from));
+			tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to', elem.to));
 		}
 	}
 }
@@ -1629,11 +1618,8 @@ rule URNspec2URNspec{
 			tURNspec.urnVersion <- sURNspec.info.urnVersion; 
 		}
 		
-		--TODO: refactor the below into the 'using' block above once you find an appropriate test case to test this
-		if(sURNspec.metadata -> select(m|m.name.indexOf('TURN-URN') <> -1 ) -> notEmpty()){
-	 		if (sURNspec.metadata -> select(m|m.name.indexOf('nextGlobalID') <> -1 ) -> notEmpty()){
-	 			thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
-	 		}
+		if(not sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').oclIsUndefined()){
+	 		thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 		}
 		tURNspec.nextGlobalID <- thisModule.id.toString();
 	}
@@ -1737,29 +1723,20 @@ rule InBinding2InBinding{
 		)
 	do{
 		--QUESTION: does the order in which the if checks are performed matter?
-		--TODO: all the innermost conditionals are a temporary fix; these need to be fixed more properly
 		if(not s.binding.oclIsUndefined()){
 			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
-				if(not thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).oclIsUndefined()){
-					tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-				}
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
 			}
-			else if(thisModule.stubMap.get(s.binding.stubParam.stub)){
-				if(not thisModule.stubMap.get(s.binding.stubParam.stub).oclIsUndefined()){
-					tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
-				}
+			else{
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
 			}
 		}
 		else if(not s.bindings.oclIsUndefined()){
 			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
-				if(not thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).oclIsUndefined()){
-					tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-				}
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
 			}
-			else if(not thisModule.stubMap.get(s.bindings.stubParam.stub).oclIsUndefined()){
-				if(not thisModule.stubMap.get(s.bindings.stubParam.stub)){
-					tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
-				}
+			else{
+				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
 			}
 		}
 	}
@@ -1773,30 +1750,21 @@ rule OutBinding2OutBinding{
 		tOutBinding: Urn!OutBinding(
 			endPoint <- thisModule.endPointMap.get(s.mapEnd)
 		)
-	do{ 
-		--TODO: all the innermost conditionals are a temporary fix; these need to be fixed more properly
+	do{
 		if(not s.bindings.oclIsUndefined()){
 			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
-				if(not thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).oclIsUndefined()){
-					tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-				}
+				tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
 			}
 			else if(not thisModule.stubMap.get(s.bindings.stubParam.stub).oclIsUndefined()){
-				if(not thisModule.stubMap.get(s.bindings.stubParam.stub)){
-					tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
-				}
+				tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
 			}
 		}
 		else if(not s.binding.oclIsUndefined()){
 			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
-				if(not thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).oclIsUndefined()){
-					tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-				}
+				tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
 			}
 			else if(thisModule.stubMap.get(s.binding.stubParam.stub)){
-				if(not thisModule.stubMap.get(s.binding.stubParam.stub).oclIsUndefined()){
-					tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
-				}
+				tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
 			}
 		}
 	}
@@ -1822,12 +1790,12 @@ rule UCMmap2UCMmap{
 			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p,'tNodeConn'))
 		)
 	do{
-		thisModule.collectReferencedEnds(tUCMmap, sUCMmap.getPathNodes());
+		thisModule.collectReferencedEnds(tUCMmap, sUCMmap.paths -> flatten() -> collect(p|p.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten());
 		
 		--Regular ends
-		--ADD CODE HERE
 		for(path in sUCMmap.paths){
 			vEmptyPoints <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)); -- INIT vEmptyPoints
+			--TODO: FIRST BUG noted in README occurs here upon running the code using startpoint.xml
 			vStartPoint <- tUCMmap.getNode(path.startPoint.turnGetLongestName()); -- INIT vStartPoint
 			vPathEnd <- path.pathBody.pathEnd; -- INIT vPathEnd
 			
@@ -1841,13 +1809,13 @@ rule UCMmap2UCMmap{
 			}
 			
 			if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
-				--TODO: determine what termToSet represents
 				thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
 				thisModule.termToSet <- vEmptyPoints -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first()));
 				thisModule.addPred(thisModule.termToSet, vStartPoint.firstUnconnectedSucc());
 			}
 			--if no pathnodes exist
 			if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and path.pathBody.pathNodes -> isEmpty()){
+				--TODO: SECOND BUG noted in README occurs here upon running the code using endpoint.xml
 				vConnectingEndPoint <- tUCMmap.getNode(vPathEnd.regularEnd.turnGetLongestName()); -- INIT vConnectingEndPoint
 				
 				if(not vPathEnd.connect.oclIsUndefined()){
@@ -1866,7 +1834,6 @@ rule UCMmap2UCMmap{
 				}
 				else{
 					if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
-						--TODO: determine what newPred represents
 						thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
 						thisModule.newPred <- vEmptyPoints -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first())).firstUnconnectedSucc();
 						thisModule.addPred(vConnectingEndPoint, thisModule.newPred);
