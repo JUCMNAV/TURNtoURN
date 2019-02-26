@@ -396,7 +396,7 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 			for(pathbody in originalPathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody)){
 				if(not pathbody.referencedEnd.oclIsUndefined()){
 					--TEMPORARY FIX for bug that I need to more wholly determine
-					if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined){
+					if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined()){
 						thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
 					}
 				}

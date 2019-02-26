@@ -43,7 +43,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Verify ordering of operations that add nodes to tUCMmap in create called rules (e.g., createTimer) is correct
 * Refactor for better coding practice (second priority)
 	* Verify the lifetime of variables to make sure they aren't sitting around eternally
-	* Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to.
+	* Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to
 	* Look to see if there is a way to remove any or all map global objects
 * Refactor for increased readability
 	* Rearrange methods so that their order feels more natural.
@@ -62,7 +62,10 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Determine if error messages can be sent out by ATL in these cases
 	* Make all caps variable names into camel case (all caps was for refactoring purposes to make variable names easier to find)
 	* Make sure all select(n.name='') are consistent in (Turn2Urn remains)
-	* File naming
+	* Files
 		* Update names of .turn input files in TURNTestInput to match with new xml file names
 		* Update names of files and test cases to be consistent with names of turn/urn items (e.g., Endpoint to EndPoint)
-		* Create a "test" folder to contain Input, Output, LaunchConfiguration, previousOutput
+		* Create a "test" folder to contain Input, Output, LaunchConfiguration, previousOutput (or find some other way to structures the directory better than its current more arbitrary state)
+		* Describe in this README how to use the launch configurations that have been added to the project
+	* TURN
+		* Check if it is acceptable to rename some TURN variables for more consistency in naming

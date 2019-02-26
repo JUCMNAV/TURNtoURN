@@ -168,33 +168,35 @@ rule handleForkLogic(tUCMmap: Turn!UCMmap, path: Turn!Path, firstNode: Turn!Path
 
 --QUESTION: there doesn't appear to be a Turn!PathNode class. What should I use instead?
 rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!PathNode){
+	using {
+		startPointFirstSucc : Urn!PathNode = OclUndefined;	
+	}
 	do{
 		if(path.oclIsTypeOf(Turn!Path)){
-			thisModule.startPoint <- tUCMmap.getNode(path.startPoint.name);
+			startPointFirstSucc <- tUCMmap.getNode(path.startPoint.name).firstUnconnectedSucc();
 			
 			if(firstNode.oclIsTypeOf(Turn!RespRef)){
-				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), thisModule.startPoint.succ -> first());
+				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), startPointFirstSucc);
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.createTimer(tUCMmap, firstNode);
-				thisModule.addPred(thisModule.timerMap.get(firstNode), thisModule.startPoint.succ);
+				thisModule.addPred(thisModule.createTimer(tUCMmap, firstNode), startPointFirstSucc);
 			} --with an else
 			else if(firstNode.oclIsTypeOf(Turn!Connect)) {
-				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, thisModule.startPoint.firstUnconnectedSucc());
+				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, startPointFirstSucc);
 			}
 			else if(firstNode.oclIsTypeOf(Turn!WaitingPlace)){
 				if(not firstNode.connect.oclIsUndefined() and not tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
-					thisModule.addPred(tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(firstNode.connect).pred -> first())), thisModule.startPoint.succ);
+					thisModule.addPred(tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(firstNode.connect).pred -> first())), startPointFirstSucc);
 				}
 				else{
-					thisModule.addPred(thisModule.resolveTemp(firstNode, 'tWtPlace'), thisModule.startPoint.succ);
+					thisModule.addPred(thisModule.resolveTemp(firstNode, 'tWtPlace'), startPointFirstSucc);
 				}
 			}
 			else if(firstNode.oclIsTypeOf(Turn!FailurePoint)){
-				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tFailPt'), thisModule.startPoint.succ);
+				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tFailPt'), startPointFirstSucc);
 			}
 			else{
-				thisModule.addPred(tUCMmap.getNode(firstNode.turnGetLongestName()), thisModule.startPoint.succ);
+				thisModule.addPred(tUCMmap.getNode(firstNode.turnGetLongestName()), startPointFirstSucc);
 			}
 		}
 		else if(path.oclIsTypeOf(Turn!OrFork)){
