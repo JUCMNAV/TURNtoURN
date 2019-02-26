@@ -416,7 +416,7 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, tUCMmap: Urn!UCMmap, expression: String){
 	using{
 		vNextPred : Urn!NodeConnection = OclUndefined;
-		vBody : Turn!PathBody = obj.connectingOrBody; -- INIT vBody
+		vBody : Turn!PathBody = obj.connectingOrBody;
 	}
 	do{
 		--INIT vNextPred
@@ -784,7 +784,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 		}
 		else{
 			-- TODO: determine if this route is ever entered
-			vAllStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=tUCMmap.name).stubs; -- INIT vAllStubs
+			vAllStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=tUCMmap.name).stubs;
 			tStub.bindings <- vAllStubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
 		
@@ -862,7 +862,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 	using{
 		--create stubInPathCounter also...
-		vStubOutPathPosition : Integer = 1; -- INIT vStubOutPathPosition
+		vStubOutPathPosition : Integer = 1;
 		vPathEnd : Turn!RegularEnd = OclUndefined;
 		vFinishedConnection : Boolean = OclUndefined;
 		vCurrentSuccessorToStub : Turn!PathNode = OclUndefined;
@@ -876,11 +876,10 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 			
 			--if no pathNodes exist
 			if(outPath.path.pathNodes -> isEmpty()){
-				-- INIT vPathEnd
 				vPathEnd <- outPath.path.pathEnd;
 				
 				if(not vPathEnd.oclIsUndefined()){
-					vFinishedConnection <- thisModule.connectPathEndToNextNode(tUCMmap, vPathEnd, vCurrentSuccessorToStub); -- INIT vFinishedConnection
+					vFinishedConnection <- thisModule.connectPathEndToNextNode(tUCMmap, vPathEnd, vCurrentSuccessorToStub);
 					
 					if(not vFinishedConnection){
 						if (not outPath.path.referencedEnd.oclIsUndefined()){
@@ -912,8 +911,7 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 						}
 					}
 					else{
-					-- INIT vCurrentNode	
-					if(node.oclIsTypeOf(Turn!RespRef)){
+						if(node.oclIsTypeOf(Turn!RespRef)){
 							vCurrentNode <- thisModule.resolveTemp(node, 'tRespRef');	
 						}
 						else{
@@ -927,7 +925,7 @@ rule createStubOutNodes(stubObj:Turn!Stub, tUCMmap:Urn!UCMmap){
 							thisModule.addPred(vCurrentNode, tUCMmap.getNode(thisModule.previousNode.name).succ);
 						}
 					}
-					vPreviousNode <- node; -- INIT vPreviousNode
+					vPreviousNode <- node;
 				}
 
 				if(not outPath.pathNodes -> empty()) {
@@ -1587,7 +1585,7 @@ rule URNspec2URNspec{
 			urndef <- tURNdef
 		),
 		tURNdef: Urn!URNdefinition(
-			specDiagrams <- sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap')) -> including(tGRLSpecDiag),
+			specDiagrams <- Sequence{tGRLSpecDiag} -> union(sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap'))),
 			concerns <- sURNspec.concerns,
 			components <- Urn!Component.allInstances(),
 			responsibilities <- Urn!Responsibility.allInstances()
@@ -1716,7 +1714,12 @@ rule PluginBinding2PluginBinding{
 --TODO: modularize after test cases are working
 rule InBinding2InBinding{
 	from
-		s:Turn!InBinding
+		s: Turn!InBinding
+	using{
+		vBoundTerm : Turn!Binding = OclUndefined;
+		vStubEntry : Turn!Stub = OclUndefined;
+		vStub: Urn!Stub = OclUndefined;
+	}
 	to
 		tInBinding: Urn!InBinding(
 			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
@@ -1724,19 +1727,22 @@ rule InBinding2InBinding{
 	do{
 		--QUESTION: does the order in which the if checks are performed matter?
 		if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
-			}
-			else{
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
-			}
+			vBoundTerm <- s.binding;
 		}
 		else if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
+			vBoundTerm <- s.bindings;
+		}
+		
+		if(not vBoundTerm.oclIsUndefined()){
+			if(not vBoundTerm.stubParam.stubDec.oclIsUndefined()){
+				vStubEntry <- thisModule.stubMap.get(vBoundTerm.stubParam.stubDec.stub);
 			}
 			else{
-				tInBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
+				vStubEntry <- thisModule.stubMap.get(vBoundTerm.stubParam.stub);
+			}
+			if(not vStubEntry.oclIsUndefined()){
+				 -- TODO: this line and its match in OutBinding2OutBinding are bug 3 in the README; these affect stub.xml. the if statement above is a temp. solution
+				tInBinding.stubEntry <- thisModule.stubMap.get(vStubEntry).pred -> at(s.index);
 			}
 		}
 	}
@@ -1746,25 +1752,33 @@ rule InBinding2InBinding{
 rule OutBinding2OutBinding{
 	from
 		s:Turn!OutBinding
+	using{
+		vBoundTerm : Turn!Binding = OclUndefined;
+		vStubEntry : Urn!Stub = OclUndefined;
+	}
 	to
 		tOutBinding: Urn!OutBinding(
 			endPoint <- thisModule.endPointMap.get(s.mapEnd)
 		)
 	do{
+		--QUESTION: does the order in which the if checks are performed matter?
 		if(not s.bindings.oclIsUndefined()){
-			if(not s.bindings.stubParam.stubDec.oclIsUndefined()){
-				tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stubDec.stub).pred -> at(s.index);
-			}
-			else if(not thisModule.stubMap.get(s.bindings.stubParam.stub).oclIsUndefined()){
-				tOutBinding.stubEntry <- thisModule.stubMap.get(s.bindings.stubParam.stub).pred -> at(s.index);
-			}
+			vBoundTerm <- s.bindings;
 		}
 		else if(not s.binding.oclIsUndefined()){
-			if(not s.binding.stubParam.stubDec.oclIsUndefined()){
-				tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stubDec.stub).pred -> at(s.index);
+			vBoundTerm <- s.binding;
+		}
+		
+		if(not vBoundTerm.oclIsUndefined()){
+			if(not vBoundTerm.stubParam.stubDec.oclIsUndefined()){
+				vStubEntry <- thisModule.stubMap.get(vBoundTerm.stubParam.stubDec.stub);
 			}
-			else if(thisModule.stubMap.get(s.binding.stubParam.stub)){
-				tOutBinding.stubEntry <- thisModule.stubMap.get(s.binding.stubParam.stub).pred -> at(s.index);
+			else{
+				vStubEntry <- thisModule.stubMap.get(vBoundTerm.stubParam.stub);
+			}
+			if(not vStubEntry.oclIsUndefined()){
+				 -- TODO: this line and its match in InBinding2InBinding are bug 3 in the README; these affect stub.xml. the if statement above is a temp. solution
+				tOutBinding.stubEntry <- thisModule.stubMap.get(vStubEntry).pred -> at(s.index);
 			}
 		}
 	}
@@ -1794,10 +1808,10 @@ rule UCMmap2UCMmap{
 		
 		--Regular ends
 		for(path in sUCMmap.paths){
-			vEmptyPoints <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)); -- INIT vEmptyPoints
+			vEmptyPoints <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint));
 			--TODO: FIRST BUG noted in README occurs here upon running the code using startpoint.xml
-			vStartPoint <- tUCMmap.getNode(path.startPoint.turnGetLongestName()); -- INIT vStartPoint
-			vPathEnd <- path.pathBody.pathEnd; -- INIT vPathEnd
+			vStartPoint <- tUCMmap.getNode(path.startPoint.turnGetLongestName());
+			vPathEnd <- path.pathBody.pathEnd;
 			
 			thisModule.processPathEnd(tUCMmap, vPathEnd, false);
 
@@ -1816,12 +1830,12 @@ rule UCMmap2UCMmap{
 			--if no pathnodes exist
 			if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and path.pathBody.pathNodes -> isEmpty()){
 				--TODO: SECOND BUG noted in README occurs here upon running the code using endpoint.xml
-				vConnectingEndPoint <- tUCMmap.getNode(vPathEnd.regularEnd.turnGetLongestName()); -- INIT vConnectingEndPoint
+				vConnectingEndPoint <- tUCMmap.getNode(vPathEnd.regularEnd.turnGetLongestName());
 				
 				if(not vPathEnd.connect.oclIsUndefined()){
 					thisModule.addSucc(vConnectingEndPoint, thisModule.createNodeConnection());
 					
-					vConnect <- thisModule.createConnect(tUCMmap); -- INIT vConnect
+					vConnect <- thisModule.createConnect(tUCMmap);
 					thisModule.addPred(vConnect, vConnectingEndPoint.succ);
 					thisModule.connectMap <- thisModule.connectMap.including(vPathEnd.connect, vConnect);
 					
@@ -1858,7 +1872,7 @@ rule UCMmap2UCMmap{
 			}
 			
 			thisModule.next <- tUCMmap.getNode(path.startPoint.turnGetLongestName()).succ;
-			vBody <- path.pathBody; -- INIT vBody
+			vBody <- path.pathBody;
 			
 			if(vBody.pathNodes -> isEmpty()){
 				if(not vBody.referencedEnd.oclIsUndefined()){

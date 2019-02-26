@@ -320,8 +320,6 @@ rule handleRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), c
 			}
 		}
 		else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			
-			--INIT vNewPred
 			if(not currentNode.oclIsTypeOf(Turn!Connect)){
 				if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
 					if(not currentNode.connect.oclIsUndefined() and not tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
@@ -423,7 +421,6 @@ rule handleReferencedStubs(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!Pathbody
 	}
 	do{
 		if(currentNode.oclIsTypeOf(Turn!RespRef)){
-			--INIT vNextNode
 			if(tUCMmap.getNode(pathbody.referencedStub.name).pred -> size() >= pathbody.index){
 				vNextNode <- tUCMmap.anyRespDefMatching(currentNode.name).succ;
 			}
@@ -451,7 +448,7 @@ rule handleReferencedStubs(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!Pathbody
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: Urn!UCMmap, nextNode: Urn!PathNode){
 	using{
 		vPreviousNode : Turn!PathNode = OclUndefined;
-		vLastNode : Turn!PathNode = pathbody.pathNodes -> last(); -- INIT vLastNode
+		vLastNode : Turn!PathNode = pathbody.pathNodes -> last();
 	}
 	do{
 		if(not pathbody.pathNodes -> isEmpty()){
@@ -464,7 +461,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, tUCMmap: U
 				}
 				
 				if(currentNode <> vLastNode){
-					vPreviousNode <- currentNode; -- INIT vPreviousNode
+					vPreviousNode <- currentNode;
 				}
 			}
 	

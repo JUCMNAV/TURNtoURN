@@ -51,15 +51,15 @@
 I am currently troubleshooting the code to look for issues that cause either incorrect outputs or runtime errors.
 
 ## ISSUES
-	* The test StartPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means a StartPoint must exist.
-	* The test EndPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means all PathEnds must have a RegularEnd in them.
-		The specific line in endpoint.xml reads:
-			```<pathBody xsi:type="turn:PathBodyNodes">
-		        <pathEnd xsi:type="turn:EndpointWithConnect"/>
-		      </pathBody>```
-		After noting the above, I looked at startpoint.xml as a point of reference. In that, no StartPoint is created at all. This actually causes the first bug, listed above. That brings three cases to mind:
-			1. EndPointTestNoName should have no EndPointWithConnect to match the behavior shown in StartPointTestNoName
-			2. StartPointTestNoName should have a StartPoint with a RegularEnd with some default name, and so EndPointTestNoName should have the same.
-			3. The EndPointWithConnect without a RegularEnd should be handled somewhere in the code, and StartPointNoName should create a StartPoint with no RegularEnd which is also handled somewhere else in the code.
-	* In some cases, the warning appears that an attribute of the target model cannot be set to a value of the source model. I have replaced all most instances of this with resolveTemps rather than directly using the source model items. Is this correct or was the previous version correct?
-		
+1. The test StartPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means a StartPoint must exist.
+2. The test EndPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means all PathEnds must have a RegularEnd in them. The specific line in endpoint.xml reads:
+	```
+	<pathBody xsi:type="turn:PathBodyNodes">
+		<pathEnd xsi:type="turn:EndpointWithConnect"/>
+	</pathBody>
+	```
+After noting the above, I looked at startpoint.xml as a point of reference. In that, no StartPoint is created at all. This actually causes the first bug, listed above. That brings three cases to mind:
+* EndPointTestNoName should have no EndPointWithConnect to match the behavior shown in StartPointTestNoName
+* StartPointTestNoName should have a StartPoint with a RegularEnd with some default name, and so EndPointTestNoName should have the same.
+* The EndPointWithConnect without a RegularEnd should be handled somewhere in the code, and StartPointNoName should create a StartPoint with no RegularEnd which is also handled somewhere else in the code.
+3. In the rules InBinding2InBinding and OutBinding2OutBinding, there is an attempt to retrieve an item from the stubMap which is not in the stubMap. I have not yet pinpointed the source of this issue beyond what lines it occurs in.		
