@@ -144,7 +144,7 @@ rule processPathEnd(tUCMmap: Urn!UCMmap, pathend: Turn!PathNode, includeBacklink
 			if(tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
 				thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
 			}
-			else if (includeBacklinks){
+			else{
 				thisModule.sEndPoint <- pathend.regularEnd;
 				thisModule.tEndPoint <- tUCMmap.getNode(pathend.regularEnd.name);
 				if(thisModule.sEndPoint.epConnect.pbody.pathNodes -> isEmpty()){
@@ -335,8 +335,13 @@ rule collectRegularEnds(tUCMmap: Urn!UCMmap, pathbody: Turn!PathBody){
 			if(pathend.oclIsTypeOf(Turn!Timer)){
 				thisModule.createTimer(tUCMmap, tUCMmap);
 			}
+			else if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
+				if(tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
+					thisModule.createEndPoint(pathend.regularEnd, tUCMmap);
+				}
+			}
 			else{
-				thisModule.processPathEnd(tUCMmap, pathend, false);	
+				thisModule.processPathEnd(tUCMmap, pathend);	
 			}
 		}
 	}
@@ -390,7 +395,10 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 		if(not originalPathend.body.oclIsUndefined()){
 			for(pathbody in originalPathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody)){
 				if(not pathbody.referencedEnd.oclIsUndefined()){
-					thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
+					--TEMPORARY FIX for bug that I need to more wholly determine
+					if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined){
+						thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
+					}
 				}
 				else{
 					--if pathNodes exist
@@ -407,8 +415,8 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 						thisModule.processPathNode(pathbody.pathEnd, tUCMmap);
 					}
 				}
+				vCounter <- vCounter.inc();
 			}		
-			vCounter <- vCounter.inc();
 		}
 	}
 }
@@ -564,11 +572,11 @@ rule createNodeConnection(){
 	}		
 }
 
-rule createOrForkNodeConnection(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
+rule createOrForkNodeConnection(ref: Turn!RegularOrFork){
 	using{
 		vCondition: Turn!Condition =
 			if(ref <> OclAny) then
-				thisModule.resolveTemp(ref.condition,'tCondition')
+				thisModule.resolveTemp(ref.condition, 'tCondition')
 			else
 				OclUndefined
 			endif;
@@ -577,15 +585,6 @@ rule createOrForkNodeConnection(ref: Turn!RegularOrFork, tUCMmap: Urn!UCMmap){
 	 	targetNodeConn: Urn!NodeConnection(
 	 		condition <- vCondition	
 	 	)
-	do{
-		targetNodeConn;	
-	}	
-}
-
---QUESTION: this is just an empty object; it doesn't use the arguments. Should it do something?
-rule createAndForkNodeConnection(ref: Turn!PathBodyNodes, tUCMmap: Urn!UCMmap){
-	to
-	 	targetNodeConn: Urn!NodeConnection()
 	do{
 		targetNodeConn;	
 	}	
@@ -630,11 +629,11 @@ rule createOrFork(obj: Turn!OrFork, tUCMmap: Urn!UCMmap){
 		
 		if(not obj.body.oclIsUndefined()){
 			for(elem in obj.body.regularBody){
-				thisModule.addSucc(tOrFork, thisModule.createOrForkNodeConnection(elem, tUCMmap));
+				thisModule.addSucc(tOrFork, thisModule.createOrForkNodeConnection(elem));
 			}
 		}
 		else if(not obj.connectingOrBody.oclIsUndefined()){
-			thisModule.addSucc(tOrFork, thisModule.createOrForkNodeConnection(obj, tUCMmap));
+			thisModule.addSucc(tOrFork, thisModule.createOrForkNodeConnection(obj));
 		}
 			
 		thisModule.orForkMap <- thisModule.orForkMap.including(obj, tOrFork);
@@ -648,13 +647,13 @@ rule createOrFork(obj: Turn!OrFork, tUCMmap: Urn!UCMmap){
 			thisModule.collectReferencedEnds(tUCMmap, obj.getPathBodies() -> collect(pb|pb.pathNodes));
 			
 			for (pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd) -> flatten()){
-				thisModule.processPathEnd(tUCMmap, pathend, true);
+				thisModule.processPathEnd(tUCMmap, pathend);
 			}
 
 			--Orforks with only one pathbody
 			if(obj.getPathBodies() -> size() = 1){
 				--creating a node connection with a negated condition
-				thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny, tUCMmap);
+				thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny);
 				
 				thisModule.condition <- '';
 				if(obj.getPathBodies().first().pathEnd.oclIsUndefined()){
@@ -671,7 +670,7 @@ rule createOrFork(obj: Turn!OrFork, tUCMmap: Urn!UCMmap){
 			}
 		}
 		else{
-			thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny, tUCMmap);
+			thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny);
 			
 			thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
 			thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
@@ -688,7 +687,7 @@ rule createOrFork(obj: Turn!OrFork, tUCMmap: Urn!UCMmap){
 				thisModule.numberOfTerminatingNodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
 			}
 			
-			thisModule.processPathEnd(tUCMmap, obj.connectingOrBody.pathEnd, true);
+			thisModule.processPathEnd(tUCMmap, obj.connectingOrBody.pathEnd);
 			
 			thisModule.nextNode <- tOrFork;
 			
@@ -823,7 +822,7 @@ rule createStub(stubObj:Turn!Stub, tUCMmap: Urn!UCMmap){
 			
 			thisModule.collectReferencedEnds(tUCMmap, stubObj.connectingStubBody.pathNodes);
 			
-			thisModule.processPathEnd(tUCMmap, stubObj.connectingStubBody.pathEnd, true);
+			thisModule.processPathEnd(tUCMmap, stubObj.connectingStubBody.pathEnd);
 			
 			thisModule.nextNode <- tStub;
 			
@@ -961,7 +960,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 		thisModule.andForkMap <- thisModule.andForkMap.including(obj, tAndFork);
 		
 		for(elem in obj.pathbody){
-			thisModule.addSucc(tAndFork, thisModule.createAndForkNodeConnection(elem, tUCMmap));
+			thisModule.addSucc(tAndFork, thisModule.createNodeConnection());
 		}
 		
 		thisModule.collectReferencedEnds(tUCMmap, obj.pathbody -> collect(pb|pb.pathNodes));
@@ -971,7 +970,7 @@ rule createAndFork(obj:Turn!AndFork, tUCMmap: Urn!UCMmap){
 			thisModule.collectReferencedEnds(tUCMmap, obj.connectingAndBody.pathNodes);
 			
 			thisModule.numberOfTerminatingNodes <- obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
-			thisModule.processPathEnd(tUCMmap, obj.connectingAndBody.pathEnd, true);
+			thisModule.processPathEnd(tUCMmap, obj.connectingAndBody.pathEnd);
 			
 			--previously this was assigned to '' but that led to a compiler error
 			--QUESTION: is setting this to tAndFork instead of '' correct? I followed the logic in createOrFork to do so
@@ -1741,7 +1740,8 @@ rule InBinding2InBinding{
 				vStubEntry <- thisModule.stubMap.get(vBoundTerm.stubParam.stub);
 			}
 			if(not vStubEntry.oclIsUndefined()){
-				 -- TODO: this line and its match in OutBinding2OutBinding are bug 3 in the README; these affect stub.xml. the if statement above is a temp. solution
+				 -- TODO: THIRD BUG - (1st instance) - this line and its match in OutBinding2OutBinding affect stub.xml, 
+				 -- component.xml, and responsibility.xml; the if statement above this line is a temporary solution
 				tInBinding.stubEntry <- thisModule.stubMap.get(vStubEntry).pred -> at(s.index);
 			}
 		}
@@ -1777,7 +1777,8 @@ rule OutBinding2OutBinding{
 				vStubEntry <- thisModule.stubMap.get(vBoundTerm.stubParam.stub);
 			}
 			if(not vStubEntry.oclIsUndefined()){
-				 -- TODO: this line and its match in InBinding2InBinding are bug 3 in the README; these affect stub.xml. the if statement above is a temp. solution
+				-- TODO: THIRD BUG - (2nd instance) - this line and its match in InBinding2InBinding affect stub.xml, 
+				-- component.xml, and responsibility.xml; the if statement above this line is a temporary solution
 				tOutBinding.stubEntry <- thisModule.stubMap.get(vStubEntry).pred -> at(s.index);
 			}
 		}
@@ -1809,12 +1810,20 @@ rule UCMmap2UCMmap{
 		--Regular ends
 		for(path in sUCMmap.paths){
 			vEmptyPoints <- tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint));
-			--TODO: FIRST BUG noted in README occurs here upon running the code using startpoint.xml
+			--TODO: FIRST BUG from README occurs on the line below upon running the code using startpoint.xml
 			vStartPoint <- tUCMmap.getNode(path.startPoint.turnGetLongestName());
 			vPathEnd <- path.pathBody.pathEnd;
 			
-			thisModule.processPathEnd(tUCMmap, vPathEnd, false);
-
+			if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				--TODO: SECOND BUG from README occurs on the line below upon running the code using endpoint.xml
+				if(tUCMmap.getNode(vPathEnd.regularEnd.name).oclIsUndefined()){
+					thisModule.createEndPoint(vPathEnd.regularEnd, tUCMmap);
+				}
+			}
+			else{
+				thisModule.processPathEnd(tUCMmap, vPathEnd);
+			}
+			
 			if(vPathEnd.oclIsTypeOf(Turn!OrFork)) {
 				thisModule.connectOrForkNodes(vPathEnd, tUCMmap);
 			}

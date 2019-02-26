@@ -31,7 +31,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 * EndPointTestNoName should have no EndPointWithConnect to match the behavior shown in StartPointTestNoName
 * StartPointTestNoName should have a StartPoint with a RegularEnd with some default name, and so EndPointTestNoName should have the same.
 * The EndPointWithConnect without a RegularEnd should be handled somewhere in the code, and StartPointNoName should create a StartPoint with no RegularEnd which is also handled somewhere else in the code.
-3. In the rules InBinding2InBinding and OutBinding2OutBinding, there is an attempt to retrieve an item from the stubMap which is not in the stubMap. I have not yet pinpointed the source of this issue beyond what lines it occurs in.	
+3. In the rules InBinding2InBinding and OutBinding2OutBinding, there is an attempt to retrieve an item from the stubMap which is not in the stubMap. This causes an issue with executing the tests for stub.xml, component.xml, and responsibility.xml; I have not yet pinpointed the source of this issue beyond what lines it occurs in.	
 
 ## TODO
 * Verify functionality (first priority)
