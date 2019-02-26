@@ -397,7 +397,8 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 				if(not pathbody.referencedEnd.oclIsUndefined()){
 					--TEMPORARY FIX for bug that I need to more wholly determine
 					if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined()){
-						thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(vCounter));
+						thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(1));
+						-- BUG: the line above used to be -> at(counter) but that led to a runtime error
 					}
 				}
 				else{
@@ -1816,8 +1817,10 @@ rule UCMmap2UCMmap{
 			
 			if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				--TODO: SECOND BUG from README occurs on the line below upon running the code using endpoint.xml
-				if(tUCMmap.getNode(vPathEnd.regularEnd.name).oclIsUndefined()){
-					thisModule.createEndPoint(vPathEnd.regularEnd, tUCMmap);
+				if(not vPathEnd.regularEnd.oclIsUndefined()){
+					if(tUCMmap.getNode(vPathEnd.regularEnd.name).oclIsUndefined()){
+						thisModule.createEndPoint(vPathEnd.regularEnd, tUCMmap);
+					}
 				}
 			}
 			else{

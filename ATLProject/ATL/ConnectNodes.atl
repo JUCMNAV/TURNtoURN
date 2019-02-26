@@ -30,19 +30,21 @@ rule processNode(tUCMmap: Urn!UCMmap, pathbody: Sequence(Turn!PathBody), current
 				vNewPred <- tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
 			}
 		}
-		else if(isTimer){
-			if(previousNode.oclIsTypeOf(Turn!RespRef)){
+		else if(previousNode.oclIsTypeOf(Turn!RespRef)){
+			if(isTimer){
 				vNewPred <- thisModule.resolveTemp(previousNode, 'tRespRef').succ -> select(s|s.target.oclIsUndefined());
 			}
 			else {
-				vNewPred <- tUCMmap.getNode(previousNode.name).firstUnconnectedSucc();
+				vNewPred <- thisModule.resolveTemp(previousNode, 'tRespRef').firstUnconnectedSucc();
 			}
 		}
-		else if(previousNode.oclIsTypeOf(Turn!RespRef)){
-			vNewPred <- thisModule.resolveTemp(previousNode, 'tRespRef').firstUnconnectedSucc();
-		}
 		else{
-			vNewPred <- tUCMmap.getNode(previousNode.name).succ;
+			if(isTimer){
+				vNewPred <- tUCMmap.getNode(previousNode.name).firstUnconnectedSucc();
+			}
+			else{
+				vNewPred <- tUCMmap.getNode(previousNode.name).succ;
+			}
 		}
 		
 		thisModule.addPred(currentNode, vNewPred);
