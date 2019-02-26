@@ -62,3 +62,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Determine if error messages can be sent out by ATL in these cases
 	* Make all caps variable names into camel case (all caps was for refactoring purposes to make variable names easier to find)
 	* Make sure all select(n.name='') are consistent in (Turn2Urn remains)
+	* File naming
+		* Update names of .turn input files in TURNTestInput to match with new xml file names
+		* Update names of files and test cases to be consistent with names of turn/urn items (e.g., Endpoint to EndPoint)
+		* Create a "test" folder to contain Input, Output, LaunchConfiguration, previousOutput
