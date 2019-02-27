@@ -20,7 +20,7 @@ rule processNode(pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, p
 		}
 		else if(previousNode.oclIsTypeOf(Turn!Connect)){
 			if(previousNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
-				thisModule.addSucc(thisModule.thisModule.tUCMmap.getNode(previousNode.connectsTo.name), thisModule.createNodeConnection());
+				thisModule.addSucc(thisModule.tUCMmap.getNode(previousNode.connectsTo.name), thisModule.createNodeConnection());
 				vNewPred <- thisModule.tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
 			}
 			else if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
@@ -139,7 +139,10 @@ rule handleForkLogic(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 		}
 	
 		if(nextNode.oclIsUndefined()){
-			nextNode <- thisModule.currentMap.get(path);
+			if(case = 'And')
+				nextNode <- thisModule.resolveTemp(path, 'tAndFork');
+			else
+				nextNode <- thisModule.currentMap.get(path);
 		}
 
 		if(firstNode.oclIsTypeOf(Turn!RespRef)){
@@ -163,7 +166,10 @@ rule handleForkLogic(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 		
 		--ADDED FOR TIMER AND ORFORK CONNECTION
 		if(firstNode.oclIsTypeOf(Turn!Timer)){
-			thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.currentMap.get(path).succ -> first());
+			if(case='And')
+				thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.resolveTemp(path, 'tAndFork').succ -> first());
+			else
+				thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.currentMap.get(path).succ -> first());
 		}
 	}
 }
@@ -361,7 +367,7 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 			--thisModule.addPred(Urn!PathNode.allInstances() -> select(n|n.name=pathend.turnGetLongestName()) -> first(), thisModule.getNodeToConnect(thisModule.tUCMmap, currentNode, true));
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
-			thisModule.addPred(thisModule.andForkMap.get(pathend), thisModule.getNodeToConnect(currentNode, true));
+			thisModule.addPred(thisModule.resolveTemp(pathend, 'tAndFork'), thisModule.getNodeToConnect(currentNode, true));
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub)){
 			if(currentNode.oclIsTypeOf(Turn!Timer)){
@@ -387,7 +393,7 @@ rule handleReferencedEnds(referencedEnd: Turn!PathNode, currentNode: Turn!PathNo
 				thisModule.addPred(thisModule.orForkMap.get(referencedEnd), thisModule.getResponsibility(currentNode.name).respRefs -> any(r|r.diagram.name = thisModule.tUCMmap.name).succ);
 			}
 			else if (referencedEnd.oclIsTypeOf(Turn!AndFork)){
-				thisModule.addPred(thisModule.andForkMap.get(referencedEnd), thisModule.getResponsibility(currentNode.name).respRefs -> any(r|r.diagram.name = thisModule.tUCMmap.name).succ);
+				thisModule.addPred(thisModule.resolveTemp(referencedEnd, 'tAndFork'), thisModule.getResponsibility(currentNode.name).respRefs -> any(r|r.diagram.name = thisModule.tUCMmap.name).succ);
 			}
 			else if (referencedEnd.oclIsTypeOf(Turn!RespRef)){
 				thisModule.addPred(thisModule.tUCMmap.anyRespDefMatching(referencedEnd.name), thisModule.tUCMmap.allRespDefsMatching(currentNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
@@ -400,7 +406,7 @@ rule handleReferencedEnds(referencedEnd: Turn!PathNode, currentNode: Turn!PathNo
 			thisModule.addPred(thisModule.orForkMap.get(referencedEnd), thisModule.tUCMmap.getNode(currentNode.name).firstUnconnectedSucc());
 		}
 		else if(referencedEnd.oclIsTypeOf(Turn!AndFork)){
-			thisModule.addPred(thisModule.andForkMap.get(referencedEnd), thisModule.tUCMmap.getNode(currentNode.name).firstUnconnectedSucc());
+			thisModule.addPred(thisModule.resolveTemp(referencedEnd, 'tAndFork'), thisModule.tUCMmap.getNode(currentNode.name).firstUnconnectedSucc());
 		}
 		else if(referencedEnd.oclIsTypeOf(Turn!RespRef)){
 			thisModule.addPred(thisModule.resolveTemp(referencedEnd, 'tRespRef'), thisModule.getNodeToConnect(currentNode, true));

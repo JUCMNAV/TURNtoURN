@@ -161,7 +161,7 @@ rule processPathEnd(pathend: Turn!PathNode, includeBacklinks: Boolean){
 			thisModule.createStubOutNodes(pathend);
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
-			thisModule.createAndFork(pathend);
+			thisModule.processAndFork(pathend);
 		}
 	}
 }
@@ -265,7 +265,7 @@ rule connectPathEndToNextNode(pathend: Turn!Pathend, nextNode: Urn!PathNode){
 			thisModule.addPred(thisModule.orForkMap.get(pathend), nextNode);
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
-			thisModule.addPred(thisModule.andForkMap.get(pathend), nextNode);
+			thisModule.addPred(thisModule.resolveTemp(pathend, 'tAndFork'), nextNode);
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub)){
 			thisModule.addPred(thisModule.tUCMmap.getNode(pathend.name), nextNode);
@@ -347,7 +347,7 @@ rule collectRegularEnds(pathbody: Turn!PathBody){
 rule connectAndForkNodes(pathend: Turn!PathEnd){
 	using{
 		vHasReferencedEnd : Boolean = OclUndefined;
-		vAndFork : Urn!AndFork = thisModule.andForkMap.get(pathend); -- INIT vAndFOrk
+		vAndFork : Urn!AndFork = thisModule.resolveTemp(pathend, 'tAndFork');
 		vCounter : Integer = 1; -- INIT vCounter
 	}
 	do{
@@ -368,7 +368,6 @@ rule connectAndForkNodes(pathend: Turn!PathEnd){
 				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
 					if(not pathbody.pathNodes -> isEmpty()){
 						-- The method below was missing its last argument, which led to a null pointer error.
-						-- QUESTION: should thisModule.andForkMap.get(pathend) go here? I followed the example of connectOrForkNodes
 						thisModule.connectNodes(pathbody, pathend, vAndFork);
 					}	
 					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
@@ -939,78 +938,6 @@ rule createStubOutNodes(stubObj:Turn!Stub){
 	}
 }
 
-rule createAndFork(obj:Turn!AndFork){
-	to
-		tAndFork: Urn!AndFork (
-			id <- thisModule.nextId().toString(),
-			name <- obj.turnGetLongestName(),
-			diagram <- thisModule.tUCMmap,
-			contRef <- thisModule.getUrnCompRef(obj)
-		)
-	do{
-		if(tAndFork.name.oclIsUndefined()){
-			tAndFork.name <- 'AndFork' + tAndFork.id;
-		}
-		else{
-			tAndFork.label <- thisModule.createLabel();
-		}
-		
-		thisModule.andForkMap <- thisModule.andForkMap.including(obj, tAndFork);
-		
-		for(elem in obj.pathbody){
-			thisModule.addSucc(tAndFork, thisModule.createNodeConnection());
-		}
-		
-		thisModule.collectReferencedEnds(obj.pathbody -> collect(pb|pb.pathNodes));
-		thisModule.collectRegularEnds(obj.pathbody -> flatten());
-		
-		if(not obj.connectingAndBody.oclIsUndefined()){	
-			thisModule.collectReferencedEnds(obj.connectingAndBody.pathNodes);
-			
-			thisModule.numberOfTerminatingNodes <- obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
-			thisModule.processPathEnd(obj.connectingAndBody.pathEnd);
-			
-			--previously this was assigned to '' but that led to a compiler error
-			--QUESTION: is setting this to tAndFork instead of '' correct? I followed the logic in createOrFork to do so
-			thisModule.nextNode <- tAndFork;
-			
-			if(thisModule.numberOfTerminatingNodes = 2){
-				thisModule.nextNode <- thisModule.createAndJoin(tAndFork.firstUnconnectedSucc());
-			}
-			else if(thisModule.numberOfTerminatingNodes = 1){
-				thisModule.firstPathNode <- obj.connectingAndBody.pathNodes -> first();
-				
-				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
-					if(not thisModule.firstPathNode.name.oclIsUndefined()){
-						thisModule.nextNode <- thisModule.tUCMmap.getNode(thisModule.firstPathNode.name);
-					}
-				}
-			}
-			
-			if(obj.connectingAndBody.pathNodes -> isEmpty()){
-				thisModule.nextPred <- thisModule.nextNode.firstUnconnectedSucc();
-				thisModule.connectPathEndToNextNode(obj.connectingAndBody.pathEnd, thisModule.nextPred); 
-				thisModule.connectReferencedEndToNextNode(obj.connectingAndBody, thisModule.nextPred);
-			}
-			
-			thisModule.connectNodes(obj.connectingAndBody, obj, thisModule.nextNode);		
-		}
-		
-		--Connecting nodes after AndFork
-		thisModule.andForkNodeConnCounter <- 1;
-		for(pathbody in obj.pathbody){
-			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
-				thisModule.addPred(thisModule.resolveTemp(pathbody.pathNodes -> first(),'tRespRef'), tAndFork.succ -> at(thisModule.andForkNodeConnCounter));
-			}
-			thisModule.andForkNodeConnCounter <- thisModule.andForkNodeConnCounter.inc(); 			
-		}
-		
-		thisModule.useBacklinksToConnectOrFork(obj.pbody, tAndFork);
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tAndFork);
-		tAndFork;
-	}
-}
-
 rule createEndPoint(node: Turn!PathNode){
 	using{
 		vPostcondition : String =
@@ -1051,7 +978,7 @@ rule createEndPoint(node: Turn!PathNode){
 					--Using backlinks to connect andFork
 					thisModule.currentAndFork <- node.epConnect.pbody.andFork;
 					if(not thisModule.currentAndFork.oclIsUndefined()){
-						thisModule.addPred(tEndPoint, thisModule.andForkMap.get(thisModule.currentAndFork).firstUnconnectedSucc());
+						thisModule.addPred(tEndPoint, thisModule.resolveTemp(thisModule.currentAndFork, 'tAndFork').firstUnconnectedSucc());
 					}
 				}
 			}
@@ -1804,6 +1731,36 @@ rule OutBinding2OutBinding{
 	}
 }
 
+rule AndFork2AndFork{
+	from
+		obj: Turn!AndFork
+	using{
+		vId : String = thisModule.nextId().toString();
+		vObjName : String = obj.turnGetLongestName();
+		
+		vName : String = 
+			if(vObjName.oclIsUndefined()) then
+				'AndFork' + vId
+			else
+				vObjName
+			endif;
+		vLabel : Urn!Label =
+			if(vObjName.oclIsUndefined()) then
+				OclUndefined
+			else
+				thisModule.createLabel()
+			endif;
+	}
+	to
+		tAndFork: Urn!AndFork (
+			id <- vId,
+			name <- vName,
+			label <- vLabel,
+			diagram <- thisModule.tUCMmap,
+			contRef <- thisModule.getUrnCompRef(obj)
+		)
+}
+
 rule UCMmap2UCMmap{
 	from
 		sUCMmap: Turn!UCMmap
@@ -1837,8 +1794,8 @@ rule UCMmap2UCMmap{
 			if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				--TODO: SECOND BUG from README occurs on the line below upon running the code using endpoint.xml
 				if(not vPathEnd.regularEnd.oclIsUndefined()){
-					if(thisModule.tUCMmap.getNode(vPathEnd.regularEnd.name).oclIsUndefined()){
-						thisModule.createEndPoint(vPathEnd.regularEnd, tUCMmap);
+					if(tUCMmap.getNode(vPathEnd.regularEnd.name).oclIsUndefined()){
+						thisModule.createEndPoint(vPathEnd.regularEnd);
 					}
 				}
 			}
@@ -1847,10 +1804,10 @@ rule UCMmap2UCMmap{
 			}
 			
 			if(vPathEnd.oclIsTypeOf(Turn!OrFork)) {
-				thisModule.connectOrForkNodes(vPathEnd, tUCMmap);
+				thisModule.connectOrForkNodes(vPathEnd);
 			}
 			else if(vPathEnd.oclIsTypeOf(Turn!AndFork)) {
-				thisModule.connectAndForkNodes(vPathEnd, tUCMmap);
+				thisModule.connectAndForkNodes(vPathEnd);
 			}
 			
 			if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
@@ -1866,15 +1823,15 @@ rule UCMmap2UCMmap{
 				if(not vPathEnd.connect.oclIsUndefined()){
 					thisModule.addSucc(vConnectingEndPoint, thisModule.createNodeConnection());
 					
-					vConnect <- thisModule.createConnect(thisModule.tUCMmap);
+					vConnect <- thisModule.createConnect();
 					thisModule.addPred(vConnect, vConnectingEndPoint.succ);
 					thisModule.connectMap <- thisModule.connectMap.including(vPathEnd.connect, vConnect);
 					
 					if(not vPathEnd.connect.connectsTo.oclIsTypeOf(Turn!Timer)){
-						thisModule.addPred(thisModule.tUCMmap.getNode(vPathEnd.connect.connectsTo.name), vConnect.succ);
+						thisModule.addPred(tUCMmap.getNode(vPathEnd.connect.connectsTo.name), vConnect.succ);
 					}
 					else{
-						thisModule.addPred(thisModule.createEmptyPt(thisModule.tUCMmap, vPathEnd.connect.connectsTo, false), vConnect.succ);
+						thisModule.addPred(thisModule.createEmptyPt(tUCMmap, vPathEnd.connect.connectsTo, false), vConnect.succ);
 					}
 				}
 				else{
@@ -1891,7 +1848,7 @@ rule UCMmap2UCMmap{
 					thisModule.addPred(thisModule.orForkMap.get(vPathEnd), vStartPoint.succ);
 				}
 				else if(vPathEnd.oclIsTypeOf(Turn!AndFork)){
-					thisModule.addPred(thisModule.andForkMap.get(vPathEnd), vStartPoint.succ);
+					thisModule.addPred(thisModule.resolveTemp(vPathEnd, 'tAndFork'), vStartPoint.succ);
 				}
 				else if(vPathEnd.oclIsTypeOf(Turn!Stub)){
 					thisModule.addPred(thisModule.stubMap.get(vPathEnd), vStartPoint.succ);
@@ -1902,7 +1859,7 @@ rule UCMmap2UCMmap{
 				thisModule.connectNodes(path.pathBody, path, OclAny);
 			}
 			
-			thisModule.next <- thisModule.tUCMmap.getNode(path.startPoint.turnGetLongestName()).succ;
+			thisModule.next <- tUCMmap.getNode(path.startPoint.turnGetLongestName()).succ;
 			vBody <- path.pathBody;
 			
 			if(vBody.pathNodes -> isEmpty()){
@@ -1911,7 +1868,7 @@ rule UCMmap2UCMmap{
 						thisModule.addPred(thisModule.resolveTemp(vBody.referencedEnd,'tRespRef'), thisModule.next);
 					}			
 					else{
-						thisModule.addPred(thisModule.tUCMmap.getNode(vBody.referencedEnd.turnGetLongestName()), thisModule.next); 
+						thisModule.addPred(tUCMmap.getNode(vBody.referencedEnd.turnGetLongestName()), thisModule.next); 
 					}
 				}
 				else if (not vBody.referencedStub.oclIsUndefined()){
@@ -1920,6 +1877,66 @@ rule UCMmap2UCMmap{
 			}
 		}
 		--Node connections
-		thisModule.tUCMmap.connections <- thisModule.tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
+		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
+	}
+}
+
+rule processAndFork(obj: Turn!AndFork){
+	using{
+		tAndFork : Urn!AndFork = thisModule.resolveTemp(obj, 'tAndFork');	
+	}
+	do{
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tAndFork);
+		
+		for(elem in obj.pathbody){
+			thisModule.addSucc(tAndFork, thisModule.createNodeConnection());
+		}
+		
+		thisModule.collectReferencedEnds(obj.pathbody -> collect(pb|pb.pathNodes));
+		thisModule.collectRegularEnds(obj.pathbody -> flatten());
+		
+		if(not obj.connectingAndBody.oclIsUndefined()){	
+			thisModule.collectReferencedEnds(obj.connectingAndBody.pathNodes);
+			
+			thisModule.numberOfTerminatingNodes <- obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
+			thisModule.processPathEnd(obj.connectingAndBody.pathEnd);
+			
+			--previously this was assigned to '' but that led to a compiler error
+			--QUESTION: is setting this to tAndFork instead of '' correct? I followed the logic in createOrFork to do so
+			thisModule.nextNode <- tAndFork;
+			
+			if(thisModule.numberOfTerminatingNodes = 2){
+				thisModule.nextNode <- thisModule.createAndJoin(tAndFork.firstUnconnectedSucc());
+			}
+			else if(thisModule.numberOfTerminatingNodes = 1){
+				thisModule.firstPathNode <- obj.connectingAndBody.pathNodes -> first();
+				
+				if(not thisModule.firstPathNode.oclIsUndefined() and not thisModule.firstPathNode.oclIsTypeOf(Turn!Connect)){
+					if(not thisModule.firstPathNode.name.oclIsUndefined()){
+						thisModule.nextNode <- thisModule.tUCMmap.getNode(thisModule.firstPathNode.name);
+					}
+				}
+			}
+			
+			if(obj.connectingAndBody.pathNodes -> isEmpty()){
+				thisModule.nextPred <- thisModule.nextNode.firstUnconnectedSucc();
+				thisModule.connectPathEndToNextNode(obj.connectingAndBody.pathEnd, thisModule.nextPred); 
+				thisModule.connectReferencedEndToNextNode(obj.connectingAndBody, thisModule.nextPred);
+			}
+			
+			thisModule.connectNodes(obj.connectingAndBody, obj, thisModule.nextNode);		
+		}
+		
+		--Connecting nodes after AndFork
+		thisModule.andForkNodeConnCounter <- 1;
+		for(pathbody in obj.pathbody){
+			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
+				thisModule.addPred(thisModule.resolveTemp(pathbody.pathNodes -> first(), 'tRespRef'), tAndFork.succ -> at(thisModule.andForkNodeConnCounter));
+			}
+			thisModule.andForkNodeConnCounter <- thisModule.andForkNodeConnCounter.inc(); 			
+		}
+		
+		thisModule.useBacklinksToConnectOrFork(obj.pbody, tAndFork);
+		tAndFork;	
 	}
 }
