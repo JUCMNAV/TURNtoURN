@@ -21,8 +21,6 @@ helper def: orForkNodeConnCounter : Integer = 1;
 
 helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
 
-helper def: timerMap : Map(Turn!Timer, Urn!Timer) = Map{};
-
 helper def: andForkNodeConnCounter : Integer = 1;
 
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
@@ -322,10 +320,7 @@ rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode
 rule collectRegularEnds(pathbody: Turn!PathBody){
 	do{
 		for(pathend in pathbody -> collect(pb|pb.pathEnd) ){
-			if(pathend.oclIsTypeOf(Turn!Timer)){
-				thisModule.createTimer(pathend);
-			}
-			else if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
+			if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(thisModule.tUCMmap.getNode(pathend.regularEnd.name).oclIsUndefined()){
 					thisModule.createEndPoint(pathend.regularEnd);
 				}
@@ -735,22 +730,13 @@ rule createEndPoint(node: Turn!PathNode){
 	}
 }
 
-rule createTimer(timerObj: Turn!Timer){
-	to
-		tTimer: Urn!Timer (
-			id <- thisModule.nextId().toString(),
-			name <- timerObj.turnGetLongestName(),
-			succ <- tNodeConn,
-			diagram <- thisModule.tUCMmap,
-			label <- tNodeLabel,
-			waitType <- timerObj.kind.toString().capitalize(),
-			contRef <- thisModule.getUrnCompRef(timerObj)
-		),
-		tNodeConn: Urn!NodeConnection(
-			condition <- timerObj.condition
-		),
-		tNodeLabel: Urn!NodeLabel()
+rule processTimer(timerObj : Turn!Timer){
+	using{
+		tTimer : Urn!Timer = thisModule.resolveTemp(timerObj, 'tTimer');
+	}
 	do{
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tTimer);
+		
 		--timer out path
 		if(not timerObj.timeoutPath.oclIsUndefined()){
 			thisModule.addSucc(tTimer, thisModule.createNodeConnection());
@@ -774,9 +760,6 @@ rule createTimer(timerObj: Turn!Timer){
 				thisModule.connectReferencedEndToNextNode(timerObj.timeoutPath, thisModule.next);
 			}
 		}
-		
-		thisModule.timerMap <- thisModule.timerMap.including(timerObj, tTimer);
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tTimer);
 		tTimer;
 	}
 }
@@ -1836,6 +1819,25 @@ rule OrFork2OrFork{
 			diagram <- thisModule.tUCMmap,
 			contRef <- thisModule.getUrnCompRef(obj)
 		)
+}
+
+rule Timer2Timer{
+	from
+		timerObj: Turn!Timer
+	to
+		tTimer: Urn!Timer(
+			id <- thisModule.nextId().toString(),
+			name <- timerObj.turnGetLongestName(),
+			succ <- tNodeConn,
+			diagram <- thisModule.tUCMmap,
+			label <- tNodeLabel,
+			waitType <- timerObj.kind.toString().capitalize(),
+			contRef <- thisModule.getUrnCompRef(timerObj)
+		),
+		tNodeConn: Urn!NodeConnection(
+			condition <- timerObj.condition
+		),
+		tNodeLabel: Urn!NodeLabel()
 }
 
 rule UCMmap2UCMmap{

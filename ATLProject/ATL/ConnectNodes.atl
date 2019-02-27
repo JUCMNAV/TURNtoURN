@@ -4,7 +4,7 @@ create OUT : Urn from IN : Turn;
 
 --QUESTION: are select(s|s.target = OclUndefined) and any(s|s.target.oclIsUndefined()) equivalent here? i.e., will there only ever be one item with s.target = undefined?
 -- TODO: determine if this name is appropriate
-rule processNode(pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, previousNode: Urn!PathNode, isTimer: Boolean){
+rule processNode(pathbody: Sequence(Turn!PathBody), previousNode: Urn!PathNode, isTimer: Boolean){
 	using{
 		vNewPred : Urn!PathNode = OclUndefined;
 	}
@@ -16,7 +16,7 @@ rule processNode(pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, p
 			vNewPred <- thisModule.resolveTemp(previousNode, 'tFailPt').firstUnconnectedSucc();
 		}
 		else if(not isTimer and previousNode.oclIsTypeOf(Turn!Timer)){
-			vNewPred <- thisModule.timerMap.get(previousNode).firstUnconnectedSucc();
+			vNewPred <- thisModule.resolveTemp(previousNode, 'tTimer').firstUnconnectedSucc();
 		}
 		else if(previousNode.oclIsTypeOf(Turn!Connect)){
 			if(previousNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
@@ -47,13 +47,11 @@ rule processNode(pathbody: Sequence(Turn!PathBody), currentNode: Urn!PathNode, p
 			}
 		}
 		
-		thisModule.addPred(currentNode, vNewPred);
-		OclUndefined; -- RETURN VOID
+		vNewPred;
 	}
 }
 
 --I'm using the vague term isCaseOne here as I'm not sure of the difference between the two cases / why it is necessary
---TODO: name this more precisely
 rule getNodeToConnect(currentNode: Turn!PathNode, isCaseOne: Boolean){
 	using{
 		vNodeToJoin : Urn!PathNode = OclUndefined;
@@ -81,7 +79,6 @@ rule getNodeToConnect(currentNode: Turn!PathNode, isCaseOne: Boolean){
 
 -- QUESTION: determine why we look at the first node, i.e., pathbody.pathNodes -> first(), rather than the last
 -- TODO: determine how the next connecting node is chosen
--- TODO: determine if this name is appropriate
 rule handleConnectNode(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 	using{
 		vConnectsToTimer : Boolean = currentNode.connectsTo.oclIsTypeOf(Turn!Timer);
@@ -124,8 +121,6 @@ rule handleConnectNode(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 	}
 }
 
-
---TODO: find a way to reduce the number of arguments for this rule
 rule handleForkLogic(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!PathNode, case: String){
 	do{
 		if(nextNode.oclIsUndefined()){
@@ -146,7 +141,7 @@ rule handleForkLogic(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 		}
 		else{
 			if(firstNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.createTimer(firstNode);
+				thisModule.processTimer(firstNode);
 			}
 			thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), nextNode.firstUnconnectedSucc());
 		}
@@ -171,7 +166,8 @@ rule handleFirstNode(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), startPointFirstSucc);
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.addPred(thisModule.createTimer(firstNode), startPointFirstSucc);
+				thisModule.processTimer(firstNode);
+				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tTimer'), startPointFirstSucc);
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Connect)) {
 				thisModule.connect <- thisModule.handleConnectNode(firstNode, startPointFirstSucc);
@@ -218,7 +214,8 @@ rule handleFirstNode(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), thisModule.currentNode.firstUnconnectedSucc());
 			} 
 			else if(firstNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.addPred(thisModule.createTimer(firstNode), thisModule.currentNode.firstUnconnectedSucc());
+				thisModule.processTimer(firstNode);
+				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tTimer'), thisModule.currentNode.firstUnconnectedSucc());
 				-- QUESTION: the second term above used to read thisModule.tUCMmap.getNode(path.name).succ -> first()
 				-- I changed it because I felt this made more sense given the rest of what was going on. Is this incorrect?
 			}
@@ -243,17 +240,18 @@ rule handleFirstNode(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 rule handleNode(pathbody: Sequence(Turn!PathBody), currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 	do{
 		if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
-			thisModule.processNode(pathbody, thisModule.resolveTemp(currentNode, 'tWtPlace'), previousNode, false);
+			thisModule.addPred(thisModule.resolveTemp(currentNode, 'tWtPlace'), thisModule.processNode(pathbody, previousNode, false));
 		}
 		else if(currentNode.oclIsTypeOf(Turn!FailurePoint)){
-			thisModule.processNode(pathbody, thisModule.resolveTemp(currentNode, 'tFailPt'), previousNode, false);
+			thisModule.addPred(thisModule.resolveTemp(currentNode, 'tFailPt'), thisModule.processNode(pathbody, previousNode, false));
 		}
 		else if(currentNode.oclIsTypeOf(Turn!RespRef)){
-			thisModule.processNode(pathbody, thisModule.resolveTemp(currentNode, 'tRespRef'), previousNode, false);
+			thisModule.addPred(thisModule.resolveTemp(currentNode, 'tRespRef'), thisModule.processNode(pathbody, previousNode, false));
 		}
 		--NEED TO CREATE TIMER FOR ALL OTHER COMBINATIONS
 		else if(currentNode.oclIsTypeOf(Turn!Timer)){
-			thisModule.processNode(pathbody, thisModule.createTimer(currentNode), previousNode, true);
+			thisModule.processTimer(currentNode);
+			thisModule.addPred(thisModule.resolveTemp(currentNode, 'tTimer'), thisModule.processNode(pathbody, previousNode, true));
 		}
 		--NEED TO CREATE CONNECT FOR ALL OTHER COMBINATIONS
 		else if(currentNode.oclIsTypeOf(Turn!Connect)){
@@ -331,7 +329,7 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 					vNewPred <- thisModule.resolveTemp(currentNode, 'tFailPt').firstUnconnectedSucc();
 				}
 				else if(currentNode.oclIsTypeOf(Turn!Timer)){
-					vNewPred <- thisModule.timerMap.get(currentNode).firstUnconnectedSucc();
+					vNewPred <- thisModule.resolveTemp(currentNode, 'tTimer').firstUnconnectedSucc();
 				}
 				else{
 					vNewPred <- thisModule.tUCMmap.getNode(currentNode.turnGetLongestName()).firstUnconnectedSucc();
@@ -352,14 +350,13 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 		}
 		else if(pathend.oclIsTypeOf(Turn!OrFork)){
 			thisModule.addPred(thisModule.resolveTemp(pathend, 'tOrFork'), thisModule.getNodeToConnect(currentNode, true));
-			--thisModule.addPred(Urn!PathNode.allInstances() -> select(n|n.name=pathend.turnGetLongestName()) -> first(), thisModule.getNodeToConnect(thisModule.tUCMmap, currentNode, true));
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
 			thisModule.addPred(thisModule.resolveTemp(pathend, 'tAndFork'), thisModule.getNodeToConnect(currentNode, true));
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub)){
 			if(currentNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.addPred(thisModule.resolveTemp(pathend, 'tStub'), thisModule.timerMap.get(currentNode).firstUnconnectedSucc());
+				thisModule.addPred(thisModule.resolveTemp(pathend, 'tStub'), thisModule.resolveTemp(currentNode, 'tTimer').firstUnconnectedSucc());
 			}
 			else if(currentNode.oclIsTypeOf(Turn!Stub)){
 				thisModule.addPred(thisModule.resolveTemp(pathend, 'tStub'), thisModule.resolveTemp(currentNode, 'tStub').firstUnconnectedSucc());
@@ -432,7 +429,7 @@ rule handleReferencedStubs(pathbody: Sequence(Turn!Pathbody), currentNode: Turn!
 		thisModule.processReferencedStub(pathbody, vNextNode);
 	}
 }
-
+ 
 rule connectNodes(pathbody: Sequence(Turn!PathBody), path: Turn!Path, nextNode: Urn!PathNode){
 	using{
 		vPreviousNode : Turn!PathNode = OclUndefined;
