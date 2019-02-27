@@ -19,6 +19,11 @@
 ## ACTIVE TASK
 I am currently troubleshooting the code to look for issues that cause either incorrect outputs or runtime errors.
 
+### Progress
+* Belief.tucm = belief.tucm ?
+	* Mostly. Two lines are different. These warrant discussion with Ruchika.
+
+
 ## ISSUES
 1. The test StartPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means a StartPoint must exist.
 2. The test EndPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means all PathEnds must have a RegularEnd in them. The specific line in endpoint.xml reads:

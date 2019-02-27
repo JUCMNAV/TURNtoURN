@@ -5,15 +5,13 @@ module Turn2Urn;
 
 create OUT : Urn from IN : Turn;
 
---This helper initializes the value of id
--- CONTEXT: thisModule
--- RETURN: Integer
-
 uses ConnectNodes;
 
 ----------------------helper variables-------------------------------
 
 helper def: id : Integer = 0;
+
+helper def: predValue : OclAny = OclAny;
 
 helper def: counter : Integer = 1;
 
@@ -392,11 +390,7 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd, tUCMmap: Urn!UCMmap){
 		if(not originalPathend.body.oclIsUndefined()){
 			for(pathbody in originalPathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody)){
 				if(not pathbody.referencedEnd.oclIsUndefined()){
-					--TEMPORARY FIX for bug that I need to more wholly determine
-					if(not tUCMmap.getNode(pathbody.referencedEnd.name).oclIsUndefined()){
-						thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), tUCMmap.getNode(originalPathend.name).succ -> at(1));
-						-- BUG: the line above used to be -> at(counter) but that led to a runtime error
-					}
+					thisModule.addPred(tUCMmap.getNode(pathbody.referencedEnd.name), thisModule.orForkMap.get(originalPathend).succ -> at(vCounter));
 				}
 				else{
 					--if pathNodes exist
@@ -1140,6 +1134,16 @@ rule createEmptyPt(tUCMmap: Urn!UCMmap, node: Turn!PathBodyNode, asynch: Boolean
 	}
 }
 
+rule createBeliefLink(s: Turn!ElementLink){
+	to
+		tBeliefLink: Urn!BeliefLink (
+			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+		)	
+	do{
+		tBeliefLink;
+	}
+}
+
 -----------------------matched rules------------------------------------
 
 rule IntElements2IntElements{
@@ -1169,20 +1173,38 @@ rule IntElements2IntElements{
 	to 
 		tIntElemRef: Urn!IntentionalElementRef (
 			id <- thisModule.nextId().toString(),
-			name <- s.turnGetLongestName(),
+			name <- 'IntentionalElementRef'+tIntElemRef.id,
 			def <- tIntElem,
 			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
 		),
 		tIntElem: Urn!IntentionalElement (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-			type <- s.type.toString().capitalize(),
 			linksSrc <- s.linksSrc,
 			decompositionType <- vDecompType,
 			importanceQuantitative <- vImportanceQuantitative,
 			importance <- vImportance,
 			metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name)
 		)
+	do{
+		if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0){
+			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
+		}
+		if(s.type.toString() = 'resource'){
+			tIntElem.type <- 'Ressource';
+		}
+		else{
+			tIntElem.type <- s.type.toString().capitalize();
+		}
+		 
+		 --Added because the default value in enum is considered always.
+		if(s.importance.toString().equals('high') and s.importanceQuantitative <> 0){
+			tIntElem.importanceQuantitative <- s.importanceQuantitative;
+		}
+		else{
+			tIntElem.importance <- s.importance.toString().capitalize();
+		}
+	}
 }
 
 rule Actor2Actor{
@@ -1204,7 +1226,7 @@ rule Actor2Actor{
 		tCompLabel: Urn!ComponentLabel()
 }
 
-rule Belief2Belief {
+rule IntElem2Belief {
 	from
 		s: Turn!IntentionalElement(s.type.toString() = 'belief')
 	to 
@@ -1217,6 +1239,13 @@ rule Belief2Belief {
 		tBeliefLink: Urn!BeliefLink(
 			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
 		)
+	do{
+		for(link in s.linksSrc){
+			if(link <> s.linksSrc -> first()){
+	 			tBelief.succ <- thisModule.createBeliefLink(link);
+			}
+	 	}	
+	}
 }
 
 rule Contribution2Contribution{
@@ -1438,7 +1467,7 @@ rule URNlink2URNlink{
 
 rule Component2Component{
 	from 
-		s:Turn!ComponentRef
+		s: Turn!ComponentRef(Urn!Component.allInstances() -> any(c|c.name = s.name).oclIsUndefined())
 	using{
 		vExistingComponent : Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name);
 		vRetrievedComponent : Urn!Component =
@@ -1459,12 +1488,12 @@ rule Component2Component{
 		),
 		tCompLabel: Urn!ComponentLabel()
 	do{
-		if(s.kind.toString() <> 'parent'){
-			if(not s.kind.oclIsUndefined()){
-				tCompRef.contDef.kind <- s.kind.toString().capitalize();
+		if(not s.boundTo.oclIsUndefined()){
+			if(not s.boundTo.comp.oclIsUndefined()){
+				tCompRef.parent <- Urn!Component.allInstances() -> any(n|s.boundTo.comp.name=n.name).contRefs -> any(r|r.diagram = s.map);
 			}
 			else{
-				tCompRef.contDef.kind <- 'Team';
+				tCompRef.parent <- Urn!Component.allInstances() -> any(n|s.boundTo.comp2.name=n.name).contRefs -> any(r|r.diagram = s.map);
 			}
 		}
 		
@@ -1547,16 +1576,18 @@ rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
 	using{
-		vLinksSrc : Sequence(Turn!ElementLink) = sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten();
-
-		vAllIntElements : Sequence(Turn!IntentionalElement) = sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> select(e|e.type.toString() <> 'belief');
-
+		
+		vElements : Sequence(Turn!IntentionalElement) = sURNspec.actors -> collect(actor|actor.elems) -> flatten();	
+		vAllIntElements : Sequence(Turn!IntentionalElement) = vElements -> select(e|e.type.toString() <> 'belief');
+		vIntElemRefs : Sequence(Urn!IntentionalElementRef) = vElements -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef'));
+		vBeliefs : Sequence(Urn!Belief) = vElements -> select(e|e.type.toString() = 'belief') ->  collect(b| thisModule.resolveTemp(b,'tBelief'));
+			
+		vLinksSrc : Sequence(Turn!ElementLink) = vElements -> collect(e|e.linksSrc) -> flatten();
 		vContributions : Sequence(Urn!Contribution) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'));
 		vDecompositions : Sequence(Urn!Decomposition) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDecomp'));
 		vDependencies : Sequence(Urn!Dependency) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDep'));
-
+		
 		vLinkRefs : Sequence(Urn!LinkRef) = vLinksSrc -> collect(m| thisModule.resolveTemp(m,'tLinkRef'));
-		vBeliefLinks : Sequence(Urn!BeliefLink) = sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink'));
 	}
 	to
 		tURNspec: Urn!URNspec(
@@ -1584,9 +1615,9 @@ rule URNspec2URNspec{
 			links <- vContributions -> union(vDecompositions) -> union(vDependencies)
 		),
 		tGRLSpecDiag: Urn!GRLGraph(
-		 	nodes <- sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')) -> union(Urn!Belief.allInstances()),
+		 	nodes <- vIntElemRefs -> union(vBeliefs),
 			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
-			connections <- vLinkRefs -> union(vBeliefLinks)
+			connections <- vLinkRefs -> union(vBeliefs -> collect(b|b.succ))
 		),
 		tUCMspec: Urn!UCMspec()
 	do{
@@ -1724,8 +1755,8 @@ rule InBinding2InBinding{
 				vStubEntry <- thisModule.stubMap.get(vBoundTerm.stubParam.stub);
 			}
 			if(not vStubEntry.oclIsUndefined()){
-				 -- TODO: THIRD BUG - (1st instance) - this line and its match in OutBinding2OutBinding affect stub.xml, 
-				 -- component.xml, and responsibility.xml; the if statement above this line is a temporary solution
+				-- TODO: THIRD BUG - (1st instance) - this line and its match in OutBinding2OutBinding affect stub.xml, 
+				-- component.xml, and responsibility.xml; the if statement above this line is a temporary solution
 				tInBinding.stubEntry <- thisModule.stubMap.get(vStubEntry).pred -> at(s.index);
 			}
 		}
