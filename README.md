@@ -23,7 +23,6 @@ I am currently troubleshooting the code to look for issues that cause either inc
 * Belief.tucm = belief.tucm ?
 	* Mostly. Two lines are different. These warrant discussion with Ruchika.
 
-
 ## ISSUES
 1. The test StartPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means a StartPoint must exist.
 2. The test EndPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means all PathEnds must have a RegularEnd in them. The specific line in endpoint.xml reads:
@@ -42,6 +41,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 * Verify functionality (first priority)
 	* Look at all uses of -> including and -> union to see if they are behaving correctly
 		* Look to see if any other places should have -> including or -> union called instead of simple assignments
+		* I may have been wrong with regards to this behavior; I need to revisit this later.
 	* Make sure all typings are correct; I'm worried that sometimes we pass in a sequence to a method that takes in a single value as an argument (e.g., collectRegularEnds)
 	* Go over all matched rules to make sure assignments are from Urn object to Urn object (i.e., that resolveTemps are used where appropriate)
 	* Make sure that no issues are occurring because tUCMmap is only updated in UCMmap2UCMmap; this seems highly likely to cause issues with tUCMmap.getNode() calls 
@@ -74,3 +74,6 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Describe in this README how to use the launch configurations that have been added to the project
 	* TURN
 		* Check if it is acceptable to rename some TURN variables for more consistency in naming
+* New TODO (will be categorized later):
+	* Figure out if it is possible to make an implementation that uses matched rules for OrFork, AndFork, etc.
+	* Find a way to remove the maps
