@@ -45,9 +45,6 @@ helper context Integer def : inc() : Integer = self + 1;
 helper context Turn!URNmodelElement def: metadataExists(param : String) : Boolean = 
 	self.metadata -> select(m|m.name.indexOf(param)<>-1 ) -> notEmpty();
 
-helper context Turn!URNspec def: getActorElements() : Sequence(OclAny) = 
-	self.actors -> collect(actor|actor.elems) -> flatten();
-
 helper context String def : capitalize(): String = self.substring(1,1).toUpper() + self.substring(2, self.size());
 
 helper context Urn!UCMmap def : getNode(turnNodeName: String) : OclAny =
@@ -1210,20 +1207,6 @@ rule Actor2Actor{
 rule Belief2Belief {
 	from
 		s: Turn!IntentionalElement(s.type.toString() = 'belief')
-	using{
-		vFirstSrcLink : Turn!ElementLink = 
-			if(not s.linksSrc -> first().oclIsUndefined()) then
-				s.linksSrc -> first()
-			else
-				OclUndefined
-			endif;
-		vTarget : Urn!IntentionalElement =
-			if(not vFirstSrcLink.oclIsUndefined()) then
-				thisModule.resolveTemp(vFirstSrcLink.dest,'tIntElemRef')
-			else
-				OclUndefined
-			endif;
-	}
 	to 
 	 	tBelief: Urn!Belief(
 	 		id <- thisModule.nextId().toString(),
@@ -1232,7 +1215,7 @@ rule Belief2Belief {
 			succ <- tBeliefLink
 	 	),
 		tBeliefLink: Urn!BeliefLink(
-			target <- vTarget	
+			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
 		)
 }
 
@@ -1274,7 +1257,7 @@ rule Contribution2Contribution{
 	
 rule Decomposition2Decomposition{
 	from 
-		s: Turn!Decomposition (not (s.link.type.toString() = 'belief'))
+		s: Turn!Decomposition (s.link.type.toString() <> 'belief')
 	to 
 		tDecomp: Urn!Decomposition (
 			id <- thisModule.nextId().toString(),
@@ -1290,7 +1273,7 @@ rule Decomposition2Decomposition{
 
 rule Dependency2Dependency{
 	from 
-		s: Turn!Dependency (not (s.link.type.toString() = 'belief'))
+		s: Turn!Dependency (s.link.type.toString() <> 'belief')
 	to 
 		tDep: Urn!Dependency (
 			id <- thisModule.nextId().toString(),
@@ -1564,48 +1547,48 @@ rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
 	using{
-		vLinksSrc : Sequence(Turn!ElementLink) = sURNspec.getActorElements() -> collect(e|e.linksSrc) -> flatten();
+		vLinksSrc : Sequence(Turn!ElementLink) = sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> collect(e|e.linksSrc) -> flatten();
+
+		vAllIntElements : Sequence(Turn!IntentionalElement) = sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> select(e|e.type.toString() <> 'belief');
 
 		vContributions : Sequence(Urn!Contribution) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'));
 		vDecompositions : Sequence(Urn!Decomposition) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDecomp'));
 		vDependencies : Sequence(Urn!Dependency) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDep'));
-		vLinks : Sequence(Urn!ElementLink) = vContributions -> union(vDecompositions) -> union(vDependencies);
 
 		vLinkRefs : Sequence(Urn!LinkRef) = vLinksSrc -> collect(m| thisModule.resolveTemp(m,'tLinkRef'));
-		vBeliefLinks : Sequence(Urn!BeliefLink) = sURNspec.getActorElements() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink'));
-		vConnections : Sequence(Urn!ElementLink) = vLinkRefs -> union(vBeliefLinks);
+		vBeliefLinks : Sequence(Urn!BeliefLink) = sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> collect(m| thisModule.resolveTemp(m,'tBeliefLink'));
 	}
 	to
 		tURNspec: Urn!URNspec(
 			name <- sURNspec.name,
 			metadata <- sURNspec.metadata,
-			grlspec <- tGRLSpec,
-			ucmspec <- tUcmspec,
+			grlspec <- tGRLspec,
+			ucmspec <- tUCMspec,
 			urnLinks <- sURNspec.urnlinks,
 			urndef <- tURNdef
 		),
 		tURNdef: Urn!URNdefinition(
-			specDiagrams <- Sequence{tGRLSpecDiag} -> union(sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m,'tUCMmap'))),
+			specDiagrams <- Sequence{tGRLSpecDiag} -> union(sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m, 'tUCMmap'))),
 			concerns <- sURNspec.concerns,
 			components <- Urn!Component.allInstances(),
 			responsibilities <- Urn!Responsibility.allInstances()
 		),
-		tGRLSpec: Urn!GRLspec(
+		tGRLspec: Urn!GRLspec(
 			actors <- sURNspec.actors,
-			intElements <- thisModule.resolveTemp(sURNspec.getActorElements() -> select(e|e.type.toString() <> 'belief'), 'tIntElem'),
+			intElements <- vAllIntElements -> collect(i|thisModule.resolveTemp(i, 'tIntElem')),
 			groups <- sURNspec.stratGroups,
 			strategies <- sURNspec.strategies,
 			contributionGroups <- sURNspec.contribContextGroups,
 			contributionContexts <- sURNspec.contribContexts,
 			KPIConversion <- sURNspec.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings)),
-			links <- vLinks
+			links <- vContributions -> union(vDecompositions) -> union(vDependencies)
 		),
 		tGRLSpecDiag: Urn!GRLGraph(
-		 	nodes <- sURNspec.getActorElements() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')) -> union(Urn!Belief.allInstances()),
+		 	nodes <- sURNspec.actors -> collect(actor|actor.elems) -> flatten() -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef')) -> union(Urn!Belief.allInstances()),
 			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
-			connections <- vConnections
+			connections <- vLinkRefs -> union(vBeliefLinks)
 		),
-		tUcmspec: Urn!UCMspec
+		tUCMspec: Urn!UCMspec()
 	do{
 		if (not sURNspec.info.oclIsUndefined()){
 			tURNspec.description <- sURNspec.info.description;
@@ -1619,7 +1602,7 @@ rule URNspec2URNspec{
 		if(not sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').oclIsUndefined()){
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 		}
-		tURNspec.nextGlobalID <- thisModule.id.toString();
+		tURNspec.nextGlobalID <- thisModule.nextId().toString();
 	}
 }
 

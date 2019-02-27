@@ -182,7 +182,7 @@ rule handleFirstNode(tUCMmap: Urn!UCMmap, path: Turn!Path, firstNode: Turn!PathN
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Timer)){
 				thisModule.addPred(thisModule.createTimer(tUCMmap, firstNode), startPointFirstSucc);
-			} --with an else
+			}
 			else if(firstNode.oclIsTypeOf(Turn!Connect)) {
 				thisModule.connect <- thisModule.handleConnectNode(tUCMmap, firstNode, startPointFirstSucc);
 			}
