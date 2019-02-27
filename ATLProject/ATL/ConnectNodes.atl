@@ -128,21 +128,8 @@ rule handleConnectNode(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 --TODO: find a way to reduce the number of arguments for this rule
 rule handleForkLogic(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!PathNode, case: String){
 	do{
-		if(case = 'And'){
-			thisModule.currentMap <- thisModule.andForkMap;
-		}
-		else if(case = 'Or'){
-			thisModule.currentMap <- thisModule.orForkMap;
-		}
-		else{
-			--there should not be any other cases
-		}
-	
 		if(nextNode.oclIsUndefined()){
-			if(case = 'And')
-				nextNode <- thisModule.resolveTemp(path, 'tAndFork');
-			else
-				nextNode <- thisModule.currentMap.get(path);
+			nextNode <- thisModule.resolveTemp(path, 't' + case);
 		}
 
 		if(firstNode.oclIsTypeOf(Turn!RespRef)){
@@ -150,10 +137,10 @@ rule handleForkLogic(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 		}
 		else if(firstNode.oclIsTypeOf(Turn!Connect)){
 			-- look for asynchronous connect (QUESTION: what does this mean?)
-			if(case = 'And'){ --AND case
+			if(case = 'AndFork'){
 				thisModule.connect <- thisModule.handleConnectNode(firstNode, nextNode.firstUnconnectedSucc());
 			}
-			else if(case = 'Or'){ --OR case
+			else if(case = 'OrFork'){
 				thisModule.connect <- thisModule.handleConnectNode(firstNode, nextNode.succ -> first());
 			}
 		}
@@ -166,10 +153,7 @@ rule handleForkLogic(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 		
 		--ADDED FOR TIMER AND ORFORK CONNECTION
 		if(firstNode.oclIsTypeOf(Turn!Timer)){
-			if(case='And')
-				thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.resolveTemp(path, 'tAndFork').succ -> first());
-			else
-				thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.currentMap.get(path).succ -> first());
+			thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.resolveTemp(path, 't' + case).succ -> first());
 		}
 	}
 }
@@ -208,9 +192,9 @@ rule handleFirstNode(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 			}
 		}
 		else if(path.oclIsTypeOf(Turn!OrFork)){
-			thisModule.handleForkLogic(path, firstNode, nextNode, 'Or');
+			thisModule.handleForkLogic(path, firstNode, nextNode, 'OrFork');
 		}
-		else if (path.oclIsTypeOf(Urn!OrJoin)){
+		else if (path.oclIsTypeOf(Turn!OrJoin)){
 			thisModule.succeeded <- false;
 			
 			if(firstNode.oclIsTypeOf(Turn!RespRef)){
@@ -225,16 +209,18 @@ rule handleFirstNode(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 			}
 		}
 		else if(path.oclIsTypeOf(Turn!AndFork)){
-			thisModule.handleForkLogic(path, firstNode, nextNode, 'And');
+			thisModule.handleForkLogic(path, firstNode, nextNode, 'AndFork');
 		}
 		else {
-			thisModule.currentNode <- thisModule.stubMap.get(path);
+			thisModule.currentNode <- thisModule.resolveTemp(path, 'tStub');
 			
 			if(firstNode.oclIsTypeOf(Turn!RespRef)){
-				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), thisModule.currentNode.succ -> first());
+				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tRespRef'), thisModule.currentNode.firstUnconnectedSucc());
 			} 
 			else if(firstNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.addPred(thisModule.createTimer(firstNode), thisModule.tUCMmap.getNode(path.name).succ -> first());
+				thisModule.addPred(thisModule.createTimer(firstNode), thisModule.currentNode.firstUnconnectedSucc());
+				-- QUESTION: the second term above used to read thisModule.tUCMmap.getNode(path.name).succ -> first()
+				-- I changed it because I felt this made more sense given the rest of what was going on. Is this incorrect?
 			}
 			else if(firstNode.oclIsTypeOf(Turn!Connect)){
 				thisModule.connect <- thisModule.handleConnectNode(firstNode, thisModule.currentNode.firstUnconnectedSucc());
@@ -246,7 +232,9 @@ rule handleFirstNode(path: Turn!Path, firstNode: Turn!PathNode, nextNode: Urn!Pa
 				thisModule.addPred(thisModule.resolveTemp(firstNode, 'tFailPt'), thisModule.currentNode.firstUnconnectedSucc());
 			}
 			else{
-				thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.tUCMmap.getNode(path.name).succ -> first());
+				thisModule.addPred(thisModule.tUCMmap.getNode(firstNode.name), thisModule.currentNode.firstUnconnectedSucc());
+				--QUESTION: the second term above used to read thisModule.tUCMmap.getNode(path.name).succ -> first()
+				-- I changed it because I felt this made more sense given the rest of what was going on (and it caused a runtime error). Is this incorrect?
 			}
 		}
 	}
@@ -323,7 +311,7 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 				thisModule.addPred(thisModule.tUCMmap.getNode(pathend.regularEnd.name), thisModule.tUCMmap.getNode(currentNode.connectsTo.name).succ);
 			}
 			else if (pathend.oclIsTypeOf(Turn!Stub)){
-				thisModule.addPred(thisModule.stubMap.get(pathend), thisModule.nextNode);
+				thisModule.addPred(thisModule.resolveTemp(pathend, 'tStub'), thisModule.nextNode);
 			}
 			else{
 				thisModule.connectPathEndToNextNode(pathend, thisModule.nextNode);
@@ -363,7 +351,7 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 			thisModule.addPred(thisModule.tUCMmap.getNode(pathend.regularEnd.name), vNewPred);
 		}
 		else if(pathend.oclIsTypeOf(Turn!OrFork)){
-			thisModule.addPred(thisModule.orForkMap.get(pathend), thisModule.getNodeToConnect(currentNode, true));
+			thisModule.addPred(thisModule.resolveTemp(pathend, 'tOrFork'), thisModule.getNodeToConnect(currentNode, true));
 			--thisModule.addPred(Urn!PathNode.allInstances() -> select(n|n.name=pathend.turnGetLongestName()) -> first(), thisModule.getNodeToConnect(thisModule.tUCMmap, currentNode, true));
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
@@ -371,13 +359,13 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub)){
 			if(currentNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.addPred(thisModule.stubMap.get(pathend), thisModule.timerMap.get(currentNode).firstUnconnectedSucc());
+				thisModule.addPred(thisModule.resolveTemp(pathend, 'tStub'), thisModule.timerMap.get(currentNode).firstUnconnectedSucc());
 			}
 			else if(currentNode.oclIsTypeOf(Turn!Stub)){
-				thisModule.addPred(thisModule.stubMap.get(pathend), thisModule.stubMap.get(currentNode).firstUnconnectedSucc());
+				thisModule.addPred(thisModule.resolveTemp(pathend, 'tStub'), thisModule.resolveTemp(currentNode, 'tStub').firstUnconnectedSucc());
 			}
 			else{
-				thisModule.addPred(thisModule.stubMap.get(pathend), thisModule.getNodeToConnect(currentNode, true));
+				thisModule.addPred(thisModule.resolveTemp(pathend, 'tStub'), thisModule.getNodeToConnect(currentNode, true));
 			}
 		}	
 	}
@@ -390,7 +378,7 @@ rule handleReferencedEnds(referencedEnd: Turn!PathNode, currentNode: Turn!PathNo
 				thisModule.addPred(thisModule.tUCMmap.getNode(referencedEnd.name), thisModule.tUCMmap.allRespDefsMatching(currentNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
 			}
 			else if (referencedEnd.oclIsTypeOf(Turn!OrFork)){
-				thisModule.addPred(thisModule.orForkMap.get(referencedEnd), thisModule.getResponsibility(currentNode.name).respRefs -> any(r|r.diagram.name = thisModule.tUCMmap.name).succ);
+				thisModule.addPred(thisModule.resolveTemp(referencedEnd, 'tOrFork'), thisModule.getResponsibility(currentNode.name).respRefs -> any(r|r.diagram.name = thisModule.tUCMmap.name).succ);
 			}
 			else if (referencedEnd.oclIsTypeOf(Turn!AndFork)){
 				thisModule.addPred(thisModule.resolveTemp(referencedEnd, 'tAndFork'), thisModule.getResponsibility(currentNode.name).respRefs -> any(r|r.diagram.name = thisModule.tUCMmap.name).succ);
@@ -403,7 +391,7 @@ rule handleReferencedEnds(referencedEnd: Turn!PathNode, currentNode: Turn!PathNo
 			}
 		}
 		else if(referencedEnd.oclIsTypeOf(Turn!OrFork)){
-			thisModule.addPred(thisModule.orForkMap.get(referencedEnd), thisModule.tUCMmap.getNode(currentNode.name).firstUnconnectedSucc());
+			thisModule.addPred(thisModule.resolveTemp(referencedEnd, 'tOrFork'), thisModule.tUCMmap.getNode(currentNode.name).firstUnconnectedSucc());
 		}
 		else if(referencedEnd.oclIsTypeOf(Turn!AndFork)){
 			thisModule.addPred(thisModule.resolveTemp(referencedEnd, 'tAndFork'), thisModule.tUCMmap.getNode(currentNode.name).firstUnconnectedSucc());
