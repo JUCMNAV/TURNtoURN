@@ -38,24 +38,24 @@ rule retrieveNode(node: Turn!PathNode){
 }
 
 --QUESTION: are select(s|s.target = OclUndefined) and any(s|s.target.oclIsUndefined()) equivalent here? i.e., will there only ever be one item with s.target = undefined?
-rule processNode(pathbody: Sequence(Turn!PathBody), previousNode: Urn!PathNode, isTimer: Boolean){
+rule processNode(pathbody: Sequence(Turn!PathBody), node: Urn!PathNode, isTimer: Boolean){
 	using{
 		vNewPred : Urn!PathNode = OclUndefined;
 	}
 	do{
-		if(previousNode.oclIsTypeOf(Turn!Connect)){
-			if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-				vNewPred <- thisModule.connectMap.get(previousNode).firstUnconnectedSucc(); 
+		if(node.oclIsTypeOf(Turn!Connect)){
+			if(node.connectsTo.oclIsTypeOf(Turn!Timer)){
+				vNewPred <- thisModule.connectMap.get(node).firstUnconnectedSucc(); 
 			}
 			else{
-				if(previousNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
-					thisModule.addSucc(thisModule.tUCMmap.getNode(previousNode.connectsTo.name), thisModule.createNodeConnection());
+				if(node.connectsTo.oclIsTypeOf(Turn!StartPoint)){
+					thisModule.addSucc(thisModule.tUCMmap.getNode(node.connectsTo.name), thisModule.createNodeConnection());
 				}
-				vNewPred <- thisModule.tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc();
+				vNewPred <- thisModule.retrieveNode(node.connectsTo).firstUnconnectedSucc();
 			}
 		}
 		else{
-			vNewPred <- thisModule.retrieveNode(previousNode).firstUnconnectedSucc();
+			vNewPred <- thisModule.retrieveNode(node).firstUnconnectedSucc();
 		}
 		
 		vNewPred;
@@ -245,7 +245,22 @@ rule handleNode(pathbody: Sequence(Turn!PathBody), currentNode: Turn!PathNode, p
 			}
 		}
 		else if(currentNode.oclIsTypeOf(Turn!Timer) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!FailurePoint) or currentNode.oclIsTypeOf(Turn!RespRef)){
-			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.processNode(pathbody, previousNode, currentNode.oclIsTypeOf(Turn!Timer)));		
+			if(previousNode.oclIsTypeOf(Turn!Connect)){
+				if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
+					thisModule.pred <- thisModule.connectMap.get(previousNode).firstUnconnectedSucc(); 
+				}
+				else{
+					if(previousNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
+						thisModule.addSucc(thisModule.tUCMmap.getNode(previousNode.connectsTo.name), thisModule.createNodeConnection());
+					}
+					thisModule.pred <- thisModule.retrieveNode(previousNode.connectsTo).firstUnconnectedSucc();
+				}
+			}
+			else{
+				thisModule.pred <- thisModule.retrieveNode(previousNode).firstUnconnectedSucc();
+			}
+			
+			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.pred);		
 		}
 		-- DOUBLE CHECK IF THIS IS REQUIRED
 		else if(previousNode.oclIsTypeOf(Turn!RespRef)){
@@ -294,7 +309,7 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 						vNewPred <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.connectMap.get(currentNode.connect).pred -> first())).firstUnconnectedSucc();
 					}
 					else{
-						vNewPred <- thisModule.resolveTemp(currentNode, 'tWtPlace').firstUnconnectedSucc();
+						vNewPred <- thisModule.retrieveNode(currentNode).firstUnconnectedSucc();
 					}
 				}
 				else if(currentNode.oclIsTypeOf(Turn!Timer)){
@@ -317,11 +332,8 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 			
 			thisModule.addPred(thisModule.tUCMmap.getNode(pathend.regularEnd.name), vNewPred);
 		}
-		else if(pathend.oclIsTypeOf(Turn!OrFork)){
-			thisModule.addPred(thisModule.resolveTemp(pathend, 'tOrFork'), thisModule.getNodeToConnect(currentNode, true));
-		}
-		else if(pathend.oclIsTypeOf(Turn!AndFork)){
-			thisModule.addPred(thisModule.resolveTemp(pathend, 'tAndFork'), thisModule.getNodeToConnect(currentNode, true));
+		else if(pathend.oclIsTypeOf(Turn!OrFork) or pathend.oclIsTypeOf(Turn!AndFork)){
+			thisModule.addPred(thisModule.retrieveNode(pathend), thisModule.getNodeToConnect(currentNode, true));
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub)){
 			if(currentNode.oclIsTypeOf(Turn!Timer)){
