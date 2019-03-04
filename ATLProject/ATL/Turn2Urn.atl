@@ -271,14 +271,14 @@ rule connectPathEndToNextNode(pathend: Turn!Pathend, nextNode: Urn!PathNode){
 
 rule processReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
 	using{
-		vStub : Urn!Stub = thisModule.tUCMmap.getNode(body.referencedStub.name); -- INIT vStub
+		vStub : Urn!Stub = thisModule.tUCMmap.getNode(body.referencedStub.name);
 		vOrJoin : Urn!OrJoin = OclUndefined;
 		vFirstPred : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(vStub.pred -> size() >= body.index){
-			vOrJoin <- thisModule.createOrJoin(nextNode); -- INIT vOrJoin
-			vFirstPred <- vStub.pred -> first(); -- INIT vFirstPred
+			vOrJoin <- thisModule.createOrJoin(nextNode);
+			vFirstPred <- vStub.pred -> first();
 			thisModule.addPred(vOrJoin, nextNode);
 			thisModule.addPred(vOrJoin, vFirstPred.source.succ);
 			thisModule.addPred(vStub, vOrJoin.succ);
@@ -510,7 +510,7 @@ rule createOrJoin(predNode: Turn!PathNode){
 	}
 }
 
-rule createAndJoin(predNode: Turn!PathNode){
+rule createAndJoin(){
 	to
 		tNodeConnection: Urn!NodeConnection(),
 		tAndJoin: Urn!AndJoin(
@@ -778,10 +778,14 @@ rule createEmptyPt(node: Turn!PathBodyNode, asynch: Boolean){
 				'EmptyPoint'+vId
 			endif;
 		vSuccessor : Urn!NodeConnection =
-			if(node = OclAny or asynch) then
+			if(asynch) then
 				Sequence{thisModule.createNodeConnection()}
 			else
-				OclUndefined
+				if(node.oclIsKindOf(OclAny)) then
+					Sequence{thisModule.createNodeConnection(), thisModule.createNodeConnection()}
+				else
+					OclUndefined
+				endif
 			endif;
 	}
 	to
@@ -831,7 +835,9 @@ rule processAndFork(obj: Turn!AndFork){
 			thisModule.nextNode <- tAndFork;
 			
 			if(thisModule.numberOfTerminatingNodes = 2){
-				thisModule.nextNode <- thisModule.createAndJoin(tAndFork.firstUnconnectedSucc());
+				thisModule.nextNode <- thisModule.createAndJoin();
+				thisModule.addPred(thisModule.nextNode, tAndFork.firstUnconnectedSucc());
+				thisModule.addPred(thisModule.nextNode, tAndFork.firstUnconnectedSucc());
 			}
 			else if(thisModule.numberOfTerminatingNodes = 1){
 				thisModule.firstPathNode <- obj.connectingAndBody.pathNodes -> first();
