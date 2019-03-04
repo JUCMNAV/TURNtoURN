@@ -1939,9 +1939,8 @@ rule UCMmap2UCMmap{
 					thisModule.addPred(thisModule.resolveTemp(vPathEnd, 'tStub'), vStartPoint.succ);
 				}
 			}
-			else{
-				--if pathnodes exist
-				thisModule.connectNodes(path.pathBody, path, OclAny);
+			else if(not path.pathBody.pathNodes -> isEmpty()){
+				thisModule.connectNodes(path.pathBody, path.startPoint, OclUndefined);
 			}
 			
 			thisModule.next <- tUCMmap.getNode(path.startPoint.turnGetLongestName()).succ;
