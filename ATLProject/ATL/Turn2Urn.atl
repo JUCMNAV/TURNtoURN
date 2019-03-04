@@ -101,6 +101,42 @@ rule addPred(node: Turn!PathNode, predecessor: OclAny){
 	}
 }
 
+rule retrieveNode(node: Turn!PathNode){
+	using{
+		vRetrievedNode : Turn!PathNode = OclUndefined;	
+	}
+	do{
+		if(node.oclIsTypeOf(Turn!WaitingPlace)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tWtPlace');
+		}
+		else if(node.oclIsTypeOf(Turn!FailurePoint)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tFailPt');
+		}
+		else if(node.oclIsTypeOf(Turn!RespRef)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tRespRef');
+		}
+		else if(node.oclIsTypeOf(Turn!Timer)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tTimer');
+		}
+		else if(node.oclIsTypeOf(Turn!AndFork)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tAndFork');
+		}
+		else if(node.oclIsTypeOf(Turn!OrFork)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tOrFork');
+		}
+		else if(node.oclIsTypeOf(Turn!Connect)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tConnect');
+		}
+		else if(node.oclIsTypeOf(Turn!Stub)){
+			vRetrievedNode <- thisModule.resolveTemp(node, 'tStub');
+		}
+		else{ --AndJoin, OrJoin, StartPoint, and EndPoint are not created in x2y rules so must be retrieved as such
+			vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());
+		}
+		vRetrievedNode;
+	}
+}
+
 rule getResponsibility(responsibilityName: String){
 	do{
 		Urn!Responsibility.allInstances() -> any(n|n.name=responsibilityName);	
@@ -1682,7 +1718,6 @@ rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 	}
 }
 
---TODO: modularize after test cases are working
 rule InBinding2InBinding{
 	from
 		s: Turn!InBinding
@@ -1695,7 +1730,6 @@ rule InBinding2InBinding{
 	}
 }
 
---TODO: modularize after test cases are working
 rule OutBinding2OutBinding{
 	from
 		s: Turn!OutBinding
