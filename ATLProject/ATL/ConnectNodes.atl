@@ -92,14 +92,6 @@ rule getNodeToConnect(currentNode: Turn!PathNode, isCaseOne: Boolean){
 -- TODO: determine how the next connecting node is chosen
 rule handleConnectNode(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 	using{
-		vConnectsToTimer : Boolean = currentNode.connectsTo.oclIsTypeOf(Turn!Timer);
-		vEmptyPtId : Integer = thisModule.nextId().toString();
-		vName : String = 
-			if (not vConnectsToTimer) then
-				'EmptyPoint'+vEmptyPtId
-			else
-				'AsynchConnectTimer#'+currentNode.connectsTo.name
-			endif;
 		vNewNode : Urn!PathNode = OclUndefined;
 	}
 	to
@@ -113,18 +105,19 @@ rule handleConnectNode(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 		),
 		tNodeConnection2: Urn!NodeConnection(),
 		tEmptyPt: Urn!EmptyPoint(
-			id <- vEmptyPtId,
-			name <- vName,
+			id <- thisModule.nextId().toString(),
+			name <- 'EmptyPoint'+tEmptyPt.id,
 			diagram <- thisModule.tUCMmap,
 			succ <- tNodeConnection2
 		)
 	do{
-		if(vConnectsToTimer){
+		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
+			tEmptyPt.name <- 'AsynchConnectTimer#'+currentNode.connectsTo.name;
 			vNewNode <- tEmptyPt;
 		}
 		else{
-			thisModule.addPred(thisModule.tUCMmap.getNode(currentNode.connectsTo.name), tConnect.succ);
 			vNewNode <- thisModule.tUCMmap.getNode(currentNode.connectsTo.name);
+			thisModule.addPred(vNewNode, tNodeConnection1);
 		}
 		thisModule.addPred(vNewNode, newPred);
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
@@ -254,21 +247,21 @@ rule handleNode(pathbody: Sequence(Turn!PathBody), currentNode: Turn!PathNode, p
 		}
 		-- DOUBLE CHECK IF THIS IS REQUIRED
 		else if(previousNode.oclIsTypeOf(Turn!RespRef)){
-			thisModule.addPred(thisModule.tUCMmap.getNode(currentNode.name), thisModule.tUCMmap.allRespDefsMatching(previousNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
+			thisModule.addPred(thisModule.retrieveNode(currentNode.name), thisModule.tUCMmap.allRespDefsMatching(previousNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
 		}
 		else if (previousNode.oclIsTypeOf(Turn!Connect)){
 			if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-				thisModule.addPred(thisModule.tUCMmap.getNode(currentNode.name), thisModule.connectMap.get(previousNode).firstUnconnectedSucc()); 
+				thisModule.addPred(thisModule.retrieveNode(currentNode.name), thisModule.connectMap.get(previousNode).firstUnconnectedSucc()); 
 			}
 			else{
 				if(previousNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
-					thisModule.addSucc(thisModule.tUCMmap.getNode(previousNode.connectsTo.name).succ, thisModule.createNodeConnection());
+					thisModule.addSucc(thisModule.retrieveNode(previousNode.connectsTo.name).succ, thisModule.createNodeConnection());
 				}
-				thisModule.addPred(thisModule.tUCMmap.getNode(currentNode.name), thisModule.tUCMmap.getNode(previousNode.connectsTo.name).firstUnconnectedSucc());
+				thisModule.addPred(thisModule.retrieveNode(currentNode.name), thisModule.retrieveNode(previousNode.connectsTo.name).firstUnconnectedSucc());
 			}
 		}
 		else{
-			thisModule.addPred(thisModule.tUCMmap.getNode(currentNode.name), thisModule.tUCMmap.getNode(previousNode.name).succ);
+			thisModule.addPred(thisModule.retrieveNode(currentNode.name), thisModule.retrieveNode(previousNode.name).succ);
 		}
 	}
 }
