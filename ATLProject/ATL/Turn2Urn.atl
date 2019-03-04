@@ -682,34 +682,27 @@ rule createEndPoint(node: Turn!PathNode){
 		)
 	do{
 		if(not node.oclIsTypeOf(Turn!OrFork)){
-			if(node = OclAny){
-				thisModule.addSucc(tEndPoint, thisModule.createNodeConnection());
-			}
-			else{
-				-- personal TODO: determine why name here isn't EndPoint(some#) (i.e., why we change it)
-				tEndPoint.name <- node.turnGetLongestName();
+			tEndPoint.name <- node.turnGetLongestName();
+			
+			thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
+			
+			if(node.epConnect.pbody.pathNodes -> isEmpty()){
+				--Using backlinks to connect orFork
+				thisModule.currentOrFork <- node.epConnect.pbody.orFork;
+				if(not thisModule.currentOrFork.oclIsUndefined()){
+					thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
+					thisModule.addPred(tEndPoint, thisModule.resolveTemp(thisModule.currentOrFork.orBody.orFork, 'tOrFork').succ -> any(s|s.condition.expression=thisModule.condExpression));
+				}
 				
-				thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
-				
-				if(node.epConnect.pbody.pathNodes -> isEmpty()){
-					--Using backlinks to connect orFork
-					thisModule.currentOrFork <- node.epConnect.pbody.orFork;
-					if(not thisModule.currentOrFork.oclIsUndefined()){
-						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
-						thisModule.addPred(tEndPoint, thisModule.resolveTemp(thisModule.currentOrFork.orBody.orFork, 'tOrFork').succ -> any(s|s.condition.expression=thisModule.condExpression));
-					}
-					
-					--Using backlinks to connect andFork
-					thisModule.currentAndFork <- node.epConnect.pbody.andFork;
-					if(not thisModule.currentAndFork.oclIsUndefined()){
-						thisModule.addPred(tEndPoint, thisModule.resolveTemp(thisModule.currentAndFork, 'tAndFork').firstUnconnectedSucc());
-					}
+				--Using backlinks to connect andFork
+				thisModule.currentAndFork <- node.epConnect.pbody.andFork;
+				if(not thisModule.currentAndFork.oclIsUndefined()){
+					thisModule.addPred(tEndPoint, thisModule.resolveTemp(thisModule.currentAndFork, 'tAndFork').firstUnconnectedSucc());
 				}
 			}
 		}
 		
-		thisModule.endPointNodeInNewSequence <- Sequence{tEndPoint};
-		thisModule.endPointNodeInNewSequence;
+		tEndPoint;
 	}
 }
 
@@ -893,7 +886,7 @@ rule processOrFork(obj: Turn!OrFork){
 				
 				--creating an empty end point
 				if(obj.body.elseBody.oclIsUndefined()){
-					thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj) -> first();
+					thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj);
 				}
 				
 				thisModule.addSucc(tOrFork, thisModule.createdOrForkNodeConnection);
@@ -904,7 +897,7 @@ rule processOrFork(obj: Turn!OrFork){
 			
 			thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
 			thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
-			thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj) -> first();
+			thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj);
 			
 			thisModule.addSucc(tOrFork, thisModule.createdOrForkNodeConnection);
 		}
