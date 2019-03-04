@@ -39,11 +39,9 @@ helper context Turn!URNmodelElement def: metadataExists(param : String) : Boolea
 
 helper context String def : capitalize(): String = self.substring(1,1).toUpper() + self.substring(2, self.size());
 
-helper context Urn!UCMmap def : getNode(turnNodeName: String) : OclAny =
-	self.nodes -> any(n|n.name=turnNodeName);
+helper context Urn!UCMmap def : getNode(turnNodeName: String) : OclAny = self.nodes -> any(n|n.name=turnNodeName);
 
-helper context Urn!UCMmap def : mergeNodes(nodesToAdd: Sequence(OclAny)) : OclAny =
-	self.nodes -> union(nodesToAdd);
+helper context Urn!UCMmap def : mergeNodes(nodesToAdd: Sequence(OclAny)) : OclAny = self.nodes -> union(nodesToAdd);
 
 --This should only be called on TURN objects; I haven't been able to determine how to express that restriction using OCL, though.
 helper context OclAny def : turnGetLongestName() : String = 
@@ -207,7 +205,7 @@ rule contributionNumberToKeyword(quantitativeContribution: Integer){
 
 rule joinStringSequence(s: String, delim: String){
 	using{
-		vJoinedString : String = ''; -- INIT vJoinedString	
+		vJoinedString : String = '';
 	}
 	do{
 		for(currentString in s.content){
@@ -327,12 +325,11 @@ rule connectAndForkNodes(pathend: Turn!PathEnd){
 	using{
 		vHasReferencedEnd : Boolean = OclUndefined;
 		vAndFork : Urn!AndFork = thisModule.resolveTemp(pathend, 'tAndFork');
-		vCounter : Integer = 1; -- INIT vCounter
+		vCounter : Integer = 1;
 	}
 	do{
 		for(pathbody in pathend.pathbody -> flatten()){
 			
-			--INIT vHasReferencedEnd
 			if(pathbody.referencedEnd.oclIsUndefined()){
 				vHasReferencedEnd <- false;
 			}
@@ -545,24 +542,6 @@ rule createNodeConnection(){
 	do{
 		tNodeConnection;
 	}		
-}
-
-rule createOrForkNodeConnection(ref: Turn!RegularOrFork){
-	using{
-		vCondition: Turn!Condition =
-			if(ref <> OclAny) then
-				thisModule.resolveTemp(ref.condition, 'tCondition')
-			else
-				OclUndefined
-			endif;
-	}
-	to
-	 	targetNodeConn: Urn!NodeConnection(
-	 		condition <- vCondition	
-	 	)
-	do{
-		targetNodeConn;	
-	}	
 }
 
 rule createResponsibility(s: Turn!RespRef){
@@ -851,15 +830,20 @@ rule processAndFork(obj: Turn!AndFork){
 rule processOrFork(obj: Turn!OrFork){
 	using{
 		tOrFork : Urn!OrFork = thisModule.retrieveNode(obj);
+		tConn : Urn!NodeConnection = OclUndefined;
 	}
 	do{
 		if(not obj.body.oclIsUndefined()){
 			for(elem in obj.body.regularBody){
-				thisModule.addSucc(tOrFork, thisModule.createOrForkNodeConnection(elem));
+				tConn <- thisModule.createNodeConnection();
+				tConn.condition <- thisModule.resolveTemp(elem.condition, 'tCondition');
+				thisModule.addSucc(tOrFork, tConn);
 			}
 		}
 		else if(not obj.connectingOrBody.oclIsUndefined()){
-			thisModule.addSucc(tOrFork, thisModule.createOrForkNodeConnection(obj));
+			tConn <- thisModule.createNodeConnection();
+			tConn.condition <- thisModule.resolveTemp(obj.condition, 'tCondition');
+			thisModule.addSucc(tOrFork, tConn);
 		}
 		--Connecting nodes before OrFork in case it is a stub
 		if(not obj.pbody.parentStub.oclIsUndefined()){
@@ -876,30 +860,30 @@ rule processOrFork(obj: Turn!OrFork){
 			--Orforks with only one pathbody
 			if(obj.getPathBodies() -> size() = 1){
 				--creating a node connection with a negated condition
-				thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny);
+				tConn <- thisModule.createNodeConnection();
 				
 				thisModule.condition <- '';
 				if(obj.getPathBodies().first().pathEnd.oclIsUndefined()){
 					thisModule.condition <- thisModule.joinStringSequence(obj.getPathBodies().first().orFork.condition.expression, '');
 				}
-				thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
+				tConn.condition <- thisModule.createCondition('!'+thisModule.condition);
 				
 				--creating an empty end point
 				if(obj.body.elseBody.oclIsUndefined()){
-					thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj);
+					tConn.target <- thisModule.createEndPoint(obj);
 				}
 				
-				thisModule.addSucc(tOrFork, thisModule.createdOrForkNodeConnection);
+				thisModule.addSucc(tOrFork, tConn);
 			}
 		}
 		else{
-			thisModule.createdOrForkNodeConnection <- thisModule.createOrForkNodeConnection(OclAny);
+			tConn <- thisModule.createNodeConnection();
 			
 			thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
-			thisModule.createdOrForkNodeConnection.condition <- thisModule.createCondition('!'+thisModule.condition);
-			thisModule.createdOrForkNodeConnection.target <- thisModule.createEndPoint(obj);
+			tConn.condition <- thisModule.createCondition('!'+thisModule.condition);
+			tConn.target <- thisModule.createEndPoint(obj);
 			
-			thisModule.addSucc(tOrFork, thisModule.createdOrForkNodeConnection);
+			thisModule.addSucc(tOrFork, tConn);
 		}
 		
 		if(not obj.connectingOrBody.oclIsUndefined()){
