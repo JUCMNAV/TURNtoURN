@@ -220,11 +220,11 @@ rule joinStringSequence(s: String, delim: String){
 rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
 	do{
 		pathNodes <- pathNodes -> flatten();
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tRespRef')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tOrJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tAndJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tFailPt')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r,'tWtPlace')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
 	}
 }
 
@@ -779,7 +779,7 @@ rule createEmptyPt(node: Turn!PathBodyNode, asynch: Boolean){
 rule createBeliefLink(s: Turn!ElementLink){
 	to
 		tBeliefLink: Urn!BeliefLink (
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+			target <- thisModule.resolveTemp(s.dest, 'tIntElemRef')
 		)	
 	do{
 		tBeliefLink;
@@ -788,7 +788,7 @@ rule createBeliefLink(s: Turn!ElementLink){
 
 rule processAndFork(obj: Turn!AndFork){
 	using{
-		tAndFork : Urn!AndFork = thisModule.resolveTemp(obj, 'tAndFork');	
+		tAndFork : Urn!AndFork = thisModule.retrieveNode(obj);	
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tAndFork);
@@ -850,7 +850,7 @@ rule processAndFork(obj: Turn!AndFork){
 
 rule processOrFork(obj: Turn!OrFork){
 	using{
-		tOrFork : Urn!OrFork = thisModule.resolveTemp(obj, 'tOrFork');
+		tOrFork : Urn!OrFork = thisModule.retrieveNode(obj);
 	}
 	do{
 		if(not obj.body.oclIsUndefined()){
@@ -958,7 +958,7 @@ rule processOrFork(obj: Turn!OrFork){
 		if(not obj.body.oclIsUndefined()){
 			for(pathbody in obj.getPathBodies()){
 				if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
-					thisModule.addPred(thisModule.resolveTemp(pathbody.pathNodes -> first(),'tRespRef'), tOrFork.succ -> at(thisModule.connectNodesAfterOrForkCounter));
+					thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), tOrFork.succ -> at(thisModule.connectNodesAfterOrForkCounter));
 				}
 				thisModule.connectNodesAfterOrForkCounter <- thisModule.connectNodesAfterOrForkCounter.inc(); 			
 			}
@@ -1120,7 +1120,7 @@ rule IntElements2IntElements{
 			id <- thisModule.nextId().toString(),
 			name <- 'IntentionalElementRef'+tIntElemRef.id,
 			def <- tIntElem,
-			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c,'tLinkRef'))
+			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c, 'tLinkRef'))
 		),
 		tIntElem: Urn!IntentionalElement (
 			id <- thisModule.nextId().toString(),
@@ -1165,7 +1165,7 @@ rule Actor2Actor{
 			id <- thisModule.nextId().toString(),
 			name <- 'ActorRef' + tActorRef.id,
 			contDef <- tActor,
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e,'tIntElemRef')) -> union(s.elems -> collect(e|thisModule.resolveTemp(e,'tBelief'))),
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e, 'tIntElemRef')) -> union(s.elems -> collect(e|thisModule.resolveTemp(e, 'tBelief'))),
 			label <- tCompLabel
 		),
 		tCompLabel: Urn!ComponentLabel()
@@ -1182,7 +1182,7 @@ rule IntElem2Belief {
 			succ <- tBeliefLink
 	 	),
 		tBeliefLink: Urn!BeliefLink(
-			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l,'tIntElemRef')) -> first()
+			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l, 'tIntElemRef')) -> first()
 		)
 	do{
 		for(link in s.linksSrc -> excluding(s.linksSrc -> first())){
@@ -1223,7 +1223,7 @@ rule Contribution2Contribution{
 		),
 		tLinkRef: Urn!LinkRef (
 			link <- tCont,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+			target <- thisModule.resolveTemp(s.dest, 'tIntElemRef')
 		)
 }
 	
@@ -1239,7 +1239,7 @@ rule Decomposition2Decomposition{
 		),
 		tLinkRef: Urn!LinkRef (
 			link <- tDecomp,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+			target <- thisModule.resolveTemp(s.dest, 'tIntElemRef')
 		)
 }
 
@@ -1255,7 +1255,7 @@ rule Dependency2Dependency{
 		),
 		tLinkRef: Urn!LinkRef (
 			link <- tDep,
-			target <- thisModule.resolveTemp(s.dest,'tIntElemRef')
+			target <- thisModule.resolveTemp(s.dest, 'tIntElemRef')
 		)
 }
 
@@ -1523,14 +1523,14 @@ rule URNspec2URNspec{
 		vElements : Sequence(Turn!IntentionalElement) = sURNspec.actors -> collect(actor|actor.elems) -> flatten();	
 		vAllIntElements : Sequence(Turn!IntentionalElement) = vElements -> select(e|e.type.toString() <> 'belief');
 		vIntElemRefs : Sequence(Urn!IntentionalElementRef) = vElements -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef'));
-		vBeliefs : Sequence(Urn!Belief) = vElements -> select(e|e.type.toString() = 'belief') -> collect(b| thisModule.resolveTemp(b,'tBelief'));
+		vBeliefs : Sequence(Urn!Belief) = vElements -> select(e|e.type.toString() = 'belief') -> collect(b| thisModule.resolveTemp(b, 'tBelief'));
 			
 		vLinksSrc : Sequence(Turn!ElementLink) = vElements -> collect(e|e.linksSrc) -> flatten();
-		vContributions : Sequence(Urn!Contribution) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tCont'));
-		vDecompositions : Sequence(Urn!Decomposition) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDecomp'));
-		vDependencies : Sequence(Urn!Dependency) = vLinksSrc -> collect(l|thisModule.resolveTemp(l,'tDep'));
+		vContributions : Sequence(Urn!Contribution) = vLinksSrc -> collect(l|thisModule.resolveTemp(l, 'tCont'));
+		vDecompositions : Sequence(Urn!Decomposition) = vLinksSrc -> collect(l|thisModule.resolveTemp(l, 'tDecomp'));
+		vDependencies : Sequence(Urn!Dependency) = vLinksSrc -> collect(l|thisModule.resolveTemp(l, 'tDep'));
 		
-		vLinkRefs : Sequence(Urn!LinkRef) = vLinksSrc -> collect(m| thisModule.resolveTemp(m,'tLinkRef'));
+		vLinkRefs : Sequence(Urn!LinkRef) = vLinksSrc -> collect(m| thisModule.resolveTemp(m, 'tLinkRef'));
 	}
 	to
 		tURNspec: Urn!URNspec(
@@ -1660,29 +1660,21 @@ rule PluginBinding2PluginBinding{
 	to
 		tPluginBinding: Urn!PluginBinding (
 			-- this could be other way round, binding could be inBinding or OutBinding and vice-versa.
-			in <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tInBinding')) -> including(thisModule.resolveTemp(s.binding,'tInBinding')),
-			out <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tOutBinding')) -> including(thisModule.resolveTemp(s.binding,'tOutBinding')),
+			in <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tInBinding')) -> including(thisModule.resolveTemp(s.binding, 'tInBinding')),
+			out <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tOutBinding')) -> including(thisModule.resolveTemp(s.binding, 'tOutBinding')),
 			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
 			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
 			replicationFactor <- s.replication
 		)
 }
 
---TODO: modularize after test cases are working
-rule InBinding2InBinding{
-	from
-		s: Turn!InBinding
+rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 	using{
 		vBoundTerm : Turn!Binding = OclUndefined;
 		vStubEntry : Turn!Stub = OclUndefined;
 		vStub: Urn!Stub = OclUndefined;
 	}
-	to
-		tInBinding: Urn!InBinding(
-			startPoint <- thisModule.resolveTemp(s.mapStart,'tStartPoint')
-		)
 	do{
-		--QUESTION: does the order in which the if checks are performed matter?
 		if(not s.binding.oclIsUndefined()){
 			vBoundTerm <- s.binding;
 		}
@@ -1697,49 +1689,38 @@ rule InBinding2InBinding{
 			else{
 				vStubEntry <- vBoundTerm.stubParam.stub;
 			}
-			if(not thisModule.resolveTemp(vStubEntry, 'tStub').oclIsUndefined() and not thisModule.resolveTemp(vStubEntry, 'tStub').pred -> isEmpty()){
-				-- TODO: THIRD BUG - (1st instance) - this line and its match in OutBinding2OutBinding affect stub.xml, 
-				-- component.xml, and responsibility.xml; the if statement above this line is a temporary solution
-				tInBinding.stubEntry <- thisModule.resolveTemp(vStubEntry, 'tStub').pred -> at(s.index);
+			if(not thisModule.retrieveNode(vStubEntry).oclIsUndefined() and not thisModule.retrieveNode(vStubEntry).pred -> isEmpty()){
+				-- TODO: THIRD BUG - (1st instance) - this line affects stub.xml, component.xml, and responsibility.xml; 
+				-- the if statement above these comments is a temporary solution
+				tBinding.stubEntry <- thisModule.retrieveNode(vStubEntry).pred -> at(s.index);
 			}
-		}
+		}	
+	}
+}
+
+--TODO: modularize after test cases are working
+rule InBinding2InBinding{
+	from
+		s: Turn!InBinding
+	to
+		tInBinding: Urn!InBinding(
+			startPoint <- thisModule.resolveTemp(s.mapStart, 'tStartPoint')
+		)
+	do{
+		thisModule.processBinding(s, tInBinding);
 	}
 }
 
 --TODO: modularize after test cases are working
 rule OutBinding2OutBinding{
 	from
-		s:Turn!OutBinding
-	using{
-		vBoundTerm : Turn!Binding = OclUndefined;
-		vStubEntry : Urn!Stub = OclUndefined;
-	}
+		s: Turn!OutBinding
 	to
 		tOutBinding: Urn!OutBinding(
 			endPoint <- thisModule.endPointMap.get(s.mapEnd)
 		)
 	do{
-		--QUESTION: does the order in which the if checks are performed matter?
-		if(not s.bindings.oclIsUndefined()){
-			vBoundTerm <- s.bindings;
-		}
-		else if(not s.binding.oclIsUndefined()){
-			vBoundTerm <- s.binding;
-		}
-		
-		if(not vBoundTerm.oclIsUndefined()){
-			if(not vBoundTerm.stubParam.stubDec.oclIsUndefined()){
-				vStubEntry <- vBoundTerm.stubParam.stubDec.stub;
-			}
-			else{
-				vStubEntry <- vBoundTerm.stubParam.stub;
-			}
-			if(not thisModule.resolveTemp(vStubEntry, 'tStub').oclIsUndefined() and not thisModule.resolveTemp(vStubEntry, 'tStub').pred -> isEmpty()){
-				-- TODO: THIRD BUG - (2nd instance) - this line and its match in InBinding2InBinding affect stub.xml, 
-				-- component.xml, and responsibility.xml; the if statement above this line is a temporary solution
-				tOutBinding.stubEntry <- thisModule.resolveTemp(vStubEntry, 'tStub').pred -> at(s.index);
-			}
-		}
+		thisModule.processBinding(s, tOutBinding);
 	}
 }
 
@@ -1837,9 +1818,9 @@ rule UCMmap2UCMmap{
 		tUCMmap: Urn!UCMmap (
 			id <- thisModule.nextId().toString(),
 			name <- sUCMmap.turnGetLongestName(),
-			contRefs <- sUCMmap.components -> collect(c|thisModule.resolveTemp(c,'tCompRef')),
-			nodes <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p,'tStartPoint')),
-			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p,'tNodeConn'))
+			contRefs <- sUCMmap.components -> collect(c|thisModule.resolveTemp(c, 'tCompRef')),
+			nodes <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tStartPoint')),
+			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tNodeConn'))
 		)
 	do{
 		thisModule.tUCMmap <- tUCMmap;
@@ -1877,45 +1858,39 @@ rule UCMmap2UCMmap{
 				thisModule.addPred(thisModule.termToSet, vStartPoint.firstUnconnectedSucc());
 			}
 			--if no pathnodes exist
-			if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and path.pathBody.pathNodes -> isEmpty()){
-				--TODO: SECOND BUG noted in README occurs here upon running the code using endpoint.xml
-				vConnectingEndPoint <- thisModule.retrieveNode(vPathEnd.regularEnd);
-				
-				if(not vPathEnd.connect.oclIsUndefined()){
-					thisModule.addSucc(vConnectingEndPoint, thisModule.createNodeConnection());
+			if(path.pathBody.pathNodes -> isEmpty()){
+				if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+					--TODO: SECOND BUG noted in README occurs here upon running the code using endpoint.xml
+					vConnectingEndPoint <- thisModule.retrieveNode(vPathEnd.regularEnd);
 					
-					vConnect <- thisModule.createConnect();
-					thisModule.addPred(vConnect, vConnectingEndPoint.succ);
-					thisModule.connectMap <- thisModule.connectMap.including(vPathEnd.connect, vConnect);
-					
-					if(not vPathEnd.connect.connectsTo.oclIsTypeOf(Turn!Timer)){
-						thisModule.addPred(thisModule.retrieveNode(vPathEnd.connect.connectsTo), vConnect.succ);
+					if(not vPathEnd.connect.oclIsUndefined()){
+						thisModule.addSucc(vConnectingEndPoint, thisModule.createNodeConnection());
+						
+						vConnect <- thisModule.createConnect();
+						thisModule.addPred(vConnect, vConnectingEndPoint.succ);
+						thisModule.connectMap <- thisModule.connectMap.including(vPathEnd.connect, vConnect);
+						
+						if(not vPathEnd.connect.connectsTo.oclIsTypeOf(Turn!Timer)){
+							thisModule.addPred(thisModule.retrieveNode(vPathEnd.connect.connectsTo), vConnect.succ);
+						}
+						else{
+							thisModule.addPred(thisModule.createEmptyPt(tUCMmap, vPathEnd.connect.connectsTo, false), vConnect.succ);
+						}
 					}
 					else{
-						thisModule.addPred(thisModule.createEmptyPt(tUCMmap, vPathEnd.connect.connectsTo, false), vConnect.succ);
-					}
+						if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
+							thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
+							thisModule.newPred <- vEmptyPoints -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first())).firstUnconnectedSucc();
+							thisModule.addPred(vConnectingEndPoint, thisModule.newPred);
+						}
+					} 
+					thisModule.addPred(vConnectingEndPoint, vStartPoint.firstUnconnectedSucc());
 				}
-				else{
-					if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
-						thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
-						thisModule.newPred <- vEmptyPoints -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first())).firstUnconnectedSucc();
-						thisModule.addPred(vConnectingEndPoint, thisModule.newPred);
-					}
-				} 
-				thisModule.addPred(vConnectingEndPoint, vStartPoint.firstUnconnectedSucc());
-			}
-			else if (not vPathEnd.oclIsUndefined() and path.pathBody.pathNodes -> isEmpty() ){
-				if(vPathEnd.oclIsTypeOf(Turn!OrFork)){
-					thisModule.addPred(thisModule.resolveTemp(vPathEnd, 'tOrFork'), vStartPoint.succ);
-				}
-				else if(vPathEnd.oclIsTypeOf(Turn!AndFork)){
-					thisModule.addPred(thisModule.resolveTemp(vPathEnd, 'tAndFork'), vStartPoint.succ);
-				}
-				else if(vPathEnd.oclIsTypeOf(Turn!Stub)){
-					thisModule.addPred(thisModule.resolveTemp(vPathEnd, 'tStub'), vStartPoint.succ);
+				else if(vPathEnd.oclIsTypeOf(Turn!OrFork) or vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!Stub)){
+					thisModule.addPred(thisModule.retrieveNode(vPathEnd), vStartPoint.succ);
 				}
 			}
-			else if(not path.pathBody.pathNodes -> isEmpty()){
+			else{
 				thisModule.connectNodes(path.pathBody, path.startPoint, OclUndefined);
 			}
 			
@@ -1925,7 +1900,7 @@ rule UCMmap2UCMmap{
 			if(vBody.pathNodes -> isEmpty()){
 				if(not vBody.referencedEnd.oclIsUndefined()){
 					if(vBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-						thisModule.addPred(thisModule.resolveTemp(vBody.referencedEnd,'tRespRef'), thisModule.next);
+						thisModule.addPred(thisModule.resolveTemp(vBody.referencedEnd, 'tRespRef'), thisModule.next);
 					}			
 					else{
 						thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), thisModule.next); 
