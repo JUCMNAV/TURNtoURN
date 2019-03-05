@@ -174,7 +174,7 @@ rule processPathEnd(pathend: Turn!PathNode, includeBacklinks: Boolean){
 					if(not thisModule.sEndPoint.epConnect.pbody.orFork.oclIsUndefined()){
 						thisModule.orFork <- thisModule.sEndPoint.epConnect.pbody.orFork;
 						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.orFork.condition.expression, '');
-						thisModule.addPred(thisModule.tEndPoint, thisModule.resolveTemp(thisModule.orFork.orBody.orFork, 'tOrFork').succ -> any(s|s.condition.expression=thisModule.condExpression));
+						thisModule.addPred(thisModule.tEndPoint, thisModule.retrieveNode(thisModule.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
 					}
 				}
 			}
@@ -282,6 +282,7 @@ rule connectPathEndToNextNode(pathend: Turn!Pathend, nextNode: Urn!PathNode){
 		thisModule.finishedConnection <- true;
 		
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
+			--HERE
 			thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), nextNode);
 		}
 		else if(pathend.oclIsTypeOf(Turn!OrFork) or pathend.oclIsTypeOf(Turn!AndFork) or pathend.oclIsTypeOf(Turn!Stub)){
@@ -302,7 +303,7 @@ rule processReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
 	}
 	do{
 		if(vStub.pred -> size() >= body.index){
-			vOrJoin <- thisModule.createOrJoin(nextNode);
+			vOrJoin <- thisModule.createOrJoin();
 			thisModule.addPred(vOrJoin, nextNode);
 			thisModule.addPred(vOrJoin, (vStub.pred -> first()).source.succ);
 			thisModule.addPred(vStub, vOrJoin.succ);
@@ -517,8 +518,7 @@ rule createOrJoin(predNode: Turn!PathNode){
 			id <- thisModule.nextId().toString(),
 			name <- 'OrJoin' + tOrJoin.id,
 			succ <- tNodeConnection,
-			diagram <- thisModule.tUCMmap,
-			pred <- predNode
+			diagram <- thisModule.tUCMmap
 		)
 	do{
 		tOrJoin;
@@ -732,15 +732,15 @@ rule processTimer(timerObj : Turn!Timer){
 			if(timerObj.timeoutPath.pathNodes -> isEmpty()){
 				thisModule.collectRegularEnds(Sequence{timerObj.timeoutPath});
 				
-				if(not timerObj.timeoutPath.referencedStub.oclIsUndefined()){
+				--if(not timerObj.timeoutPath.referencedStub.oclIsUndefined()){
 					--QUESTION: thisModule.nextNode isn't defined anywhere; what should it be?
-					thisModule.next <- thisModule.nextNode.firstUnconnectedSucc();
-				}
-				else{
-					thisModule.next <- tTimer.succ -> at(2);
-				}
+				--	thisModule.next <- tTimer.firstUnconnectedSucc();
+				--}
+				--else{
+				--	thisModule.next <- tTimer.succ -> at(2);
+				--}
 				
-				thisModule.connectReferencedEndToNextNode(timerObj.timeoutPath, thisModule.next);
+				--thisModule.connectReferencedEndToNextNode(timerObj.timeoutPath, thisModule.next);
 			}
 		}
 		tTimer;
@@ -935,17 +935,17 @@ rule processOrFork(obj: Turn!OrFork){
 				}
 			}
 			else if(thisModule.numberOfTerminatingNodes = 2){
-				thisModule.nextNode <- thisModule.createOrJoin(tOrFork.firstUnconnectedSucc());
+				thisModule.nextNode <- thisModule.createOrJoin();
+				thisModule.addPred(thisModule.nextNode, tOrFork.firstUnconnectedSucc());
+				--thisModule.addPred(thisModule.nextNode, tOrFork.firstUnconnectedSucc());
 			}
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
 				if(not obj.body.oclIsUndefined()){
 					thisModule.pathBodies <- obj.getPathBodies();
-					if(not obj.body.elseBody.oclIsUndefined()){
-						-- TODO (COMMENTED OUT): thisModule.createdCondition isn't defined; I'm not sure what should go here instead. Try to determine it
-						-- QUESTION: where should the condition come from?
-						-- thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, tUCMmap, thisModule.createdCondition.expression);
-					}
+					--if(not obj.body.elseBody.oclIsUndefined()){
+					--	thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, thisModule.tUCMmap, tConn.condition.expression);
+					--}
 					
 					for (pathbody in obj.getPathBodies()){
 						thisModule.condition <- '';
@@ -1067,7 +1067,8 @@ rule processStub(stubObj:Turn!Stub){
 			thisModule.nextNode <- tStub;
 			
 			if(thisModule.numberOfterminatingStubNodes > 1){
-				thisModule.orJoin <- thisModule.createOrJoin(tStub.succ -> at(thisModule.outPathNumber -> first()));
+				thisModule.orJoin <- thisModule.createOrJoin();
+				thisModule.addPred(thisModule.orJoin, tStub.succ -> at(thisModule.outPathNumber -> first()));
 				thisModule.addPred(thisModule.orJoin, tStub.succ -> at(thisModule.outPathNumber -> at(2)));
 				thisModule.nextNode <- thisModule.orJoin;
 				thisModule.outPathNumber <- Sequence{1};
@@ -1899,24 +1900,18 @@ rule UCMmap2UCMmap{
 				thisModule.connectNodes(path.pathBody, path.startPoint, OclUndefined);
 			}
 			
-			thisModule.next <- thisModule.retrieveNode(path.startPoint).succ;
 			vBody <- path.pathBody;
 			
 			if(vBody.pathNodes -> isEmpty()){
 				if(not vBody.referencedEnd.oclIsUndefined()){
-					if(vBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-						thisModule.addPred(thisModule.resolveTemp(vBody.referencedEnd, 'tRespRef'), thisModule.next);
-					}			
-					else{
-						thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), thisModule.next); 
-					}
+					thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), thisModule.retrieveNode(path.startPoint).succ); 
 				}
 				else if (not vBody.referencedStub.oclIsUndefined()){
-					thisModule.processReferencedStub(vBody, thisModule.next);
+					thisModule.processReferencedStub(vBody, thisModule.retrieveNode(path.startPoint).succ);
 				}
 			}
 		}
-		--Node connections
+		
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
 	}
 }

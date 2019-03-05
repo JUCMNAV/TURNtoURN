@@ -77,3 +77,12 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 * New TODO (will be categorized later):
 	* Figure out if it is possible to make an implementation that uses matched rules for OrFork, AndFork, etc.
 	* Find a way to remove the maps
+	* Current issues in output produced by new code:
+		* AndFork:
+			* OrJoins missing (lines 33, 409, 477 of original file); corresponding NodeConnection missing as well
+			* extra pred in FailurePoint (line 465 of new file)
+			* extra pred in RespRef (line 399 of new file)
+			* missing pred in Timer (line 380 of new file)
+			* missing pred in EmptyPoint (lines 321, 350, 376 of new file)
+			* missing AndJoin (line 111 of original file)
+			* missing NodeConnections (lines 330, 360 of old file)
