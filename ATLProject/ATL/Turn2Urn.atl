@@ -810,8 +810,12 @@ rule processAndFork(obj: Turn!AndFork){
 		if(not obj.connectingAndBody.oclIsUndefined()){	
 			thisModule.collectReferencedEnds(obj.connectingAndBody.pathNodes);
 			
-			thisModule.numberOfTerminatingNodes <- obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
 			thisModule.processPathEnd(obj.connectingAndBody.pathEnd);
+			
+			thisModule.numberOfTerminatingNodes <- obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
+			
+			--if(tAndFork.name='AndFork8')
+			--	thisModule.debug(thisModule.numberOfTerminatingNodes);
 			
 			--previously this was assigned to '' but that led to a compiler error
 			--QUESTION: is setting this to tAndFork instead of '' correct? I followed the logic in createOrFork to do so
@@ -906,7 +910,6 @@ rule processOrFork(obj: Turn!OrFork){
 		}
 		else{
 			tConn <- thisModule.createNodeConnection();
-			
 			tConn.condition <- thisModule.createCondition('!'+thisModule.joinStringSequence(obj.condition.expression, ''));
 			tConn.target <- thisModule.createEndPoint(obj);
 			
@@ -916,12 +919,12 @@ rule processOrFork(obj: Turn!OrFork){
 		if(not obj.connectingOrBody.oclIsUndefined()){
 			thisModule.collectReferencedEnds(obj.connectingOrBody.pathNodes);
 			
+			thisModule.processPathEnd(obj.connectingOrBody.pathEnd);
+			
 			thisModule.numberOfTerminatingNodes <- 0;
 			if(not obj.body.oclIsUndefined()){
 				thisModule.numberOfTerminatingNodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
 			}
-			
-			thisModule.processPathEnd(obj.connectingOrBody.pathEnd);
 			
 			thisModule.nextNode <- tOrFork;
 			
@@ -1033,19 +1036,15 @@ rule processStub(stubObj:Turn!Stub){
 			tStub.dynamic <- true;
 		}
 		
-		thisModule.numberOfterminatingStubNodes <- 0;
-		thisModule.outPathNumber <- Sequence{};
+		thisModule.outPaths <- stubObj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
+		thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
+		thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index);
 		
 		for(outPath in stubObj.outPaths -> flatten()){
 			thisModule.stubOutPathNodeConnection <- thisModule.createNodeConnection();
 			thisModule.addSucc(tStub, thisModule.stubOutPathNodeConnection);
 			if(outPath.threshold <> 0){
 				thisModule.stubOutPathNodeConnection.threshold <- outPath.threshold.toString();
-			}
-			if(outPath.path.pathEnd.oclIsUndefined()){
-				--connecting pathnodes after andfork
-				thisModule.numberOfterminatingStubNodes <- thisModule.numberOfterminatingStubNodes.inc();
-				thisModule.outPathNumber <- thisModule.outPathNumber -> union(Sequence{outPath.index});
 			}
 		}
 		
@@ -1066,14 +1065,14 @@ rule processStub(stubObj:Turn!Stub){
 			
 			thisModule.nextNode <- tStub;
 			
-			if(thisModule.numberOfterminatingStubNodes > 1){
+			if(thisModule.numberOfTerminatingStubNodes > 1){
 				thisModule.orJoin <- thisModule.createOrJoin();
 				thisModule.addPred(thisModule.orJoin, tStub.succ -> at(thisModule.outPathNumber -> first()));
 				thisModule.addPred(thisModule.orJoin, tStub.succ -> at(thisModule.outPathNumber -> at(2)));
 				thisModule.nextNode <- thisModule.orJoin;
 				thisModule.outPathNumber <- Sequence{1};
 			}
-			else if(thisModule.numberOfterminatingStubNodes = 1){
+			else if(thisModule.numberOfTerminatingStubNodes = 1){
 				thisModule.firstNode <- stubObj.connectingStubBody.pathNodes -> first();
 				
 				if(not thisModule.firstNode.oclIsUndefined() and not thisModule.firstNode.oclIsTypeOf(Turn!Connect)){
