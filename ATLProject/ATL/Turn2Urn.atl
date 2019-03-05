@@ -11,15 +11,11 @@ uses ConnectNodes;
 
 helper def: id : Integer = 0;
 
-helper def: predValue : OclAny = OclAny;
-
-helper def: counter : Integer = 1;
-
 helper def: connectMap : Map(Turn!Connect, Urn!Connect) = Map{};
 
-helper def: orForkNodeConnCounter : Integer = 1;
-
 helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
+
+helper def: orForkNodeConnCounter : Integer = 1;
 
 helper def: andForkNodeConnCounter : Integer = 1;
 
@@ -30,12 +26,6 @@ helper def: tUCMmap : Urn!UCMmap = OclUndefined;
 -- CONTEXT: Integer
 -- RETURN: Integer
 helper context Integer def : inc() : Integer = self + 1;
-
--- This helper checks if metadata already exists for a given parameter
--- CONTEXT: Turn!URNmodelElement
--- RETURN: Boolean
-helper context Turn!URNmodelElement def: metadataExists(param : String) : Boolean = 
-	self.metadata -> select(m|m.name.indexOf(param)<>-1 ) -> notEmpty();
 
 helper context String def : capitalize(): String = 
 	self.substring(1,1).toUpper() + self.substring(2, self.size());
@@ -61,8 +51,8 @@ helper context OclAny def : turnGetLongestName() : String =
 helper context Turn!OrFork def : getPathBodies() : Turn!PathBody =
 	self.body.regularBody -> collect(pb|pb.pathBody) -> flatten();
 
-helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclAny =
-	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
+--helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclAny =
+--	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
 
 helper context OclAny def : firstUnconnectedSucc() : OclAny =
 	self.succ -> any(s|s.target.oclIsUndefined());
@@ -98,37 +88,49 @@ rule addPred(node: Turn!PathNode, predecessor: OclAny){
 	}
 }
 
-rule retrieveNode(node: Turn!PathNode){
+-- This is a rather obtuse approach but was necessary as
+-- multiple conditionals in retrieveNode was causing
+-- slow build times.
+rule getNodeTarget(node: Turn!PathNode){
 	using{
-		vRetrievedNode : Turn!PathNode = OclUndefined;	
+		vTarget : String = OclUndefined;
 	}
 	do{
-		if(node.oclIsTypeOf(Turn!WaitingPlace)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tWtPlace');
-		}
-		else if(node.oclIsTypeOf(Turn!FailurePoint)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tFailPt');
-		}
-		else if(node.oclIsTypeOf(Turn!RespRef)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tRespRef');
-		}
-		else if(node.oclIsTypeOf(Turn!Timer)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tTimer');
-		}
-		else if(node.oclIsTypeOf(Turn!AndFork)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tAndFork');
-		}
-		else if(node.oclIsTypeOf(Turn!OrFork)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tOrFork');
+		if(node.oclIsKindOf(Turn!WaitingPlace))
+			vTarget <- 'tWtPlace';
+		else if(node.oclIsKindOf(Turn!FailurePoint))
+			vTarget <- 'tFailPt';
+		else if(node.oclIsTypeOf(Turn!RespRef))
+			vTarget <- 'tRespRef';
+		else if(node.oclIsTypeOf(Turn!Timer))
+			vTarget <- 'tTimer';
+		else if(node.oclIsTypeOf(Turn!AndFork))
+			vTarget <- 'tAndFork';
+		else if(node.oclIsTypeOf(Turn!OrFork))
+			vTarget <- 'tOrFork';
+		else if(node.oclIsTypeOf(Turn!Stub))
+			vTarget <- 'tStub';
+		else
+			vTarget <- 'Not Found';
+		
+		vTarget;
+	}
+}
+
+rule retrieveNode(node: Turn!PathNode){
+	using{
+		vRetrievedNode : Turn!PathNode = OclUndefined;
+		vTarget : Turn!PathNode = thisModule.getNodeTarget(node);
+	}
+	do{
+		if(vTarget <> 'Not Found'){
+			vRetrievedNode <- thisModule.resolveTemp(node, thisModule.getNodeTarget(node));
 		}
 		else if(node.oclIsTypeOf(Turn!Connect)){
 			vRetrievedNode <- thisModule.resolveTemp(node, 'tConnect');
 			if(vRetrievedNode.oclIsUndefined()){
 				vRetrievedNode <- thisModule.connectMap.get(node);	
 			}
-		}
-		else if(node.oclIsTypeOf(Turn!Stub)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tStub');
 		}
 		else{ --AndJoin, OrJoin, StartPoint, and EndPoint are not created in x2y rules so must be retrieved as such
 			vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());
@@ -1860,7 +1862,7 @@ rule UCMmap2UCMmap{
 			}
 			
 			if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
-				thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
+				thisModule.startPointConnect <- thisModule.retrieveNode(path.startPoint.connect);
 				thisModule.termToSet <- vEmptyPoints -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first()));
 				thisModule.addPred(thisModule.termToSet, vStartPoint.firstUnconnectedSucc());
 			}
