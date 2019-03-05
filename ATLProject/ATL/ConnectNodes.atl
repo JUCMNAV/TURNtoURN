@@ -42,8 +42,6 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 			name <- 'EmptyPoint'+tEmptyPt.id,
 			diagram <- thisModule.tUCMmap,
 			succ <- tNodeConnection2
-			--TODO: determine if this is a fix
-			--succ <- Sequence{tNodeConnection1, tNodeConnection2}
 		)
 	do{
 		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
@@ -62,7 +60,18 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 --QUESTION: there doesn't appear to be a Turn!PathNode class. What should I use instead?
 rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Urn!PathNode){
 	do{
-		if(node.oclIsTypeOf(Turn!StartPoint)){
+		if(firstNode.oclIsTypeOf(Turn!Connect)){
+			if(node.oclIsTypeOf(Turn!AndFork)){
+				thisModule.createEmptyPointConnect(firstNode, nextNode.firstUnconnectedSucc());
+			}
+			else if(node.oclIsTypeOf(Turn!OrFork)){
+				thisModule.createEmptyPointConnect(firstNode, nextNode.succ -> first());
+			}
+			else{
+				thisModule.createEmptyPointConnect(firstNode, thisModule.retrieveNode(node).firstUnconnectedSucc());
+			}
+		}
+		else if(node.oclIsTypeOf(Turn!StartPoint)){
 			if(firstNode.oclIsTypeOf(Turn!WaitingPlace)){
 				if(not firstNode.connect.oclIsUndefined()){
 					thisModule.addPred(thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and n.succ -> includes(thisModule.retrieveNode(firstNode.connect).pred -> first())), thisModule.retrieveNode(node).firstUnconnectedSucc());
@@ -70,9 +79,6 @@ rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Ur
 				else{
 					thisModule.addPred(thisModule.retrieveNode(firstNode), thisModule.retrieveNode(node).firstUnconnectedSucc());
 				}
-			}
-			else if(firstNode.oclIsTypeOf(Turn!Connect)){
-				thisModule.createEmptyPointConnect(firstNode, thisModule.retrieveNode(node).firstUnconnectedSucc());
 			}
 			else{
 				thisModule.addPred(thisModule.retrieveNode(firstNode), thisModule.retrieveNode(node).firstUnconnectedSucc());
@@ -82,18 +88,8 @@ rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Ur
 			if(nextNode.oclIsUndefined()){
 				nextNode <- thisModule.retrieveNode(node);
 			}
-	
-			if(firstNode.oclIsTypeOf(Turn!Connect)){
-				if(node.oclIsTypeOf(Turn!AndFork)){
-					thisModule.createEmptyPointConnect(firstNode, nextNode.firstUnconnectedSucc());
-				}
-				else if(node.oclIsTypeOf(Turn!OrFork)){
-					thisModule.createEmptyPointConnect(firstNode, nextNode.succ -> first());
-				}
-			}
-			else{
-				thisModule.addPred(thisModule.retrieveNode(firstNode), nextNode.firstUnconnectedSucc());
-			}
+			
+			thisModule.addPred(thisModule.retrieveNode(firstNode), nextNode.firstUnconnectedSucc());
 			
 			if(firstNode.oclIsTypeOf(Turn!Timer) and node.oclIsTypeOf(Turn!OrFork)){
 				thisModule.addPred(thisModule.retrieveNode(firstNode), thisModule.retrieveNode(node).succ -> first());
@@ -107,9 +103,6 @@ rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Ur
 			--	thisModule.addPred(thisModule.retrieveNode(firstNode), thisModule.retrieveNode(node).succ -> firstUnconnectedSucc());
 			--}
 		--}
-		else if(firstNode.oclIsTypeOf(Turn!Connect)){
-			thisModule.createEmptyPointConnect(firstNode, thisModule.retrieveNode(node).firstUnconnectedSucc());
-		}
 		else{
 			thisModule.addPred(thisModule.retrieveNode(firstNode), thisModule.retrieveNode(node).firstUnconnectedSucc());
 		}
@@ -132,10 +125,10 @@ rule handleNode(currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 				thisModule.createEmptyPointConnect(currentNode, thisModule.retrieveNode(previousNode).succ);
 			}
 		}
-		else if(previousNode.oclIsTypeOf(Turn!RespRef) and not (currentNode.oclIsTypeOf(Turn!Timer) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!FailurePoint) or currentNode.oclIsTypeOf(Turn!RespRef))){
-			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.tUCMmap.allRespDefsMatching(previousNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
-		}
-		else if(previousNode.oclIsTypeOf(Turn!Connect)){
+		--else if(previousNode.oclIsTypeOf(Turn!RespRef) and not (currentNode.oclIsTypeOf(Turn!Timer) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!FailurePoint) or currentNode.oclIsTypeOf(Turn!RespRef))){
+			--thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.tUCMmap.allRespDefsMatching(previousNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
+		--}
+		--else if(previousNode.oclIsTypeOf(Turn!Connect)){
 			--if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
 			--	thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.connectMap.get(previousNode).firstUnconnectedSucc()); 
 			--}
@@ -146,12 +139,12 @@ rule handleNode(currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 				--else{
 				--	thisModule.addSucc(thisModule.retrieveNode(previousNode.connectsTo).succ, thisModule.createNodeConnection());
 				--}
-				thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode.connectsTo).firstUnconnectedSucc());
+				--thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode.connectsTo).firstUnconnectedSucc());
 			--}
-		}
-		else{
-			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode).firstUnconnectedSucc());
-		}
+		--}
+		--else{
+			--thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode).firstUnconnectedSucc());
+		--}
 	}
 }
 
@@ -162,15 +155,15 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 	do{
 		if(currentNode.oclIsTypeOf(Turn!RespRef)){
 			--QUESTION: is it possible for something to be both Turn!RespRef and Turn!Connect
-			if(pathend.oclIsTypeOf(Turn!EndpointWithConnect) and currentNode.oclIsTypeOf(Turn!Connect)){
-				thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), thisModule.retrieveNode(currentNode.connectsTo).firstUnconnectedSucc());
-			}
-			else if (pathend.oclIsTypeOf(Turn!Stub)){
-				thisModule.addPred(thisModule.retrieveNode(pathend), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
-			}
-			else{
+			--if(pathend.oclIsTypeOf(Turn!EndpointWithConnect) and currentNode.oclIsTypeOf(Turn!Connect)){
+			--	thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), thisModule.retrieveNode(currentNode.connectsTo).firstUnconnectedSucc());
+			--}
+			--else if (pathend.oclIsTypeOf(Turn!Stub)){
+			--	thisModule.addPred(thisModule.retrieveNode(pathend), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
+			--}
+			--else{
 				thisModule.connectPathEndToNextNode(pathend, thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
-			}
+			--}
 		}
 		else if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
 			if(currentNode.oclIsTypeOf(Turn!Connect)){
@@ -197,7 +190,7 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 				thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
 			}
 		}
-		else if(pathend.oclIsTypeOf(Turn!Stub) and (currentNode.oclIsTypeOf(Turn!Timer) or currentNode.oclIsTypeOf(Turn!Stub))){
+		else if(pathend.oclIsTypeOf(Turn!Stub) and (currentNode.oclIsTypeOf(Turn!Timer))){--or currentNode.oclIsTypeOf(Turn!Stub))){
 			thisModule.addPred(thisModule.retrieveNode(pathend), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub) or pathend.oclIsTypeOf(Turn!OrFork) or pathend.oclIsTypeOf(Turn!AndFork)){

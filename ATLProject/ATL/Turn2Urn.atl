@@ -1870,7 +1870,7 @@ rule UCMmap2UCMmap{
 					--TODO: SECOND BUG noted in README occurs here upon running the code using endpoint.xml
 					vConnectingEndPoint <- thisModule.retrieveNode(vPathEnd.regularEnd);
 					
-					if(not vPathEnd.connect.oclIsUndefined()){
+					--if(not vPathEnd.connect.oclIsUndefined()){
 						--thisModule.addSucc(vConnectingEndPoint, thisModule.createNodeConnection());
 						
 						--vConnect <- thisModule.createConnect();
@@ -1883,12 +1883,12 @@ rule UCMmap2UCMmap{
 						--else{
 						--	thisModule.addPred(thisModule.retrieveNode(vPathEnd.connect.connectsTo), vConnect.succ);
 						--}
-					}
-					else if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
-						thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
-						thisModule.newPred <- vEmptyPoints -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first())).firstUnconnectedSucc();
-						thisModule.addPred(vConnectingEndPoint, thisModule.newPred);
-					} 
+					--}
+					--else if(not path.startPoint.connect.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
+					--	thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
+					--	thisModule.newPred <- vEmptyPoints -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first())).firstUnconnectedSucc();
+					--	thisModule.addPred(vConnectingEndPoint, thisModule.newPred);
+					--} 
 					thisModule.addPred(vConnectingEndPoint, vStartPoint.firstUnconnectedSucc());
 				}
 				else if(vPathEnd.oclIsTypeOf(Turn!OrFork) or vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!Stub)){
@@ -1905,7 +1905,7 @@ rule UCMmap2UCMmap{
 				if(not vBody.referencedEnd.oclIsUndefined()){
 					thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), thisModule.retrieveNode(path.startPoint).succ); 
 				}
-				else if (not vBody.referencedStub.oclIsUndefined()){
+				else if(not vBody.referencedStub.oclIsUndefined()){
 					thisModule.processReferencedStub(vBody, thisModule.retrieveNode(path.startPoint).succ);
 				}
 			}
