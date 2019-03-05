@@ -284,7 +284,6 @@ rule connectPathEndToNextNode(pathend: Turn!Pathend, nextNode: Urn!PathNode){
 		thisModule.finishedConnection <- true;
 		
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-			--HERE
 			thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), nextNode);
 		}
 		else if(pathend.oclIsTypeOf(Turn!OrFork) or pathend.oclIsTypeOf(Turn!AndFork) or pathend.oclIsTypeOf(Turn!Stub)){
@@ -359,7 +358,7 @@ rule collectRegularEnds(pathbody: Turn!PathBody){
 rule connectAndForkNodes(pathend: Turn!PathEnd){
 	using{
 		vHasReferencedEnd : Boolean = OclUndefined;
-		vAndFork : Urn!AndFork = thisModule.resolveTemp(pathend, 'tAndFork');
+		vAndFork : Urn!AndFork = thisModule.retrieveNode(pathend);
 		vCounter : Integer = 1;
 	}
 	do{
@@ -795,6 +794,20 @@ rule createBeliefLink(s: Turn!ElementLink){
 	}
 }
 
+rule connectNodesAfterFork(pathbodies: Sequence(Turn!PathBody), forkNode: Turn!PathNode){
+	using{
+		vCounter: Integer = 1;	
+	}
+	do{
+		for(pathbody in pathbodies){
+			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
+				thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), forkNode.succ -> at(vCounter));
+			}
+			vCounter <- vCounter.inc(); 			
+		}	
+	}
+}
+
 rule processAndFork(obj: Turn!AndFork){
 	using{
 		tAndFork : Urn!AndFork = thisModule.retrieveNode(obj);	
@@ -847,15 +860,7 @@ rule processAndFork(obj: Turn!AndFork){
 			thisModule.connectNodes(obj.connectingAndBody, obj, thisModule.nextNode);		
 		}
 		
-		--Connecting nodes after AndFork
-		thisModule.andForkNodeConnCounter <- 1;
-		for(pathbody in obj.pathbody){
-			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
-				thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), tAndFork.succ -> at(thisModule.andForkNodeConnCounter));
-			}
-			thisModule.andForkNodeConnCounter <- thisModule.andForkNodeConnCounter.inc(); 			
-		}
-		
+		thisModule.connectNodesAfterFork(obj.pathbody, tAndFork);
 		thisModule.useBacklinksToConnectOrFork(obj.pbody, tAndFork);
 		tAndFork;	
 	}
@@ -867,6 +872,8 @@ rule processOrFork(obj: Turn!OrFork){
 		tConn : Urn!NodeConnection = OclUndefined;
 	}
 	do{
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tOrFork);
+		
 		if(not obj.body.oclIsUndefined()){
 			for(elem in obj.body.regularBody){
 				tConn <- thisModule.createNodeConnection();
@@ -969,53 +976,13 @@ rule processOrFork(obj: Turn!OrFork){
 			thisModule.connectNodes(obj.connectingOrBody, obj, thisModule.nextNode);
 		}
 		
-		--Connecting nodes after OrFork
-		thisModule.connectNodesAfterOrForkCounter <- 1;
 		if(not obj.body.oclIsUndefined()){
-			for(pathbody in obj.getPathBodies()){
-				if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
-					thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), tOrFork.succ -> at(thisModule.connectNodesAfterOrForkCounter));
-				}
-				thisModule.connectNodesAfterOrForkCounter <- thisModule.connectNodesAfterOrForkCounter.inc(); 			
-			}
+			thisModule.connectNodesAfterFork(obj.getPathBodies(), tOrFork);
 		}
 		
 		thisModule.useBacklinksToConnectOrFork(obj.pbody, tOrFork);
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tOrFork);
 		tOrFork;
 	}
-}
-
-rule Stub2Stub{
-	from
-		stubObj: Turn!Stub
-	using{
-		vIsBlocking : Boolean = stubObj.stubType.toString() = 'blocking';
-		vIsSynchronizing : Boolean = stubObj.stubType.toString() = 'synchronizing';
-		vBlocking : Boolean = 
-			if(vIsBlocking) then
-				true
-			else
-				OclUndefined
-			endif;
-		vSynchronizing : Boolean = 
-			if(vIsBlocking or vIsSynchronizing) then
-				true
-			else
-				OclUndefined
-			endif;
-	}
-	to
-		tStub: Urn!Stub (
-			id <- thisModule.nextId().toString(),
-			name <- stubObj.turnGetLongestName(),
-			diagram <- thisModule.tUCMmap,
-			label <- tNodeLabel,
-			blocking <- vBlocking,
-			synchronization <- vSynchronizing,
-			contRef <- thisModule.getUrnCompRef(stubObj)
-		),
-		tNodeLabel: Urn!NodeLabel()
 }
 
 rule processStub(stubObj:Turn!Stub){
@@ -1029,7 +996,6 @@ rule processStub(stubObj:Turn!Stub){
 			tStub.bindings <- stubObj.params.plugin -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
 		else{
-			-- TODO: determine if this route is ever entered
 			vAllStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs;
 			tStub.bindings <- vAllStubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
@@ -1037,6 +1003,8 @@ rule processStub(stubObj:Turn!Stub){
 		if(tStub.synchronization){
 			tStub.dynamic <- true;
 		}
+		
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tStub);
 		
 		thisModule.outPaths <- stubObj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
 		thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
@@ -1094,13 +1062,12 @@ rule processStub(stubObj:Turn!Stub){
 			
 		}
 		--WRITE CODE FOR OUTPATH NODES as outpath has nodes too.
-	
+
 		thisModule.useBacklinksToConnectOrFork(stubObj.pbody, tStub);
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tStub);
 		thisModule.createStubOutNodes(stubObj);
 		tStub;
 	}
-}
+	}
 
 rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 	using{
@@ -1123,9 +1090,7 @@ rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 			else{
 				vStubEntry <- vBoundTerm.stubParam.stub;
 			}
-			if(not thisModule.retrieveNode(vStubEntry).oclIsUndefined() and not thisModule.retrieveNode(vStubEntry).pred -> isEmpty()){
-				-- TODO: THIRD BUG - (1st instance) - this line affects stub.xml, component.xml, and responsibility.xml; 
-				-- the if statement above these comments is a temporary solution
+			if(not thisModule.retrieveNode(vStubEntry).pred -> isEmpty()){
 				tBinding.stubEntry <- thisModule.retrieveNode(vStubEntry).pred -> at(s.index);
 			}
 		}	
@@ -1193,6 +1158,38 @@ rule IntElements2IntElements{
 			tIntElem.importance <- s.importance.toString().capitalize();
 		}
 	}
+}
+
+rule Stub2Stub{
+	from
+		stubObj: Turn!Stub
+	using{
+		vIsBlocking : Boolean = stubObj.stubType.toString() = 'blocking';
+		vIsSynchronizing : Boolean = stubObj.stubType.toString() = 'synchronizing';
+		vBlocking : Boolean = 
+			if(vIsBlocking) then
+				true
+			else
+				OclUndefined
+			endif;
+		vSynchronizing : Boolean = 
+			if(vIsBlocking or vIsSynchronizing) then
+				true
+			else
+				OclUndefined
+			endif;
+	}
+	to
+		tStub: Urn!Stub (
+			id <- thisModule.nextId().toString(),
+			name <- stubObj.turnGetLongestName(),
+			diagram <- thisModule.tUCMmap,
+			label <- tNodeLabel,
+			blocking <- vBlocking,
+			synchronization <- vSynchronizing,
+			contRef <- thisModule.getUrnCompRef(stubObj)
+		),
+		tNodeLabel: Urn!NodeLabel()
 }
 
 rule Actor2Actor{
