@@ -870,22 +870,26 @@ rule processOrFork(obj: Turn!OrFork){
 	using{
 		tOrFork : Urn!OrFork = thisModule.retrieveNode(obj);
 		tConn : Urn!NodeConnection = OclUndefined;
+		vElements : Sequence(Turn!RegularOrFork) = Sequence{};
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tOrFork);
 		
 		if(not obj.body.oclIsUndefined()){
-			for(elem in obj.body.regularBody){
+			vElements <- vElements -> union(obj.body.regularBody);
+		}
+		else if(not obj.connectingOrBody.oclIsUndefined()){
+			vElements <- vElements -> including(obj);	
+		}
+		
+		if(not vElements -> isEmpty()){
+			for(elem in vElements){
 				tConn <- thisModule.createNodeConnection();
 				tConn.condition <- thisModule.resolveTemp(elem.condition, 'tCondition');
 				thisModule.addSucc(tOrFork, tConn);
 			}
 		}
-		else if(not obj.connectingOrBody.oclIsUndefined()){
-			tConn <- thisModule.createNodeConnection();
-			tConn.condition <- thisModule.resolveTemp(obj.condition, 'tCondition');
-			thisModule.addSucc(tOrFork, tConn);
-		}
+		
 		--Connecting nodes before OrFork in case it is a stub
 		if(not obj.pbody.parentStub.oclIsUndefined()){
 			thisModule.addPred(tOrFork, thisModule.retrieveNode(obj.pbody.parentStub.parentStub).succ);
@@ -931,6 +935,7 @@ rule processOrFork(obj: Turn!OrFork){
 			thisModule.processPathEnd(obj.connectingOrBody.pathEnd);
 			
 			thisModule.numberOfTerminatingNodes <- 0;
+			
 			if(not obj.body.oclIsUndefined()){
 				thisModule.numberOfTerminatingNodes <- obj.body.regularBody -> collect(pb|pb.pathBody) -> select(pb|pb.pathEnd.oclIsUndefined()) -> size();
 			}
@@ -949,7 +954,7 @@ rule processOrFork(obj: Turn!OrFork){
 			else if(thisModule.numberOfTerminatingNodes = 2){
 				thisModule.nextNode <- thisModule.createOrJoin();
 				thisModule.addPred(thisModule.nextNode, tOrFork.firstUnconnectedSucc());
-				--thisModule.addPred(thisModule.nextNode, tOrFork.firstUnconnectedSucc());
+				thisModule.addPred(thisModule.nextNode, tOrFork.firstUnconnectedSucc());
 			}
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
