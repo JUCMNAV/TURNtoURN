@@ -147,10 +147,7 @@ rule getResponsibility(responsibilityName: String){
 
 rule processPathNode(node: OclAny){
 	do{
-		if(node.oclIsTypeOf(Turn!Timer)){
-			thisModule.connectTimerNodes(node);
-		}
-		else if(node.oclIsTypeOf(Turn!AndFork)){
+		if(node.oclIsTypeOf(Turn!AndFork)){
 			thisModule.connectAndForkNodes(node);
 		}
 		else if(node.oclIsTypeOf(Turn!OrFork)){
@@ -448,24 +445,24 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, expression
 	}
 }
 
-rule connectTimerNodes(timerObj: Turn!Timer){
-	using{
-		vReferencedEnd : Turn!ReferencedEnd = timerObj.timeoutPath.referencedEnd;
-	}
-	do{
-		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
-		--if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
-		--	thisModule.addPred(thisModule.retrieveNode(timerObj.timeoutPath.pathNodes -> first()), thisModule.retrieveNode(timerObj).succ -> at(2));
-		--	thisModule.connectNodes(timerObj.timeoutPath, timerObj, OclUndefined);
-		--}
-		
-		--if(vReferencedEnd.oclIsTypeOf(Turn!RespRef)){
-		--	thisModule.addPred(thisModule.getResponsibility(thisModule.referencedEnd.name).respRefs -> first(), thisModule.retrieveNode(timerObj).succ -> at(2));
-		--}
-		
-		thisModule.processPathNode(timerObj.timeoutPath.pathEnd);
-	}
-}
+--rule connectTimerNodes(timerObj: Turn!Timer){
+--	using{
+--		vReferencedEnd : Turn!ReferencedEnd = timerObj.timeoutPath.referencedEnd;
+--	}
+--	do{
+--		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
+--		if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
+--			thisModule.addPred(thisModule.retrieveNode(timerObj.timeoutPath.pathNodes -> first()), thisModule.retrieveNode(timerObj).succ -> at(2));
+--			thisModule.connectNodes(timerObj.timeoutPath, timerObj, OclUndefined);
+--		}
+--		
+--		if(vReferencedEnd.oclIsTypeOf(Turn!RespRef)){
+--			thisModule.addPred(thisModule.getResponsibility(thisModule.referencedEnd.name).respRefs -> first(), thisModule.retrieveNode(timerObj).succ -> at(2));
+--		}
+--		
+--		thisModule.processPathNode(timerObj.timeoutPath.pathEnd);
+--	}
+--}
 
 rule createMetadata(name: String, value: String) {
 	to 
@@ -633,38 +630,7 @@ rule createStubOutNodes(stubObj:Turn!Stub){
 					}
 				}
 			}
-			--TODO: determine why removing the code below didn't change what was produced by the system
-			--if pathNodes exist
-			--else{
-			--	for(node in outPath.path.pathNodes){
-					--if(vPreviousNode.oclIsUndefined()){
-					--	if(node.oclIsTypeOf(Turn!RespRef)){
-					--		thisModule.nextUnconnectedRef <- thisModule.getResponsibility(node.name).respRefs -> select(r|r.diagram.name=thisModule.tUCMmap.name) -> flatten() -> any(ref|ref.pred -> isEmpty());
-					--		thisModule.addPred(thisModule.nextUnconnectedRef, thisModule.currentSucessorToStub);
-					--	}
-					--	else{	
-					--		thisModule.addPred(thisModule.retrieveNode(node), thisModule.currentSucessorToStub);
-					--	}
-					--}
-					--else if(vPreviousNode.oclIsTypeOf(Turn!RespRef)){
-					--	thisModule.addPred(thisModule.retrieveNode(node), thisModule.resolveTemp(thisModule.previousNode, 'tRespRef').firstUnconnectedSucc());	
-					--}
-					--else{
-					--	thisModule.addPred(thisModule.retrieveNode(node), thisModule.retrieveNode(thisModule.previousNode).succ);
-					--}
-					
-				--	vPreviousNode <- node;
-				--}
-
-				--if(not outPath.pathNodes -> empty()) {
-					--if(outPath.path.pathNodes -> at(outPath.path.pathNodes -> size()).oclIsTypeOf(Turn!RespRef)){
-					--	thisModule.addPred(thisModule.tUCMmap.getNode(outPath.path.pathEnd.regularEnd.name), thisModule.resolveTemp(vPreviousNode, 'tRespRef').firstUnconnectedSucc());
-					--}
-					--else{
-					--	thisModule.addPred(thisModule.tUCMmap.getNode(outPath.path.pathEnd.name), thisModule.tUCMmap.getNode(thisModule.previousNode.name).succ);
-					--}
-				--}
-			--}
+			
 			vStubOutPathPosition <- vStubOutPathPosition.inc();
 		}	
 	}
@@ -732,16 +698,6 @@ rule processTimer(timerObj : Turn!Timer){
 			
 			if(timerObj.timeoutPath.pathNodes -> isEmpty()){
 				thisModule.collectRegularEnds(Sequence{timerObj.timeoutPath});
-				
-				--if(not timerObj.timeoutPath.referencedStub.oclIsUndefined()){
-					--QUESTION: thisModule.nextNode isn't defined anywhere; what should it be?
-				--	thisModule.next <- tTimer.firstUnconnectedSucc();
-				--}
-				--else{
-				--	thisModule.next <- tTimer.succ -> at(2);
-				--}
-				
-				--thisModule.connectReferencedEndToNextNode(timerObj.timeoutPath, thisModule.next);
 			}
 		}
 		tTimer;
@@ -794,7 +750,8 @@ rule createBeliefLink(s: Turn!ElementLink){
 	}
 }
 
-rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfTerminatingNodes: Integer){
+--TODO:  uses global variable thisModule.nextNode to pass data to calling rules; change this
+rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfTerminatingNodes: Integer, stubOutNumbers: Sequence(Integer)){
 	using{
 		vFirstPathNode : Turn!PathNode = OclUndefined;
 	}
@@ -814,14 +771,21 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 			}
 		}
 		else if(numberOfTerminatingNodes = 2){
-			if(fork.oclIsTypeOf(Urn!AndFork)){
-				thisModule.nextNode <- thisModule.createAndJoin();
-			}
-			else if(fork.oclIsTypeOf(Urn!OrFork)){
+			if(fork.oclIsTypeOf(Urn!Stub)){
 				thisModule.nextNode <- thisModule.createOrJoin();
+				thisModule.addPred(thisModule.nextNode, fork.succ -> at(stubOutNumbers -> at(1)));
+				thisModule.addPred(thisModule.nextNode, fork.succ -> at(stubOutNumbers -> at(2)));
 			}
-			thisModule.addPred(thisModule.nextNode, fork.firstUnconnectedSucc());
-			thisModule.addPred(thisModule.nextNode, fork.firstUnconnectedSucc());
+			else{
+				if(fork.oclIsTypeOf(Urn!AndFork)){
+					thisModule.nextNode <- thisModule.createAndJoin();
+				}
+				else if(fork.oclIsTypeOf(Urn!OrFork)){
+					thisModule.nextNode <- thisModule.createOrJoin();
+				}
+				thisModule.addPred(thisModule.nextNode, fork.firstUnconnectedSucc());
+				thisModule.addPred(thisModule.nextNode, fork.firstUnconnectedSucc());
+			}
 		}
 		
 		thisModule.nextNode;
@@ -863,7 +827,7 @@ rule processAndFork(obj: Turn!AndFork){
 		thisModule.collectRegularEnds(obj.pathbody -> flatten());
 		
 		if(not obj.connectingAndBody.oclIsUndefined()){
-			thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes);
+			thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes, OclUndefined);
 			
 			if(obj.connectingAndBody.pathNodes -> isEmpty()){
 				thisModule.nextPred <- thisModule.nextNode.firstUnconnectedSucc();
@@ -908,11 +872,6 @@ rule processOrFork(obj: Turn!OrFork){
 			thisModule.addSucc(tOrFork, tConn);
 		}
 		
-		--Connecting nodes before OrFork in case it is a stub
-		if(not obj.pbody.parentStub.oclIsUndefined()){
-			thisModule.addPred(tOrFork, thisModule.retrieveNode(obj.pbody.parentStub.parentStub).succ);
-		}
-		
 		if(not obj.body.oclIsUndefined()) {
 			thisModule.collectReferencedEnds(obj.getPathBodies() -> collect(pb|pb.pathNodes));
 			
@@ -941,14 +900,11 @@ rule processOrFork(obj: Turn!OrFork){
 		}
 		
 		if(not obj.connectingOrBody.oclIsUndefined()){
-			thisModule.handleForkJoin(tOrFork, obj.connectingOrBody, vNumberOfTerminatingNodes);
+			thisModule.handleForkJoin(tOrFork, obj.connectingOrBody, vNumberOfTerminatingNodes, OclUndefined);
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
 				if(not obj.body.oclIsUndefined()){
 					thisModule.pathBodies <- obj.getPathBodies();
-					--if(not obj.body.elseBody.oclIsUndefined()){
-					--	thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, thisModule.tUCMmap, tConn.condition.expression);
-					--}
 					
 					for (pathbody in obj.getPathBodies()){
 						thisModule.condition <- '';
@@ -997,6 +953,10 @@ rule processStub(stubObj:Turn!Stub){
 		
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tStub);
 		
+		thisModule.paths <- stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
+		thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes));
+		thisModule.collectRegularEnds(thisModule.paths);
+		
 		thisModule.outPaths <- stubObj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
 		thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
 		thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index);
@@ -1009,10 +969,6 @@ rule processStub(stubObj:Turn!Stub){
 			}
 		}
 		
-		thisModule.paths <- stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
-		thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes));
-		thisModule.collectRegularEnds(thisModule.paths);
-		
 		--collecting nodes from connecting stub body
 		if(not stubObj.connectingStubBody.oclIsUndefined()){ 
 			if(stubObj.outPaths -> isEmpty()){
@@ -1020,27 +976,9 @@ rule processStub(stubObj:Turn!Stub){
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			
-			thisModule.collectReferencedEnds(stubObj.connectingStubBody.pathNodes);
-			
-			thisModule.processPathEnd(stubObj.connectingStubBody.pathEnd);
-			
-			thisModule.nextNode <- tStub;
-			
-			if(thisModule.numberOfTerminatingStubNodes > 1){
-				thisModule.orJoin <- thisModule.createOrJoin();
-				thisModule.addPred(thisModule.orJoin, tStub.succ -> at(thisModule.outPathNumber -> first()));
-				thisModule.addPred(thisModule.orJoin, tStub.succ -> at(thisModule.outPathNumber -> at(2)));
-				thisModule.nextNode <- thisModule.orJoin;
+			thisModule.handleForkJoin(tStub, stubObj.connectingStubBody, thisModule.numberOfTerminatingStubNodes, thisModule.outPathNumber);
+			if(thisModule.numberOfTerminatingStubNodes = 2){
 				thisModule.outPathNumber <- Sequence{1};
-			}
-			else if(thisModule.numberOfTerminatingStubNodes = 1){
-				thisModule.firstNode <- stubObj.connectingStubBody.pathNodes -> first();
-				
-				if(not thisModule.firstNode.oclIsUndefined() and not thisModule.firstNode.oclIsTypeOf(Turn!Connect)){
-					if(not thisModule.firstNode.name.oclIsUndefined()){
-						thisModule.nextNode <- thisModule.retrieveNode(thisModule.firstNode);
-					}
-				}
 			}
 			
 			if(stubObj.connectingStubBody.pathNodes -> isEmpty()){
@@ -1050,9 +988,7 @@ rule processStub(stubObj:Turn!Stub){
 			}
 
 			thisModule.connectNodes(stubObj.connectingStubBody, stubObj, thisModule.nextNode);
-			
 		}
-		--WRITE CODE FOR OUTPATH NODES as outpath has nodes too.
 
 		thisModule.useBacklinksToConnectOrFork(stubObj.pbody, tStub);
 		thisModule.createStubOutNodes(stubObj);
@@ -1101,12 +1037,6 @@ rule IntElements2IntElements{
 			else
 				OclUndefined
 			endif;
-		vImportanceQuantitative : Integer =
-			if(s.importance.toString().toLower().equals('none')) then
-				s.importanceQuantitative
-			else
-				OclUndefined
-			endif;
 		vImportance : String =
 			if(s.importance.toString().toLower().equals('none')) then
 				OclUndefined
@@ -1126,7 +1056,7 @@ rule IntElements2IntElements{
 			name <- s.turnGetLongestName(),
 			linksSrc <- s.linksSrc,
 			decompositionType <- vDecompType,
-			importanceQuantitative <- vImportanceQuantitative,
+			importanceQuantitative <- s.importanceQuantitative,
 			importance <- vImportance,
 			metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name)
 		)
@@ -1154,30 +1084,14 @@ rule IntElements2IntElements{
 rule Stub2Stub{
 	from
 		stubObj: Turn!Stub
-	using{
-		vIsBlocking : Boolean = stubObj.stubType.toString() = 'blocking';
-		vIsSynchronizing : Boolean = stubObj.stubType.toString() = 'synchronizing';
-		vBlocking : Boolean = 
-			if(vIsBlocking) then
-				true
-			else
-				OclUndefined
-			endif;
-		vSynchronizing : Boolean = 
-			if(vIsBlocking or vIsSynchronizing) then
-				true
-			else
-				OclUndefined
-			endif;
-	}
 	to
 		tStub: Urn!Stub (
 			id <- thisModule.nextId().toString(),
 			name <- stubObj.turnGetLongestName(),
 			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
-			blocking <- vBlocking,
-			synchronization <- vSynchronizing,
+			blocking <- stubObj.stubType.toString() = 'blocking',
+			synchronization <- stubObj.stubType.toString() = 'blocking' or stubObj.stubType.toString() = 'synchronizing',
 			contRef <- thisModule.getUrnCompRef(stubObj)
 		),
 		tNodeLabel: Urn!NodeLabel()
@@ -1375,7 +1289,7 @@ rule ContributionChange2ContributionChange{
 		t: Urn!ContributionChange (
 			contribution <- s.contribution,
 			newQuantitativeContribution <- s.newQuantitativeContribution,
-			newContribution <- vNewContr
+			newContribution <- s.newContribution
 		)
 }
 
@@ -1433,7 +1347,6 @@ rule URNlink2URNlink{
 	to 
 		tCon: Urn!URNlink (
 			type <- s.type,
-			-- the pair of items below are URNmodelElements and so exist in both the URN and TURN metamodels
 			fromElem <- s.fromElem,
 			toElem <- s.toElem
 		)
@@ -1550,7 +1463,6 @@ rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
 	using{
-		
 		vElements : Sequence(Turn!IntentionalElement) = sURNspec.actors -> collect(actor|actor.elems) -> flatten();	
 		vAllIntElements : Sequence(Turn!IntentionalElement) = vElements -> select(e|e.type.toString() <> 'belief');
 		vIntElemRefs : Sequence(Urn!IntentionalElementRef) = vElements -> collect(e| thisModule.resolveTemp(e, 'tIntElemRef'));
@@ -1607,6 +1519,7 @@ rule URNspec2URNspec{
 		if(not sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').oclIsUndefined()){
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 		}
+		
 		tURNspec.nextGlobalID <- thisModule.id.toString();
 	}
 }

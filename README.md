@@ -77,6 +77,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* EndpointWithConnect vs EndPoint
 			* LongName.longname
 * New TODO (will be categorized later):
+	* Determine which attributes are not being tested (e.g., author in tStrategies)
 	* Figure out if it is possible to make an implementation that uses matched rules for OrFork, AndFork, etc.
 	* Find a way to remove the maps
 	* Ensure nextGlobalId is correct
