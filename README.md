@@ -74,6 +74,8 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Describe in this README how to use the launch configurations that have been added to the project
 	* TURN
 		* Check if it is acceptable to rename some TURN variables for more consistency in naming
+			* EndpointWithConnect vs EndPoint
+			* LongName.longname
 * New TODO (will be categorized later):
 	* Figure out if it is possible to make an implementation that uses matched rules for OrFork, AndFork, etc.
 	* Find a way to remove the maps
