@@ -76,11 +76,13 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Check if it is acceptable to rename some TURN variables for more consistency in naming
 			* EndpointWithConnect vs EndPoint
 			* LongName.longname
+		* Why is failLabel an object with failure as a property rather than just a string failLabel?
 * New TODO (will be categorized later):
 	* Determine which attributes are not being tested (e.g., author in tStrategies)
 	* Figure out if it is possible to make an implementation that uses matched rules for OrFork, AndFork, etc.
 	* Find a way to remove the maps
 	* Ensure nextGlobalId is correct
+	* Write comments describing what rules do
 	* Current issues in output produced by new code:
 		* AndFork:
 			* OrJoins missing (lines 33, 409, 477 of original file); corresponding NodeConnection missing as well
