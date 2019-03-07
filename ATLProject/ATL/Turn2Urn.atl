@@ -65,17 +65,6 @@ rule nextId(){
 	}
 }
 
-rule addSucc(node: Turn!PathNode, successor: OclAny){
-	do{
-		if(successor.oclIsKindOf(Sequence(OclAny))){
-			node.succ <- node.succ -> union(successor);
-		}
-		else{
-			node.succ <- node.succ -> including(successor);	
-		}
-	}
-}
-
 rule addPred(node: Turn!PathNode, predecessor: OclAny){
 	do{
 		if(predecessor.oclIsKindOf(Sequence(OclAny))){
@@ -87,9 +76,18 @@ rule addPred(node: Turn!PathNode, predecessor: OclAny){
 	}
 }
 
--- This is a rather obtuse approach but was necessary as
--- multiple conditionals in retrieveNode was causing
--- slow build times.
+rule addSucc(node: Turn!PathNode, successor: OclAny){
+	do{
+		if(successor.oclIsKindOf(Sequence(OclAny))){
+			node.succ <- node.succ -> union(successor);
+		}
+		else{
+			node.succ <- node.succ -> including(successor);	
+		}
+	}
+}
+
+-- This is a rather obtuse approach but was necessary as multiple conditionals in retrieveNode was causing slow build times.
 rule getNodeTarget(node: Turn!PathNode){
 	using{
 		vTarget : String = OclUndefined;
@@ -116,6 +114,49 @@ rule getNodeTarget(node: Turn!PathNode){
 	}
 }
 
+rule getResponsibility(responsibilityName: String){
+	do{
+		Urn!Responsibility.allInstances() -> any(n|n.name=responsibilityName);	
+	}
+}
+
+rule processEndpointWithConnect(sRegularEnd: Turn!PathEnd){
+	using{
+		tRegularEnd : Urn!PathEnd = thisModule.retrieveNode(sRegularEnd);
+		vOrFork : Turn!OrFork = OclUndefined;
+		vCondText : String = OclUndefined;
+	}
+	do{
+		if(tRegularEnd.oclIsUndefined()){
+			thisModule.createEndPoint(sRegularEnd);
+		}
+		else if(sRegularEnd.epConnect.pbody.pathNodes -> isEmpty()){
+			if(not sRegularEnd.epConnect.pbody.orFork.oclIsUndefined()){
+				vOrFork <- sRegularEnd.epConnect.pbody.orFork;
+				vCondText <- thisModule.joinStringSequence(vOrFork.condition.expression, '');
+				thisModule.addPred(tRegularEnd, thisModule.retrieveNode(vOrFork.orBody.orFork).succ -> any(s|s.condition.expression=vCondText));
+			}
+		}	
+	}
+}
+
+rule processPathEnd(pathend: Turn!PathNode){
+	do{
+		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
+			thisModule.processEndpointWithConnect(pathend.regularEnd);
+		}
+		else if(pathend.oclIsTypeOf(Turn!OrFork)){
+			thisModule.processOrFork(pathend);
+		}
+		else if(pathend.oclIsTypeOf(Turn!Stub)){
+			thisModule.processStub(pathend);
+		}
+		else if(pathend.oclIsTypeOf(Turn!AndFork)){
+			thisModule.processAndFork(pathend);
+		}
+	}
+}
+
 rule retrieveNode(node: Turn!PathNode){
 	using{
 		vRetrievedNode : Turn!PathNode = OclUndefined;
@@ -138,56 +179,6 @@ rule retrieveNode(node: Turn!PathNode){
 	}
 }
 
-rule getResponsibility(responsibilityName: String){
-	do{
-		Urn!Responsibility.allInstances() -> any(n|n.name=responsibilityName);	
-	}
-}
-
-rule processPathNode(node: OclAny){
-	do{
-		if(node.oclIsTypeOf(Turn!AndFork)){
-			thisModule.connectAndForkNodes(node);
-		}
-		else if(node.oclIsTypeOf(Turn!OrFork)){
-			thisModule.connectOrForkNodes(node);
-		}
-		else if(node.oclIsTypeOf(Turn!Stub)){
-			thisModule.createStubOutNodes(node);
-		}
-	}
-}
-
---TODO: to remove the boolean, take the logic that makes it necessary and withdraw it into places this method is called and the boolean is true
-rule processPathEnd(pathend: Turn!PathNode, includeBacklinks: Boolean){
-	do{
-		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(thisModule.retrieveNode(pathend.regularEnd).oclIsUndefined()){
-				thisModule.createEndPoint(pathend.regularEnd);
-			}
-			else{
-				thisModule.sEndPoint <- pathend.regularEnd;
-				thisModule.tEndPoint <- thisModule.retrieveNode(pathend.regularEnd);
-				if(thisModule.sEndPoint.epConnect.pbody.pathNodes -> isEmpty()){
-					if(not thisModule.sEndPoint.epConnect.pbody.orFork.oclIsUndefined()){
-						thisModule.orFork <- thisModule.sEndPoint.epConnect.pbody.orFork;
-						thisModule.condExpression <- thisModule.joinStringSequence(thisModule.orFork.condition.expression, '');
-						thisModule.addPred(thisModule.tEndPoint, thisModule.retrieveNode(thisModule.orFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
-					}
-				}
-			}
-		}
-		else if(pathend.oclIsTypeOf(Turn!OrFork)){
-			thisModule.processOrFork(pathend);
-		}
-		else if(pathend.oclIsTypeOf(Turn!Stub)){
-			thisModule.processStub(pathend);
-		}
-		else if(pathend.oclIsTypeOf(Turn!AndFork)){
-			thisModule.processAndFork(pathend);
-		}
-	}
-}
 
 rule getUrnCompRef(obj: OclAny){
 	using{
@@ -336,21 +327,6 @@ rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode
 	}
 }
 
-rule collectRegularEnds(pathbody: Turn!PathBody){
-	do{
-		for(pathend in pathbody -> collect(pb|pb.pathEnd) ){
-			if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-				if(thisModule.retrieveNode(pathend.regularEnd).oclIsUndefined()){
-					thisModule.createEndPoint(pathend.regularEnd);
-				}
-			}
-			else{
-				thisModule.processPathEnd(pathend);	
-			}
-		}
-	}
-}
-
 rule connectAndForkNodes(pathend: Turn!PathEnd){
 	using{
 		vHasReferencedEnd : Boolean = OclUndefined;
@@ -377,8 +353,7 @@ rule connectAndForkNodes(pathend: Turn!PathEnd){
 					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 						thisModule.addPred(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vAndFork.succ -> at(vCounter));
 					}
-				}
-				thisModule.processPathNode(pathbody.pathEnd);
+				} 
 			}
 			
 			vCounter <- vCounter.inc();
@@ -399,16 +374,8 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd){
 						thisModule.addPred(thisModule.retrieveNode(pathbody.referencedEnd), thisModule.retrieveNode(originalPathend).succ -> at(vCounter));
 					}
 				}
-				else{
-					if(pathbody.pathEnd.oclIsTypeOf(Turn!Stub)){
-						thisModule.createStubOutNodes(pathbody.pathEnd);
-					}
-					else{
-						if(not pathbody.pathNodes -> isEmpty()){
-							thisModule.connectNodes(pathbody, originalPathend, thisModule.retrieveNode(originalPathend));
-						}
-						thisModule.processPathNode(pathbody.pathEnd);
-					}
+				else if(not pathbody.pathNodes -> isEmpty()){
+					thisModule.connectNodes(pathbody, originalPathend, thisModule.retrieveNode(originalPathend));
 				}
 				vCounter <- vCounter.inc();
 			}		
@@ -455,7 +422,15 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, expression
 --			thisModule.addPred(thisModule.getResponsibility(thisModule.referencedEnd.name).respRefs -> first(), thisModule.retrieveNode(timerObj).succ -> at(2));
 --		}
 --		
---		thisModule.processPathNode(timerObj.timeoutPath.pathEnd);
+--		if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!OrFork)){
+--			thisModule.connectOrForkNodes(timerObj.timeoutPath.pathEnd);
+--		}
+--		else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!AndFork)){
+--			thisModule.connectAndForkNodes(timerObj.timeoutPath.pathEnd);
+--		}
+--		else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!Stub)){
+--			thisModule.createStubOutNodes(timerObj.timeoutPath.pathEnd);
+--		}
 --	}
 --}
 
@@ -692,7 +667,7 @@ rule processTimer(timerObj : Turn!Timer){
 			}
 			
 			if(timerObj.timeoutPath.pathNodes -> isEmpty()){
-				thisModule.collectRegularEnds(Sequence{timerObj.timeoutPath});
+				thisModule.processPathEnd(timerObj.timeoutPath.pathEnd);
 			}
 		}
 		tTimer;
@@ -819,7 +794,10 @@ rule processAndFork(obj: Turn!AndFork){
 		}
 		
 		thisModule.collectReferencedEnds(obj.pathbody -> collect(pb|pb.pathNodes));
-		thisModule.collectRegularEnds(obj.pathbody -> flatten());
+		
+		for(pathend in obj.pathbody -> collect(pb|pb.pathEnd) ){
+			thisModule.processPathEnd(pathend);	
+		}
 		
 		if(not obj.connectingAndBody.oclIsUndefined()){
 			thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes, OclUndefined);
@@ -870,7 +848,7 @@ rule processOrFork(obj: Turn!OrFork){
 		if(not obj.body.oclIsUndefined()) {
 			thisModule.collectReferencedEnds(obj.getPathBodies() -> collect(pb|pb.pathNodes));
 			
-			for (pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd) -> flatten()){
+			for(pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd)){
 				thisModule.processPathEnd(pathend);
 			}
 
@@ -950,7 +928,9 @@ rule processStub(stubObj:Turn!Stub){
 		
 		thisModule.paths <- stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
 		thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes));
-		thisModule.collectRegularEnds(thisModule.paths);
+		for(pathend in thisModule.paths -> collect(pb|pb.pathEnd)){
+			thisModule.processPathEnd(pathend);	
+		}
 		
 		thisModule.outPaths <- stubObj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
 		thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
@@ -1109,7 +1089,7 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	}
 }
 
--------------------------------4/5 MATCHED RULES WITHOUT DO BLOCKS--------------------------------
+-------------------------------3/4 MATCHED RULES WITHOUT DO BLOCKS--------------------------------
 
 rule Actor2Actor{
 	from 
@@ -1595,7 +1575,7 @@ rule WaitingPlace2WaitingPlace{
 		)
 }
 
--------------------------------5/5 MATCHED RULES WITH DO BLOCKS-----------------------------------
+-------------------------------4/4 MATCHED RULES WITH DO BLOCKS-----------------------------------
 
 rule Component2Component{
 	from 
