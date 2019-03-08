@@ -7,115 +7,6 @@ create OUT : Urn from IN : Turn;
 -- to initialize the matched item. The second is in a called rule, to 
 -- initialize some object created during a different object's matching.
 
-rule processEndpointWithConnect(sRegularEnd: Turn!PathEnd){
-	using{
-		tRegularEnd : Urn!PathEnd = thisModule.retrieveNode(sRegularEnd);
-		vOrFork : Turn!OrFork = OclUndefined;
-	}
-	do{
-		if(tRegularEnd.oclIsUndefined()){
-			thisModule.processEndPoint(sRegularEnd, thisModule.createEndPoint());
-		}
-		else if(sRegularEnd.epConnect.pbody.pathNodes -> isEmpty()){
-			if(not sRegularEnd.epConnect.pbody.orFork.oclIsUndefined()){
-				vOrFork <- sRegularEnd.epConnect.pbody.orFork;
-				thisModule.addPred(tRegularEnd, thisModule.retrieveNode(vOrFork.orBody.orFork).succ -> any(s|s.condition.expression=vOrFork.condition.expression.asString()));
-			}
-		}	
-	}
-}
-
-rule processEndPoint(node: Turn!PathNode, tEndPoint: Turn!EndPoint){
-	do{
-		tEndPoint.contRef <- thisModule.getUrnCompRef(node);
-		if(node.oclIsTypeOf(Turn!EndPoint)){
-			tEndPoint.postcondition <- node.condition;
-		}
-		
-		if(not node.oclIsTypeOf(Turn!OrFork)){
-			tEndPoint.name <- node.turnGetLongestName();
-			
-			thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
-			
-			if(node.epConnect.pbody.pathNodes -> isEmpty()){
-				--Using backlinks to connect orFork
-				thisModule.currentOrFork <- node.epConnect.pbody.orFork;
-				if(not thisModule.currentOrFork.oclIsUndefined()){
-					thisModule.condExpression <- thisModule.currentOrFork.condition.expression.asString();
-					thisModule.addPred(tEndPoint, thisModule.retrieveNode(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
-				}
-				
-				--Using backlinks to connect andFork
-				thisModule.currentAndFork <- node.epConnect.pbody.andFork;
-				if(not thisModule.currentAndFork.oclIsUndefined()){
-					thisModule.addPred(tEndPoint, thisModule.retrieveNode(thisModule.currentAndFork).firstUnconnectedSucc());
-				}
-			}
-		}
-		
-		tEndPoint;
-	}
-}
-
-rule processPathEnd(pathend: Turn!PathNode){
-	do{
-		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-			thisModule.processEndpointWithConnect(pathend.regularEnd);
-		}
-		else if(pathend.oclIsTypeOf(Turn!OrFork)){
-			thisModule.processOrFork(pathend);
-		}
-		else if(pathend.oclIsTypeOf(Turn!Stub)){
-			thisModule.processStub(pathend);
-		}
-		else if(pathend.oclIsTypeOf(Turn!AndFork)){
-			thisModule.processAndFork(pathend);
-		}
-	}
-}
-
-rule processReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
-	using{
-		vStub : Urn!Stub = thisModule.retrieveNode(body.referencedStub);
-		vOrJoin : Urn!OrJoin = OclUndefined;
-	}
-	do{
-		if(vStub.pred -> size() >= body.index){
-			vOrJoin <- thisModule.createOrJoin();
-			thisModule.addPred(vOrJoin, nextNode);
-			thisModule.addPred(vOrJoin, (vStub.pred -> first()).source.succ);
-			thisModule.addPred(vStub, vOrJoin.succ);
-		}
-		else{
-			thisModule.addPred(vStub, nextNode);	
-		}
-	}
-}
-
-rule processTimer(timerObj : Turn!Timer){
-	using{
-		tTimer : Urn!Timer = thisModule.retrieveNode(timerObj);
-	}
-	do{
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tTimer);
-		
-		--timer out path
-		if(not timerObj.timeoutPath.oclIsUndefined()){
-			thisModule.addSucc(tTimer, thisModule.createNodeConnection());
-			thisModule.collectReferencedEnds(timerObj.timeoutPath.pathNodes);
-			
-			if(not timerObj.timeoutCondition.oclIsUndefined()){
-				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> first());
-			}
-			
-			if(timerObj.timeoutPath.pathNodes -> isEmpty()){
-				thisModule.processPathEnd(timerObj.timeoutPath.pathEnd);
-			}
-		}
-		tTimer;
-	}
-}
-
 rule processAndFork(obj: Turn!AndFork){
 	using{
 		tAndFork : Urn!AndFork = thisModule.retrieveNode(obj);	
@@ -197,6 +88,115 @@ rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 				tBinding.stubEntry <- thisModule.retrieveNode(vStubEntry).pred -> at(s.index);
 			}
 		}	
+	}
+}
+
+rule processEndPoint(node: Turn!PathNode, tEndPoint: Turn!EndPoint){
+	do{
+		tEndPoint.contRef <- thisModule.getUrnCompRef(node);
+		if(node.oclIsTypeOf(Turn!EndPoint)){
+			tEndPoint.postcondition <- node.condition;
+		}
+		
+		if(not node.oclIsTypeOf(Turn!OrFork)){
+			tEndPoint.name <- node.turnGetLongestName();
+			
+			thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
+			
+			if(node.epConnect.pbody.pathNodes -> isEmpty()){
+				--Using backlinks to connect orFork
+				thisModule.currentOrFork <- node.epConnect.pbody.orFork;
+				if(not thisModule.currentOrFork.oclIsUndefined()){
+					thisModule.condExpression <- thisModule.currentOrFork.condition.expression.asString();
+					thisModule.addPred(tEndPoint, thisModule.retrieveNode(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
+				}
+				
+				--Using backlinks to connect andFork
+				thisModule.currentAndFork <- node.epConnect.pbody.andFork;
+				if(not thisModule.currentAndFork.oclIsUndefined()){
+					thisModule.addPred(tEndPoint, thisModule.retrieveNode(thisModule.currentAndFork).firstUnconnectedSucc());
+				}
+			}
+		}
+		
+		tEndPoint;
+	}
+}
+
+rule processEndpointWithConnect(sRegularEnd: Turn!PathEnd){
+	using{
+		tRegularEnd : Urn!PathEnd = thisModule.retrieveNode(sRegularEnd);
+		vOrFork : Turn!OrFork = OclUndefined;
+	}
+	do{
+		if(tRegularEnd.oclIsUndefined()){
+			thisModule.processEndPoint(sRegularEnd, thisModule.createEndPoint());
+		}
+		else if(sRegularEnd.epConnect.pbody.pathNodes -> isEmpty()){
+			if(not sRegularEnd.epConnect.pbody.orFork.oclIsUndefined()){
+				vOrFork <- sRegularEnd.epConnect.pbody.orFork;
+				thisModule.addPred(tRegularEnd, thisModule.retrieveNode(vOrFork.orBody.orFork).succ -> any(s|s.condition.expression=vOrFork.condition.expression.asString()));
+			}
+		}	
+	}
+}
+
+rule processPathEnd(pathend: Turn!PathNode){
+	do{
+		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
+			thisModule.processEndpointWithConnect(pathend.regularEnd);
+		}
+		else if(pathend.oclIsTypeOf(Turn!OrFork)){
+			thisModule.processOrFork(pathend);
+		}
+		else if(pathend.oclIsTypeOf(Turn!Stub)){
+			thisModule.processStub(pathend);
+		}
+		else if(pathend.oclIsTypeOf(Turn!AndFork)){
+			thisModule.processAndFork(pathend);
+		}
+	}
+}
+
+rule processReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
+	using{
+		vStub : Urn!Stub = thisModule.retrieveNode(body.referencedStub);
+		vOrJoin : Urn!OrJoin = OclUndefined;
+	}
+	do{
+		if(vStub.pred -> size() >= body.index){
+			vOrJoin <- thisModule.createOrJoin();
+			thisModule.addPred(vOrJoin, nextNode);
+			thisModule.addPred(vOrJoin, (vStub.pred -> first()).source.succ);
+			thisModule.addPred(vStub, vOrJoin.succ);
+		}
+		else{
+			thisModule.addPred(vStub, nextNode);	
+		}
+	}
+}
+
+rule processTimer(timerObj : Turn!Timer){
+	using{
+		tTimer : Urn!Timer = thisModule.retrieveNode(timerObj);
+	}
+	do{
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tTimer);
+		
+		--timer out path
+		if(not timerObj.timeoutPath.oclIsUndefined()){
+			thisModule.addSucc(tTimer, thisModule.createNodeConnection());
+			thisModule.collectReferencedEnds(timerObj.timeoutPath.pathNodes);
+			
+			if(not timerObj.timeoutCondition.oclIsUndefined()){
+				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> first());
+			}
+			
+			if(timerObj.timeoutPath.pathNodes -> isEmpty()){
+				thisModule.processPathEnd(timerObj.timeoutPath.pathEnd);
+			}
+		}
+		tTimer;
 	}
 }
 
