@@ -380,7 +380,6 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	using{
 		vPathEnd : Turn!RegularEnd = OclUndefined;
 		vConnect : Urn!Connect = OclUndefined;
-		vConnectingEndPoint : Urn!EndPoint = OclUndefined;
 		vStartPoint : Urn!StartPoint = OclUndefined;
 		vBody : Turn!PathBody = OclUndefined;
 	}
@@ -414,29 +413,7 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			--if no pathnodes exist
 			if(path.pathBody.pathNodes -> isEmpty()){
 				if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					--TODO: SECOND BUG noted in README occurs here upon running the code using endpoint.xml
-					vConnectingEndPoint <- thisModule.retrieveNode(vPathEnd.regularEnd);
-					--thisModule.debug(vPathEnd.connect);
-					--if(not vPathEnd.connect.oclIsUndefined()){
-						--thisModule.addSucc(vConnectingEndPoint, thisModule.createNodeConnection());
-						
-						--vConnect <- thisModule.createConnect();
-						--thisModule.addPred(vConnect, vConnectingEndPoint.succ);
-						--thisModule.connectMap <- thisModule.connectMap.including(vPathEnd.connect, vConnect);
-						
-						--if(vPathEnd.connect.connectsTo.oclIsTypeOf(Turn!Timer)){
-						--	thisModule.addPred(thisModule.createEmptyPt(vPathEnd.connect.connectsTo, false), vConnect.succ);
-						--}
-						--else{
-						--	thisModule.addPred(thisModule.retrieveNode(vPathEnd.connect.connectsTo), vConnect.succ);
-						--}
-					--}
-					--else if(not path.startPoint.connect.oclIsUndefined() and not thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
-					--	thisModule.startPointConnect <- thisModule.connectMap.get(path.startPoint.connect);
-					--	thisModule.newPred <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first())).firstUnconnectedSucc();
-					--	thisModule.addPred(vConnectingEndPoint, thisModule.newPred);
-					--} 
-					thisModule.addPred(vConnectingEndPoint, vStartPoint.firstUnconnectedSucc());
+					thisModule.addPred(thisModule.retrieveNode(vPathEnd.regularEnd), vStartPoint.firstUnconnectedSucc());
 				}
 				else if(vPathEnd.oclIsTypeOf(Turn!OrFork) or vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!Stub)){
 					thisModule.addPred(thisModule.retrieveNode(vPathEnd), vStartPoint.succ);
