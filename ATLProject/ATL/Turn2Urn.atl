@@ -75,10 +75,10 @@ rule nextId(){
 rule addPred(node: Turn!PathNode, predecessor: OclAny){
 	do{
 		if(predecessor.oclIsKindOf(Sequence(OclAny))){
-			node.pred <- node.pred -> union(predecessor);
+			node.pred <- node.pred.union(predecessor);
 		}
 		else{
-			node.pred <- node.pred -> including(predecessor);	
+			node.pred <- node.pred.including(predecessor);	
 		}
 	}
 }
@@ -86,10 +86,10 @@ rule addPred(node: Turn!PathNode, predecessor: OclAny){
 rule addSucc(node: Turn!PathNode, successor: OclAny){
 	do{
 		if(successor.oclIsKindOf(Sequence(OclAny))){
-			node.succ <- node.succ -> union(successor);
+			node.succ <- node.succ.union(successor);
 		}
 		else{
-			node.succ <- node.succ -> including(successor);	
+			node.succ <- node.succ.including(successor);	
 		}
 	}
 }
@@ -125,11 +125,11 @@ rule contributionNumberToKeyword(quantitativeContribution: Integer){
 rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
 	do{
 		pathNodes <- pathNodes -> flatten();
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
 	}
 }
 
@@ -170,13 +170,13 @@ rule retrieveNode(node: Turn!PathNode){
 		-- implementation of this rule.
 		
 		vRetrievedNode <- Sequence{thisModule.resolveTemp(node, 'tWtPlace')};
-		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tFailPt'));
-		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tRespRef'));
-		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tTimer'));
-		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tAndFork'));
-		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tOrFork'));
-		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tStub'));
-		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tConnect'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tFailPt'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tRespRef'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tTimer'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tAndFork'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tOrFork'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tStub'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tConnect'));
 		vRetrievedNode <- vRetrievedNode -> any(e|not e.oclIsUndefined());
 		
 		if(vRetrievedNode.oclIsUndefined()){
@@ -249,7 +249,7 @@ rule Actor2Actor{
 			id <- thisModule.nextId().toString(),
 			name <- 'ActorRef' + tActorRef.id,
 			contDef <- tActor,
-			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e, 'tIntElemRef')) -> union(s.elems -> collect(e|thisModule.resolveTemp(e, 'tBelief'))),
+			nodes <- s.elems -> collect(e|thisModule.resolveTemp(e, 'tIntElemRef')).union(s.elems -> collect(e|thisModule.resolveTemp(e, 'tBelief'))),
 			label <- tCompLabel
 		),
 		tCompLabel: Urn!ComponentLabel()
@@ -397,7 +397,7 @@ rule ContributionContextGroup2ContributionContextGroup{
 		tContribGroups: Urn!ContributionContextGroup (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-			contribs <- s.contribs -> including(s.contrib)
+			contribs <- s.contribs.including(s.contrib)
 		)
 }
 	
@@ -543,8 +543,8 @@ rule PluginBinding2PluginBinding{
 	to
 		tPluginBinding: Urn!PluginBinding (
 			-- this could be other way round, binding could be inBinding or OutBinding and vice-versa.
-			in <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tInBinding')) -> including(thisModule.resolveTemp(s.binding, 'tInBinding')),
-			out <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tOutBinding')) -> including(thisModule.resolveTemp(s.binding, 'tOutBinding')),
+			in <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tInBinding')).including(thisModule.resolveTemp(s.binding, 'tInBinding')),
+			out <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tOutBinding')).including(thisModule.resolveTemp(s.binding, 'tOutBinding')),
 			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
 			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
 			replicationFactor <- s.replication
@@ -605,7 +605,7 @@ rule StrategiesGroup2StrategiesGroup{
 		tStrategiesGroup: Urn!StrategiesGroup (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-			strategies <- s.evalStrategies -> including(s.evalStrategy)
+			strategies <- s.evalStrategies.including(s.evalStrategy)
 		)
 	
 }
@@ -756,9 +756,9 @@ rule Component2Component{
 		
 		tCompRef.contDef.protected <- s.protected;
 		
-		for(elem in (s.elements -> including(s.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
-			tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('from', elem.from));
-			tCompRef.metadata <- tCompRef.metadata -> including(thisModule.createMetadata('to', elem.to));
+		for(elem in (s.elements.including(s.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
+			tCompRef.metadata <- tCompRef.metadata.including(thisModule.createMetadata('from', elem.from));
+			tCompRef.metadata <- tCompRef.metadata.including(thisModule.createMetadata('to', elem.to));
 		}
 	}
 }
@@ -904,7 +904,7 @@ rule URNspec2URNspec{
 			urndef <- tURNdef
 		),
 		tURNdef: Urn!URNdefinition(
-			specDiagrams <- Sequence{tGRLSpecDiag} -> union(sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m, 'tUCMmap'))),
+			specDiagrams <- Sequence{tGRLSpecDiag}.union(sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m, 'tUCMmap'))),
 			concerns <- sURNspec.concerns,
 			components <- Urn!Component.allInstances(),
 			responsibilities <- Urn!Responsibility.allInstances()
@@ -917,12 +917,12 @@ rule URNspec2URNspec{
 			contributionGroups <- sURNspec.contribContextGroups,
 			contributionContexts <- sURNspec.contribContexts,
 			KPIConversion <- sURNspec.indConversions -> select(c|c.oclIsTypeOf(Turn!QualToQMappings)),
-			links <- vContributions -> union(vDecompositions) -> union(vDependencies)
+			links <- vContributions.union(vDecompositions).union(vDependencies)
 		),
 		tGRLSpecDiag: Urn!GRLGraph(
-		 	nodes <- vIntElemRefs -> union(vBeliefs),
+		 	nodes <- vIntElemRefs.union(vBeliefs),
 			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
-			connections <- vLinkRefs -> union(vBeliefs -> collect(b|b.succ))
+			connections <- vLinkRefs.union(vBeliefs -> collect(b|b.succ))
 		),
 		tUCMspec: Urn!UCMspec()
 	do{

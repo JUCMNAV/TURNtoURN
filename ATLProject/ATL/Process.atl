@@ -20,7 +20,7 @@ rule processAndFork(obj: Turn!AndFork){
 		vNextPred : Turn!PathNode = OclUndefined;
 	}
 	do{
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tAndFork);
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tAndFork);
 		
 		for(elem in obj.pathbody){
 			thisModule.addSucc(tAndFork, thisModule.createNodeConnection());
@@ -34,11 +34,7 @@ rule processAndFork(obj: Turn!AndFork){
 		
 		if(not obj.connectingAndBody.oclIsUndefined()){
 			thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes, OclUndefined);
-			
-			if(obj.connectingAndBody.pathNodes -> isEmpty()){
-				thisModule.connectReferencedEndToNextNode(obj.connectingAndBody, thisModule.nextNode.firstUnconnectedSucc());
-			}
-			
+			thisModule.connectReferencedEndToNextNode(obj.connectingAndBody, thisModule.nextNode.firstUnconnectedSucc());
 			thisModule.connectNodes(obj.connectingAndBody, obj, thisModule.nextNode);		
 		}
 		
@@ -171,7 +167,7 @@ rule processTimer(timerObj : Turn!Timer){
 		tTimer : Urn!Timer = thisModule.retrieveNode(timerObj);
 	}
 	do{
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tTimer);
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
 		
 		--timer out path
 		if(not timerObj.timeoutPath.oclIsUndefined()){
@@ -201,15 +197,16 @@ rule processOrFork(obj: Turn!OrFork){
 			else
 				obj.body.regularBody -> collect(pb|pb.pathBody) -> select(pb|pb.pathEnd.oclIsUndefined()) -> size()
 			endif;
+		vConditions : Sequence(Turn!Condition) = OclUndefined;
 	}
 	do{
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tOrFork);
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tOrFork);
 		
 		if(not obj.body.oclIsUndefined()){
-			vElements <- vElements -> union(obj.body.regularBody);
+			vElements <- vElements.union(obj.body.regularBody);
 		}
 		else if(not obj.connectingOrBody.oclIsUndefined()){
-			vElements <- vElements -> including(obj);	
+			vElements <- vElements.including(obj);	
 		}
 		
 		for(elem in vElements){
@@ -249,19 +246,17 @@ rule processOrFork(obj: Turn!OrFork){
 			thisModule.handleForkJoin(tOrFork, obj.connectingOrBody, vNumberOfTerminatingNodes, OclUndefined);
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
+				vConditions <- Sequence{};
+				
 				if(not obj.body.oclIsUndefined()){
-					thisModule.pathBodies <- obj.getPathBodies();
-					
-					for (pathbody in obj.getPathBodies()){
-						thisModule.condition <- '';
-						if(pathbody.pathEnd.oclIsUndefined()){
-							thisModule.condition <- pathbody.orFork.condition.expression.asString();
-						}
-						thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, thisModule.condition);
-					}
+					vConditions <- vConditions.union(obj.getPathBodies() -> select(pb|pb.pathEnd.oclIsUndefined()) -> collect(pb|pb.orFork.condition));
 				}
 				else{
-					thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, obj.condition.expression.asString());
+					vConditions <- vConditions.including(obj.condition);
+				}
+				
+				for(condition in vConditions){
+					thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, condition.expression.asString());
 				}
 			}
 			
@@ -302,7 +297,7 @@ rule processStub(obj:Turn!Stub){
 			tStub.dynamic <- true;
 		}
 		
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tStub);
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tStub);
 		
 		thisModule.paths <- obj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
 		thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes));
@@ -334,10 +329,7 @@ rule processStub(obj:Turn!Stub){
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			
-			if(obj.connectingStubBody.pathNodes -> isEmpty()){
-				thisModule.connectReferencedEndToNextNode(obj.connectingStubBody, thisModule.nextNode.succ -> at(thisModule.outPathNumber -> first()));
-			}
-
+			thisModule.connectReferencedEndToNextNode(obj.connectingStubBody, thisModule.nextNode.succ -> at(thisModule.outPathNumber -> first()));
 			thisModule.connectNodes(obj.connectingStubBody, obj, thisModule.nextNode);
 		}
 

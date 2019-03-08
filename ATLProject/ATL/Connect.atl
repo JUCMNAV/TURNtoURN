@@ -9,18 +9,20 @@ create OUT : Urn from IN : Turn;
 
 rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode){
 	do{
-		if(body.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			thisModule.addPred(thisModule.retrieveNode(body.pathEnd.regularEnd), nextNode);
-		}
-		else if(body.pathEnd.oclIsTypeOf(Turn!OrFork) or body.pathEnd.oclIsTypeOf(Turn!AndFork) or body.pathEnd.oclIsTypeOf(Turn!Stub)){
-			thisModule.addPred(thisModule.retrieveNode(body.pathEnd), nextNode);
-		}
-		
-		if(not body.referencedEnd.oclIsUndefined()){
-			thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
-		}
-		else if(not body.referencedStub.oclIsUndefined()){
-			thisModule.processReferencedStub(body, nextNode);
+		if(body.pathNodes -> isEmpty()){
+			if(body.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				thisModule.addPred(thisModule.retrieveNode(body.pathEnd.regularEnd), nextNode);
+			}
+			else if(body.pathEnd.oclIsTypeOf(Turn!OrFork) or body.pathEnd.oclIsTypeOf(Turn!AndFork) or body.pathEnd.oclIsTypeOf(Turn!Stub)){
+				thisModule.addPred(thisModule.retrieveNode(body.pathEnd), nextNode);
+			}
+			
+			if(not body.referencedEnd.oclIsUndefined()){
+				thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
+			}
+			else if(not body.referencedStub.oclIsUndefined()){
+				thisModule.processReferencedStub(body, nextNode);
+			}
 		}
 	}
 }
