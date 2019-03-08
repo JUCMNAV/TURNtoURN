@@ -269,15 +269,6 @@ rule retrieveNode(node: Turn!PathNode){
 	}
 }
 
-rule useBacklinksToConnectOrFork(pathbody: Turn!PathBody, node: Urn!PathNode){
-	do{
-		if(pathbody.pathNodes -> isEmpty() and not pathbody.orFork.oclIsUndefined()){
-			thisModule.addPred(node, thisModule.retrieveNode(pathbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
-			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
-		}
-	}
-}
-
 rule processTimer(timerObj : Turn!Timer){
 	using{
 		tTimer : Urn!Timer = thisModule.retrieveNode(timerObj);
@@ -390,7 +381,12 @@ rule processAndFork(obj: Turn!AndFork){
 		}
 		
 		thisModule.connectNodesAfterFork(obj.pathbody, tAndFork);
-		thisModule.useBacklinksToConnectOrFork(obj.pbody, tAndFork);
+		
+		if(obj.pbody.pathNodes -> isEmpty() and not obj.pbody.orFork.oclIsUndefined()){
+			thisModule.addPred(tAndFork, thisModule.retrieveNode(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
+			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
+		}
+		
 		tAndFork;	
 	}
 }
@@ -505,21 +501,25 @@ rule processOrFork(obj: Turn!OrFork){
 			thisModule.connectNodesAfterFork(obj.getPathBodies(), tOrFork);
 		}
 		
-		thisModule.useBacklinksToConnectOrFork(obj.pbody, tOrFork);
+		if(obj.pbody.pathNodes -> isEmpty() and not obj.pbody.orFork.oclIsUndefined()){
+			thisModule.addPred(tOrFork, thisModule.retrieveNode(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
+			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
+		}
+		
 		tOrFork;
 	}
 }
 
-rule processStub(stubObj:Turn!Stub){
+rule processStub(obj:Turn!Stub){
 	using{
 		vAllStubs : Sequence(Turn!Stub) = OclUndefined;
-		tStub : Urn!Stub = thisModule.retrieveNode(stubObj);
+		tStub : Urn!Stub = thisModule.retrieveNode(obj);
 		vPathEnd : Urn!PathEnd = OclUndefined;
 	}
 	do{
-		if(not stubObj.params.oclIsUndefined()){
-			tStub.dynamic <- stubObj.params.plugin -> flatten() -> size() >= 2;
-			tStub.bindings <- stubObj.params.plugin -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
+		if(not obj.params.oclIsUndefined()){
+			tStub.dynamic <- obj.params.plugin -> flatten() -> size() >= 2;
+			tStub.bindings <- obj.params.plugin -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
 		else{
 			vAllStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs;
@@ -532,17 +532,17 @@ rule processStub(stubObj:Turn!Stub){
 		
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> including(tStub);
 		
-		thisModule.paths <- stubObj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
+		thisModule.paths <- obj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
 		thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes));
 		for(pathend in thisModule.paths -> collect(pb|pb.pathEnd)){
 			thisModule.processPathEnd(pathend);	
 		}
 		
-		thisModule.outPaths <- stubObj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
+		thisModule.outPaths <- obj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
 		thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
 		thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index);
 		
-		for(outPath in stubObj.outPaths -> flatten()){
+		for(outPath in obj.outPaths -> flatten()){
 			thisModule.stubOutPathNodeConnection <- thisModule.createNodeConnection();
 			thisModule.addSucc(tStub, thisModule.stubOutPathNodeConnection);
 			if(outPath.threshold <> 0){
@@ -551,20 +551,20 @@ rule processStub(stubObj:Turn!Stub){
 		}
 		
 		--collecting nodes from connecting stub body
-		if(not stubObj.connectingStubBody.oclIsUndefined()){ 
-			if(stubObj.outPaths -> isEmpty()){
+		if(not obj.connectingStubBody.oclIsUndefined()){ 
+			if(obj.outPaths -> isEmpty()){
 				thisModule.addSucc(tStub, thisModule.createNodeConnection());
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			
-			thisModule.handleForkJoin(tStub, stubObj.connectingStubBody, thisModule.numberOfTerminatingStubNodes, thisModule.outPathNumber);
+			thisModule.handleForkJoin(tStub, obj.connectingStubBody, thisModule.numberOfTerminatingStubNodes, thisModule.outPathNumber);
 			if(thisModule.numberOfTerminatingStubNodes = 2){
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			
-			if(stubObj.connectingStubBody.pathNodes -> isEmpty()){
+			if(obj.connectingStubBody.pathNodes -> isEmpty()){
 				thisModule.nextPred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> first());
-				vPathEnd <- stubObj.connectingStubBody.pathEnd;
+				vPathEnd <- obj.connectingStubBody.pathEnd;
 				
 				if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 					thisModule.addPred(thisModule.retrieveNode(vPathEnd.regularEnd), thisModule.nextPred);
@@ -573,14 +573,18 @@ rule processStub(stubObj:Turn!Stub){
 					thisModule.addPred(thisModule.retrieveNode(vPathEnd), thisModule.nextPred);
 				}
 				
-				thisModule.connectReferencedEndToNextNode(stubObj.connectingStubBody, thisModule.nextPred);
+				thisModule.connectReferencedEndToNextNode(obj.connectingStubBody, thisModule.nextPred);
 			}
 
-			thisModule.connectNodes(stubObj.connectingStubBody, stubObj, thisModule.nextNode);
+			thisModule.connectNodes(obj.connectingStubBody, obj, thisModule.nextNode);
 		}
 
-		thisModule.useBacklinksToConnectOrFork(stubObj.pbody, tStub);
-		thisModule.connectStubOutNodes(stubObj);
+		if(obj.pbody.pathNodes -> isEmpty() and not obj.pbody.orFork.oclIsUndefined()){
+			thisModule.addPred(tStub, thisModule.retrieveNode(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
+			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
+		}
+		
+		thisModule.connectStubOutNodes(obj);
 		tStub;
 	}
 }
