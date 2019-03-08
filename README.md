@@ -83,6 +83,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Find a way to remove the maps
 	* Ensure nextGlobalId is correct
 	* Write comments describing what rules do
+	* Verify variable declaration typings are correct
 	* Current issues in output produced by new code:
 		* AndFork:
 			* OrJoins missing (lines 33, 409, 477 of original file); corresponding NodeConnection missing as well

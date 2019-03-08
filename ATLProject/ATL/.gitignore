@@ -1,0 +1,5 @@
+<<<<<<< HEAD
+/ConnectNodes.asm
+=======
+/*.asm
+>>>>>>> d250a5e... Moved another rule to ConnectNodes; created Create.atl. Added asm files to gitignore as build time is no longer an issue

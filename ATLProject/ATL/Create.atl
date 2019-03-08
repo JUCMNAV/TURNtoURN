@@ -1,0 +1,192 @@
+module Create;
+
+create OUT : Urn from IN : Turn;
+
+-- Contains all rules used to instantiate model items in other parts of the code.
+-- This is a good place to look for potential improvements as it may be possible to
+-- make some of these into matched rules (either now, if I have missed something),
+-- or in future versions of ATL.
+
+rule createAndJoin(){
+	to
+		tNodeConnection: Urn!NodeConnection(),
+		tAndJoin: Urn!AndJoin(
+			id <- thisModule.nextId().toString(),
+			name <- 'AndJoin' + tAndJoin.id,
+			succ <- tNodeConnection,
+			diagram <- thisModule.tUCMmap
+		)
+	do{
+		tAndJoin;
+	}
+}
+
+rule createBeliefLink(s: Turn!ElementLink){
+	to
+		tBeliefLink: Urn!BeliefLink (
+			target <- thisModule.resolveTemp(s.dest, 'tIntElemRef')
+		)	
+	do{
+		tBeliefLink;
+	}
+}
+
+rule createComponent(s: Turn!ComponentRef){
+	to
+		tComp: Urn!Component(
+			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName()
+		)
+	do{
+		tComp;	
+	}
+}
+
+rule createCondition(sourceExpression: String){
+	to
+	 	targetCondition: Urn!Condition(
+	 		expression <- sourceExpression,
+			label <- sourceExpression
+	 	)
+	do{
+		targetCondition;
+	}		
+}
+
+rule createConnect(){
+	to
+		tNodeConnection: Urn!NodeConnection(),
+		tConnect: Urn!Connect(
+			id <- thisModule.nextId().toString(),
+			name <- 'Connect' + tConnect.id,
+			succ <- tNodeConnection,
+			diagram <- thisModule.tUCMmap
+		)
+	do{
+		tConnect;	
+	}
+}
+
+rule createEndPoint(){
+	to
+		tEndPoint: Urn!EndPoint (
+			id <- thisModule.nextId().toString(),
+			name <- 'EndPoint' + tEndPoint.id,
+			label <- thisModule.createLabel(),
+			diagram <- thisModule.tUCMmap
+		)
+	do{
+		tEndPoint;
+	}
+}
+
+rule createEmptyPt(node: Turn!PathBodyNode, asynch: Boolean){
+	using{
+		vId : Integer = thisModule.nextId().toString();
+		vName : String = 
+			if(node <> OclAny) then
+				if(asynch) then
+					'AsynchConnectTimer#'+node.name
+				else
+					'SynchConnectTimer#'+node.name
+				endif
+			else
+				'EmptyPoint'+vId
+			endif;
+		vSuccessor : Urn!NodeConnection =
+			if(asynch) then
+				Sequence{thisModule.createNodeConnection()}
+			else
+				if(node.oclIsKindOf(OclAny)) then
+					Sequence{thisModule.createNodeConnection(), thisModule.createNodeConnection()}
+				else
+					OclUndefined
+				endif
+			endif;
+	}
+	to
+		tEmptyPt: Urn!EmptyPoint(
+			id <- vId,
+			name <- vName,
+			diagram <- thisModule.tUCMmap,
+			succ <- vSuccessor
+		)
+	do{
+		tEmptyPt;	
+	}
+}
+
+rule createKpiEvalValueSet(s: Turn!LinearConversion) {
+	to
+		tKpiEvalValueSet: Urn! KPIEvalValueSet(
+			unit <- s.unit,
+			targetValue <- s.targetValue,
+			thresholdValue <- s.thresholdValue,
+			worstValue <- s.worstValue
+		)
+	do{ 
+		tKpiEvalValueSet;
+	}
+}
+
+rule createLabel(){
+	to
+		tNodeLabel: Urn!NodeLabel()
+	do{
+		tNodeLabel;
+	}
+}
+
+rule createMetadata(name: String, value: String) {
+	to 
+ 		targetMetadata: Urn!Metadata(
+ 			name <- name,
+ 			value <- value 
+		)
+	do{
+	 	targetMetadata;
+	}
+}
+
+rule createNodeConnection(){
+	to
+	 	tNodeConnection: Urn!NodeConnection()
+	do{
+		tNodeConnection;
+	}		
+}
+
+rule createOrJoin(predNode: Turn!PathNode){
+	to
+		tNodeConnection: Urn!NodeConnection(),
+		tOrJoin: Urn!OrJoin(
+			id <- thisModule.nextId().toString(),
+			name <- 'OrJoin' + tOrJoin.id,
+			succ <- tNodeConnection,
+			diagram <- thisModule.tUCMmap
+		)
+	do{
+		tOrJoin;
+	}
+}
+
+rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
+	to		
+		tQMapKpiEvalValueSet: Urn!KPIEvalValueSet(
+			kpiConv <- conv	
+		)
+	do{
+		tQMapKpiEvalValueSet;
+	}
+}
+
+rule createResponsibility(s: Turn!RespRef){
+	to
+		tResp: Urn!Responsibility(
+			id <- thisModule.nextId().toString(),
+			name <- s.turnGetLongestName()
+		)
+	do{
+		tResp;
+	}
+}

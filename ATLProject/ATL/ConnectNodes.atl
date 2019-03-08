@@ -20,6 +20,20 @@ rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode
 	}
 }
 
+rule connectNodesAfterFork(pathbodies: Sequence(Turn!PathBody), forkNode: Turn!PathNode){
+	using{
+		vCounter: Integer = 1;	
+	}
+	do{
+		for(pathbody in pathbodies){
+			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
+				thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), forkNode.succ -> at(vCounter));
+			}
+			vCounter <- vCounter.inc(); 			
+		}	
+	}
+}
+
 rule connectAndForkNodes(pathend: Turn!PathEnd){
 	using{
 		vHasReferencedEnd : Boolean = OclUndefined;
@@ -38,16 +52,14 @@ rule connectAndForkNodes(pathend: Turn!PathEnd){
 			if(vHasReferencedEnd){
 				thisModule.addPred(thisModule.retrieveNode(pathbody.referencedEnd), vAndFork.succ -> at(vCounter));
 			}
-			else{
-				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
-					if(not pathbody.pathNodes -> isEmpty()){
-						thisModule.connectNodes(pathbody, pathend, vAndFork);
-					}	
-					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						thisModule.addPred(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vAndFork.succ -> at(vCounter));
-					}
-				} 
-			}
+			else if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
+				if(not pathbody.pathNodes -> isEmpty()){
+					thisModule.connectNodes(pathbody, pathend, vAndFork);
+				}	
+				else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+					thisModule.addPred(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vAndFork.succ -> at(vCounter));
+				}
+			} 
 			
 			vCounter <- vCounter.inc();
 		}
@@ -73,6 +85,52 @@ rule connectOrForkNodes(originalPathend: Turn!PathEnd){
 				vCounter <- vCounter.inc();
 			}		
 		}
+	}
+}
+
+rule connectStubOutNodes(stubObj:Turn!Stub){
+	using{
+		vStubOutPathPosition : Integer = 1;
+		vPathEnd : Turn!RegularEnd = OclUndefined;
+		vFinishedConnection : Boolean = OclUndefined;
+		vCurrentSuccessorToStub : Turn!PathNode = OclUndefined;
+		vPreviousNode : Turn!PathNode = OclUndefined;
+		vCurrentNode : Turn!PathNode = OclUndefined;
+	}
+	do{
+		vStubOutPathPosition <- 1;
+		for(outPath in stubObj.outPaths -> flatten()){
+			vCurrentSuccessorToStub <- thisModule.retrieveNode(stubObj).succ -> at(vStubOutPathPosition);
+			
+			--if no pathNodes exist
+			if(outPath.path.pathNodes -> isEmpty()){
+				vPathEnd <- outPath.path.pathEnd;
+				
+				if(not vPathEnd.oclIsUndefined()){
+					if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+						thisModule.addPred(thisModule.retrieveNode(vPathEnd.regularEnd), vCurrentSuccessorToStub);
+					}
+					else if(vPathEnd.oclIsTypeOf(Turn!OrFork) or vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!Stub)){
+						thisModule.addPred(thisModule.retrieveNode(vPathEnd), vCurrentSuccessorToStub);
+					}
+					else if(not outPath.path.referencedEnd.oclIsUndefined()){
+						thisModule.addPred(thisModule.retrieveNode(outPath.path.referencedEnd), vCurrentSuccessorToStub);
+					}
+					else { 
+						thisModule.addPred(thisModule.retrieveNode(vPathEnd), vCurrentSuccessorToStub);
+					}
+					
+					if(vPathEnd.oclIsTypeOf(Turn!OrFork)){
+						thisModule.connectOrForkNodes(vPathEnd);
+					}
+					else if(vPathEnd.oclIsTypeOf(Turn!AndFork)){
+						thisModule.connectAndForkNodes(vPathEnd);
+					}
+				}
+			}
+			
+			vStubOutPathPosition <- vStubOutPathPosition.inc();
+		}	
 	}
 }
 

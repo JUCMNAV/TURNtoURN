@@ -9,6 +9,7 @@
 </mapAttribute>
 <mapAttribute key="Libs">
 <mapEntry key="ConnectNodes" value="/ATLProject/ATL/ConnectNodes.asm"/>
+<mapEntry key="Create" value="/ATLProject/ATL/Create.asm"/>
 </mapAttribute>
 <mapAttribute key="Model Handler">
 <mapEntry key="Turn" value="EMF"/>
