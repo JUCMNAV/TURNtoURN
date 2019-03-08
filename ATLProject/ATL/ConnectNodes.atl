@@ -2,6 +2,136 @@ module ConnectNodes;
 
 create OUT : Urn from IN : Turn;
 
+rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode){
+	do{
+		if(body.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			if(not body.pathNodes -> last().oclIsTypeOf(Turn!Connect)){
+				if(thisModule.retrieveNode(body.referencedEnd).pred -> collect(s|s.source) -> isEmpty()){
+					thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
+				}
+			}
+		}
+		else if(not body.referencedEnd.oclIsUndefined()){
+			thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
+		}
+		else if(not body.referencedStub.oclIsUndefined()){
+			thisModule.processReferencedStub(body, nextNode);
+		}
+	}
+}
+
+rule connectAndForkNodes(pathend: Turn!PathEnd){
+	using{
+		vHasReferencedEnd : Boolean = OclUndefined;
+		vAndFork : Urn!AndFork = thisModule.retrieveNode(pathend);
+		vCounter : Integer = 1;
+	}
+	do{
+		for(pathbody in pathend.pathbody -> flatten()){
+			if(pathbody.referencedEnd.oclIsUndefined() or pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+				vHasReferencedEnd <- false;
+			}
+			else{
+				vHasReferencedEnd <- not thisModule.retrieveNode(pathbody.referencedEnd).oclIsUndefined();
+			}
+			
+			if(vHasReferencedEnd){
+				thisModule.addPred(thisModule.retrieveNode(pathbody.referencedEnd), vAndFork.succ -> at(vCounter));
+			}
+			else{
+				if(pathbody.oclIsTypeOf(Turn!PathBodyNodes)){
+					if(not pathbody.pathNodes -> isEmpty()){
+						thisModule.connectNodes(pathbody, pathend, vAndFork);
+					}	
+					else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+						thisModule.addPred(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vAndFork.succ -> at(vCounter));
+					}
+				} 
+			}
+			
+			vCounter <- vCounter.inc();
+		}
+	}
+}
+
+rule connectOrForkNodes(originalPathend: Turn!PathEnd){
+	using{
+		vCounter : Integer = 1;
+	}
+	do{
+		if(not originalPathend.body.oclIsUndefined()){
+			for(pathbody in originalPathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody)){
+				if(not pathbody.referencedEnd.oclIsUndefined() and not pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+					-- BUG: referencedEnd below is undefined in some cases, leading to an error; unsure why; temporary fix: added in the conditional below
+					if(not thisModule.retrieveNode(pathbody.referencedEnd).oclIsUndefined()){
+						thisModule.addPred(thisModule.retrieveNode(pathbody.referencedEnd), thisModule.retrieveNode(originalPathend).succ -> at(vCounter));
+					}
+				}
+				else if(not pathbody.pathNodes -> isEmpty()){
+					thisModule.connectNodes(pathbody, originalPathend, thisModule.retrieveNode(originalPathend));
+				}
+				vCounter <- vCounter.inc();
+			}		
+		}
+	}
+}
+
+rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, expression: String){
+	using{
+		vNextPred : Urn!NodeConnection = OclUndefined;
+		vBody : Turn!PathBody = obj.connectingOrBody;
+	}
+	do{
+		if(nextNode.oclIsTypeOf(Urn!OrFork)){
+			vNextPred <- nextNode.succ -> any(s|s.condition.expression=expression);
+		}
+		else if(nextNode.oclIsTypeOf(Urn!OrJoin)){
+			vNextPred <- nextNode.firstUnconnectedSucc();
+		}
+		
+		if(vBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			thisModule.addPred(thisModule.retrieveNode(vBody.pathEnd.regularEnd), vNextPred);
+		}
+		else if(vBody.pathEnd.oclIsTypeOf(Turn!OrFork) or vBody.pathEnd.oclIsTypeOf(Turn!AndFork) or vBody.pathEnd.oclIsTypeOf(Turn!Stub)){
+			thisModule.addPred(thisModule.retrieveNode(vBody.pathEnd), vNextPred);
+		}
+		
+		if(vBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+			thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), vNextPred);
+		}
+		else{
+			thisModule.connectReferencedEndToNextNode(vBody, vNextPred);
+		}
+	}
+}
+
+--rule connectTimerNodes(timerObj: Turn!Timer){
+--	using{
+--		vReferencedEnd : Turn!ReferencedEnd = timerObj.timeoutPath.referencedEnd;
+--	}
+--	do{
+--		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
+--		if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
+--			thisModule.addPred(thisModule.retrieveNode(timerObj.timeoutPath.pathNodes -> first()), thisModule.retrieveNode(timerObj).succ -> at(2));
+--			thisModule.connectNodes(timerObj.timeoutPath, timerObj, OclUndefined);
+--		}
+--		
+--		if(vReferencedEnd.oclIsTypeOf(Turn!RespRef)){
+--			thisModule.addPred(thisModule.getResponsibility(thisModule.referencedEnd.name).respRefs -> first(), thisModule.retrieveNode(timerObj).succ -> at(2));
+--		}
+--		
+--		if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!OrFork)){
+--			thisModule.connectOrForkNodes(timerObj.timeoutPath.pathEnd);
+--		}
+--		else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!AndFork)){
+--			thisModule.connectAndForkNodes(timerObj.timeoutPath.pathEnd);
+--		}
+--		else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!Stub)){
+--			thisModule.createStubOutNodes(timerObj.timeoutPath.pathEnd);
+--		}
+--	}
+--}
+
 rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 	to
 		tNodeConnection1: Urn!NodeConnection(),
