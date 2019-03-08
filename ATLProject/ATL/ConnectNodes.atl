@@ -127,7 +127,7 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 				thisModule.addPred(thisModule.retrieveNode(pathend), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
 			}
 			else if(pathend.oclIsTypeOf(Turn!AndFork) or pathend.oclIsTypeOf(Turn!OrFork)){
-				thisModule.connectPathEndToNextNode(pathend, thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
+				thisModule.addPred(thisModule.retrieveNode(pathend), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
 			}
 		}
 		else if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
