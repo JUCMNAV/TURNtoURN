@@ -85,6 +85,66 @@ rule addSucc(node: Turn!PathNode, successor: OclAny){
 	}
 }
 
+rule contributionNumberToKeyword(quantitativeContribution: Integer){
+	using{
+		vContribution :	String = OclUndefined;
+	}
+	do{
+		-- Dictionary. Had to use called rule as elseif is not supported in helpers
+		
+		if(quantitativeContribution <= -1)
+			vContribution <- 'Hurt';
+		else if(quantitativeContribution < -49)
+			vContribution <- 'SomeNegative';
+		else if(quantitativeContribution = -100)
+			vContribution <- 'Break';
+		else if(quantitativeContribution = 0)
+			vContribution <- 'Unknown';
+		else if(quantitativeContribution < 50)
+			vContribution <- 'Help';
+		else if(quantitativeContribution <= 99)
+			vContribution <- 'SomePositive';
+		else if(quantitativeContribution = 100)
+			vContribution <- 'Make';
+		else
+			vContribution <- OclUndefined;
+		
+		vContribution;
+	}
+}
+
+rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
+	do{
+		pathNodes <- pathNodes -> flatten();
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
+	}
+}
+
+rule getUrnCompRef(obj: OclAny){
+	using{
+		vCompRef : Urn!ComponentRef = OclUndefined;
+	}
+	do{
+		if(not obj.boundTo.oclIsUndefined()) {
+			if(not obj.boundTo.comp.oclIsUndefined()){
+				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
+			}
+			else{
+				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp2, 'tCompRef');
+			}
+		}
+		else{
+			vCompRef <- OclUndefined;	
+		}
+		
+		vCompRef;
+	}
+}
+
 rule getResponsibility(responsibilityName: String){
 	do{
 		Urn!Responsibility.allInstances() -> any(n|n.name=responsibilityName);	
@@ -126,6 +186,24 @@ rule processPathEnd(pathend: Turn!PathNode){
 	}
 }
 
+rule processReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
+	using{
+		vStub : Urn!Stub = thisModule.retrieveNode(body.referencedStub);
+		vOrJoin : Urn!OrJoin = OclUndefined;
+	}
+	do{
+		if(vStub.pred -> size() >= body.index){
+			vOrJoin <- thisModule.createOrJoin();
+			thisModule.addPred(vOrJoin, nextNode);
+			thisModule.addPred(vOrJoin, (vStub.pred -> first()).source.succ);
+			thisModule.addPred(vStub, vOrJoin.succ);
+		}
+		else{
+			thisModule.addPred(vStub, nextNode);	
+		}
+	}
+}
+
 rule retrieveNode(node: Turn!PathNode){
 	using{
 		vRetrievedNode : Turn!PathNode = OclUndefined;
@@ -158,66 +236,6 @@ rule retrieveNode(node: Turn!PathNode){
 	}
 }
 
-rule getUrnCompRef(obj: OclAny){
-	using{
-		vCompRef : Urn!ComponentRef = OclUndefined;
-	}
-	do{
-		if(not obj.boundTo.oclIsUndefined()) {
-			if(not obj.boundTo.comp.oclIsUndefined()){
-				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
-			}
-			else{
-				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp2, 'tCompRef');
-			}
-		}
-		else{
-			vCompRef <- OclUndefined;	
-		}
-		
-		vCompRef;
-	}
-}
-
-rule contributionNumberToKeyword(quantitativeContribution: Integer){
-	using{
-		vContribution :	String = OclUndefined;
-	}
-	do{
-		-- Dictionary. Had to use called rule as elseif is not supported in helpers
-		
-		if(quantitativeContribution <= -1)
-			vContribution <- 'Hurt';
-		else if(quantitativeContribution < -49)
-			vContribution <- 'SomeNegative';
-		else if(quantitativeContribution = -100)
-			vContribution <- 'Break';
-		else if(quantitativeContribution = 0)
-			vContribution <- 'Unknown';
-		else if(quantitativeContribution < 50)
-			vContribution <- 'Help';
-		else if(quantitativeContribution <= 99)
-			vContribution <- 'SomePositive';
-		else if(quantitativeContribution = 100)
-			vContribution <- 'Make';
-		else
-			vContribution <- OclUndefined;
-		
-		vContribution;
-	}
-}
-
-rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
-	do{
-		pathNodes <- pathNodes -> flatten();
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes -> union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
-	}
-}
-
 rule useBacklinksToConnectOrFork(pathbody: Turn!PathBody, node: Urn!PathNode){
 	do{
 		if(pathbody.pathNodes -> isEmpty() and not pathbody.orFork.oclIsUndefined()){
@@ -227,42 +245,19 @@ rule useBacklinksToConnectOrFork(pathbody: Turn!PathBody, node: Urn!PathNode){
 	}
 }
 
-rule processReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
-	using{
-		vStub : Urn!Stub = thisModule.retrieveNode(body.referencedStub);
-		vOrJoin : Urn!OrJoin = OclUndefined;
-	}
-	do{
-		if(vStub.pred -> size() >= body.index){
-			vOrJoin <- thisModule.createOrJoin();
-			thisModule.addPred(vOrJoin, nextNode);
-			thisModule.addPred(vOrJoin, (vStub.pred -> first()).source.succ);
-			thisModule.addPred(vStub, vOrJoin.succ);
-		}
-		else{
-			thisModule.addPred(vStub, nextNode);	
-		}
-	}
-}
-
 --TODO: ensure all arguments in all calls of connectReferencedEnds are actually valid
 --TODO: all calls to this method use the argument "nextPred" as nextNode; verify if this matches the original code
 rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode){
-	using{
-		vReferencedEnd : Turn!ReferencedEnd = body.referencedEnd;
-	}
 	do{
-		if(not vReferencedEnd.oclIsUndefined()){
-			if(vReferencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				if(not body.pathNodes -> last().oclIsTypeOf(Turn!Connect)){
-					if(thisModule.retrieveNode(vReferencedEnd).pred -> collect(s|s.source) -> isEmpty()){
-						thisModule.addPred(thisModule.retrieveNode(vReferencedEnd), nextNode);
-					}
+		if(body.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			if(not body.pathNodes -> last().oclIsTypeOf(Turn!Connect)){
+				if(thisModule.retrieveNode(body.referencedEnd).pred -> collect(s|s.source) -> isEmpty()){
+					thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
 				}
 			}
-			else{
-				thisModule.addPred(thisModule.retrieveNode(vReferencedEnd), nextNode);
-			}
+		}
+		else if(not body.referencedEnd.oclIsUndefined()){
+			thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
 		}
 		else if(not body.referencedStub.oclIsUndefined()){
 			thisModule.processReferencedStub(body, nextNode);
@@ -986,7 +981,6 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			
 			if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(not vPathEnd.regularEnd.oclIsUndefined() and thisModule.retrieveNode(vPathEnd.regularEnd).oclIsUndefined()){
-					--thisModule.debug(thisModule.createEndPoint(vPathEnd.regularEnd));
 					thisModule.createEndPoint(vPathEnd.regularEnd);
 				}
 			}
