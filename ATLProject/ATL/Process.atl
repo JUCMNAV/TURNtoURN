@@ -296,6 +296,7 @@ rule processStub(obj:Turn!Stub){
 		vAllStubs : Sequence(Turn!Stub) = OclUndefined;
 		tStub : Urn!Stub = thisModule.retrieveNode(obj);
 		vPathEnd : Urn!PathEnd = OclUndefined;
+		vStubOutPathPosition : Integer = OclUndefined;
 	}
 	do{
 		if(not obj.params.oclIsUndefined()){
@@ -365,7 +366,12 @@ rule processStub(obj:Turn!Stub){
 			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
 		}
 		
-		thisModule.connectStubOutNodes(obj);
+		vStubOutPathPosition <- 1;
+		for(pathend in obj.outPaths -> collect(op|op.path.pathEnd) -> flatten() -> select(pe|pe.oclIsTypeOf(Turn!EndpointWithConnect))){
+			thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), tStub.succ -> at(vStubOutPathPosition));
+			vStubOutPathPosition <- vStubOutPathPosition.inc();
+		}
+		
 		tStub;
 	}
 }
