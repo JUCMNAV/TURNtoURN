@@ -105,7 +105,8 @@ rule handleNode(currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 			}
 		}
 		else if((previousNode.oclIsTypeOf(Turn!RespRef) and not currentNode.oclIsTypeOf(Turn!Timer)) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!FailurePoint) or currentNode.oclIsTypeOf(Turn!RespRef)){
-			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.tUCMmap.allRespDefsMatching(previousNode.name) -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
+			thisModule.respDef <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=previousNode.name) -> flatten();
+			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.respDef -> collect(s|s.succ) -> flatten() -> select(s|s.target.oclIsUndefined()));
 		}
 		else if(previousNode.oclIsTypeOf(Turn!Timer) or previousNode.oclIsTypeOf(Turn!AndJoin) or previousNode.oclIsTypeOf(Turn!OrJoin)){
 			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode).firstUnconnectedSucc());

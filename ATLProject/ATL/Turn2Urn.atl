@@ -17,22 +17,20 @@ helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
 
 helper def: orForkNodeConnCounter : Integer = 1;
 
-helper def: andForkNodeConnCounter : Integer = 1;
-
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
 
 ----------------------2/5 HELPERS-------------------------------------------
 
-helper context Integer def : inc() : Integer = self + 1;
+helper context Turn!Text def : asString() : String =
+	self.content -> iterate(item; condition : String = '' | condition.concat(item));
 
 helper context String def : capitalize(): String = 
 	self.substring(1,1).toUpper() + self.substring(2, self.size());
 
+helper context Integer def : inc() : Integer = self + 1;
+
 helper context Urn!UCMmap def : getNode(turnNodeName: String) : OclAny = 
 	self.nodes -> any(n|n.name=turnNodeName);
-
-helper context Urn!UCMmap def : mergeNodes(nodesToAdd: Sequence(OclAny)) : OclAny = 
-	self.nodes -> union(nodesToAdd);
 
 --This should only be called on TURN objects; I haven't been able to determine how to express that restriction using OCL, though.
 helper context OclAny def : turnGetLongestName() : String = 
@@ -43,7 +41,7 @@ helper context OclAny def : turnGetLongestName() : String =
 			self.name	
 		endif
 	else
-			self.name	
+		self.name	
 	endif;
 
 helper context Turn!OrFork def : getPathBodies() : Turn!PathBody =
@@ -124,7 +122,6 @@ rule processEndpointWithConnect(sRegularEnd: Turn!PathEnd){
 	using{
 		tRegularEnd : Urn!PathEnd = thisModule.retrieveNode(sRegularEnd);
 		vOrFork : Turn!OrFork = OclUndefined;
-		vCondText : String = OclUndefined;
 	}
 	do{
 		if(tRegularEnd.oclIsUndefined()){
@@ -133,8 +130,7 @@ rule processEndpointWithConnect(sRegularEnd: Turn!PathEnd){
 		else if(sRegularEnd.epConnect.pbody.pathNodes -> isEmpty()){
 			if(not sRegularEnd.epConnect.pbody.orFork.oclIsUndefined()){
 				vOrFork <- sRegularEnd.epConnect.pbody.orFork;
-				vCondText <- thisModule.joinStringSequence(vOrFork.condition.expression, '');
-				thisModule.addPred(tRegularEnd, thisModule.retrieveNode(vOrFork.orBody.orFork).succ -> any(s|s.condition.expression=vCondText));
+				thisModule.addPred(tRegularEnd, thisModule.retrieveNode(vOrFork.orBody.orFork).succ -> any(s|s.condition.expression=vOrFork.condition.expression.asString()));
 			}
 		}	
 	}
@@ -179,14 +175,13 @@ rule retrieveNode(node: Turn!PathNode){
 	}
 }
 
-
 rule getUrnCompRef(obj: OclAny){
 	using{
 		vCompRef : Urn!ComponentRef = OclUndefined;
 	}
 	do{
 		if(not obj.boundTo.oclIsUndefined()) {
-			if (not obj.boundTo.comp.oclIsUndefined()){
+			if(not obj.boundTo.comp.oclIsUndefined()){
 				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
 			}
 			else{
@@ -201,42 +196,30 @@ rule getUrnCompRef(obj: OclAny){
 	}
 }
 
---Dictionary. Had to use called rule as elseif is not supported in helpers
+-- Dictionary. Had to use called rule as elseif is not supported in helpers
 rule contributionNumberToKeyword(quantitativeContribution: Integer){
 	using{
 		vContribution :	String = OclUndefined;
 	}
 	do{
-		if (quantitativeContribution <= -1)
+		if(quantitativeContribution <= -1)
 			vContribution <- 'Hurt';
-		else if (quantitativeContribution < -49)
+		else if(quantitativeContribution < -49)
 			vContribution <- 'SomeNegative';
-		else if (quantitativeContribution = -100)
+		else if(quantitativeContribution = -100)
 			vContribution <- 'Break';
-		else if (quantitativeContribution = 0)
+		else if(quantitativeContribution = 0)
 			vContribution <- 'Unknown';
-		else if (quantitativeContribution < 50)
+		else if(quantitativeContribution < 50)
 			vContribution <- 'Help';
-		else if (quantitativeContribution <= 99)
+		else if(quantitativeContribution <= 99)
 			vContribution <- 'SomePositive';
-		else if (quantitativeContribution = 100)
+		else if(quantitativeContribution = 100)
 			vContribution <- 'Make';
 		else
 			vContribution <- OclUndefined;
 		
 		vContribution;
-	}
-}
-
-rule joinStringSequence(s: String, delim: String){
-	using{
-		vJoinedString : String = '';
-	}
-	do{
-		for(currentString in s.content){
-			vJoinedString <- vJoinedString + currentString + delim;	
-		}
-		vJoinedString;
 	}
 }
 
@@ -251,17 +234,11 @@ rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
 	}
 }
 
-rule useBacklinksToConnectOrFork(pathbody: Turn!PathBody, urnNode: Turn!PathNode){
+rule useBacklinksToConnectOrFork(pathbody: Turn!PathBody, node: Urn!PathNode){
 	do{
 		if(pathbody.pathNodes -> isEmpty() and not pathbody.orFork.oclIsUndefined()){
-			thisModule.addPred(urnNode, thisModule.retrieveNode(pathbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
-			
-			--if(thisModule.retrieveNode(pathbody.orFork.orBody.orFork).succ -> size() = thisModule.orForkNodeConnCounter){
-			--	thisModule.orForkNodeConnCounter <- 1;
-			--}
-			--else{
-				thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
-			--}
+			thisModule.addPred(node, thisModule.retrieveNode(pathbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
+			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
 		}
 	}
 }
@@ -584,7 +561,7 @@ rule createStubOutNodes(stubObj:Turn!Stub){
 					vFinishedConnection <- thisModule.connectPathEndToNextNode(vPathEnd, vCurrentSuccessorToStub);
 					
 					if(not vFinishedConnection){
-						if (not outPath.path.referencedEnd.oclIsUndefined()){
+						if(not outPath.path.referencedEnd.oclIsUndefined()){
 							thisModule.addPred(thisModule.retrieveNode(outPath.path.referencedEnd), vCurrentSuccessorToStub);
 						}
 						else { 
@@ -634,7 +611,7 @@ rule createEndPoint(node: Turn!PathNode){
 				--Using backlinks to connect orFork
 				thisModule.currentOrFork <- node.epConnect.pbody.orFork;
 				if(not thisModule.currentOrFork.oclIsUndefined()){
-					thisModule.condExpression <- thisModule.joinStringSequence(thisModule.currentOrFork.condition.expression, '');
+					thisModule.condExpression <- thisModule.currentOrFork.condition.expression.asString();
 					thisModule.addPred(tEndPoint, thisModule.retrieveNode(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
 				}
 				
@@ -678,7 +655,7 @@ rule createEmptyPt(node: Turn!PathBodyNode, asynch: Boolean){
 	using{
 		vId : Integer = thisModule.nextId().toString();
 		vName : String = 
-			if (node <> OclAny) then
+			if(node <> OclAny) then
 				if(asynch) then
 					'AsynchConnectTimer#'+node.name
 				else
@@ -855,7 +832,7 @@ rule processOrFork(obj: Turn!OrFork){
 			--Orforks with only one pathbody
 			if(obj.getPathBodies() -> size() = 1){
 				tConn <- thisModule.createNodeConnection();
-				tConn.condition <- thisModule.createCondition('!'+thisModule.joinStringSequence(obj.getPathBodies().first().orFork.condition.expression, ''));
+				tConn.condition <- thisModule.createCondition('!' + obj.getPathBodies().first().orFork.condition.expression.asString());
 				
 				if(obj.body.elseBody.oclIsUndefined()){
 					tConn.target <- thisModule.createEndPoint(obj);
@@ -866,7 +843,7 @@ rule processOrFork(obj: Turn!OrFork){
 		}
 		else{
 			tConn <- thisModule.createNodeConnection();
-			tConn.condition <- thisModule.createCondition('!'+thisModule.joinStringSequence(obj.condition.expression, ''));
+			tConn.condition <- thisModule.createCondition('!' + obj.condition.expression.asString());
 			tConn.target <- thisModule.createEndPoint(obj);
 			
 			thisModule.addSucc(tOrFork, tConn);
@@ -882,14 +859,13 @@ rule processOrFork(obj: Turn!OrFork){
 					for (pathbody in obj.getPathBodies()){
 						thisModule.condition <- '';
 						if(pathbody.pathEnd.oclIsUndefined()){
-							thisModule.condition <- thisModule.joinStringSequence(pathbody.orFork.condition.expression, '');
+							thisModule.condition <- pathbody.orFork.condition.expression.asString();
 						}
 						thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, thisModule.condition);
 					}
 				}
 				else{
-					thisModule.condition <- thisModule.joinStringSequence(obj.condition.expression, '');
-					thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, thisModule.condition);
+					thisModule.connectOrForkEndPoints(obj, thisModule.nextNode, obj.condition.expression.asString());
 				}
 			}
 			
@@ -1174,7 +1150,7 @@ rule Condition2Condition{
 		s: Turn!Condition
 	to 
 		tCondition: Urn!Condition(
-			expression <- thisModule.joinStringSequence(s.expression, '')
+			expression <- s.expression.asString()
 		)
 }
 
