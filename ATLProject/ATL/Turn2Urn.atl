@@ -138,7 +138,7 @@ rule getUrnCompRef(obj: OclAny){
 		vCompRef : Urn!ComponentRef = OclUndefined;
 	}
 	do{
-		if(not obj.boundTo.oclIsUndefined()) {
+		if(not obj.boundTo.oclIsUndefined()){
 			if(not obj.boundTo.comp.oclIsUndefined()){
 				vCompRef <- thisModule.resolveTemp(obj.boundTo.comp, 'tCompRef');
 			}
@@ -433,7 +433,7 @@ rule Dependency2Dependency{
 		)
 }
 
-rule Evaluation2Evaluation {
+rule Evaluation2Evaluation{
 	from
 		s: Turn!Evaluation
 	using{
@@ -626,7 +626,7 @@ rule Stub2Stub{
 		tNodeLabel: Urn!NodeLabel()
 }
 
-rule QMapping2QMapping {
+rule QMapping2QMapping{
 	from 
 		s: Turn!QualToQMapping
 	to
@@ -638,7 +638,7 @@ rule QMapping2QMapping {
 		)
 }
 
-rule QMappings2QMappings {
+rule QMappings2QMappings{
 	from
 		s: Turn!QualToQMappings
 	to
@@ -763,7 +763,7 @@ rule Component2Component{
 	}
 }
 
-rule IntElements2Belief {
+rule IntElements2Belief{
 	from
 		s: Turn!IntentionalElement(s.type.toString() = 'belief')
 	to 

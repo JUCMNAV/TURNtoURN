@@ -147,7 +147,7 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 	}
 }
 
-rule createKpiEvalValueSet(s: Turn!LinearConversion) {
+rule createKpiEvalValueSet(s: Turn!LinearConversion){
 	to
 		tKpiEvalValueSet: Urn! KPIEvalValueSet(
 			unit <- s.unit,
@@ -168,7 +168,7 @@ rule createLabel(){
 	}
 }
 
-rule createMetadata(name: String, value: String) {
+rule createMetadata(name: String, value: String){
 	to 
  		targetMetadata: Urn!Metadata(
  			name <- name,

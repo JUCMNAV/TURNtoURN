@@ -137,7 +137,7 @@ rule processEndpointWithConnect(sRegularEnd: Turn!PathEnd){
 				vOrFork <- sRegularEnd.epConnect.pbody.orFork;
 				thisModule.addPred(tRegularEnd, thisModule.retrieveNode(vOrFork.orBody.orFork).succ -> any(s|s.condition.expression=vOrFork.condition.expression.asString()));
 			}
-		}	
+		}
 	}
 }
 
@@ -228,7 +228,7 @@ rule processOrFork(obj: Turn!OrFork){
 			thisModule.addSucc(tOrFork, tConn);
 		}
 		
-		if(not obj.body.oclIsUndefined()) {
+		if(not obj.body.oclIsUndefined()){
 			thisModule.collectReferencedEnds(obj.getPathBodies() -> collect(pb|pb.pathNodes));
 			
 			for(pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd)){
@@ -396,11 +396,8 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 				thisModule.processPathEnd(vPathEnd);
 			}
 			
-			if(vPathEnd.oclIsTypeOf(Turn!OrFork)) {
-				thisModule.connectOrForkNodes(vPathEnd);
-			}
-			else if(vPathEnd.oclIsTypeOf(Turn!AndFork)) {
-				thisModule.connectAndForkNodes(vPathEnd);
+			if(vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!OrFork)){
+				thisModule.connectForkNodes(vPathEnd);
 			}
 			
 			if(not path.startPoint.connect.oclIsUndefined() and not thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
