@@ -282,6 +282,7 @@ rule processStub(obj:Turn!Stub){
 		tStub : Urn!Stub = thisModule.retrieveNode(obj);
 		vPathEnd : Urn!PathEnd = OclUndefined;
 		vStubOutPathPosition : Integer = OclUndefined;
+		vPaths : Sequence(Turn!PathBody) = OclUndefined;
 	}
 	do{
 		if(not obj.params.oclIsUndefined()){
@@ -299,9 +300,9 @@ rule processStub(obj:Turn!Stub){
 		
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tStub);
 		
-		thisModule.paths <- obj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
-		thisModule.collectReferencedEnds(thisModule.paths -> collect(p|p.pathNodes));
-		for(pathend in thisModule.paths -> collect(pb|pb.pathEnd)){
+		vPaths <- obj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
+		thisModule.collectReferencedEnds(vPaths -> collect(p|p.pathNodes));
+		for(pathend in vPaths -> collect(pb|pb.pathEnd)){
 			thisModule.processPathEnd(pathend);	
 		}
 		
@@ -385,26 +386,10 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			}
 			--if no pathnodes exist
 			if(path.pathBody.pathNodes -> isEmpty()){
-				if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					thisModule.addPred(thisModule.retrieveNode(vPathEnd.regularEnd), vStartPoint.firstUnconnectedSucc());
-				}
-				else if(vPathEnd.oclIsTypeOf(Turn!OrFork) or vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!Stub)){
-					thisModule.addPred(thisModule.retrieveNode(vPathEnd), vStartPoint.succ);
-				}
+				thisModule.connectReferencedEndToNextNode(path.pathBody, vStartPoint.firstUnconnectedSucc());
 			}
 			else{
 				thisModule.connectNodes(path.pathBody, path.startPoint, OclUndefined);
-			}
-			
-			vBody <- path.pathBody;
-			
-			if(vBody.pathNodes -> isEmpty()){
-				if(not vBody.referencedEnd.oclIsUndefined()){
-					thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), thisModule.retrieveNode(path.startPoint).succ); 
-				}
-				else if(not vBody.referencedStub.oclIsUndefined()){
-					thisModule.processReferencedStub(vBody, thisModule.retrieveNode(path.startPoint).succ);
-				}
 			}
 		}
 		
