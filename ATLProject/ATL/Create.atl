@@ -116,6 +116,37 @@ rule createEmptyPt(node: Turn!PathBodyNode, asynch: Boolean){
 	}
 }
 
+rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
+	to
+		tNodeConnection1: Urn!NodeConnection(),
+		tConnect: Urn!Connect(
+			id <- thisModule.nextId().toString(),
+			name <- 'Connect' + tConnect.id,
+			diagram <- thisModule.tUCMmap,
+			succ <- tNodeConnection1,
+			pred <- tNodeConnection2
+		),
+		tNodeConnection2: Urn!NodeConnection(),
+		tEmptyPt: Urn!EmptyPoint(
+			id <- thisModule.nextId().toString(),
+			name <- 'EmptyPoint' + tEmptyPt.id,
+			diagram <- thisModule.tUCMmap,
+			succ <- tNodeConnection2
+		)
+	do{
+		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
+			tEmptyPt.name <- 'AsynchConnectTimer#' + currentNode.connectsTo.name;
+			thisModule.addPred(tEmptyPt, newPred);
+		}
+		else{
+			thisModule.addPred(thisModule.retrieveNode(currentNode.connectsTo), tNodeConnection1);
+			thisModule.addPred(thisModule.retrieveNode(currentNode.connectsTo), newPred);
+		}
+		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
+		tConnect;
+	}
+}
+
 rule createKpiEvalValueSet(s: Turn!LinearConversion) {
 	to
 		tKpiEvalValueSet: Urn! KPIEvalValueSet(
