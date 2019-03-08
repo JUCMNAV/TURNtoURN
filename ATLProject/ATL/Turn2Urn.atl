@@ -85,33 +85,6 @@ rule addSucc(node: Turn!PathNode, successor: OclAny){
 	}
 }
 
--- This is a rather obtuse approach but was necessary as multiple conditionals in retrieveNode was causing slow build times.
-rule getNodeTarget(node: Turn!PathNode){
-	using{
-		vTarget : String = OclUndefined;
-	}
-	do{
-		if(node.oclIsKindOf(Turn!WaitingPlace))
-			vTarget <- 'tWtPlace';
-		else if(node.oclIsKindOf(Turn!FailurePoint))
-			vTarget <- 'tFailPt';
-		else if(node.oclIsTypeOf(Turn!RespRef))
-			vTarget <- 'tRespRef';
-		else if(node.oclIsTypeOf(Turn!Timer))
-			vTarget <- 'tTimer';
-		else if(node.oclIsTypeOf(Turn!AndFork))
-			vTarget <- 'tAndFork';
-		else if(node.oclIsTypeOf(Turn!OrFork))
-			vTarget <- 'tOrFork';
-		else if(node.oclIsTypeOf(Turn!Stub))
-			vTarget <- 'tStub';
-		else
-			vTarget <- 'Not Found';
-		
-		vTarget;
-	}
-}
-
 rule getResponsibility(responsibilityName: String){
 	do{
 		Urn!Responsibility.allInstances() -> any(n|n.name=responsibilityName);	
@@ -159,19 +132,30 @@ rule retrieveNode(node: Turn!PathNode){
 		vTarget : Turn!PathNode = thisModule.getNodeTarget(node);
 	}
 	do{
-		if(vTarget <> 'Not Found'){
-			vRetrievedNode <- thisModule.resolveTemp(node, thisModule.getNodeTarget(node));
-		}
-		else if(node.oclIsTypeOf(Turn!Connect)){
-			vRetrievedNode <- thisModule.resolveTemp(node, 'tConnect');
-			if(vRetrievedNode.oclIsUndefined()){
-				vRetrievedNode <- thisModule.connectMap.get(node);
+		-- This is a rather obtuse approach but was necessary as multiple conditionals in retrieveNode was causing slow build times.
+		-- I'm not sure how inefficient this approach is; if the system is running slowly, it may be worth looking at a different
+		-- implementation of this rule.
+		
+		vRetrievedNode <- Sequence{thisModule.resolveTemp(node, 'tWtPlace')};
+		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tFailPt'));
+		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tRespRef'));
+		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tTimer'));
+		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tAndFork'));
+		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tOrFork'));
+		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tStub'));
+		vRetrievedNode <- vRetrievedNode -> including(thisModule.resolveTemp(node, 'tConnect'));
+		vRetrievedNode <- vRetrievedNode -> any(e|not e.oclIsUndefined());
+		
+		if(vRetrievedNode.oclIsUndefined()){
+			if(node.oclIsTypeOf(Turn!Connect)){
+				vRetrievedNode <- thisModule.connectMap.get(node);	
+			}
+			else{
+				vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());
 			}
 		}
-		else{ --AndJoin, OrJoin, StartPoint, and EndPoint are not created in x2y rules so must be retrieved as such
-			vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());
-		}
-		vRetrievedNode;
+		
+		vRetrievedNode; --returns a single node, not a sequence
 	}
 }
 
@@ -196,12 +180,13 @@ rule getUrnCompRef(obj: OclAny){
 	}
 }
 
--- Dictionary. Had to use called rule as elseif is not supported in helpers
 rule contributionNumberToKeyword(quantitativeContribution: Integer){
 	using{
 		vContribution :	String = OclUndefined;
 	}
 	do{
+		-- Dictionary. Had to use called rule as elseif is not supported in helpers
+		
 		if(quantitativeContribution <= -1)
 			vContribution <- 'Hurt';
 		else if(quantitativeContribution < -49)
