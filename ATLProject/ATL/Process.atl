@@ -36,17 +36,7 @@ rule processAndFork(obj: Turn!AndFork){
 			thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes, OclUndefined);
 			
 			if(obj.connectingAndBody.pathNodes -> isEmpty()){
-				vNextPred <- thisModule.nextNode.firstUnconnectedSucc();
-				vPathEnd <- obj.connectingAndBody.pathEnd;
-				
-				if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					thisModule.addPred(thisModule.retrieveNode(vPathEnd.regularEnd), vNextPred);
-				}
-				else if(vPathEnd.oclIsTypeOf(Turn!OrFork) or vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!Stub)){
-					thisModule.addPred(thisModule.retrieveNode(vPathEnd), vNextPred);
-				}
-				
-				thisModule.connectReferencedEndToNextNode(obj.connectingAndBody, vNextPred);
+				thisModule.connectReferencedEndToNextNode(obj.connectingAndBody, thisModule.nextNode.firstUnconnectedSucc());
 			}
 			
 			thisModule.connectNodes(obj.connectingAndBody, obj, thisModule.nextNode);		
@@ -345,17 +335,7 @@ rule processStub(obj:Turn!Stub){
 			}
 			
 			if(obj.connectingStubBody.pathNodes -> isEmpty()){
-				thisModule.nextPred <- thisModule.nextNode.succ -> at(thisModule.outPathNumber -> first());
-				vPathEnd <- obj.connectingStubBody.pathEnd;
-				
-				if(vPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					thisModule.addPred(thisModule.retrieveNode(vPathEnd.regularEnd), thisModule.nextPred);
-				}
-				else if(vPathEnd.oclIsTypeOf(Turn!OrFork) or vPathEnd.oclIsTypeOf(Turn!AndFork) or vPathEnd.oclIsTypeOf(Turn!Stub)){
-					thisModule.addPred(thisModule.retrieveNode(vPathEnd), thisModule.nextPred);
-				}
-				
-				thisModule.connectReferencedEndToNextNode(obj.connectingStubBody, thisModule.nextPred);
+				thisModule.connectReferencedEndToNextNode(obj.connectingStubBody, thisModule.nextNode.succ -> at(thisModule.outPathNumber -> first()));
 			}
 
 			thisModule.connectNodes(obj.connectingStubBody, obj, thisModule.nextNode);

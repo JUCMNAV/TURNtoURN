@@ -939,6 +939,6 @@ rule URNspec2URNspec{
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 		}
 		
-		tURNspec.nextGlobalID <- thisModule.id.toString(); --TODO: figure out how to make this value be assigned last in program execution
+		tURNspec.nextGlobalID <- thisModule.id.toString();
 	}
 }

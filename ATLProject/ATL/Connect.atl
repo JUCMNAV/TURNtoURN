@@ -9,6 +9,13 @@ create OUT : Urn from IN : Turn;
 
 rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode){
 	do{
+		if(body.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			thisModule.addPred(thisModule.retrieveNode(body.pathEnd.regularEnd), nextNode);
+		}
+		else if(body.pathEnd.oclIsTypeOf(Turn!OrFork) or body.pathEnd.oclIsTypeOf(Turn!AndFork) or body.pathEnd.oclIsTypeOf(Turn!Stub)){
+			thisModule.addPred(thisModule.retrieveNode(body.pathEnd), nextNode);
+		}
+		
 		if(not body.referencedEnd.oclIsUndefined()){
 			thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
 		}
@@ -86,18 +93,10 @@ rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, expression
 			vNextPred <- nextNode.firstUnconnectedSucc();
 		}
 		
-		if(vBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			thisModule.addPred(thisModule.retrieveNode(vBody.pathEnd.regularEnd), vNextPred);
-		}
-		else if(vBody.pathEnd.oclIsTypeOf(Turn!OrFork) or vBody.pathEnd.oclIsTypeOf(Turn!AndFork) or vBody.pathEnd.oclIsTypeOf(Turn!Stub)){
-			thisModule.addPred(thisModule.retrieveNode(vBody.pathEnd), vNextPred);
-		}
+		thisModule.connectReferencedEndToNextNode(vBody, vNextPred);
 		
 		if(vBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
 			thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), vNextPred);
-		}
-		else{
-			thisModule.connectReferencedEndToNextNode(vBody, vNextPred);
 		}
 	}
 }
