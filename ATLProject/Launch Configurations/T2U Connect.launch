@@ -8,8 +8,9 @@
 <mapEntry key="IN" value="Turn"/>
 </mapAttribute>
 <mapAttribute key="Libs">
-<mapEntry key="ConnectNodes" value="/ATLProject/ATL/ConnectNodes.asm"/>
+<mapEntry key="Connect" value="/ATLProject/ATL/Connect.asm"/>
 <mapEntry key="Create" value="/ATLProject/ATL/Create.asm"/>
+<mapEntry key="Process" value="/ATLProject/ATL/Process.asm"/>
 </mapAttribute>
 <mapAttribute key="Model Handler">
 <mapEntry key="Turn" value="EMF"/>

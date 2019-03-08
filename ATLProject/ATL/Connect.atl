@@ -2,6 +2,11 @@ module ConnectNodes;
 
 create OUT : Urn from IN : Turn;
 
+-- Contains all rules used to handle connections between nodes.
+-- At present, this is behavior is also partially performed by
+-- rules in the "Process.atl" file. Ideally, this behavior should
+-- be limited to only rules in this file.
+
 rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode){
 	do{
 		if(body.referencedEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
