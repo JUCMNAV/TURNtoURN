@@ -141,7 +141,7 @@ rule processPathEnd(pathend: Turn!PathNode){
 	}
 }
 
-rule processReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
+rule connectReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
 	using{
 		vStub : Urn!Stub = thisModule.retrieveNode(body.referencedStub);
 		vOrJoin : Urn!OrJoin = OclUndefined;
@@ -291,10 +291,6 @@ rule processStub(obj:Turn!Stub){
 			thisModule.processPathEnd(pathend);	
 		}
 		
-		thisModule.outPaths <- obj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
-		thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
-		thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index);
-		
 		for(outPath in obj.outPaths -> flatten()){
 			thisModule.stubOutPathNodeConnection <- thisModule.createNodeConnection();
 			thisModule.addSucc(tStub, thisModule.stubOutPathNodeConnection);
@@ -304,10 +300,16 @@ rule processStub(obj:Turn!Stub){
 		}
 		
 		--collecting nodes from connecting stub body
-		if(not obj.connectingStubBody.oclIsUndefined()){ 
+		if(not obj.connectingStubBody.oclIsUndefined()){
+			thisModule.outPaths <- obj.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
+			thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
+			
 			if(obj.outPaths -> isEmpty()){
 				thisModule.addSucc(tStub, thisModule.createNodeConnection());
 				thisModule.outPathNumber <- Sequence{1};
+			}
+			else{
+				thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index);	
 			}
 			
 			thisModule.handleForkJoin(tStub, obj.connectingStubBody, thisModule.numberOfTerminatingStubNodes, thisModule.outPathNumber);

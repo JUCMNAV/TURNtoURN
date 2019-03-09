@@ -21,7 +21,7 @@ rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode
 				thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNode);
 			}
 			else if(not body.referencedStub.oclIsUndefined()){
-				thisModule.processReferencedStub(body, nextNode);
+				thisModule.connectReferencedStub(body, nextNode);
 			}
 		}
 	}
@@ -89,6 +89,24 @@ rule connectForkNodes(pathend: Turn!PathEnd){
 				
 				vCounter <- vCounter.inc();
 			}
+		}
+	}
+}
+
+rule connectReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
+	using{
+		vStub : Urn!Stub = thisModule.retrieveNode(body.referencedStub);
+		vOrJoin : Urn!OrJoin = OclUndefined;
+	}
+	do{
+		if(vStub.pred -> size() >= body.index){
+			vOrJoin <- thisModule.createOrJoin();
+			thisModule.addPred(vOrJoin, nextNode);
+			thisModule.addPred(vOrJoin, (vStub.pred -> first()).source.succ);
+			thisModule.addPred(vStub, vOrJoin.succ);
+		}
+		else{
+			thisModule.addPred(vStub, nextNode);	
 		}
 	}
 }
@@ -279,7 +297,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, nextNo
 					thisModule.addPred(thisModule.retrieveNode(pathbody.referencedEnd), thisModule.retrieveNode(vLastNode).succ);	
 				}
 				else if(not pathbody.referencedStub.oclIsUndefined()){-- and not vPreviousNode.oclIsUndefined()){
-					thisModule.processReferencedStub(pathbody, thisModule.retrieveNode(vLastNode).succ);
+					thisModule.connectReferencedStub(pathbody, thisModule.retrieveNode(vLastNode).succ);
 				}
 			}
 		}

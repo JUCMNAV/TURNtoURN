@@ -614,8 +614,10 @@ rule Stub2Stub{
 	from
 		stubObj: Turn!Stub
 	using{
+		vBlocking : Boolean = stubObj.stubType.toString() = 'blocking';
+		vSynchronization : Boolean = vBlocking or stubObj.stubType.toString() = 'synchronizing';
 		vDynamic : Boolean = 
-			if(stubObj.stubType.toString() = 'synchronizing') then
+			if(vSynchronization) then
 				true
 			else
 				if(not stubObj.params.oclIsUndefined()) then
@@ -631,8 +633,8 @@ rule Stub2Stub{
 			name <- stubObj.turnGetLongestName(),
 			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
-			blocking <- stubObj.stubType.toString() = 'blocking',
-			synchronization <- stubObj.stubType.toString() = 'blocking' or stubObj.stubType.toString() = 'synchronizing',
+			blocking <- vBlocking,
+			synchronization <- vSynchronization,
 			contRef <- thisModule.getUrnCompRef(stubObj),
 			dynamic <- vDynamic
 		),

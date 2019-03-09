@@ -154,7 +154,7 @@ rule createEmptyPt(node: Turn!PathBodyNode, asynch: Boolean){
 
 rule createKpiEvalValueSet(s: Turn!LinearConversion){
 	to
-		tKpiEvalValueSet: Urn! KPIEvalValueSet(
+		tKpiEvalValueSet: Urn!KPIEvalValueSet(
 			unit <- s.unit,
 			targetValue <- s.targetValue,
 			thresholdValue <- s.thresholdValue,
