@@ -116,42 +116,6 @@ rule createEndPoint(){
 	}
 }
 
-rule createEmptyPt(node: Turn!PathBodyNode, asynch: Boolean){
-	using{
-		vId : Integer = thisModule.nextId().toString();
-		vName : String = 
-			if(node <> OclAny) then
-				if(asynch) then
-					'AsynchConnectTimer#'+node.name
-				else
-					'SynchConnectTimer#'+node.name
-				endif
-			else
-				'EmptyPoint'+vId
-			endif;
-		vSuccessor : Urn!NodeConnection =
-			if(asynch) then
-				Sequence{thisModule.createNodeConnection()}
-			else
-				if(node.oclIsKindOf(OclAny)) then
-					Sequence{thisModule.createNodeConnection(), thisModule.createNodeConnection()}
-				else
-					OclUndefined
-				endif
-			endif;
-	}
-	to
-		tEmptyPt: Urn!EmptyPoint(
-			id <- vId,
-			name <- vName,
-			diagram <- thisModule.tUCMmap,
-			succ <- vSuccessor
-		)
-	do{
-		tEmptyPt;	
-	}
-}
-
 rule createKpiEvalValueSet(s: Turn!LinearConversion){
 	to
 		tKpiEvalValueSet: Urn!KPIEvalValueSet(

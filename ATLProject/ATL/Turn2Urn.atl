@@ -179,9 +179,15 @@ rule retrieveNode(node: Turn!PathNode){
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tConnect'));
 		vRetrievedNode <- vRetrievedNode -> any(e|not e.oclIsUndefined());
 		
+		if(vRetrievedNode.oclIsUndefined() and node.oclIsTypeOf(Turn!EndPoint)){
+			vRetrievedNode <- thisModule.endPointMap.get(node);	
+		}
 		if(vRetrievedNode.oclIsUndefined()){
 			if(node.oclIsTypeOf(Turn!Connect)){
 				vRetrievedNode <- thisModule.connectMap.get(node);	
+			}
+			else if(node.oclIsTypeOf(Turn!EndPoint)){
+				vRetrievedNode <- thisModule.endPointMap.get(node);	
 			}
 			else{
 				vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());

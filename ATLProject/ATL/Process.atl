@@ -141,24 +141,6 @@ rule processPathEnd(pathend: Turn!PathNode){
 	}
 }
 
-rule connectReferencedStub(body: Turn!PathBody, nextNode: Turn!PathNode){
-	using{
-		vStub : Urn!Stub = thisModule.retrieveNode(body.referencedStub);
-		vOrJoin : Urn!OrJoin = OclUndefined;
-	}
-	do{
-		if(vStub.pred -> size() >= body.index){
-			vOrJoin <- thisModule.createOrJoin();
-			thisModule.addPred(vOrJoin, nextNode);
-			thisModule.addPred(vOrJoin, (vStub.pred -> first()).source.succ);
-			thisModule.addPred(vStub, vOrJoin.succ);
-		}
-		else{
-			thisModule.addPred(vStub, nextNode);	
-		}
-	}
-}
-
 rule processTimer(timerObj : Turn!Timer){
 	using{
 		tTimer : Urn!Timer = thisModule.retrieveNode(timerObj);
@@ -348,6 +330,9 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 		--Regular ends
 		for(path in paths){
 			thisModule.processPathEnd(path.pathBody.pathEnd);
+			if(not path.pathBody.pathEnd.oclIsUndefined() and path.pathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect))
+				if(not thisModule.retrieveNode(path.pathBody.pathEnd.regularEnd).oclIsUndefined())
+					thisModule.debug(thisModule.retrieveNode(path.pathBody.pathEnd.regularEnd));
 			
 			if(path.pathBody.pathNodes -> isEmpty()){
 				vStartPoint <- thisModule.retrieveNode(path.startPoint);
