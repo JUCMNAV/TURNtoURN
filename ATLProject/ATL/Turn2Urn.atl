@@ -186,9 +186,6 @@ rule retrieveNode(node: Turn!PathNode){
 			if(node.oclIsTypeOf(Turn!Connect)){
 				vRetrievedNode <- thisModule.connectMap.get(node);	
 			}
-			else if(node.oclIsTypeOf(Turn!EndPoint)){
-				vRetrievedNode <- thisModule.endPointMap.get(node);	
-			}
 			else{
 				vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());
 			}
@@ -198,45 +195,43 @@ rule retrieveNode(node: Turn!PathNode){
 	}
 }
 
---TODO:  uses global variable thisModule.nextNode to pass data to calling rules; change this
 rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfTerminatingNodes: Integer, stubOutNumbers: Sequence(Integer)){
 	using{
 		vFirstPathNode : Turn!PathNode = OclUndefined;
+		vNextNode : Turn!PathNode = fork;
 	}
 	do{
 		thisModule.collectReferencedEnds(connectingBody.pathNodes);
 		thisModule.processPathEnd(connectingBody.pathEnd);
-		
-		thisModule.nextNode <- fork;
 		
 		if(numberOfTerminatingNodes = 1){
 			vFirstPathNode <- connectingBody.pathNodes -> first();
 			
 			if(not vFirstPathNode.oclIsUndefined() and not vFirstPathNode.oclIsTypeOf(Turn!Connect)){
 				if(not vFirstPathNode.name.oclIsUndefined()){
-					thisModule.nextNode <- thisModule.tUCMmap.getNode(vFirstPathNode.name);
+					vNextNode <- thisModule.tUCMmap.getNode(vFirstPathNode.name);
 				}
 			}
 		}
 		else if(numberOfTerminatingNodes = 2){
 			if(fork.oclIsTypeOf(Urn!Stub)){
-				thisModule.nextNode <- thisModule.createOrJoin();
-				thisModule.addPred(thisModule.nextNode, fork.succ -> at(stubOutNumbers -> at(1)));
-				thisModule.addPred(thisModule.nextNode, fork.succ -> at(stubOutNumbers -> at(2)));
+				vNextNode <- thisModule.createOrJoin();
+				thisModule.addPred(vNextNode, fork.succ -> at(stubOutNumbers -> at(1)));
+				thisModule.addPred(vNextNode, fork.succ -> at(stubOutNumbers -> at(2)));
 			}
 			else{
 				if(fork.oclIsTypeOf(Urn!AndFork)){
-					thisModule.nextNode <- thisModule.createAndJoin();
+					vNextNode <- thisModule.createAndJoin();
 				}
 				else if(fork.oclIsTypeOf(Urn!OrFork)){
-					thisModule.nextNode <- thisModule.createOrJoin();
+					vNextNode <- thisModule.createOrJoin();
 				}
-				thisModule.addPred(thisModule.nextNode, fork.firstUnconnectedSucc());
-				thisModule.addPred(thisModule.nextNode, fork.firstUnconnectedSucc());
+				thisModule.addPred(vNextNode, fork.firstUnconnectedSucc());
+				thisModule.addPred(vNextNode, fork.firstUnconnectedSucc());
 			}
 		}
 		
-		thisModule.nextNode;
+		vNextNode;
 	}
 }
 
