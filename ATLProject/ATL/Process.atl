@@ -38,12 +38,7 @@ rule processAndFork(obj: Turn!AndFork){
 			thisModule.connectNodes(obj.connectingAndBody, obj, thisModule.nextNode);		
 		}
 		
-		thisModule.connectNodesAfterFork(obj.pathbody, tAndFork);
-		
-		if(obj.pbody.pathNodes -> isEmpty() and not obj.pbody.orFork.oclIsUndefined()){
-			thisModule.addPred(tAndFork, thisModule.retrieveNode(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
-			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
-		}
+		thisModule.connectNodesAfterFork(obj, tAndFork);
 		
 		tAndFork;	
 	}
@@ -263,11 +258,7 @@ rule processOrFork(obj: Turn!OrFork){
 		}
 		
 		if(not obj.body.oclIsUndefined()){
-			thisModule.connectNodesAfterFork(obj.getPathBodies(), tOrFork);
-			if(obj.pbody.pathNodes -> isEmpty() and not obj.pbody.orFork.oclIsUndefined()){
-				thisModule.addPred(tOrFork, thisModule.retrieveNode(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
-				thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
-			}
+			thisModule.connectNodesAfterFork(obj, tOrFork);
 		}
 		
 		tOrFork;
@@ -284,7 +275,6 @@ rule processStub(obj:Turn!Stub){
 	}
 	do{
 		if(not obj.params.oclIsUndefined()){
-			tStub.dynamic <- obj.params.plugin -> flatten() -> size() >= 2;
 			tStub.bindings <- obj.params.plugin -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
 		else{
@@ -292,14 +282,11 @@ rule processStub(obj:Turn!Stub){
 			tStub.bindings <- vAllStubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		}
 		
-		if(tStub.synchronization){
-			tStub.dynamic <- true;
-		}
-		
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tStub);
 		
 		vPaths <- obj.outPaths -> flatten() -> collect(op|op.path) -> flatten();
 		thisModule.collectReferencedEnds(vPaths -> collect(p|p.pathNodes));
+		
 		for(pathend in vPaths -> collect(pb|pb.pathEnd)){
 			thisModule.processPathEnd(pathend);	
 		}

@@ -27,17 +27,28 @@ rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode
 	}
 }
 
-rule connectNodesAfterFork(pathbodies: Sequence(Turn!PathBody), forkNode: Turn!PathNode){
+rule connectNodesAfterFork(obj: Turn!PathNode, forkNode: Urn!PathNode){
 	using{
-		vCounter: Integer = 1;
+		vCounter : Integer = 1;
+		vPathBodies : Sequence(Turn!PathBody) = 
+			if(forkNode.oclIsTypeOf(Urn!OrFork)) then
+				obj.getPathBodies()
+			else
+				obj.pathbody
+			endif;
 	}
 	do{
-		for(pathbody in pathbodies){
+		for(pathbody in vPathBodies){
 			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
 				thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), forkNode.succ -> at(vCounter));
 			}
 			vCounter <- vCounter.inc(); 			
-		}	
+		}
+		
+		if(obj.pbody.pathNodes -> isEmpty() and not obj.pbody.orFork.oclIsUndefined()){
+			thisModule.addPred(forkNode, thisModule.retrieveNode(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
+			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
+		}
 	}
 }
 

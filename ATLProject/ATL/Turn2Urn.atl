@@ -613,6 +613,18 @@ rule StrategiesGroup2StrategiesGroup{
 rule Stub2Stub{
 	from
 		stubObj: Turn!Stub
+	using{
+		vDynamic : Boolean = 
+			if(stubObj.stubType.toString() = 'synchronizing') then
+				true
+			else
+				if(not stubObj.params.oclIsUndefined()) then
+					stubObj.params.plugin -> flatten() -> size() >= 2
+				else
+					OclUndefined
+				endif
+			endif;
+	}
 	to
 		tStub: Urn!Stub (
 			id <- thisModule.nextId().toString(),
@@ -621,7 +633,8 @@ rule Stub2Stub{
 			label <- tNodeLabel,
 			blocking <- stubObj.stubType.toString() = 'blocking',
 			synchronization <- stubObj.stubType.toString() = 'blocking' or stubObj.stubType.toString() = 'synchronizing',
-			contRef <- thisModule.getUrnCompRef(stubObj)
+			contRef <- thisModule.getUrnCompRef(stubObj),
+			dynamic <- vDynamic
 		),
 		tNodeLabel: Urn!NodeLabel()
 }
