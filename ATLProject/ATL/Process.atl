@@ -330,10 +330,10 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 		--Regular ends
 		for(path in paths){
 			thisModule.processPathEnd(path.pathBody.pathEnd);
-			if(not path.pathBody.pathEnd.oclIsUndefined() and path.pathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect))
-				if(not thisModule.retrieveNode(path.pathBody.pathEnd.regularEnd).oclIsUndefined())
-					thisModule.debug(thisModule.retrieveNode(path.pathBody.pathEnd.regularEnd));
-			
+			--if(not path.pathBody.pathEnd.oclIsUndefined() and path.pathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect))
+			--	if(not thisModule.retrieveNode(path.pathBody.pathEnd.regularEnd).oclIsUndefined())
+			--		thisModule.debug(thisModule.retrieveNode(path.pathBody.pathEnd.regularEnd));
+
 			if(path.pathBody.pathNodes -> isEmpty()){
 				vStartPoint <- thisModule.retrieveNode(path.startPoint);
 				if(not path.startPoint.connect.oclIsUndefined() and not thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
@@ -341,6 +341,7 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 					thisModule.termToSet <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ept|ept.succ -> includes(thisModule.startPointConnect.pred -> first()));
 					thisModule.addPred(thisModule.termToSet, vStartPoint.firstUnconnectedSucc());
 				}
+				--thisModule.debug(vStartPoint.firstUnconnectedSucc());
 				thisModule.connectReferencedEndToNextNode(path.pathBody, vStartPoint.firstUnconnectedSucc());
 			}
 			else{
