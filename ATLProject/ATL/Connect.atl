@@ -11,8 +11,6 @@ rule connectReferencedEndToNextNode(body: Turn!PathBody, nextNode: Turn!PathNode
 	do{
 		if(body.pathNodes -> isEmpty()){
 			if(body.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				--if(thisModule.retrieveNode(body.pathEnd.regularEnd).id='151' or thisModule.retrieveNode(body.pathEnd.regularEnd).id='156')
-				--	thisModule.debug(nextNode);
 				thisModule.addPred(thisModule.retrieveNode(body.pathEnd.regularEnd), nextNode);
 			}
 			else if(body.pathEnd.oclIsTypeOf(Turn!OrFork) or body.pathEnd.oclIsTypeOf(Turn!AndFork) or body.pathEnd.oclIsTypeOf(Turn!Stub)){
@@ -163,7 +161,7 @@ rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Ur
 	do{
 		if(firstNode.oclIsTypeOf(Turn!Connect)){
 			if(node.oclIsTypeOf(Turn!AndFork)){
-				thisModule.createEmptyPointConnect(firstNode, nextNode.firstUnconnectedSucc());
+				thisModule.createEmptyPointConnect(firstNode, nextNode.firstUnconnectedSucc());---HERE
 			}
 			else if(node.oclIsTypeOf(Turn!OrFork)){
 				thisModule.createEmptyPointConnect(firstNode, nextNode.succ -> first());
@@ -246,7 +244,12 @@ rule handleRegularEnds(pathend: Turn!PathNode, currentNode: Turn!PathNode){
 		}
 		
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-			thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
+			if(thisModule.retrieveNode(currentNode).firstUnconnectedSucc().oclIsUndefined() and not thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
+				thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), (thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> first()).firstUnconnectedSucc());
+			}
+			else{
+				thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());
+			}
 		}
 		else{
 			thisModule.addPred(thisModule.retrieveNode(pathend), thisModule.retrieveNode(currentNode).firstUnconnectedSucc());

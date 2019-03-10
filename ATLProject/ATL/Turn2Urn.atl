@@ -191,6 +191,11 @@ rule retrieveNode(node: Turn!PathNode){
 			}
 		}
 		
+		--if(not vRetrievedNode.oclIsUndefined())
+		--	if(vRetrievedNode.id='156')
+		--		thisModule.k.k;
+				--thisModule.debug('EndPoint ' + vRetrievedNode.id + ' retrieved here');
+		
 		vRetrievedNode; --returns a single node, not a sequence
 	}
 }
@@ -320,8 +325,10 @@ rule Condition2Condition{
 		s: Turn!Condition
 	to 
 		tCondition: Urn!Condition(
-			expression <- s.expression.asString()
+			expression <- s.expression.asString(),
+			label <- s.expression.asString()
 		)
+	
 }
 
 rule Contribution2Contribution{
