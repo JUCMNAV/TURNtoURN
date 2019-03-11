@@ -158,7 +158,7 @@ rule createNodeConnection(){
 	}		
 }
 
-rule createOrJoin(predNode: Turn!PathNode){
+rule createOrJoin(){
 	to
 		tNodeConnection: Urn!NodeConnection(),
 		tOrJoin: Urn!OrJoin(

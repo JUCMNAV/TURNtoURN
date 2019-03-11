@@ -85,5 +85,23 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Write comments describing what rules do
 	* Verify variable declaration typings are correct
 	* Current issues in output produced by new code:
-		* AndFork:
-			* AndForkTestOrFork: missing a label for a condition
+		* (none recorded)
+	* Remaining to test:
+		* AndForkTestMergedBranches.jucm
+		* Belief.jucm
+		* Component.jucm
+		* Connect.jucm
+		* FailurePoint.jucm
+		* Goal.jucm
+		* Indicator.jucm
+		* OrFork.jucm
+		* OrForkTestBranches.jucm
+		* OrForkTestMergedBranches.jucm
+		* OrJoin.jucm
+		* Resource.jucm
+		* Responsibility.jucm
+		* Softgoal.jucm
+		* Stub.jucm
+		* Task.jucm
+		* Timer.jucm
+		* WaitingPlace.jucm
