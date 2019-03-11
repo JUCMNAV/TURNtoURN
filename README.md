@@ -105,3 +105,6 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Task.jucm
 		* Timer.jucm
 		* WaitingPlace.jucm
+	* Remaining to validate:
+		* AndFork.jucm
+		* AndJoin.jucm

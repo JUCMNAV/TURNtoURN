@@ -19,6 +19,7 @@ rule processAndFork(obj: Turn!AndFork){
 		vPathEnd : Turn!PathNode = OclUndefined;
 		vNextPred : Turn!PathNode = OclUndefined;
 		vNextNode : Turn!PathNode = OclUndefined;
+		vEmptyPt : Turn!PathNode = OclUndefined;
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tAndFork);
@@ -34,7 +35,13 @@ rule processAndFork(obj: Turn!AndFork){
 		}
 		
 		if(not obj.connectingAndBody.oclIsUndefined()){
-			vNextNode <- thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes, OclUndefined);
+			vNextNode <- thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes);
+			
+			if(vNumberOfTerminatingNodes = 2){
+				vEmptyPt <- thisModule.createEmptyPoint(vNextNode, tAndFork.firstUnconnectedSucc());
+				thisModule.addPred(vEmptyPt, tAndFork.firstUnconnectedSucc());
+			}
+			
 			if(obj.connectingAndBody.pathNodes -> isEmpty()){
 				thisModule.connectEndToNextNode(obj.connectingAndBody, vNextNode.firstUnconnectedSucc());
 			}
@@ -158,6 +165,7 @@ rule processOrFork(obj: Turn!OrFork){
 		vConditions : Sequence(Turn!Condition) = OclUndefined;
 		vNextNode : Turn!PathNode = OclUndefined;
 		vNextPred : Turn!PathNode = OclUndefined;
+		vEmptyPt : Turn!PathNode = OclUndefined;
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tOrFork);
@@ -181,6 +189,11 @@ rule processOrFork(obj: Turn!OrFork){
 			for(pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd)){
 				thisModule.processPathEnd(pathend);
 			}
+			--if(not obj.body.elseBody.oclIsUndefined()){
+			--	for(pathend in obj.body.elseBody.pathNodes){
+			--		thisModule.processPathEnd(pathend);
+			--	}	
+			--}
 		}
 
 		if(obj.body.oclIsUndefined()){
@@ -202,7 +215,12 @@ rule processOrFork(obj: Turn!OrFork){
 		}
 		
 		if(not obj.connectingOrBody.oclIsUndefined()){
-			vNextNode <- thisModule.handleForkJoin(tOrFork, obj.connectingOrBody, vNumberOfTerminatingNodes, OclUndefined);
+			vNextNode <- thisModule.handleForkJoin(tOrFork, obj.connectingOrBody, vNumberOfTerminatingNodes);
+			
+			if(vNumberOfTerminatingNodes = 2){
+				vEmptyPt <- thisModule.createEmptyPoint(vNextNode, tOrFork.firstUnconnectedSucc());
+				thisModule.addPred(vEmptyPt, tOrFork.firstUnconnectedSucc());
+			}
 			
 			if(obj.connectingOrBody.pathNodes -> isEmpty()){
 				vConditions <- Sequence{};
@@ -289,8 +307,11 @@ rule processStub(obj:Turn!Stub){
 				thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index);	
 			}
 			
-			vNextNode <- thisModule.handleForkJoin(tStub, obj.connectingStubBody, thisModule.numberOfTerminatingStubNodes, thisModule.outPathNumber);
+			vNextNode <- thisModule.handleForkJoin(tStub, obj.connectingStubBody, thisModule.numberOfTerminatingStubNodes);
+			
 			if(thisModule.numberOfTerminatingStubNodes = 2){
+				thisModule.addPred(vNextNode, tStub.succ -> at(thisModule.outPathNumber -> at(1)));
+				thisModule.addPred(vNextNode, tStub.succ -> at(thisModule.outPathNumber -> at(2)));
 				thisModule.outPathNumber <- Sequence{1};
 			}
 			

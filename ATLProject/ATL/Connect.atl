@@ -172,7 +172,7 @@ rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Ur
 			if(thisModule.retrieveNode(firstNode) <> nextNode)
 				thisModule.addPred(thisModule.retrieveNode(firstNode), nextNode.firstUnconnectedSucc());
 			
-			if(firstNode.oclIsTypeOf(Turn!Timer) and node.oclIsTypeOf(Turn!OrFork)){
+			if(node.oclIsTypeOf(Turn!OrFork)){
 				thisModule.addPred(thisModule.retrieveNode(firstNode), thisModule.retrieveNode(node).succ -> first());
 			}
 		}
