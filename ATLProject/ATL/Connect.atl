@@ -8,18 +8,19 @@ create OUT : Urn from IN : Turn;
 -- be limited to only rules in this file.
 
 rule connectPathEnd(body: Turn!PathBody, nextNodeConnection: Turn!NodeConnection){
+	using{
+		vPathEnd : Turn!PathNode = body.pathEnd;	
+	}
 	do{
 		if(body.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(nextNodeConnection.oclIsUndefined()){
-				if(not thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
-					thisModule.addPred(thisModule.retrieveNode(body.pathEnd.regularEnd), (thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> first()).firstUnconnectedSucc());
-				}
-			}
-			thisModule.addPred(thisModule.retrieveNode(body.pathEnd.regularEnd), nextNodeConnection);
+			vPathEnd <- body.pathEnd.regularEnd;
 		}
-		else if(body.pathEnd.oclIsTypeOf(Turn!OrFork) or body.pathEnd.oclIsTypeOf(Turn!AndFork) or body.pathEnd.oclIsTypeOf(Turn!Stub)){
-			thisModule.addPred(thisModule.retrieveNode(body.pathEnd), nextNodeConnection);
+		
+		if(nextNodeConnection.oclIsUndefined() and not thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> isEmpty()){
+			nextNodeConnection <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> first().firstUnconnectedSucc();
 		}
+		
+		thisModule.addPred(thisModule.retrieveNode(vPathEnd), nextNodeConnection);
 	}
 }
 
@@ -125,27 +126,6 @@ rule connectForkNodes(pathend: Turn!PathEnd){
 	}
 }
 
-rule connectOrForkEndPoints(obj: Turn!OrFork, nextNode: Urn!PathNode, expression: String){
-	using{
-		vNextPred : Urn!NodeConnection = OclUndefined;
-		vBody : Turn!PathBody = obj.connectingOrBody;
-	}
-	do{
-		if(nextNode.oclIsTypeOf(Urn!OrFork)){
-			vNextPred <- nextNode.succ -> any(s|s.condition.expression=expression);
-		}
-		else if(nextNode.oclIsTypeOf(Urn!OrJoin)){
-			vNextPred <- nextNode.firstUnconnectedSucc();
-		}
-		
-		thisModule.connectEndToNextNode(vBody, vNextPred);
-		
-		if(vBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-			thisModule.addPred(thisModule.retrieveNode(vBody.referencedEnd), vNextPred);
-		}
-	}
-}
-
 --rule connectTimerNodes(timerObj: Turn!Timer){
 --	using{
 --		vReferencedEnd : Turn!ReferencedEnd = timerObj.timeoutPath.referencedEnd;
@@ -189,7 +169,8 @@ rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Ur
 				nextNode <- thisModule.retrieveNode(node);
 			}
 			
-			thisModule.addPred(thisModule.retrieveNode(firstNode), nextNode.firstUnconnectedSucc());
+			if(thisModule.retrieveNode(firstNode) <> nextNode)
+				thisModule.addPred(thisModule.retrieveNode(firstNode), nextNode.firstUnconnectedSucc());
 			
 			if(firstNode.oclIsTypeOf(Turn!Timer) and node.oclIsTypeOf(Turn!OrFork)){
 				thisModule.addPred(thisModule.retrieveNode(firstNode), thisModule.retrieveNode(node).succ -> first());

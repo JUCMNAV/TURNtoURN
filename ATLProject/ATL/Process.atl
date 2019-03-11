@@ -157,6 +157,7 @@ rule processOrFork(obj: Turn!OrFork){
 			endif;
 		vConditions : Sequence(Turn!Condition) = OclUndefined;
 		vNextNode : Turn!PathNode = OclUndefined;
+		vNextPred : Turn!PathNode = OclUndefined;
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tOrFork);
@@ -214,7 +215,18 @@ rule processOrFork(obj: Turn!OrFork){
 				}
 				
 				for(condition in vConditions){
-					thisModule.connectOrForkEndPoints(obj, vNextNode, condition.expression.asString());
+					if(vNextNode.oclIsTypeOf(Urn!OrFork)){
+						vNextPred <- vNextNode.succ -> any(s|s.condition.expression=condition.expression.asString());
+					}
+					else if(vNextNode.oclIsTypeOf(Urn!OrJoin)){
+						vNextPred <- vNextNode.firstUnconnectedSucc();
+					}
+					
+					thisModule.connectEndToNextNode(obj.connectingOrBody, vNextPred);
+					
+					if(obj.connectingOrBody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+						thisModule.addPred(thisModule.retrieveNode(obj.connectingOrBody.referencedEnd), vNextPred);
+					}
 				}
 			}
 			

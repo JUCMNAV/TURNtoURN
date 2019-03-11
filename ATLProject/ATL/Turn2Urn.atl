@@ -191,9 +191,10 @@ rule retrieveNode(node: Turn!PathNode){
 			}
 		}
 		
-		--if(not vRetrievedNode.oclIsUndefined())
-			--if(vRetrievedNode.id='114')
-				--thisModule.debug('Node ' + vRetrievedNode.id + ' retrieved here');
+		if(not vRetrievedNode.oclIsUndefined())
+			if(vRetrievedNode.id='37')
+				thisModule.debug('Node ' + vRetrievedNode.id + ' retrieved here');
+				--thisModule.k.k;
 		
 		vRetrievedNode; --returns a single node, not a sequence
 	}
@@ -228,7 +229,7 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 					vNextNode <- thisModule.createAndJoin();
 				}
 				else if(fork.oclIsTypeOf(Urn!OrFork)){
-					vNextNode <- thisModule.createOrJoin(fork.firstUnconnectedSucc(), fork.firstUnconnectedSucc());
+					vNextNode <- thisModule.createOrJoin();
 				}
 				thisModule.addPred(vNextNode, fork.firstUnconnectedSucc());
 				thisModule.addPred(vNextNode, fork.firstUnconnectedSucc());
