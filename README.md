@@ -90,9 +90,6 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Verify variable declaration typings are correct
 	* Current issues in output produced by new code:
 		* Component.jucm
-		* Connect.jucm
-			* Extra EmptyPoint + NodeConnection (line 249, id=155)
-			* Extra pred on EmptyPoint (line 519, id=202)
 		* OrFork.jucm
 			* Elsebody logic not working
 		* OrForkTestBranches.jucm
@@ -108,10 +105,10 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Resource.jucm
 		* Softgoal.jucm
 		* Task.jucm
-	* Broke while fixing others:
-		* AndFork.jucm
 	* Remaining for more careful validation:
+		* AndFork.jucm
 		* AndJoin.jucm
+		* Connect.jucm
 		* FailurePoint.jucm
 		* OrJoin.jucm
 		* Timer.jucm

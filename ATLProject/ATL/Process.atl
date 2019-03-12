@@ -47,6 +47,7 @@ rule processAndFork(sAndFork: Turn!AndFork){
 			if(sAndFork.connectingAndBody.pathNodes -> isEmpty()){
 				thisModule.connectEndToNextNode(sAndFork.connectingAndBody, vNextNode.nextFreeConnection());
 			}
+			
 			thisModule.connectNodes(sAndFork.connectingAndBody, sAndFork, vNextNode);	
 		}
 		
@@ -354,8 +355,6 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	do{
 		thisModule.tUCMmap <- tUCMmap;
 		thisModule.collectReferencedEnds(paths -> flatten() -> collect(p|p.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten());
-		
-		--Regular ends
 		for(path in paths){
 			thisModule.processPathEnd(path.pathBody.pathEnd);
 			
@@ -364,7 +363,7 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 					thisModule.connectEndToNextNode(path.pathBody, thisModule.retrieveNode(path.startPoint).nextFreeConnection());
 				}
 				else{
-					thisModule.termToSet <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> first();
+					thisModule.termToSet <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and not n.nextFreeConnection().oclIsUndefined());
 					thisModule.useConnection(thisModule.termToSet, thisModule.retrieveNode(path.startPoint).nextFreeConnection());
 					thisModule.connectEndToNextNode(path.pathBody, thisModule.termToSet.nextFreeConnection());
 				}
@@ -373,7 +372,6 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 				thisModule.connectNodes(path.pathBody, path.startPoint, thisModule.retrieveNode(path.startPoint));
 			}
 		}
-		
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();	
 	}
 }

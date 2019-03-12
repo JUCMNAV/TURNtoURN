@@ -38,6 +38,9 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
+		--if(vNodeToConnect.id='202')
+		--	thisModule.debug(vNodeToConnect.pred);
+		
 		if(nextNodeConnection.oclIsUndefined() and not vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).oclIsUndefined()){
 			nextNodeConnection <- vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).nextFreeConnection();
 		}
@@ -109,9 +112,10 @@ rule connectNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnect
 		else{
 			if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
 				if(not currentNode.connect.oclIsUndefined()){
-					vNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and n.succ -> includes(thisModule.retrieveNode(currentNode.connect).pred -> first()));
+					vNode <- thisModule.emptyPointMap.get(currentNode.connect);
 				}
 			}
+			
 			thisModule.useConnection(vNode, nextNodeConnection);
 		}
 	}

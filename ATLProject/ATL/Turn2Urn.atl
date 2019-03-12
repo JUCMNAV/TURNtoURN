@@ -24,6 +24,8 @@ helper def: connectMap : Map(Turn!Connect, Urn!Connect) = Map{};
 
 helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
 
+helper def: emptyPointMap : Map(Turn!Connect, Urn!EmptyPoint) = Map{};
+
 helper def: orForkNodeConnCounter : Integer = 1;
 
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
@@ -192,7 +194,7 @@ rule retrieveNode(node: Turn!PathNode){
 		}
 		
 		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='202'){
+			if(vRetrievedNode.id='155'){
 				--thisModule.debug('Node ' + vRetrievedNode.id + ' retrieved here');
 				--thisModule.k.k; --randomly picked error generating case to track where events occur
 			}
