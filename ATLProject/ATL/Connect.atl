@@ -152,86 +152,60 @@ rule handleForkNodes(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Ur
 		}
 	}
 }
-
-rule handleFirstNode(firstNode: Turn!PathNode, nextNodeConnection : Urn!NodeConnection){
-	using{
-		vNode : Urn!PathNode = thisModule.retrieveNode(firstNode);
-	}
-	do{
-		if(firstNode.oclIsTypeOf(Turn!Connect)){
-			thisModule.createEmptyPointConnect(firstNode, nextNodeConnection);
-		}
-		else{
-			if(firstNode.oclIsTypeOf(Turn!WaitingPlace)){
-				if(not firstNode.connect.oclIsUndefined()){
-					vNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and n.succ -> includes(thisModule.retrieveNode(firstNode.connect).pred -> first()));
-				}
-			}
-			
-			thisModule.addPred(vNode, nextNodeConnection);
-		}
-	}
-}
 	
 rule handleNode(currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 	using{
-		nextNodeConnection : Turn!PathNode = OclUndefined;
+		vNode : Urn!PathNode = thisModule.retrieveNode(currentNode);
+		nextNodeConnection : Turn!PathNode = thisModule.retrieveNode(previousNode).firstUnconnectedSucc();
 	}
 	do{
-		if(previousNode.oclIsTypeOf(Turn!Connect)){
-			previousNode <- previousNode.connectsTo;
-		}
-		
-		nextNodeConnection <- thisModule.retrieveNode(previousNode).firstUnconnectedSucc();
-		
 		if(currentNode.oclIsTypeOf(Turn!Connect)){
 			thisModule.createEmptyPointConnect(currentNode, nextNodeConnection);
 		}
 		else{
-			thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode).firstUnconnectedSucc());
+			if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
+				if(not currentNode.connect.oclIsUndefined()){
+					vNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and n.succ -> includes(thisModule.retrieveNode(currentNode.connect).pred -> first()));
+				}
+			}
+			thisModule.addPred(vNode, thisModule.retrieveNode(previousNode).firstUnconnectedSucc());
 		}
 	}
 }
 
 rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, nextNode: Urn!PathNode){
 	using{
-		vFirstNode : Turn!PathNode = pathbody.pathNodes -> first();
-		vPreviousNode : Turn!PathNode = OclUndefined;
+		vPreviousNode : Turn!PathNode = node;
 		vLastNode : Turn!PathNode = OclUndefined;
 	}
 	do{
-		for(currentNode in pathbody.pathNodes){
-			if(currentNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.processTimer(currentNode);
-			}
-			
-			if(currentNode = vFirstNode){
+		if(not pathbody.pathNodes -> isEmpty()){
+			for(currentNode in pathbody.pathNodes){
+				if(currentNode.oclIsTypeOf(Turn!Timer)){
+					thisModule.processTimer(currentNode);
+				}
+				
 				if(node.oclIsTypeOf(Turn!OrFork) or node.oclIsTypeOf(Turn!AndFork)){
-					thisModule.handleForkNodes(node, vFirstNode, nextNode);
+					thisModule.handleForkNodes(node, currentNode, nextNode);
 				}
 				else{
-					thisModule.handleFirstNode(vFirstNode, thisModule.retrieveNode(node).firstUnconnectedSucc());
+					thisModule.handleNode(currentNode, vPreviousNode);
+				}
+				
+				vPreviousNode <- currentNode;
+				if(vPreviousNode.oclIsTypeOf(Turn!Connect)){
+					vPreviousNode <- vPreviousNode.connectsTo;
 				}
 			}
-			else{
-				thisModule.handleNode(currentNode, vPreviousNode);
-			}
-			
-			vPreviousNode <- currentNode;
-		}
 		
-		if(not vPreviousNode.oclIsUndefined()){
-			vLastNode <- vPreviousNode;
+			vLastNode <- pathbody.pathNodes -> last();
 			
 			if(vLastNode.oclIsTypeOf(Turn!Connect)){
-				if(vLastNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
+				if(not vLastNode.connectsTo.oclIsTypeOf(Turn!Timer)){
 					vLastNode <- vLastNode.connectsTo;
 				}
-				else if(vLastNode.connectsTo.oclIsTypeOf(Turn!StartPoint) and not pathbody.pathEnd.oclIsUndefined()){
-					if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-						thisModule.addSucc(thisModule.retrieveNode(vLastNode.connectsTo), thisModule.createNodeConnection());
-					}
-					vLastNode <- vLastNode.connectsTo;
+				if(vLastNode.oclIsTypeOf(Turn!StartPoint) and pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+					thisModule.addSucc(thisModule.retrieveNode(vLastNode), thisModule.createNodeConnection());
 				}
 			}
 			
