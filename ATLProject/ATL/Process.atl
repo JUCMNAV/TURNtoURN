@@ -38,6 +38,9 @@ rule processAndFork(obj: Turn!AndFork){
 			vNextNode <- thisModule.handleForkJoin(tAndFork, obj.connectingAndBody, vNumberOfTerminatingNodes);
 			
 			if(vNumberOfTerminatingNodes = 2){
+				--thisModule.debug(obj.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()));
+				--thisModule.debug(vNextNode);
+				--thisModule.debug(tAndFork.firstUnconnectedSucc());
 				vEmptyPt <- thisModule.createEmptyPoint(vNextNode, tAndFork.firstUnconnectedSucc());
 				thisModule.addPred(vEmptyPt, tAndFork.firstUnconnectedSucc());
 			}
@@ -143,6 +146,10 @@ rule processTimer(timerObj : Turn!Timer){
 			if(not timerObj.timeoutCondition.oclIsUndefined()){
 				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> first());
 			}
+			
+			if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				thisModule.addPred(thisModule.retrieveNode(timerObj.timeoutPath.pathEnd.regularEnd), tTimer.succ -> at(2));
+			}
 		}
 		
 		tTimer;
@@ -189,11 +196,6 @@ rule processOrFork(obj: Turn!OrFork){
 			for(pathend in obj.getPathBodies() -> collect(pb|pb.pathEnd)){
 				thisModule.processPathEnd(pathend);
 			}
-			--if(not obj.body.elseBody.oclIsUndefined()){
-			--	for(pathend in obj.body.elseBody.pathNodes){
-			--		thisModule.processPathEnd(pathend);
-			--	}	
-			--}
 		}
 
 		if(obj.body.oclIsUndefined()){
@@ -231,6 +233,7 @@ rule processOrFork(obj: Turn!OrFork){
 				else{
 					vConditions <- vConditions.including(obj.condition);
 				}
+				
 				
 				for(condition in vConditions){
 					if(vNextNode.oclIsTypeOf(Urn!OrFork)){

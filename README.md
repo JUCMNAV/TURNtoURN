@@ -76,6 +76,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Check if it is acceptable to rename some TURN variables for more consistency in naming
 			* EndpointWithConnect vs EndPoint
 			* LongName.longname
+			* Softgoal
 		* Why is failLabel an object with failure as a property rather than just a string failLabel?
 * New TODO (will be categorized later):
 	* Determine which attributes are not being tested (e.g., author in tStrategies)
@@ -85,26 +86,30 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Write comments describing what rules do
 	* Verify variable declaration typings are correct
 	* Current issues in output produced by new code:
-		* (none recorded)
-	* Remaining to test:
-		* AndForkTestMergedBranches.jucm
-		* Belief.jucm
 		* Component.jucm
 		* Connect.jucm
-		* FailurePoint.jucm
+		* OrFork.jucm
+			* Elsebody logic not working
+		* OrForkTestBranches.jucm
+		* Responsibility.jucm
+		* Stub.jucm
+	* Null pointer errors when running phase 2:
+		* AndForkTestMergedBranches.jucm
+		* Belief.jucm
 		* Goal.jucm
 		* Indicator.jucm
-		* OrFork.jucm
-		* OrForkTestBranches.jucm
 		* OrForkTestMergedBranches.jucm
-		* OrJoin.jucm
 		* Resource.jucm
-		* Responsibility.jucm
 		* Softgoal.jucm
-		* Stub.jucm
 		* Task.jucm
-		* Timer.jucm
-		* WaitingPlace.jucm
-	* Remaining to validate:
+	* Remaining for more careful validation:
 		* AndFork.jucm
 		* AndJoin.jucm
+		* FailurePoint.jucm
+		* OrJoin.jucm
+		* Timer.jucm
+		* WaitingPlace.jucm
+	* Untested cases:
+		* StartPoint.xml
+		* EndPoint.xml
+		* Remaining test cases.xml

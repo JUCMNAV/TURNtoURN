@@ -126,30 +126,6 @@ rule connectForkNodes(pathend: Turn!PathEnd){
 	}
 }
 
---rule connectTimerNodes(timerObj: Turn!Timer){
---	using{
---		vReferencedEnd : Turn!ReferencedEnd = timerObj.timeoutPath.referencedEnd;
---	}
---	do{
---		--if pathNodes exist NOT SURE IF REQUIRED AS THERE IS NO PATHNODES TO TIMEOUT PATH
---		if(not (timerObj.timeoutPath.pathNodes -> isEmpty())){
---			thisModule.addPred(thisModule.retrieveNode(timerObj.timeoutPath.pathNodes -> first()), thisModule.retrieveNode(timerObj).succ -> at(2));
---			thisModule.connectNodes(timerObj.timeoutPath, timerObj, OclUndefined);
---		}
---		
---		if(vReferencedEnd.oclIsTypeOf(Turn!RespRef)){
---			thisModule.addPred(thisModule.getResponsibility(thisModule.referencedEnd.name).respRefs -> first(), thisModule.retrieveNode(timerObj).succ -> at(2));
---		}
---		
---		if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!OrFork) or timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!AndFork)){
---			thisModule.connectForkNodes(timerObj.timeoutPath.pathEnd);
---		}
---		else if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!Stub)){
---			thisModule.createStubOutNodes(timerObj.timeoutPath.pathEnd);
---		}
---	}
---}
-
 --QUESTION: there doesn't appear to be a Turn!PathNode class. What should I use instead?
 rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Urn!PathNode){
 	do{
@@ -196,19 +172,14 @@ rule handleNode(currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 	}
 	do{
 		if(previousNode.oclIsTypeOf(Turn!Connect)){
-			if(previousNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-				thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode).firstUnconnectedSucc()); 
+			if(not currentNode.oclIsTypeOf(Turn!Connect) and not currentNode.oclIsTypeOf(Turn!OrJoin) and not currentNode.oclIsTypeOf(Turn!AndJoin)){
+				thisModule.addSucc(thisModule.retrieveNode(previousNode.connectsTo), thisModule.createNodeConnection());
+			}
+			if(currentNode.oclIsTypeOf(Turn!Connect)){
+				thisModule.addPred(thisModule.retrieveNode(previousNode.connectsTo), thisModule.createEmptyPointConnect(currentNode, thisModule.retrieveNode(previousNode.connectsTo).succ).succ);
 			}
 			else{
-				if(not currentNode.oclIsTypeOf(Turn!Connect) and not currentNode.oclIsTypeOf(Turn!OrJoin) and not currentNode.oclIsTypeOf(Turn!AndJoin)){
-					thisModule.addSucc(thisModule.retrieveNode(previousNode.connectsTo), thisModule.createNodeConnection());
-				}
-				if(currentNode.oclIsTypeOf(Turn!Connect)){
-					thisModule.addPred(thisModule.retrieveNode(previousNode.connectsTo), thisModule.createEmptyPointConnect(currentNode, thisModule.retrieveNode(previousNode.connectsTo).succ).succ);
-				}
-				else{
-					thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode.connectsTo).firstUnconnectedSucc());	
-				}
+				thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode.connectsTo).firstUnconnectedSucc());	
 			}
 		}
 		else if(currentNode.oclIsTypeOf(Turn!Connect)){
