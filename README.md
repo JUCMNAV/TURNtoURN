@@ -88,10 +88,17 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Current issues in output produced by new code:
 		* Component.jucm
 		* Connect.jucm
+			* Extra pred in WaitingPlace (598|589)
+			* Missing pred in EndPoint (573|564)
+			* Missing pred in WaitingPlace (560|551)
+			* Extra pred in WaitingPlace (557|548)
+			* Missing pred in EndPoint (532|523)
+			* Missing pred in EmptyPoint, extra pred in EmptyPoint...
 		* OrFork.jucm
 			* Elsebody logic not working
 		* OrForkTestBranches.jucm
 		* Responsibility.jucm
+			* unsure how to make binding logic correct / what is correct (lines 491-499 current output, 476-493 original output)
 		* Stub.jucm
 	* Null pointer errors when running phase 2:
 		* AndForkTestMergedBranches.jucm
@@ -102,8 +109,9 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Resource.jucm
 		* Softgoal.jucm
 		* Task.jucm
-	* Remaining for more careful validation:
+	* Broke while fixing others:
 		* AndFork.jucm
+	* Remaining for more careful validation:
 		* AndJoin.jucm
 		* FailurePoint.jucm
 		* OrJoin.jucm

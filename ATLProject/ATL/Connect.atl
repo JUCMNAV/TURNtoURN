@@ -130,7 +130,7 @@ rule connectForkNodes(pathend: Turn!PathEnd){
 rule handleFirstNode(node: Turn!PathNode, firstNode: Turn!PathNode, nextNode: Urn!PathNode){
 	do{
 		if(firstNode.oclIsTypeOf(Turn!Connect)){
-			if(nextNode.oclIsTypeOf(Urn!AndJoin)){
+			if(node.oclIsTypeOf(Urn!AndFork)){ -- this condition necessarily implies that nextNode.oclIsTypeOf('AndFork')
 				thisModule.createEmptyPointConnect(firstNode, nextNode.firstUnconnectedSucc());
 			}
 			else if(node.oclIsTypeOf(Turn!OrFork)){
@@ -176,7 +176,7 @@ rule handleNode(currentNode: Turn!PathNode, previousNode: Turn!PathNode){
 				thisModule.addSucc(thisModule.retrieveNode(previousNode.connectsTo), thisModule.createNodeConnection());
 			}
 			if(currentNode.oclIsTypeOf(Turn!Connect)){
-				thisModule.addPred(thisModule.retrieveNode(previousNode.connectsTo), thisModule.createEmptyPointConnect(currentNode, thisModule.retrieveNode(previousNode.connectsTo).succ).succ);
+				thisModule.createEmptyPointConnect(currentNode, thisModule.retrieveNode(previousNode.connectsTo).succ);
 			}
 			else{
 				thisModule.addPred(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(previousNode.connectsTo).firstUnconnectedSucc());	

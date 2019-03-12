@@ -59,7 +59,7 @@ rule processAndFork(obj: Turn!AndFork){
 rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 	using{
 		vBoundTerm : Turn!Binding = OclUndefined;
-		vStubEntry : Turn!Stub = OclUndefined;
+		vStubItem : Turn!Stub = OclUndefined;
 		vStub: Urn!Stub = OclUndefined;
 	}
 	do{
@@ -69,16 +69,21 @@ rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 		else if(not s.bindings.oclIsUndefined()){
 			vBoundTerm <- s.bindings;
 		}
-		
 		if(not vBoundTerm.oclIsUndefined()){
 			if(not vBoundTerm.stubParam.stubDec.oclIsUndefined()){
-				vStubEntry <- vBoundTerm.stubParam.stubDec.stub;
+				vStubItem <- vBoundTerm.stubParam.stubDec.stub;
 			}
 			else{
-				vStubEntry <- vBoundTerm.stubParam.stub;
+				vStubItem <- vBoundTerm.stubParam.stub;
 			}
-			if(not thisModule.retrieveNode(vStubEntry).pred -> isEmpty()){
-				tBinding.stubEntry <- thisModule.retrieveNode(vStubEntry).pred -> at(s.index);
+			
+			if(not thisModule.retrieveNode(vStubItem).pred -> isEmpty() and s.index <= thisModule.retrieveNode(vStubItem).pred -> size()){
+				if(s.oclIsTypeOf(Turn!InBinding)){
+					tBinding.stubEntry <- thisModule.retrieveNode(vStubItem).pred -> at(s.index);
+				}
+				else if(s.oclIsTypeOf(Turn!OutBinding)){
+					tBinding.stubExit <- thisModule.retrieveNode(vStubItem).pred -> at(s.index);
+				}
 			}
 		}	
 	}

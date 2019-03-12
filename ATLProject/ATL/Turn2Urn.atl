@@ -192,9 +192,9 @@ rule retrieveNode(node: Turn!PathNode){
 		}
 		
 		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='100'){
+			if(vRetrievedNode.id='106'){
 				--thisModule.debug('Node ' + vRetrievedNode.id + ' retrieved here');
-				--thisModule.k.k;
+				--thisModule.k.k; --randomly picked error generating case to track where events occur
 			}
 		}
 		
@@ -855,30 +855,6 @@ rule IntElements2IntElements{
 	}
 }
 
-rule InBinding2InBinding{
-	from
-		s: Turn!InBinding
-	to
-		tInBinding: Urn!InBinding(
-			startPoint <- thisModule.resolveTemp(s.mapStart, 'tStartPoint')
-		)
-	do{
-		thisModule.processBinding(s, tInBinding);
-	}
-}
-
-rule OutBinding2OutBinding{
-	from
-		s: Turn!OutBinding
-	to
-		tOutBinding: Urn!OutBinding(
-			endPoint <- thisModule.endPointMap.get(s.mapEnd)
-		)
-	do{
-		thisModule.processBinding(s, tOutBinding);
-	}
-}
-
 rule UCMmap2UCMmap{
 	from
 		sUCMmap: Turn!UCMmap
@@ -892,6 +868,28 @@ rule UCMmap2UCMmap{
 		)
 	do{
 		thisModule.processUCMmap(tUCMmap, sUCMmap.paths);
+	}
+}
+
+rule InBinding2InBinding{
+	from
+		s: Turn!InBinding
+	to
+		tInBinding: Urn!InBinding()
+	do{
+		thisModule.processBinding(s, tInBinding);
+		tInBinding.startPoint <- thisModule.resolveTemp(s.mapStart, 'tStartPoint');
+	}
+}
+
+rule OutBinding2OutBinding{
+	from
+		s: Turn!OutBinding
+	to
+		tOutBinding: Urn!OutBinding()
+	do{
+		thisModule.processBinding(s, tOutBinding);
+		tOutBinding.endPoint <- thisModule.retrieveNode(s.mapEnd);
 	}
 }
 
