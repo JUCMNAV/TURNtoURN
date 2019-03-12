@@ -128,7 +128,9 @@ rule processPathEnd(pathend: Turn!PathNode){
 		}
 		else if(pathend.oclIsTypeOf(Turn!OrFork)){
 			thisModule.processOrFork(pathend);
-			thisModule.connectForkNodes(pathend);
+			if(not pathend.body.oclIsUndefined()){
+				thisModule.connectForkNodes(pathend);
+			}
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub)){
 			thisModule.processStub(pathend);
@@ -326,7 +328,7 @@ rule processStub(obj:Turn!Stub){
 			if(obj.connectingStubBody.pathNodes -> isEmpty()){
 				thisModule.connectEndToNextNode(obj.connectingStubBody, vNextNode.succ -> at(thisModule.outPathNumber -> first()));
 			}
-			thisModule.connectNodes(obj.connectingStubBody, obj, OclUndefined);
+			thisModule.connectNodes(obj.connectingStubBody, obj, thisModule.retrieveNode(obj));
 
 			if(obj.pbody.pathNodes -> isEmpty() and not obj.pbody.orFork.oclIsUndefined()){
 				thisModule.addPred(tStub, thisModule.retrieveNode(obj.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
@@ -365,7 +367,7 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 				}
 			}
 			else{
-				thisModule.connectNodes(path.pathBody, path.startPoint, OclUndefined);
+				thisModule.connectNodes(path.pathBody, path.startPoint, thisModule.retrieveNode(path.startPoint));
 			}
 		}
 		

@@ -217,7 +217,7 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 			
 			if(not vFirstPathNode.oclIsUndefined() and not vFirstPathNode.oclIsTypeOf(Turn!Connect)){
 				if(not vFirstPathNode.name.oclIsUndefined()){
-					vNextNode <- thisModule.tUCMmap.getNode(vFirstPathNode.name);
+					vNextNode <- thisModule.retrieveNode(vFirstPathNode);
 				}
 			}
 		}
