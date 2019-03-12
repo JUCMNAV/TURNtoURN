@@ -123,12 +123,12 @@ rule processPathEnd(pathend: Turn!PathNode){
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
 			thisModule.processAndFork(pathend);
-			thisModule.connectForkNodes(pathend);
+			thisModule.connectForkNodes(pathend, pathend.pathbody);
 		}
 		else if(pathend.oclIsTypeOf(Turn!OrFork)){
 			thisModule.processOrFork(pathend);
 			if(not pathend.body.oclIsUndefined()){
-				thisModule.connectForkNodes(pathend);
+				thisModule.connectForkNodes(pathend, pathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody));
 			}
 		}
 		else if(pathend.oclIsTypeOf(Turn!Stub)){
@@ -272,21 +272,23 @@ rule processOrFork(sOrFork: Turn!OrFork){
 
 rule processStub(sStub:Turn!Stub){
 	using{
-		vAllStubs : Sequence(Turn!Stub) = OclUndefined;
+		vPlugins : Sequence(Turn!Stub) = OclUndefined;
 		tStub : Urn!Stub = thisModule.retrieveNode(sStub);
 		vPathEnd : Urn!PathEnd = OclUndefined;
-		vStubOutPathPosition : Integer = OclUndefined;
 		vPaths : Sequence(Turn!PathBody) = OclUndefined;
 		vNextNode : Turn!PathNode = OclUndefined;
+		vPathEnds : Sequence(Turn!PathNode) = OclUndefined;
+		vCurrentPosition : Integer = 0;
 	}
 	do{
 		if(not sStub.params.oclIsUndefined()){
-			tStub.bindings <- sStub.params.plugin -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
+			vPlugins <- sStub.params.plugin;
 		}
 		else{
-			vAllStubs <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs;
-			tStub.bindings <- vAllStubs -> collect(s|s.params.plugin) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
+			vPlugins <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs -> collect(s|s.params.plugin) -> flatten();
 		}
+			
+		tStub.bindings <- vPlugins -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tStub);
 		
@@ -312,22 +314,22 @@ rule processStub(sStub:Turn!Stub){
 			
 			if(sStub.outPaths -> isEmpty()){
 				thisModule.addSucc(tStub, thisModule.createNodeConnection());
-				thisModule.outPathNumber <- Sequence{1};
-			}
-			else{
-				thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index);	
+				thisModule.outPathNumber <- 1;
 			}
 			
 			vNextNode <- thisModule.handleForkJoin(tStub, sStub.connectingStubBody, thisModule.numberOfTerminatingStubNodes);
 			
-			if(thisModule.numberOfTerminatingStubNodes = 2){
-				thisModule.addPred(vNextNode, tStub.succ -> at(thisModule.outPathNumber -> at(1)));
-				thisModule.addPred(vNextNode, tStub.succ -> at(thisModule.outPathNumber -> at(2)));
-				thisModule.outPathNumber <- Sequence{1};
+			if(thisModule.numberOfTerminatingStubNodes = 1){
+				thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index) -> first();	
+			}
+			else if(thisModule.numberOfTerminatingStubNodes = 2){
+				thisModule.addPred(vNextNode, tStub.succ -> at(thisModule.outPaths -> collect(op|op.index) -> at(1)));
+				thisModule.addPred(vNextNode, tStub.succ -> at(thisModule.outPaths -> collect(op|op.index) -> at(2)));
+				thisModule.outPathNumber <- 1;
 			}
 			
 			if(sStub.connectingStubBody.pathNodes -> isEmpty()){
-				thisModule.connectEndToNextNode(sStub.connectingStubBody, vNextNode.succ -> at(thisModule.outPathNumber -> first()));
+				thisModule.connectEndToNextNode(sStub.connectingStubBody, vNextNode.succ -> at(thisModule.outPathNumber));
 			}
 			thisModule.connectNodes(sStub.connectingStubBody, sStub, thisModule.retrieveNode(sStub));
 
@@ -337,11 +339,11 @@ rule processStub(sStub:Turn!Stub){
 			}
 		}
 		
-		vStubOutPathPosition <- 1;
+		vPathEnds <- sStub.outPaths -> collect(op|op.path.pathEnd) -> flatten() -> select(pe|pe.oclIsTypeOf(Turn!EndpointWithConnect));
 		
-		for(pathend in sStub.outPaths -> collect(op|op.path.pathEnd) -> flatten() -> select(pe|pe.oclIsTypeOf(Turn!EndpointWithConnect))){
-			thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), tStub.succ -> at(vStubOutPathPosition));
-			vStubOutPathPosition <- vStubOutPathPosition.inc();
+		for(pathend in vPathEnds){
+			vCurrentPosition <- vPathEnds.indexOf(pathend);
+			thisModule.addPred(thisModule.retrieveNode(pathend.regularEnd), tStub.succ -> at(vCurrentPosition));
 		}
 		
 		tStub;

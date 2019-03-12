@@ -7,58 +7,67 @@ create OUT : Urn from IN : Turn;
 -- rules in the "Process.atl" file. Ideally, this behavior should
 -- be limited to only rules in this file.
 
-rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConnection){
+rule getNodeToConnect(body: Turn!PathBody){
 	using{
 		vNodeToConnect : Turn!PathNode = OclUndefined;
-		vEmptyPoints : Sequence(Urn!PathNode) = OclUndefined;
-		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
 		if(not body.pathEnd.oclIsUndefined()){
 			if(body.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				vNodeToConnect <- body.pathEnd.regularEnd;
+				vNodeToConnect <- thisModule.retrieveNode(body.pathEnd.regularEnd);
 			}
 			else{
-				vNodeToConnect <- body.pathEnd;	
+				vNodeToConnect <- thisModule.retrieveNode(body.pathEnd);	
 			}
-			
-			vEmptyPoints <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint));
-			if(nextNodeConnection.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
-				nextNodeConnection <- vEmptyPoints -> first().nextFreeConnection();
-			}
-			
-			thisModule.addPred(thisModule.retrieveNode(vNodeToConnect), nextNodeConnection);
 		}
 		else if(not body.referencedEnd.oclIsUndefined()){
-			thisModule.addPred(thisModule.retrieveNode(body.referencedEnd), nextNodeConnection);
+			vNodeToConnect <- thisModule.retrieveNode(body.referencedEnd);
 		}
 		else if(not body.referencedStub.oclIsUndefined()){
 			vNodeToConnect <- thisModule.retrieveNode(body.referencedStub);
-			
+		}
+		
+		vNodeToConnect;
+	}
+}
+
+rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConnection){
+	using{
+		vNodeToConnect : Turn!PathNode = thisModule.getNodeToConnect(body);
+		vEmptyPoints : Sequence(Urn!PathNode) = thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint));
+		vOrJoin : Urn!OrJoin = OclUndefined;	
+	}
+	do{
+		if(nextNodeConnection.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
+			nextNodeConnection <- vEmptyPoints -> first().nextFreeConnection();
+		}
+		
+		if(not body.referencedStub.oclIsUndefined()){
 			if(vNodeToConnect.pred -> size() >= body.index){
 				vOrJoin <- thisModule.createOrJoin();
 				thisModule.addPred(vOrJoin, nextNodeConnection);
 				thisModule.addPred(vOrJoin, (vNodeToConnect.pred -> first()).source.succ);
-				thisModule.addPred(vNodeToConnect, vOrJoin.succ);
+				nextNodeConnection <- vOrJoin.nextFreeConnection();
 			}
-			else{
-				thisModule.addPred(vNodeToConnect, nextNodeConnection);	
-			}
+		}
+		
+		if(not vNodeToConnect.oclIsUndefined()){
+			thisModule.addPred(vNodeToConnect, nextNodeConnection);
 		}
 	}
 }
 
 rule connectNodesAfterFork(sFork: Turn!PathNode, pathbodies: Sequence(Turn!PathBody)){
 	using{
-		vCounter : Integer = 1;
+		vCurrentPosition : Integer = 1;
 		vForkNode : Urn!PathNode = thisModule.retrieveNode(sFork);
 	}
 	do{
 		for(pathbody in pathbodies){
+			vCurrentPosition <- pathbodies.indexOf(pathbody);
 			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
-				thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), vForkNode.succ -> at(vCounter));
+				thisModule.addPred(thisModule.retrieveNode(pathbody.pathNodes -> first()), vForkNode.succ -> at(vCurrentPosition));
 			}
-			vCounter <- vCounter.inc(); 			
 		}
 		
 		if(sFork.pbody.pathNodes -> isEmpty() and not sFork.pbody.orFork.oclIsUndefined()){
@@ -68,33 +77,23 @@ rule connectNodesAfterFork(sFork: Turn!PathNode, pathbodies: Sequence(Turn!PathB
 	}
 }
 
-rule connectForkNodes(pathend: Turn!PathEnd){
+rule connectForkNodes(pathend: Turn!PathEnd, pathbodies: Sequence(Turn!PathBody)){
 	using{
-		vHasReferencedEnd : Boolean = OclUndefined;
 		vFork : Urn!PathNode = thisModule.retrieveNode(pathend);
-		vCounter : Integer = 1;
-		vPathBodies : Sequence(Turn!PathBody) = OclUndefined;
+		vCurrentPosition : Integer = 0;
 	}
 	do{
-		if(pathend.oclIsTypeOf(Turn!AndFork)){
-			vPathBodies <- pathend.pathbody;
-		}
-		else if(not pathend.body.oclIsUndefined()){ -- this implicitly ensures that this case can only be OrFork as only OrFork has the property 'body'
-			vPathBodies <- pathend.body.regularBody -> flatten() -> collect(rb|rb.pathBody);	
-		}
-		
-		for(pathbody in vPathBodies){
+		for(pathbody in pathbodies){
+			vCurrentPosition <- pathbodies.indexOf(pathbody);
 			if(not pathbody.referencedEnd.oclIsUndefined() and not pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
-				thisModule.addPred(thisModule.retrieveNode(pathbody.referencedEnd), vFork.succ -> at(vCounter));
+				thisModule.addPred(thisModule.retrieveNode(pathbody.referencedEnd), vFork.succ -> at(vCurrentPosition));
 			}
 			else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and vFork.oclIsTypeOf(Urn!AndFork)){
-				thisModule.addPred(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vFork.succ -> at(vCounter));
+				thisModule.addPred(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vFork.succ -> at(vCurrentPosition));
 			}
 			else if(not pathbody.pathNodes -> isEmpty()){
 				thisModule.connectNodes(pathbody, pathend, thisModule.retrieveNode(pathend));
-			}	
-			
-			vCounter <- vCounter.inc();
+			}
 		}
 	}
 }
