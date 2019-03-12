@@ -67,7 +67,7 @@
       </startPoint>
       <pathBody xsi:type="turn:PathBodyNodes">
         <pathEnd xsi:type="turn:EndpointWithConnect">
-          <regularEnd name="e">
+          <regularEnd name="e3">
             <longName/>
           </regularEnd>
         </pathEnd>

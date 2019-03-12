@@ -79,6 +79,9 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* Softgoal
 		* Why is failLabel an object with failure as a property rather than just a string failLabel?
 * New TODO (will be categorized later):
+	* Test case issues:
+		* ConnectTestEndPointAgain has 2 'e's instead of an e3
+		* resource should be ressource
 	* Determine which attributes are not being tested (e.g., author in tStrategies)
 	* Figure out if it is possible to make an implementation that uses matched rules for OrFork, AndFork, etc.
 	* Find a way to remove the maps
@@ -88,12 +91,8 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Current issues in output produced by new code:
 		* Component.jucm
 		* Connect.jucm
-			* Extra pred in WaitingPlace (598|589)
-			* Missing pred in EndPoint (573|564)
-			* Missing pred in WaitingPlace (560|551)
-			* Extra pred in WaitingPlace (557|548)
-			* Missing pred in EndPoint (532|523)
-			* Missing pred in EmptyPoint, extra pred in EmptyPoint...
+			* Extra EmptyPoint + NodeConnection (line 249, id=155)
+			* Extra pred on EmptyPoint (line 519, id=202)
 		* OrFork.jucm
 			* Elsebody logic not working
 		* OrForkTestBranches.jucm

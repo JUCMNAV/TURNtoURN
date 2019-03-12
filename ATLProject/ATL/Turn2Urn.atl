@@ -126,10 +126,10 @@ rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
 	do{
 		pathNodes <- pathNodes -> flatten();
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
 	}
 }
 
@@ -192,7 +192,7 @@ rule retrieveNode(node: Turn!PathNode){
 		}
 		
 		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='201'){
+			if(vRetrievedNode.id='202'){
 				--thisModule.debug('Node ' + vRetrievedNode.id + ' retrieved here');
 				--thisModule.k.k; --randomly picked error generating case to track where events occur
 			}

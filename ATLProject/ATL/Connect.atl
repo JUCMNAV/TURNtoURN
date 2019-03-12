@@ -38,8 +38,8 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
-		if(nextNodeConnection.oclIsUndefined() and not vEmptyPoints -> isEmpty()){
-			nextNodeConnection <- vEmptyPoints -> first().nextFreeConnection();
+		if(nextNodeConnection.oclIsUndefined() and not vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).oclIsUndefined()){
+			nextNodeConnection <- vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).nextFreeConnection();
 		}
 		
 		if(not body.referencedStub.oclIsUndefined()){
@@ -98,7 +98,7 @@ rule connectForkNodes(pathend: Turn!PathEnd, pathbodies: Sequence(Turn!PathBody)
 	}
 }
 	
-rule handleNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnection){
+rule connectNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnection){
 	using{
 		vNode : Urn!PathNode = thisModule.retrieveNode(currentNode);
 	}
@@ -119,7 +119,7 @@ rule handleNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnecti
 
 rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
 	using{
-		vLastNode : Turn!PathNode = OclUndefined;
+		vLastNode : Turn!PathNode = pathbody.pathNodes -> last();
 	}
 	do{
 		if(not pathbody.pathNodes -> isEmpty()){
@@ -130,12 +130,12 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 				
 				if(node.oclIsTypeOf(Turn!OrFork)){
 					if(not currentNode.oclIsTypeOf(Turn!Connect) and thisModule.retrieveNode(currentNode) <> previousNode){
-						thisModule.handleNode(currentNode, previousNode.nextFreeConnection());
+						thisModule.connectNode(currentNode, previousNode.nextFreeConnection());
 					}
-					thisModule.handleNode(currentNode, thisModule.retrieveNode(node).succ -> first());
+					thisModule.connectNode(currentNode, thisModule.retrieveNode(node).succ -> first());
 				}
 				else{
-					thisModule.handleNode(currentNode, previousNode.nextFreeConnection());
+					thisModule.connectNode(currentNode, previousNode.nextFreeConnection());
 				}
 				
 				if(currentNode.oclIsTypeOf(Turn!Connect)){
@@ -146,8 +146,6 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 				}
 			}
 		
-			vLastNode <- pathbody.pathNodes -> last();
-			
 			if(vLastNode.oclIsTypeOf(Turn!Connect)){
 				if(not vLastNode.connectsTo.oclIsTypeOf(Turn!Timer)){
 					vLastNode <- vLastNode.connectsTo;

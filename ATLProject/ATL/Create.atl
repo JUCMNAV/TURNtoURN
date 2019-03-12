@@ -36,7 +36,7 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 			thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), newPred);
 			thisModule.addNewConnection(tEmptyPt, thisModule.createNodeConnection());
 		}
-		if(tEmptyPt.id='201'){
+		if(tEmptyPt.id='202'){
 			--thisModule.debug(tEmptyPt.pred);	
 		}
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
