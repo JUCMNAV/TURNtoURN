@@ -192,7 +192,7 @@ rule retrieveNode(node: Turn!PathNode){
 		}
 		
 		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='106'){
+			if(vRetrievedNode.id='201'){
 				--thisModule.debug('Node ' + vRetrievedNode.id + ' retrieved here');
 				--thisModule.k.k; --randomly picked error generating case to track where events occur
 			}
