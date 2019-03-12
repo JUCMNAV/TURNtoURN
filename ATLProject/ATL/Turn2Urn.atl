@@ -72,7 +72,7 @@ rule nextId(){
 	}
 }
 
-rule addPred(node: Turn!PathNode, predecessor: OclAny){
+rule useConnection(node: Turn!PathNode, predecessor: OclAny){
 	do{
 		if(predecessor.oclIsKindOf(Sequence(OclAny))){
 			node.pred <- node.pred.union(predecessor);
@@ -83,7 +83,7 @@ rule addPred(node: Turn!PathNode, predecessor: OclAny){
 	}
 }
 
-rule addSucc(node: Turn!PathNode, successor: OclAny){
+rule addNewConnection(node: Turn!PathNode, successor: OclAny){
 	do{
 		if(successor.oclIsKindOf(Sequence(OclAny))){
 			node.succ <- node.succ.union(successor);

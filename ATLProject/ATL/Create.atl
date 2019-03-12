@@ -29,12 +29,12 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 	do{
 		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
 			tEmptyPt.name <- 'AsynchConnectTimer#' + currentNode.connectsTo.name;
-			thisModule.addPred(tEmptyPt, newPred);
+			thisModule.useConnection(tEmptyPt, newPred);
 		}
 		else{
-			thisModule.addPred(thisModule.retrieveNode(currentNode.connectsTo), tNodeConnection1);
-			thisModule.addPred(thisModule.retrieveNode(currentNode.connectsTo), newPred);
-			thisModule.addSucc(tEmptyPt, thisModule.createNodeConnection());
+			thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), tNodeConnection1);
+			thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), newPred);
+			thisModule.addNewConnection(tEmptyPt, thisModule.createNodeConnection());
 		}
 		if(tEmptyPt.id='201'){
 			--thisModule.debug(tEmptyPt.pred);	
