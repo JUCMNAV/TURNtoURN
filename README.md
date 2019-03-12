@@ -90,12 +90,19 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Verify variable declaration typings are correct
 	* Current issues in output produced by new code:
 		* Component.jucm
+			* Much to be done
 		* OrFork.jucm
-			* Elsebody logic not working
+			* Elsebody case is not being handled in current version of code
 		* OrForkTestBranches.jucm
+			* Missing an OrJoin and its corresponding NodeConnection (id=73 in expected output)
+			* Lots of nodes are missing connections
+			* Lots of incorrect connections
 		* Responsibility.jucm
-			* unsure how to make binding logic correct / what is correct (lines 491-499 current output, 476-493 original output)
+			* Unsure how to make binding logic correct / what is correct (lines 491-499 current output, 476-493 original output)
 		* Stub.jucm
+			* InBinding, OutBinding logic is incorrect
+			* Missing a precondition (lines 561, 604, ... in expected output)
+			* Missing some NodeConnections (e.g., lines 591-592 in original code)
 	* Null pointer errors when running phase 2:
 		* AndForkTestMergedBranches.jucm
 		* Belief.jucm

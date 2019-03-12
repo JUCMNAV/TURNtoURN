@@ -38,9 +38,6 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
-		--if(vNodeToConnect.id='202')
-		--	thisModule.debug(vNodeToConnect.pred);
-		
 		if(nextNodeConnection.oclIsUndefined() and not vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).oclIsUndefined()){
 			nextNodeConnection <- vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).nextFreeConnection();
 		}
