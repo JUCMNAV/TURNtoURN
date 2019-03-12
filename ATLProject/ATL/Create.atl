@@ -44,22 +44,6 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 	}
 }
 
-rule createEmptyPoint(join: Turn!PathNode, newPred: Urn!PathNode){
-	to
-		tNodeConnection1: Urn!NodeConnection(),
-		tEmptyPt: Urn!EmptyPoint(
-			id <- thisModule.nextId().toString(),
-			name <- 'EmptyPoint' + tEmptyPt.id,
-			diagram <- thisModule.tUCMmap,
-			succ <- tNodeConnection1
-		)
-	do{
-		thisModule.addPred(join, newPred);
-		thisModule.addPred(join, tNodeConnection1);
-		tEmptyPt;
-	}
-}
-
 ------------2/2 RULES WITHOUT DO LOGIC-----------
 -- or well, where the only "do" logic is a return
 
@@ -120,6 +104,20 @@ rule createConnect(){
 		)
 	do{
 		tConnect;	
+	}
+}
+
+rule createEmptyPoint(){
+	to
+		tNodeConnection1: Urn!NodeConnection(),
+		tEmptyPt: Urn!EmptyPoint(
+			id <- thisModule.nextId().toString(),
+			name <- 'EmptyPoint' + tEmptyPt.id,
+			diagram <- thisModule.tUCMmap,
+			succ <- tNodeConnection1
+		)
+	do{
+		tEmptyPt;
 	}
 }
 

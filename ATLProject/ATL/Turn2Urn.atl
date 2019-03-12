@@ -59,7 +59,7 @@ helper context Turn!OrFork def : getPathBodies() : Turn!PathBody =
 helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclAny =
 	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
 
-helper context OclAny def : firstUnconnectedSucc() : OclAny =
+helper context OclAny def : nextFreeConnection() : OclAny =
 	self.succ -> any(s|s.target.oclIsUndefined());
 
 -----------------------3/5 CALLED RULES-----------------------------
