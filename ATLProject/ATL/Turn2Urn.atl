@@ -194,8 +194,8 @@ rule retrieveNode(node: Turn!PathNode){
 		}
 		
 		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='155'){
-				--thisModule.debug('Node ' + vRetrievedNode.id + ' retrieved here');
+			if(vRetrievedNode.id='32'){
+				--thisModule.debug('Node ' + vRetrievedNode.id + ' of type ' + vRetrievedNode.oclType() + ' retrieved here');
 				--thisModule.k.k; --randomly picked error generating case to track where events occur
 			}
 		}
@@ -299,6 +299,16 @@ rule AndJoin2AndJoin{
 			succ <- tNodeConn,
 			label <- tNodeLabel,
 			contRef <- thisModule.getUrnCompRef(s)
+		)
+}
+
+rule ComponentBinding2ComponentBinding{
+	from
+		s:Turn!ComponentBinding
+	to
+		tComponentBinding: Urn!ComponentBinding(
+			pluginComponent <- thisModule.resolveTemp(s.componentIn, 'tCompRef'),
+			parentComponent <- thisModule.resolveTemp(s.componentOut, 'tCompRef')
 		)
 }
 
@@ -548,6 +558,7 @@ rule PluginBinding2PluginBinding{
 		tPluginBinding: Urn!PluginBinding (
 			-- this could be other way round, binding could be inBinding or OutBinding and vice-versa.
 			in <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tInBinding')).including(thisModule.resolveTemp(s.binding, 'tInBinding')),
+			components <- s.bindings -> collect(b|thisModule.resolveTemp(b,'tComponentBinding')),
 			out <- s.bindings -> collect(b|thisModule.resolveTemp(b, 'tOutBinding')).including(thisModule.resolveTemp(s.binding, 'tOutBinding')),
 			plugin <- thisModule.resolveTemp(s.map, 'tUCMmap'),
 			precondition <- thisModule.resolveTemp(s.condition, 'tCondition'),
@@ -565,6 +576,16 @@ rule StartPoint2StartPoint{
 			else
 				OclUndefined
 			endif;
+		vPrecondition : Urn!Condition =
+			if(s.failKind.oclIsUndefined()) then
+				s.precondition
+			else
+				if(not s.catches.oclIsUndefined()) then
+					thisModule.createCondition(s.catches)
+				else
+					OclUndefined
+				endif
+			endif;
 	}
 	to
 		tNodeConn: Urn!NodeConnection(),
@@ -574,8 +595,7 @@ rule StartPoint2StartPoint{
 			name <- s.turnGetLongestName(),
 			succ <- tNodeConn,
 			label <- tNodeLabel,
-			diagram <- s.path.map,
-			precondition <- s.precondition,
+			precondition <- vPrecondition,
 			contRef <- thisModule.getUrnCompRef(s),
 			failureKind <- vFailureKind
 		)
@@ -743,7 +763,7 @@ rule WaitingPlace2WaitingPlace{
 
 rule Component2Component{
 	from 
-		s: Turn!ComponentRef(Urn!Component.allInstances() -> any(c|c.name = s.name).oclIsUndefined())
+		s: Turn!ComponentRef
 	using{
 		vExistingComponent : Urn!Component = Urn!Component.allInstances() -> any(c|c.name=s.name);
 		vRetrievedComponent : Urn!Component =
@@ -789,16 +809,14 @@ rule IntElements2Belief{
 	 	tBelief: Urn!Belief(
 	 		id <- thisModule.nextId().toString(),
 	 		name <- s.name,
-			description <- s.name,
-			succ <- tBeliefLink
-	 	),
-		tBeliefLink: Urn!BeliefLink(
-			target <- s.linksSrc -> collect(l|l.dest) -> flatten() -> collect(l|thisModule.resolveTemp(l, 'tIntElemRef')) -> first()
-		)
+			description <- s.name
+	 	)
 	do{
-		for(link in s.linksSrc -> excluding(s.linksSrc -> first())){
-			tBelief.succ <- thisModule.createBeliefLink(link);
-	 	}	
+		if(not s.linksSrc -> isEmpty()){
+			for(link in s.linksSrc){
+				tBelief.succ <- thisModule.createBeliefLink(link);
+		 	}
+		}
 	}
 }
 
@@ -937,8 +955,9 @@ rule URNspec2URNspec{
 			links <- vContributions.union(vDecompositions).union(vDependencies)
 		),
 		tGRLSpecDiag: Urn!GRLGraph(
+			id <- thisModule.nextId().toString(),
 		 	nodes <- vIntElemRefs.union(vBeliefs),
-			contRefs <- sURNspec.actors -> collect(a| thisModule.resolveTemp(a, 'tActorRef')),
+			contRefs <- sURNspec.actors -> collect(a|thisModule.resolveTemp(a, 'tActorRef')),
 			connections <- vLinkRefs.union(vBeliefs -> collect(b|b.succ))
 		),
 		tUCMspec: Urn!UCMspec()

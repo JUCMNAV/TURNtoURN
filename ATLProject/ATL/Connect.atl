@@ -129,10 +129,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 					thisModule.processTimer(currentNode);
 				}
 				
-				if(node.oclIsTypeOf(Turn!OrFork)){
-					if(not currentNode.oclIsTypeOf(Turn!Connect) and thisModule.retrieveNode(currentNode) <> previousNode){
-						thisModule.connectNode(currentNode, previousNode.nextFreeConnection());
-					}
+				if(node.oclIsTypeOf(Turn!OrFork) and (currentNode.oclIsTypeOf(Turn!Connect) or thisModule.retrieveNode(currentNode) = previousNode)){
 					thisModule.connectNode(currentNode, thisModule.retrieveNode(node).succ -> first());
 				}
 				else{

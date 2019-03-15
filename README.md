@@ -88,11 +88,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Ensure nextGlobalId is correct
 	* Write comments describing what rules do
 	* Verify variable declaration typings are correct
-	* Current issues in output produced by new code:
-		* Component.jucm
-			* Much to be done
-		* OrFork.jucm
-			* Elsebody case is not being handled in current version of code
+	* Major issues in output produced by new code:
 		* OrForkTestBranches.jucm
 			* Missing an OrJoin and its corresponding NodeConnection (id=73 in expected output)
 			* Lots of nodes are missing connections
@@ -105,18 +101,18 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* Missing some NodeConnections (e.g., lines 591-592 in original code)
 	* Null pointer errors when running phase 2:
 		* AndForkTestMergedBranches.jucm
-		* Belief.jucm
-		* Goal.jucm
-		* Indicator.jucm
+		* Belief.jucm, Goal.jucm, Indicator.jucm, Resource.jucm, Softgoal.jucm, Task.jucm
+			* java.lang.ClassCastException: grl.impl.ActorRefImpl cannot be cast to ucm.map.ComponentRef
+				at org.xtext.project.turn.Turn2UrnPhase2.main(Turn2UrnPhase2.java:192)
 		* OrForkTestMergedBranches.jucm
-		* Resource.jucm
-		* Softgoal.jucm
-		* Task.jucm
-	* Remaining for more careful validation:
+	* Remaining for more careful validation (some have minor issues):
 		* AndFork.jucm
 		* AndJoin.jucm
+		* Component.jucm
 		* Connect.jucm
 		* FailurePoint.jucm
+		* OrFork.jucm
+			* Elsebody case is not being handled in current version of code
 		* OrJoin.jucm
 		* Timer.jucm
 		* WaitingPlace.jucm
