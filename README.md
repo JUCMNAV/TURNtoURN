@@ -89,6 +89,10 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Write comments describing what rules do
 	* Verify variable declaration typings are correct
 	* Major issues in output produced by new code:
+		* AndForkTestMergedBranches.jucm
+			* Null pointer error when running phase 2
+		* OrForkTestMergedBranches.jucm
+			* Null pointer error when running phase 2
 		* OrForkTestBranches.jucm
 			* Missing an OrJoin and its corresponding NodeConnection (id=73 in expected output)
 			* Lots of nodes are missing connections
@@ -99,21 +103,22 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* InBinding, OutBinding logic is incorrect
 			* Missing a precondition (lines 561, 604, ... in expected output)
 			* Missing some NodeConnections (e.g., lines 591-592 in original code)
-	* Null pointer errors when running phase 2:
-		* AndForkTestMergedBranches.jucm
-		* Belief.jucm, Goal.jucm, Indicator.jucm, Resource.jucm, Softgoal.jucm, Task.jucm
-			* java.lang.ClassCastException: grl.impl.ActorRefImpl cannot be cast to ucm.map.ComponentRef
-				at org.xtext.project.turn.Turn2UrnPhase2.main(Turn2UrnPhase2.java:192)
-		* OrForkTestMergedBranches.jucm
 	* Remaining for more careful validation (some have minor issues):
 		* AndFork.jucm
 		* AndJoin.jucm
+		* Belief.jucm
 		* Component.jucm
+			* Definite minor issues
 		* Connect.jucm
 		* FailurePoint.jucm
+		* Goal.jucm
+		* Indicator.jucm
 		* OrFork.jucm
-			* Elsebody case is not being handled in current version of code
+			* Elsebody case is not being handled in my version of the code
 		* OrJoin.jucm
+		* Resource.jucm
+		* SoftGoal.jucm
+		* Task.jucm
 		* Timer.jucm
 		* WaitingPlace.jucm
 	* Untested cases:

@@ -69,21 +69,21 @@ rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 		else if(not s.bindings.oclIsUndefined()){
 			vBoundTerm <- s.bindings;
 		}
-		if(not vBoundTerm.oclIsUndefined()){
-			if(not vBoundTerm.stubParam.stubDec.oclIsUndefined()){
-				vStubItem <- vBoundTerm.stubParam.stubDec.stub;
+		
+		if(not vBoundTerm.stubParam.stubDec.oclIsUndefined()){
+			vStubItem <- vBoundTerm.stubParam.stubDec.stub;
+		}
+		else if(not vBoundTerm.stubParam.stub.oclIsUndefined()){
+			vStubItem <- vBoundTerm.stubParam.stub;
+		}
+		
+		if(not vStubItem.oclIsUndefined() and not thisModule.retrieveNode(vStubItem).pred -> isEmpty()){
+			if(s.oclIsTypeOf(Turn!InBinding)){
+				tBinding.stubEntry <- thisModule.retrieveNode(vStubItem).pred -> at(s.index);
 			}
-			else{
-				vStubItem <- vBoundTerm.stubParam.stub;
-			}
-			
-			if(not thisModule.retrieveNode(vStubItem).pred -> isEmpty() and s.index <= thisModule.retrieveNode(vStubItem).pred -> size()){
-				if(s.oclIsTypeOf(Turn!InBinding)){
-					tBinding.stubEntry <- thisModule.retrieveNode(vStubItem).pred -> at(s.index);
-				}
-				else if(s.oclIsTypeOf(Turn!OutBinding)){
-					tBinding.stubExit <- thisModule.retrieveNode(vStubItem).succ -> at(s.index);
-				}
+			else if(s.oclIsTypeOf(Turn!OutBinding)){
+				tBinding.stubExit <- thisModule.retrieveNode(vStubItem).succ -> at(s.index);
+			--	thisModule.debug(thisModule.retrieveNode(vStubItem).succ -> at(s.index).target);
 			}
 		}	
 	}

@@ -124,6 +124,30 @@ rule contributionNumberToKeyword(quantitativeContribution: Integer){
 	}
 }
 
+rule contributionKeywordToNumber(keyword: String){
+	using{
+		vQuantitativeContribution : Integer = OclUndefined;	
+	}
+	do{
+		if(keyword.equals('Make'))
+			vQuantitativeContribution <- 100;
+		else if(keyword.equals('Hurt'))
+			vQuantitativeContribution <- -25;
+		else if(keyword.equals('Break'))
+			vQuantitativeContribution <- -100;
+		else if(keyword.equals('SomePositive'))
+			vQuantitativeContribution <- 50;
+		else if(keyword.equals('SomeNegative'))
+			vQuantitativeContribution <- -50;
+		else if(keyword.equals('Help'))
+			vQuantitativeContribution <- 25;
+		else
+			vQuantitativeContribution <- OclUndefined;
+		
+		vQuantitativeContribution;
+	}
+}
+
 rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
 	do{
 		pathNodes <- pathNodes -> flatten();
@@ -341,21 +365,16 @@ rule Contribution2Contribution{
 	from 
 		s: Turn!Contribution (s.link.type.toString() <> 'belief')
 	using{
-		vIsQuantitativeContribution : Boolean = s.contribution.toString().equals('undefined');
+		vNoContributionType : Boolean = s.contribution.toString().equals('undefined');
 	
 		vContribution : String =
-			if(vIsQuantitativeContribution) then
+			if(vNoContributionType) then
 				thisModule.contributionNumberToKeyword(s.quantitativeContribution)
 			else
 				s.contribution.toString().capitalize()
 			endif;
 
-		vQuantitativeContribution : Integer =
-			if(vIsQuantitativeContribution) then
-				s.quantitativeContribution
-			else
-				OclUndefined
-			endif;
+		vQuantitativeContribution : Integer = thisModule.contributionKeywordToNumber(vContribution);
 	}
 	to 
 		tCont: Urn!Contribution (
@@ -841,7 +860,7 @@ rule IntElements2IntElements{
 	to 
 		tIntElemRef: Urn!IntentionalElementRef (
 			id <- thisModule.nextId().toString(),
-			name <- 'IntentionalElementRef'+tIntElemRef.id,
+			name <- s.turnGetLongestName(),
 			def <- tIntElem,
 			succ <- s.linksSrc -> collect(c|thisModule.resolveTemp(c, 'tLinkRef'))
 		),
@@ -855,8 +874,11 @@ rule IntElements2IntElements{
 			metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name)
 		)
 	do{
+		if(tIntElemRef.name.oclIsUndefined())
+			tIntElemRef.name <- 'IntentionalElementRef'+tIntElemRef.id;
+		
 		if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0){
-			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().substring(1,1).toUpper()+a.decompositionType.toString().substring(2,a.decompositionType.toString().size()))-> first();
+			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().capitalize())-> first();
 		}
 		if(s.type.toString() = 'resource'){
 			tIntElem.type <- 'Ressource';
