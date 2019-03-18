@@ -99,10 +99,6 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* Lots of incorrect connections
 		* Responsibility.jucm
 			* Unsure how to make binding logic correct / what is correct (lines 491-499 current output, 476-493 original output)
-		* Stub.jucm
-			* InBinding, OutBinding logic is incorrect
-			* Missing a precondition (lines 561, 604, ... in expected output)
-			* Missing some NodeConnections (e.g., lines 591-592 in original code)
 	* Remaining for more careful validation (some have minor issues):
 		* AndFork.jucm
 		* AndJoin.jucm
@@ -118,6 +114,8 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* OrJoin.jucm
 		* Resource.jucm
 		* SoftGoal.jucm
+		* Stub.jucm
+			* Compare result of phase 2 with "stub.jucm" of the Expected Output folder rather than stub-autolayout.jucm in that folder
 		* Task.jucm
 		* Timer.jucm
 		* WaitingPlace.jucm

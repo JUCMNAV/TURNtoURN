@@ -218,7 +218,7 @@ rule retrieveNode(node: Turn!PathNode){
 		}
 		
 		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='32'){
+			if(vRetrievedNode.id='194'){
 				--thisModule.debug('Node ' + vRetrievedNode.id + ' of type ' + vRetrievedNode.oclType() + ' retrieved here');
 				--thisModule.k.k; --randomly picked error generating case to track where events occur
 			}
@@ -236,7 +236,13 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 	}
 	do{
 		thisModule.collectReferencedEnds(connectingBody.pathNodes);
-		thisModule.processPathEnd(connectingBody.pathEnd);
+		if(connectingBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
+			thisModule.processAndFork(connectingBody.pathEnd, fork.oclIsTypeOf(Urn!Stub));
+			thisModule.connectForkNodes(connectingBody.pathEnd, connectingBody.pathEnd.pathbody);	
+		}
+		else{
+			thisModule.processPathEnd(connectingBody.pathEnd);
+		}
 		
 		if(numberOfTerminatingNodes = 1){
 			vFirstPathNode <- connectingBody.pathNodes -> first();
