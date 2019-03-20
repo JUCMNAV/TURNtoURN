@@ -1,0 +1,57 @@
+urnModel Test
+
+
+map Default {
+	start startPoint -> end continue.
+	parent Agent: startPoint, continue
+}
+
+map OF #"Originating Features" {
+	start startPoint -> stub OrigFeatures(
+		[!subTL] Default: startPoint=in 1, continue=out 1, Agent=Agent	
+		[subTL] TL: startPoint=in 1, success=out 1, failPoint=out 2,
+		Agent=Agent
+	) {
+		out 1 -> X sendRequest -> end success.
+		out 2 -> end failPoint.
+	}
+	parent Agent: startPoint..success, failPoint
+
+
+}
+
+map TCS #"Terminating Call Screening (TCS)" {
+	start startPoint -> X checkTCS -> or {
+		[!onTCSlist] -> end success.
+[onTCSlist] -> end failPoint.
+	}
+	parent Agent: startPoint..success, failPoint, TCSCreeningList
+	parent TCSCreeningList: checkTCS
+}
+
+map SC#"Simple Connection" {
+start request -> stub Originating(
+	OF: success=out 1, failPoint=out 2, startPoint=in 1, 	Agent=OriginatingAgent
+) {
+		out 1 -> stub Terminating(
+			TF: success=out 1, reportSuccess=out 2, busy=out 3, 
+			failPoint=out 4, startPoint=in 1, 
+			Agent=TerminatingAgent
+		) {
+			out 1 -> end ring.
+			out 2 -> X forwardSignal -> end ringing.
+			out 3 -> X forwardSignal -> end busy.
+			out 4 -> end notify.
+		}
+		out 2 -> end notify.
+	}
+	parent OriginatingUser: request, notify, busy, ringing
+	parent OriginatingAgent: Originating, forwardSignal
+	parent TerminatingAgent: Terminating
+	parent TerminatingUser: ring
+}
+
+
+
+
+	

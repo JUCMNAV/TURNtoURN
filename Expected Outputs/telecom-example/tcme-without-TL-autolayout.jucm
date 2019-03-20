@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:ucm.map="http:///ucm/map.ecore" xmlns:urn="http:///urn.ecore" name="Test" created="March 20, 2019 3:51:06 PM EDT" modified="March 20, 2019 3:52:33 PM EDT" specVersion="2" urnVersion="1.27" nextGlobalID="45">
+  <ucmspec/>
+  <grlspec/>
+  <urndef>
+    <responsibilities name="sendRequest" id="15" respRefs="16"/>
+    <responsibilities name="checkTCS" id="17" respRefs="18"/>
+    <responsibilities name="forwardSignal" id="19" respRefs="20 21"/>
+    <specDiagrams xsi:type="grl:GRLGraph" name="GRLGraph22" id="45"/>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="Default" id="27" parentStub="//@urndef/@specDiagrams.2/@nodes.1/@bindings.0">
+      <nodes xsi:type="ucm.map:StartPoint" name="startPoint" id="22" x="139" y="-34" contRef="2" succ="//@urndef/@specDiagrams.1/@connections.0" inBindings="//@urndef/@specDiagrams.2/@nodes.1/@bindings.0/@in.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="continue" id="26" x="301" y="-34" contRef="2" pred="//@urndef/@specDiagrams.1/@connections.0" outBindings="//@urndef/@specDiagrams.2/@nodes.1/@bindings.0/@out.0">
+        <label/>
+      </nodes>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef2" id="2" x="58" y="-110" width="304" height="92" contDef="1" nodes="22 26" parentBindings="//@urndef/@specDiagrams.2/@nodes.1/@bindings.0/@components.0 //@urndef/@specDiagrams.2/@nodes.1/@bindings.1/@components.0" pluginBindings="//@urndef/@specDiagrams.2/@nodes.1/@bindings.0/@components.0 //@urndef/@specDiagrams.2/@nodes.1/@bindings.1/@components.0 //@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@components.0 //@urndef/@specDiagrams.4/@nodes.2/@bindings.0/@components.0">
+        <label/>
+      </contRefs>
+      <connections xsi:type="ucm.map:NodeConnection" source="22" target="26"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="Originating Features" id="31" parentStub="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0">
+      <nodes xsi:type="ucm.map:StartPoint" name="startPoint" id="23" x="139" y="-35" contRef="3" succ="//@urndef/@specDiagrams.2/@connections.0" inBindings="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@in.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="OrigFeatures" id="28" x="301" y="-35" contRef="3" succ="//@urndef/@specDiagrams.2/@connections.1 //@urndef/@specDiagrams.2/@connections.2" pred="//@urndef/@specDiagrams.2/@connections.0" dynamic="true">
+        <label/>
+        <bindings replicationFactor="0" plugin="27">
+          <in startPoint="22" stubEntry="//@urndef/@specDiagrams.2/@connections.0"/>
+          <out endPoint="26" stubExit="//@urndef/@specDiagrams.2/@connections.1"/>
+          <precondition label="!subTL" expression="!subTL"/>
+          <components parentComponent="2" pluginComponent="2"/>
+        </bindings>
+        <bindings replicationFactor="0">
+          <in stubEntry="//@urndef/@specDiagrams.2/@connections.0"/>
+          <out stubExit="//@urndef/@specDiagrams.2/@connections.1"/>
+          <out stubExit="//@urndef/@specDiagrams.2/@connections.2"/>
+          <precondition label="subTL" expression="subTL"/>
+          <components parentComponent="2" pluginComponent="2"/>
+        </bindings>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef16" id="16" x="444" y="-88" contRef="3" succ="//@urndef/@specDiagrams.2/@connections.3" pred="//@urndef/@specDiagrams.2/@connections.1" respDef="15">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="success" id="29" x="586" y="-88" contRef="3" pred="//@urndef/@specDiagrams.2/@connections.3" outBindings="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@out.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="failPoint" id="30" x="444" y="-34" contRef="3" pred="//@urndef/@specDiagrams.2/@connections.2" outBindings="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@out.1">
+        <label/>
+      </nodes>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef3" id="3" x="58" y="-114" width="589" height="96" contDef="1" nodes="30 23 28 16 29">
+        <label/>
+      </contRefs>
+      <connections xsi:type="ucm.map:NodeConnection" source="23" target="28" inBindings="//@urndef/@specDiagrams.2/@nodes.1/@bindings.0/@in.0 //@urndef/@specDiagrams.2/@nodes.1/@bindings.1/@in.0"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="28" target="16" outBindings="//@urndef/@specDiagrams.2/@nodes.1/@bindings.0/@out.0 //@urndef/@specDiagrams.2/@nodes.1/@bindings.1/@out.0"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="28" target="30" outBindings="//@urndef/@specDiagrams.2/@nodes.1/@bindings.1/@out.1"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="16" target="29"/>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="Terminating Call Screening (TCS)" id="35">
+      <nodes xsi:type="ucm.map:StartPoint" name="startPoint" id="24" x="139" y="-42" contRef="4" succ="//@urndef/@specDiagrams.3/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef18" id="18" x="321" y="-42" contRef="6" succ="//@urndef/@specDiagrams.3/@connections.1" pred="//@urndef/@specDiagrams.3/@connections.0" respDef="17">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork32" id="32" x="483" y="-42" contRef="4" succ="//@urndef/@specDiagrams.3/@connections.2 //@urndef/@specDiagrams.3/@connections.3" pred="//@urndef/@specDiagrams.3/@connections.1"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="success" id="33" x="625" y="-92" contRef="4" pred="//@urndef/@specDiagrams.3/@connections.2">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="failPoint" id="34" x="625" y="-38" contRef="4" pred="//@urndef/@specDiagrams.3/@connections.3">
+        <label/>
+      </nodes>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef4" id="4" x="58" y="-126" width="629" height="108" contDef="1" nodes="32 34 24 33">
+        <label/>
+      </contRefs>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef6" id="6" x="240" y="-78" width="161" height="62" contDef="5" nodes="18">
+        <label/>
+      </contRefs>
+      <connections xsi:type="ucm.map:NodeConnection" source="24" target="18"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="18" target="32"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="32" target="33">
+        <condition label="!onTCSlist" expression="!onTCSlist"/>
+      </connections>
+      <connections xsi:type="ucm.map:NodeConnection" source="32" target="34">
+        <condition label="onTCSlist" expression="onTCSlist"/>
+      </connections>
+    </specDiagrams>
+    <specDiagrams xsi:type="ucm.map:UCMmap" name="Simple Connection" id="42">
+      <nodes xsi:type="ucm.map:StartPoint" name="request" id="25" x="502" y="-210" contRef="8" succ="//@urndef/@specDiagrams.4/@connections.0">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="Originating" id="36" x="321" y="-210" contRef="10" succ="//@urndef/@specDiagrams.4/@connections.1 //@urndef/@specDiagrams.4/@connections.2" pred="//@urndef/@specDiagrams.4/@connections.0">
+        <label/>
+        <bindings replicationFactor="0" plugin="31">
+          <in startPoint="23" stubEntry="//@urndef/@specDiagrams.4/@connections.0"/>
+          <out endPoint="29" stubExit="//@urndef/@specDiagrams.4/@connections.1"/>
+          <out endPoint="30" stubExit="//@urndef/@specDiagrams.4/@connections.2"/>
+          <precondition label="" expression="true"/>
+          <components parentComponent="10" pluginComponent="2"/>
+        </bindings>
+      </nodes>
+      <nodes xsi:type="ucm.map:Stub" name="Terminating" id="37" x="139" y="-164" contRef="12" succ="//@urndef/@specDiagrams.4/@connections.3 //@urndef/@specDiagrams.4/@connections.4 //@urndef/@specDiagrams.4/@connections.5 //@urndef/@specDiagrams.4/@connections.6" pred="//@urndef/@specDiagrams.4/@connections.1">
+        <label/>
+        <bindings replicationFactor="0">
+          <in stubEntry="//@urndef/@specDiagrams.4/@connections.1"/>
+          <out stubExit="//@urndef/@specDiagrams.4/@connections.3"/>
+          <out stubExit="//@urndef/@specDiagrams.4/@connections.4"/>
+          <out stubExit="//@urndef/@specDiagrams.4/@connections.5"/>
+          <out stubExit="//@urndef/@specDiagrams.4/@connections.6"/>
+          <precondition label="" expression="true"/>
+          <components parentComponent="12" pluginComponent="2"/>
+        </bindings>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef20" id="20" x="321" y="-264" contRef="10" succ="//@urndef/@specDiagrams.4/@connections.7" pred="//@urndef/@specDiagrams.4/@connections.4" respDef="19">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:RespRef" name="RespRef21" id="21" x="321" y="-16" succ="//@urndef/@specDiagrams.4/@connections.8" pred="//@urndef/@specDiagrams.4/@connections.5" respDef="19">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="ring" id="38" x="321" y="-68" contRef="14" pred="//@urndef/@specDiagrams.4/@connections.3">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="ringing" id="39" x="502" y="-264" contRef="8" pred="//@urndef/@specDiagrams.4/@connections.7">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="busy" id="40" x="502" y="-102" contRef="8" pred="//@urndef/@specDiagrams.4/@connections.8">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:EndPoint" name="notify" id="41" x="664" y="-156" contRef="8" pred="//@urndef/@specDiagrams.4/@connections.9">
+        <label/>
+      </nodes>
+      <nodes xsi:type="ucm.map:OrJoin" name="OrJoin43" id="43" x="502" y="-156" contRef="8" succ="//@urndef/@specDiagrams.4/@connections.9" pred="//@urndef/@specDiagrams.4/@connections.6 //@urndef/@specDiagrams.4/@connections.2"/>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef8" id="8" x="421" y="-340" width="305" height="254" contDef="7" nodes="25 39 40 41 43">
+        <label/>
+      </contRefs>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef10" id="10" x="240" y="-340" width="161" height="146" contDef="9" nodes="20 36" parentBindings="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@components.0">
+        <label/>
+      </contRefs>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef12" id="12" x="58" y="-240" width="162" height="92" contDef="11" nodes="37" parentBindings="//@urndef/@specDiagrams.4/@nodes.2/@bindings.0/@components.0">
+        <label/>
+      </contRefs>
+      <contRefs xsi:type="ucm.map:ComponentRef" name="ComponentRef14" id="14" x="240" y="-144" width="161" height="92" contDef="13" nodes="38">
+        <label/>
+      </contRefs>
+      <connections xsi:type="ucm.map:NodeConnection" source="25" target="36" inBindings="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@in.0"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="36" target="37" inBindings="//@urndef/@specDiagrams.4/@nodes.2/@bindings.0/@in.0" outBindings="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@out.0"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="36" target="43" outBindings="//@urndef/@specDiagrams.4/@nodes.1/@bindings.0/@out.1"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="37" target="38" outBindings="//@urndef/@specDiagrams.4/@nodes.2/@bindings.0/@out.0"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="37" target="20" outBindings="//@urndef/@specDiagrams.4/@nodes.2/@bindings.0/@out.1"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="37" target="21" outBindings="//@urndef/@specDiagrams.4/@nodes.2/@bindings.0/@out.2"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="37" target="43" outBindings="//@urndef/@specDiagrams.4/@nodes.2/@bindings.0/@out.3"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="20" target="39"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="21" target="40"/>
+      <connections xsi:type="ucm.map:NodeConnection" source="43" target="41"/>
+    </specDiagrams>
+    <components name="Agent" id="1" contRefs="2 3 4"/>
+    <components name="TCSCreeningList" id="5" contRefs="6"/>
+    <components name="OriginatingUser" id="7" contRefs="8"/>
+    <components name="OriginatingAgent" id="9" contRefs="10"/>
+    <components name="TerminatingAgent" id="11" contRefs="12"/>
+    <components name="TerminatingUser" id="13" contRefs="14"/>
+  </urndef>
+</urn:URNspec>
