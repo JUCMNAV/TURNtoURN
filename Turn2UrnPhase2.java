@@ -47,8 +47,8 @@ public class Turn2UrnPhase2 {
 	
 	public static void main(String argv[]) {
 		try {
-			String input = "connect.jucm";
-			String output = "connect-autolayout.jucm";
+			String input = "tcme.jucm";
+			String output = "tcmee-final-auto.jucm";
 			
 		    File inFile = new File(input);
 		    File outFile = new File(output);
@@ -77,6 +77,7 @@ public class Turn2UrnPhase2 {
 				List<IURNNode> nodes = map.getNodes();
 				for (ListIterator<IURNNode> iter = nodes.listIterator(); iter.hasNext();) {
 					IURNNode node = iter.next();
+					
 					if((node.eClass().getName().equals("Connect"))){
 						connect = (Connect)node;
 						
@@ -174,7 +175,7 @@ public class Turn2UrnPhase2 {
 								NodeConnection emptyPtNC = (NodeConnection) emptyPt.getPred().get(0);
 								IURNNode emptyPtPred = emptyPtNC.getSource();
 								timerConnect.getPred().addAll(emptyPtPred.getSucc());
-								nodes.remove(emptyPt);
+								//nodes.remove(emptyPt);
 							}
 								
 						}
@@ -189,6 +190,8 @@ public class Turn2UrnPhase2 {
 				PathNode firstNode = null;
 				RespRef rf = null;
 				for(Object cr: map.getContRefs()){
+					//System.out.println("check map name: "+map.eClass().getName());
+					
 					ComponentRef cRef = (ComponentRef) cr;
 					if(!cRef.getMetadata().isEmpty()){
 						Iterator<Metadata> it = cRef.getMetadata().iterator();
@@ -207,8 +210,9 @@ public class Turn2UrnPhase2 {
 									PathNode nd = (PathNode) node;
 									if(nd.eClass().getName().equals("RespRef")) {
 										 rf = (RespRef) nd;
-										 if(rf.getRespDef().getName().equals(from))
+										 if(rf.getContRef() == null && rf.getRespDef().getName().equals(from)){
 											 firstNode = rf;
+										}
 									}
 									else if(nd.getName().equals(from))
 										firstNode = nd;
@@ -220,7 +224,8 @@ public class Turn2UrnPhase2 {
 												elemsToAdd.addAll(addNodesInOrFork(nd,to));
 												break;}
 												NodeConnection nc = (NodeConnection)nd.getSucc().get(0);
-												contRef.getNodes().add(nc.getTarget());
+												if(nc.getTarget().getContRef()==null) {
+													contRef.getNodes().add(nc.getTarget());}
 												nd = (PathNode) nc.getTarget();
 												if(nd.getName().equals(to))
 													break;
