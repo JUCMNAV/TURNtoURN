@@ -85,7 +85,7 @@ rule connectForkNodes(pathend: Turn!PathEnd, pathbodies: Sequence(Turn!PathBody)
 	do{
 		for(pathbody in pathbodies){
 			vCurrentPosition <- pathbodies.indexOf(pathbody);
-			if(not pathbody.referencedEnd.oclIsUndefined() and not pathbody.referencedEnd.oclIsTypeOf(Turn!RespRef)){
+			if(pathbody.referencedEnd.oclIsTypeOf(Turn!AndJoin) or pathbody.referencedEnd.oclIsTypeOf(Turn!OrJoin)){
 				thisModule.useConnection(thisModule.retrieveNode(pathbody.referencedEnd), vFork.succ -> at(vCurrentPosition));
 			}
 			else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and vFork.oclIsTypeOf(Urn!AndFork)){

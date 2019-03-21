@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:ucm.map="http:///ucm/map.ecore" xmlns:urn="http:///urn.ecore" name="AdditionalOrForkTest" created="March 13, 2019 4:46:27 PM EDT" modified="March 13, 2019 4:49:57 PM EDT" specVersion="2" urnVersion="1.27" nextGlobalID="75">
+<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:ucm.map="http:///ucm/map.ecore" xmlns:urn="http:///urn.ecore" name="AdditionalOrForkTest" created="March 13, 2019 4:46:27 PM EDT" modified="March 20, 2019 10:19:47 PM EDT" specVersion="4" urnVersion="1.27" nextGlobalID="80">
   <ucmspec/>
   <grlspec/>
   <urndef>

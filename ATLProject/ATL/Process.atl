@@ -370,8 +370,10 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 				else{
 					thisModule.termToSet <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and not n.nextFreeConnection().oclIsUndefined());
 					thisModule.useConnection(thisModule.termToSet, thisModule.retrieveNode(path.startPoint).nextFreeConnection());
+					-------thisModule.debug(Urn!PathNode.allInstances() -> select(e|e.id='57') -> collect(e|e.pred));
 					thisModule.connectEndToNextNode(path.pathBody, thisModule.termToSet.nextFreeConnection());
 				}
+				--thisModule.debug(Urn!PathNode.allInstances() -> select(e|e.id='57') -> collect(e|e.pred));
 			}
 			else{
 				thisModule.connectNodes(path.pathBody, path.startPoint, thisModule.retrieveNode(path.startPoint));

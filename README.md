@@ -97,8 +97,6 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* Missing an OrJoin and its corresponding NodeConnection (id=73 in expected output)
 			* Lots of nodes are missing connections
 			* Lots of incorrect connections
-		* Responsibility.jucm
-			* Unsure how to make binding logic correct / what is correct (lines 491-499 current output, 476-493 original output)
 	* Remaining for more careful validation (some have minor issues):
 		* AndFork.jucm
 		* AndJoin.jucm
@@ -113,6 +111,10 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* Elsebody case is not being handled in my version of the code
 		* OrJoin.jucm
 		* Resource.jucm
+		* Responsibility.jucm
+			* Missing an OutBinding (476 current, 474 original)
+			* Current version of output has an extra EmptyPoint on line 136
+			* Differences in how binding logic is handled (lines 491-502, ResponsibilityTestReferencedStubInpath2)
 		* SoftGoal.jucm
 		* Stub.jucm
 			* Compare result of phase 2 with "stub.jucm" of the Expected Output folder rather than stub-autolayout.jucm in that folder
