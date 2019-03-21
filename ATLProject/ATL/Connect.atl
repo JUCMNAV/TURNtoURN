@@ -63,13 +63,6 @@ rule connectNodesAfterFork(sFork: Turn!PathNode, pathbodies: Sequence(Turn!PathB
 		vForkNode : Urn!PathNode = thisModule.retrieveNode(sFork);
 	}
 	do{
-		for(pathbody in pathbodies){
-			vCurrentPosition <- pathbodies.indexOf(pathbody);
-			if(pathbody.pathNodes -> first().oclIsTypeOf(Turn!RespRef)){
-				thisModule.useConnection(thisModule.retrieveNode(pathbody.pathNodes -> first()), vForkNode.succ -> at(vCurrentPosition));
-			}
-		}
-		
 		if(sFork.pbody.pathNodes -> isEmpty() and not sFork.pbody.orFork.oclIsUndefined()){
 			thisModule.useConnection(vForkNode, thisModule.retrieveNode(sFork.pbody.orFork.orBody.orFork).succ -> at(thisModule.orForkNodeConnCounter));
 			thisModule.orForkNodeConnCounter <- thisModule.orForkNodeConnCounter.inc();
