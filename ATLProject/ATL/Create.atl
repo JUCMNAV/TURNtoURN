@@ -34,7 +34,7 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 		else{
 			thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), tNodeConnection1);
 			thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), newPred);
-			thisModule.addNewConnection(tEmptyPt, thisModule.createNodeConnection());
+			thisModule.createNewConnection(tEmptyPt);
 		}
 		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode, tEmptyPt);
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
@@ -129,6 +129,9 @@ rule createEndPoint(node : Turn!PathNode){
 			contRef <- thisModule.getUrnCompRef(node)
 		)
 	do{
+		if(tEndPoint.id='36'){
+		--	thisModule.debug(thisModule.k.k);	
+		}
 		tEndPoint;
 	}
 }

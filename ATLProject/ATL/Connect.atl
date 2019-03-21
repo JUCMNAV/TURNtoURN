@@ -122,7 +122,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 					thisModule.processTimer(currentNode);
 				}
 				
-				if(node.oclIsTypeOf(Turn!OrFork) and (currentNode.oclIsTypeOf(Turn!Connect) or thisModule.retrieveNode(currentNode) = previousNode)){
+				if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
 					thisModule.connectNode(currentNode, thisModule.retrieveNode(node).succ -> first());
 				}
 				else{
@@ -142,7 +142,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 					vLastNode <- vLastNode.connectsTo;
 				}
 				if(vLastNode.oclIsTypeOf(Turn!StartPoint) and pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					thisModule.addNewConnection(thisModule.retrieveNode(vLastNode), thisModule.createNodeConnection());
+					thisModule.createNewConnection(thisModule.retrieveNode(vLastNode));
 				}
 			}
 			

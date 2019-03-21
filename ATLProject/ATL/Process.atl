@@ -25,7 +25,7 @@ rule processAndFork(sAndFork: Turn!AndFork, stubCase: Boolean){
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tAndFork);
 		
 		for(elem in sAndFork.pathbody){
-			thisModule.addNewConnection(tAndFork, thisModule.createNodeConnection());
+			thisModule.createNewConnection(tAndFork);
 		}
 		
 		thisModule.collectReferencedEnds(sAndFork.pathbody -> collect(pb|pb.pathNodes));
@@ -151,7 +151,7 @@ rule processTimer(timerObj : Turn!Timer){
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
 		
 		if(not timerObj.timeoutPath.oclIsUndefined()){
-			thisModule.addNewConnection(tTimer, thisModule.createNodeConnection());
+			thisModule.createNewConnection(tTimer);
 			thisModule.collectReferencedEnds(timerObj.timeoutPath.pathNodes);
 			thisModule.processPathEnd(timerObj.timeoutPath.pathEnd);
 			
@@ -197,9 +197,8 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		}
 		
 		for(elem in vElements){
-			tConn <- thisModule.createNodeConnection();
-			tConn.condition <- thisModule.resolveTemp(elem.condition, 'tCondition');
-			thisModule.addNewConnection(tOrFork, tConn);
+			thisModule.createNewConnection(tOrFork);
+			tOrFork.mostRecentUnusedConnection().condition <- thisModule.resolveTemp(elem.condition, 'tCondition');
 		}
 		
 		if(not sOrFork.body.oclIsUndefined()){
@@ -220,12 +219,12 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		}
 		
 		if(not vNode.oclIsUndefined()){
-			tConn <- thisModule.createNodeConnection();
-			tConn.condition <- thisModule.createCondition('!' + vNode.condition.expression.asString());
+			thisModule.createNewConnection(tOrFork);
+			tOrFork.mostRecentUnusedConnection().condition <- thisModule.createCondition('!' + vNode.condition.expression.asString());
 			if(vHasTarget){
-				tConn.target <- thisModule.createEndPoint(sOrFork);
+				tOrFork.mostRecentUnusedConnection().target <- thisModule.createEndPoint(sOrFork);
 			}
-			thisModule.addNewConnection(tOrFork, tConn);
+			
 		}
 		
 		if(not sOrFork.connectingOrBody.oclIsUndefined()){
@@ -306,10 +305,9 @@ rule processStub(sStub:Turn!Stub){
 		}
 		
 		for(outPath in sStub.outPaths -> flatten()){
-			thisModule.stubOutPathNodeConnection <- thisModule.createNodeConnection();
-			thisModule.addNewConnection(tStub, thisModule.stubOutPathNodeConnection);
+			thisModule.createNewConnection(tStub);
 			if(outPath.threshold <> 0){
-				thisModule.stubOutPathNodeConnection.threshold <- outPath.threshold.toString();
+				tStub.mostRecentUnusedConnection().threshold <- outPath.threshold.toString();
 			}
 		}
 		
@@ -319,7 +317,7 @@ rule processStub(sStub:Turn!Stub){
 			thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
 			
 			if(sStub.outPaths -> isEmpty()){
-				thisModule.addNewConnection(tStub, thisModule.createNodeConnection());
+				thisModule.createNewConnection(tStub);
 				thisModule.outPathNumber <- 1;
 			}
 			

@@ -64,6 +64,9 @@ helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclA
 helper context OclAny def : nextFreeConnection() : OclAny =
 	self.succ -> any(s|s.target.oclIsUndefined());
 
+helper context OclAny def : mostRecentUnusedConnection() : OclAny =
+	self.succ -> select(s|s.target.oclIsUndefined()) -> last();
+
 -----------------------3/5 CALLED RULES-----------------------------
 ------------(sorry, spirit of declarative programming)--------------
 
@@ -85,14 +88,9 @@ rule useConnection(node: Turn!PathNode, predecessor: OclAny){
 	}
 }
 
-rule addNewConnection(node: Turn!PathNode, successor: OclAny){
+rule createNewConnection(node: Turn!PathNode){
 	do{
-		if(successor.oclIsKindOf(Sequence(OclAny))){
-			node.succ <- node.succ.union(successor);
-		}
-		else{
-			node.succ <- node.succ.including(successor);	
-		}
+		node.succ <- node.succ.including(thisModule.createNodeConnection());
 	}
 }
 
@@ -218,7 +216,7 @@ rule retrieveNode(node: Turn!PathNode){
 		}
 		
 		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='9'){
+			if(vRetrievedNode.id='36' or vRetrievedNode.id='37'){
 				--thisModule.debug('Node ' + vRetrievedNode.id + ' of type ' + vRetrievedNode.oclType() + ' retrieved here');
 				--thisModule.k.k; --randomly picked error generating case to track where events occur
 			}
@@ -236,6 +234,7 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 	}
 	do{
 		thisModule.collectReferencedEnds(connectingBody.pathNodes);
+		
 		if(connectingBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
 			thisModule.processAndFork(connectingBody.pathEnd, fork.oclIsTypeOf(Urn!Stub));
 			thisModule.connectForkNodes(connectingBody.pathEnd, connectingBody.pathEnd.pathbody);	
@@ -244,7 +243,7 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 			thisModule.processPathEnd(connectingBody.pathEnd);
 		}
 		
-		if(numberOfTerminatingNodes = 1){
+		if(numberOfTerminatingNodes = 1){	
 			vFirstPathNode <- connectingBody.pathNodes -> first();
 			
 			if(not vFirstPathNode.oclIsUndefined() and not vFirstPathNode.oclIsTypeOf(Turn!Connect)){
