@@ -125,3 +125,11 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* StartPoint.xml
 		* EndPoint.xml
 		* Remaining test cases.xml
+	* Ask Ruchika about 3 OrJoin test case
+	* Issue with:
+	  [c7] -> and {
+         * -> end e7.
+         * -> end e8.
+      }
+      is dealt with first because it is a matched rule OrJoin; this is messing up the numbering of connections
+    

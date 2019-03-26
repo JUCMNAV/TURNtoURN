@@ -37,7 +37,7 @@ rule processAndFork(sAndFork: Turn!AndFork, stubCase: Boolean){
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
 			vNextNode <- thisModule.handleForkJoin(tAndFork, sAndFork.connectingAndBody, vNumberOfTerminatingNodes);
 
-			if(vNumberOfTerminatingNodes = 2){
+			if(vNumberOfTerminatingNodes >= 2){
 				thisModule.useConnection(vNextNode, tAndFork.nextFreeConnection());
 				
 				if(stubCase){
@@ -230,7 +230,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		if(not sOrFork.connectingOrBody.oclIsUndefined()){
 			vNextNode <- thisModule.handleForkJoin(tOrFork, sOrFork.connectingOrBody, vNumberOfTerminatingNodes);
 			
-			if(vNumberOfTerminatingNodes = 2){
+			if(vNumberOfTerminatingNodes >= 2){
 				vEmptyPt <- thisModule.createEmptyPoint();
 				thisModule.useConnection(vNextNode, tOrFork.nextFreeConnection());
 				thisModule.useConnection(vNextNode, vEmptyPt.nextFreeConnection());
@@ -326,7 +326,7 @@ rule processStub(sStub:Turn!Stub){
 			if(thisModule.numberOfTerminatingStubNodes = 1){
 				thisModule.outPathNumber <- thisModule.outPaths -> collect(op|op.index) -> first();	
 			}
-			else if(thisModule.numberOfTerminatingStubNodes = 2){
+			else if(thisModule.numberOfTerminatingStubNodes >= 2){
 				thisModule.useConnection(vNextNode, tStub.succ -> at(thisModule.outPaths -> collect(op|op.index) -> at(1)));
 				thisModule.useConnection(vNextNode, tStub.succ -> at(thisModule.outPaths -> collect(op|op.index) -> at(2)));
 				thisModule.outPathNumber <- 1;

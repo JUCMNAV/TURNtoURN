@@ -252,7 +252,7 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 				}
 			}
 		}
-		else if(numberOfTerminatingNodes = 2){
+		else if(numberOfTerminatingNodes >= 2){
 			if(fork.oclIsTypeOf(Urn!Stub) or fork.oclIsTypeOf(Urn!OrFork)){
 				vNextNode <- thisModule.createOrJoin();
 			}
