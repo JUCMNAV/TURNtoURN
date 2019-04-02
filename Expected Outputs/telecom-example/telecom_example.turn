@@ -52,6 +52,22 @@ start request -> stub Originating(
 }
 
 
+map TF #"Terminating Features" {
+	start startPoint -> stub TermFeatures(
+		[!subTCS] Default: startPoint=in 1, continue=out 1, Agent=Agent
+[subTCS] TCS: startPoint=in 1, success=out 1, failPoint=out 2, Agent=Agent
+	) {
+		out 1 -> or {
+			[!busy] -> and {
+				* -> X ringTreatment -> end success.
+				* -> X ringingTreatment -> end reportSuccess.
+			}
+			[busy] -> X busyTreatment -> end busy.
+		}
+		out 2 -> end failPoint.
+	}
+parent Agent: startPoint..success, startPoint..reportSuccess, startPoint..busy, failPoint
+}
 
 
 	
