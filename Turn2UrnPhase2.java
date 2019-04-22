@@ -175,6 +175,7 @@ public class Turn2UrnPhase2 {
 								NodeConnection emptyPtNC = (NodeConnection) emptyPt.getPred().get(0);
 								IURNNode emptyPtPred = emptyPtNC.getSource();
 								timerConnect.getPred().addAll(emptyPtPred.getSucc());
+								iter.remove();
 								//nodes.remove(emptyPt);
 							}
 								
