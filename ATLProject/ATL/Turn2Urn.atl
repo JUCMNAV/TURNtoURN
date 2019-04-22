@@ -264,17 +264,16 @@ rule Contribution2Contribution{
 			
 			tCont.name <- thisModule.name;
 			--Added because the default value in enum is considered always.
-			if(s.contribution.toString().equals('undefined')){
-				tCont.contribution <- 'Make';
+			if(s.contribution.toString().equals('unknown')){
 				tCont.quantitativeContribution <- s.quantitativeContribution;
-				if(s.quantitativeContribution <= -1)
+				if(s.quantitativeContribution = 0)
+					tCont.contribution <- 'Unknown';
+				else if(s.quantitativeContribution <= -1)
 					tCont.contribution <- 'Hurt';
 				else if(s.quantitativeContribution < -49)
 					tCont.contribution <- 'SomeNegative';
 				else if(s.quantitativeContribution = -100)
 					tCont.contribution <- 'Break';
-				else if(s.quantitativeContribution = 0)
-					tCont.contribution <- 'Unknown';
 				else if(s.quantitativeContribution < 50)
 					tCont.contribution <- 'Help';
 				else if (s.quantitativeContribution <= 99)
