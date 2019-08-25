@@ -39,7 +39,7 @@
   </actors>
   <actors name="Tech">
     <longName longname="Technician"/>
-    <elems type="resource" name="LoggEquip">
+    <elems type="ressource" name="LoggEquip">
       <longName longname="Logging Equipment"/>
       <linksSrc xsi:type="turn:Dependency" dest="//@actors.1/@elems.1"/>
     </elems>

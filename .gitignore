@@ -3,3 +3,6 @@
 .classpath
 .project
 /bin
+/PreviousOutputs
+/testOutputsMatch.txt
+/Turn2UrnPhase2.java
