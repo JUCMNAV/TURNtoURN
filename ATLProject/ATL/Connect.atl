@@ -51,6 +51,15 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 			}
 		}
 		
+		if(not body.referencedEnd.oclIsUndefined()){
+			if(vNodeToConnect.oclIsTypeOf(Urn!RespRef) or vNodeToConnect.oclIsTypeOf(Urn!FailurePoint)){
+				vOrJoin <- thisModule.createOrJoin();
+				thisModule.useConnection(vOrJoin, nextNodeConnection);
+				thisModule.useConnection(vOrJoin, (vNodeToConnect.pred -> first()).source.succ);
+				nextNodeConnection <- vOrJoin.nextFreeConnection();
+			}
+		}
+		
 		if(not vNodeToConnect.oclIsUndefined()){
 			thisModule.useConnection(vNodeToConnect, nextNodeConnection);
 		}
