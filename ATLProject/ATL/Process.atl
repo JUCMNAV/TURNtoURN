@@ -149,6 +149,7 @@ rule processTimer(timerObj : Turn!Timer){
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
+		--thisModule.debug(timerObj.timeoutPath);
 		
 		if(not timerObj.timeoutPath.oclIsUndefined()){
 			thisModule.createNewConnection(tTimer);
@@ -162,6 +163,8 @@ rule processTimer(timerObj : Turn!Timer){
 			if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				thisModule.useConnection(thisModule.retrieveNode(timerObj.timeoutPath.pathEnd.regularEnd), tTimer.succ -> at(2));
 			}
+			
+		--	thisModule.debug(tTimer);
 		}
 		
 		tTimer;
@@ -335,6 +338,7 @@ rule processStub(sStub:Turn!Stub){
 			if(sStub.connectingStubBody.pathNodes -> isEmpty()){
 				thisModule.connectEndToNextNode(sStub.connectingStubBody, vNextNode.succ -> at(thisModule.outPathNumber));
 			}
+			
 			thisModule.connectNodes(sStub.connectingStubBody, sStub, thisModule.retrieveNode(sStub));
 
 			if(sStub.pbody.pathNodes -> isEmpty() and not sStub.pbody.orFork.oclIsUndefined()){
@@ -358,6 +362,7 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	do{
 		thisModule.tUCMmap <- tUCMmap;
 		thisModule.collectReferencedEnds(paths -> flatten() -> collect(p|p.pathBody) -> flatten() -> collect(pb|pb.pathNodes) -> flatten());
+		
 		for(path in paths){
 			thisModule.processPathEnd(path.pathBody.pathEnd);
 			
@@ -368,15 +373,16 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 				else{
 					thisModule.termToSet <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and not n.nextFreeConnection().oclIsUndefined());
 					thisModule.useConnection(thisModule.termToSet, thisModule.retrieveNode(path.startPoint).nextFreeConnection());
-					-------thisModule.debug(Urn!PathNode.allInstances() -> select(e|e.id='57') -> collect(e|e.pred));
 					thisModule.connectEndToNextNode(path.pathBody, thisModule.termToSet.nextFreeConnection());
 				}
 				--thisModule.debug(Urn!PathNode.allInstances() -> select(e|e.id='57') -> collect(e|e.pred));
 			}
-			else{
+			else{		
 				thisModule.connectNodes(path.pathBody, path.startPoint, thisModule.retrieveNode(path.startPoint));
 			}
 		}
+
+		
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();	
 	}
 }

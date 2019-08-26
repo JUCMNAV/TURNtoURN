@@ -27,20 +27,55 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
 			succ <- tNodeConnection2
 		)
 	do{
-		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-			tEmptyPt.name <- 'AsynchConnectTimer#' + currentNode.connectsTo.name;
-			thisModule.useConnection(tEmptyPt, newPred);
-		}
-		else{
-			thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), tNodeConnection1);
-			thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), newPred);
-			thisModule.createNewConnection(tEmptyPt);
-		}
+		thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), tNodeConnection1);
+		thisModule.useConnection(thisModule.retrieveNode(currentNode.connectsTo), newPred);
+		thisModule.createNewConnection(tEmptyPt);
+
 		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode, tEmptyPt);
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
 		tNodeConnection1;
 	}
 }
+
+rule createAsynchEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!PathNode){
+	to
+		tNodeConnection1: Urn!NodeConnection(),
+		tConnect: Urn!Connect(
+			id <- thisModule.nextId().toString(),
+			name <- 'Connect' + tConnect.id,
+			diagram <- thisModule.tUCMmap,
+			succ <- tNodeConnection1,
+			pred <- tNodeConnection2
+		),
+		tNodeConnection2: Urn!NodeConnection(),
+		tNodeConnection3: Urn!NodeConnection(),
+		tEmptyPt: Urn!EmptyPoint(
+			id <- thisModule.nextId().toString(),
+			name <- 'AsynchConnectTimer#' + currentNode.connectsTo.name,
+			diagram <- thisModule.tUCMmap,
+			succ <- tNodeConnection2,
+			succ <- tNodeConnection3
+		)
+	do{
+		thisModule.useConnection(thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'), newPred);
+		thisModule.useConnection(thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'), tConnect.succ);
+		--thisModule.debug(thisModule.resolveTemp(currentNode.connectsTo, 'tTimer').pred -> at(3).source);
+		--thisModule.debug(thisModule.resolveTemp(currentNode.connectsTo, 'tTimer').pred);
+		--thisModule.useConnection(tEmptyPt, newPred);
+		--if(currentNode.oclIsTypeOf(Turn!Connect)){
+			--thisModule.debug(currentNode.connectsTo)
+			--thisModule.debug(newPred.source);
+			--thisModule.useConnection(tConnect, thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'));
+		--}
+
+		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode.connectsTo, tEmptyPt);
+		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'), tEmptyPt);
+		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(tEmptyPt, thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'));
+		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
+		tNodeConnection1;
+	}
+}
+
 
 ------------2/2 RULES WITHOUT DO LOGIC-----------
 -- or well, where the only "do" logic is a return

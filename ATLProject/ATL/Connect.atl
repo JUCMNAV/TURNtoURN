@@ -60,9 +60,42 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 			}
 		}
 		
+		if(vNodeToConnect.oclIsTypeOf(Urn!EndPoint) and not vNodeToConnect.pred -> isEmpty()){
+			vOrJoin <- thisModule.createOrJoin();
+			thisModule.useConnection(vOrJoin, nextNodeConnection);
+			thisModule.useConnection(vOrJoin, (vNodeToConnect.pred -> first()).source.succ);
+			nextNodeConnection <- vOrJoin.nextFreeConnection();
+		}
+		
+		if(nextNodeConnection.source.oclIsTypeOf(Urn!EmptyPoint) or nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
+			if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
+				thisModule.debug(nextNodeConnection.source);
+				nextNodeConnection.source <- thisModule.emptyPointMap.get(nextNodeConnection.source);
+				
+				--nextNodeConnection.source.succ <- nextNodeConnection.source.succ -> excluding(nextNodeConnection);
+				--thisModule.emptyPointMap.get(nextNodeConnection.source).succ <- nextNodeConnection;
+				--nextNodeConnection <- thisModule.emptyPointMap.get(nextNodeConnection.source).succ.last();
+				
+				thisModule.debug(nextNodeConnection.source);
+			}
+		}
+		
+		--if(nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
+		--	if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
+		--		vNodeToConnect <- thisModule.emptyPointMap.get(nextNodeConnection.source);
+		--		thisModule.debug(thisModule.emptyPointMap.get(nextNodeConnection.source).succ.last().target);
+		--	}
+		--}
+
 		if(not vNodeToConnect.oclIsUndefined()){
 			thisModule.useConnection(vNodeToConnect, nextNodeConnection);
 		}
+		
+		--if(not Urn!PathNode.allInstances() -> select(e|e.id='183') -> isEmpty()){
+		--	if(Urn!PathNode.allInstances() -> select(e|e.id='183').first().succ.last().target.oclIsTypeOf(Urn!EndPoint)){
+		--		thisModule.debug('b');	
+		--	}
+		--}
 	}
 }
 
@@ -106,7 +139,13 @@ rule connectNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnect
 	}
 	do{
 		if(currentNode.oclIsTypeOf(Turn!Connect)){
-			thisModule.createEmptyPointConnect(currentNode, nextNodeConnection);
+			if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
+				thisModule.createAsynchEmptyPointConnect(currentNode, nextNodeConnection);
+				--thisModule.debug(thisModule.resolveTemp(currentNode.connectsTo, 'tTimer').pred -> collect(n|n.source.toString()));
+			}
+			else{
+				thisModule.createEmptyPointConnect(currentNode, nextNodeConnection);
+			}
 		}
 		else{
 			if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
@@ -114,7 +153,12 @@ rule connectNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnect
 					vNode <- thisModule.emptyPointMap.get(currentNode.connect);
 				}
 			}
-			
+			else if(currentNode.oclIsTypeOf(Turn!Timer)){
+				if(not thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer')).oclIsUndefined()){
+					vNode <- thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer'));
+				}
+			}
+
 			thisModule.useConnection(vNode, nextNodeConnection);
 		}
 	}
@@ -131,7 +175,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 					thisModule.processTimer(currentNode);
 				}
 				
-				if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
+				if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){					
 					thisModule.connectNode(currentNode, thisModule.retrieveNode(node).succ -> first());
 				}
 				else{
@@ -147,14 +191,18 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 			}
 		
 			if(vLastNode.oclIsTypeOf(Turn!Connect)){
+				--thisModule.debug(thisModule.retrieveNode(vLastNode));
+				--thisModule.debug(thisModule.retrieveNode(currentNode));
+				
 				if(not vLastNode.connectsTo.oclIsTypeOf(Turn!Timer)){
 					vLastNode <- vLastNode.connectsTo;
 				}
+				
 				if(vLastNode.oclIsTypeOf(Turn!StartPoint) and pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 					thisModule.createNewConnection(thisModule.retrieveNode(vLastNode));
 				}
 			}
-			
+
 			thisModule.connectEndToNextNode(pathbody, thisModule.retrieveNode(vLastNode).nextFreeConnection());
 		}
 	}

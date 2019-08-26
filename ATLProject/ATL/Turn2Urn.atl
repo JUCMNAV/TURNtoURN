@@ -230,7 +230,6 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 	using{
 		vFirstPathNode : Turn!PathNode = OclUndefined;
 		vNextNode : Turn!PathNode = fork;
-		vEmptyPt : Urn!EmptyPoint = OclUndefined;
 	}
 	do{
 		thisModule.collectReferencedEnds(connectingBody.pathNodes);
@@ -879,8 +878,9 @@ rule IntElements2IntElements{
 			metadata <- thisModule.createMetadata('TURN-URN-NAME', s.name)
 		)
 	do{
-		if(tIntElemRef.name.oclIsUndefined())
-			tIntElemRef.name <- 'IntentionalElementRef'+tIntElemRef.id;
+		if(tIntElemRef.name.oclIsUndefined()){
+			tIntElemRef.name <- 'IntentionalElementRef' + tIntElemRef.id;
+		}
 		
 		if(Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> size() > 0){
 			tIntElem.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=s) -> collect(a|a.decompositionType.toString().capitalize())-> first();
