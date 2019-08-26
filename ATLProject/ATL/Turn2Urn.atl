@@ -915,6 +915,7 @@ rule UCMmap2UCMmap{
 		)
 	do{
 		thisModule.processUCMmap(tUCMmap, sUCMmap.paths);
+		thisModule.processMetadata(tUCMmap.contRefs -> collect(cf|cf.metadata) -> flatten(), tUCMmap.nodes); --iterate through them using node.succ.target until no more successors found (bc at end of a branch)
 	}
 }
 

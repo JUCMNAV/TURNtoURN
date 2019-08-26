@@ -69,14 +69,14 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 		
 		if(nextNodeConnection.source.oclIsTypeOf(Urn!EmptyPoint) or nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
 			if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
-				thisModule.debug(nextNodeConnection.source);
+				--thisModule.debug(nextNodeConnection.source);
 				nextNodeConnection.source <- thisModule.emptyPointMap.get(nextNodeConnection.source);
 				
 				--nextNodeConnection.source.succ <- nextNodeConnection.source.succ -> excluding(nextNodeConnection);
 				--thisModule.emptyPointMap.get(nextNodeConnection.source).succ <- nextNodeConnection;
 				--nextNodeConnection <- thisModule.emptyPointMap.get(nextNodeConnection.source).succ.last();
 				
-				thisModule.debug(nextNodeConnection.source);
+				--thisModule.debug(nextNodeConnection.source);
 			}
 		}
 		

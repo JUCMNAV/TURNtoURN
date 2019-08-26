@@ -38,6 +38,7 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 3. In the rules InBinding2InBinding and OutBinding2OutBinding, there is an attempt to retrieve an item from the stubMap which is not in the stubMap. This causes an issue with executing the tests for stub.xml, component.xml, and responsibility.xml; I have not yet pinpointed the source of this issue beyond what lines it occurs in.	
 
 ## TODO
+* Remove debug statements
 * Verify functionality (first priority)
 	* Look at all uses of -> including and -> union to see if they are behaving correctly
 		* Look to see if any other places should have -> including or -> union called instead of simple assignments

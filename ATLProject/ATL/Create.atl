@@ -68,7 +68,6 @@ rule createAsynchEmptyPointConnect(currentNode: Turn!PathNode, newPred: Urn!Path
 			--thisModule.useConnection(tConnect, thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'));
 		--}
 
-		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode.connectsTo, tEmptyPt);
 		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'), tEmptyPt);
 		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(tEmptyPt, thisModule.resolveTemp(currentNode.connectsTo, 'tTimer'));
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
