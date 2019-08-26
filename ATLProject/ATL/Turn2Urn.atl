@@ -67,6 +67,10 @@ helper context OclAny def : nextFreeConnection() : OclAny =
 helper context OclAny def : mostRecentUnusedConnection() : OclAny =
 	self.succ -> select(s|s.target.oclIsUndefined()) -> last();
 
+helper context Urn!RespRef def : getRespName() : String =
+	self.respDef.name;
+
+
 -----------------------3/5 CALLED RULES-----------------------------
 ------------(sorry, spirit of declarative programming)--------------
 
@@ -784,7 +788,7 @@ rule WaitingPlace2WaitingPlace{
 
 ----------5/5 MATCHED RULES WITH DO BLOCKS----------------
 
-rule Component2Component{
+rule ComponentRef2ComponentRef {
 	from 
 		s: Turn!ComponentRef
 	using{
@@ -807,6 +811,13 @@ rule Component2Component{
 		),
 		tCompLabel: Urn!ComponentLabel()
 	do{
+		if(not s.kind.oclIsUndefined() and s.kind.toString() <> 'parent'){
+			tCompRef.contDef.kind <- s.kind.toString().capitalize();
+		}
+		else if(s.kind <> 'parent'){
+			tCompRef.contDef.kind <- 'Team';
+		}
+		
 		if(not s.boundTo.oclIsUndefined()){
 			if(not s.boundTo.comp.oclIsUndefined()){
 				tCompRef.parent <- Urn!Component.allInstances() -> any(n|s.boundTo.comp.name=n.name).contRefs -> any(r|r.diagram = s.map);
@@ -915,7 +926,10 @@ rule UCMmap2UCMmap{
 		)
 	do{
 		thisModule.processUCMmap(tUCMmap, sUCMmap.paths);
-		thisModule.processMetadata(tUCMmap.contRefs -> collect(cf|cf.metadata) -> flatten(), tUCMmap.nodes); --iterate through them using node.succ.target until no more successors found (bc at end of a branch)
+		
+		for(tContRef in tUCMmap.contRefs){
+			thisModule.processContRef(tContRef, tUCMmap.nodes); --iterate through them using node.succ.target until no more successors found (bc at end of a branch)
+		}
 	}
 }
 

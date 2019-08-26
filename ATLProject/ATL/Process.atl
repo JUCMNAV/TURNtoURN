@@ -382,6 +382,60 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	}
 }
 
-rule processMetadata(tMetadata: Sequence(Urn!Metadata), nodes: Sequence(Urn!StartPoint)){
-	
+rule processContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
+	using{
+		tMetadata : Sequence(Urn!Metadata) = tContRef.metadata -> flatten();
+		tFrom : Urn!Metadata = 
+			if tMetadata -> select(md|md.name='from') -> size() = 1 then
+				tMetadata -> select(md|md.name='from') -> first().value
+			else
+				''
+			endif;
+		tTo : Urn!Metadata = 
+			if tMetadata -> select(md|md.name='to') -> size() = 1 then
+				tMetadata -> select(md|md.name='to') -> first().value
+			else
+				''
+			endif;
+		uniqueTFromExists : Boolean = 
+			(nodes -> select(n|n.name = tFrom) -> size() = 1)
+			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> size() = 1)
+			and not (tFrom = '');
+		uniqueTToExists : Boolean = 
+			(nodes -> select(n|n.name = tTo) -> size() = 1)
+			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> size() = 1)
+			and not (tTo = '');
+		vPathBetweenNodes : Sequence(Urn!PathNode) = OclUndefined;
+		vStartNode : Urn!PathNode = OclUndefined;
+		vEndNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(not tMetadata -> isEmpty()){
+			--thisModule.debug(tMetadata -> collect(md|md.value));
+			--thisModule.debug(nodes);
+		}
+		
+		if(uniqueTFromExists and uniqueTToExists){ --unidirectional, tFrom must be before tTo
+			vStartNode <- nodes -> any(n|n.name = tFrom);
+
+			if(vStartNode.oclIsUndefined()){
+				vStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
+			}
+			
+			vEndNode <- nodes -> any(n|n.name = tTo);
+			
+			if(vEndNode.oclIsUndefined()){
+				vEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tTo);
+			}
+			
+			tContRef.nodes <- thisModule.findPathBetweenNodes(vStartNode, vEndNode);	
+		}
+	}
+}
+
+rule findPathBetweenNodes(startNode: Urn!PathNode, endNode: Urn!PathNode){
+	do{
+		thisModule.debug(startNode);
+		OclUndefined;
+	}
 }
