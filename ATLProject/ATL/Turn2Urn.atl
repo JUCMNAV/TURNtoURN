@@ -55,9 +55,6 @@ helper context OclAny def : turnGetLongestName() : String =
 		self.name	
 	endif;
 
-helper context Turn!OrFork def : getPathBodies() : Turn!PathBody =
-	self.body.regularBody -> collect(pb|pb.pathBody) -> flatten();
-
 helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclAny =
 	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
 
@@ -197,35 +194,33 @@ rule retrieveNode(node: Turn!PathNode){
 		-- I'm not sure how inefficient this approach is; if the system is running slowly, it may be worth looking at a different
 		-- implementation of this rule.
 		
-		vRetrievedNode <- Sequence{thisModule.resolveTemp(node, 'tWtPlace')};
+		if(node.oclIsTypeOf(Turn!EndpointWithConnect)){
+			node <- node.regularEnd;	
+		}
+		
+		vRetrievedNode <- Sequence{};
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tWtPlace'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tFailPt'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tRespRef'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tTimer'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tAndFork'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tOrFork'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tStub'));
-		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tConnect'));
 		vRetrievedNode <- vRetrievedNode -> any(e|not e.oclIsUndefined());
 		
 		if(vRetrievedNode.oclIsUndefined() and node.oclIsTypeOf(Turn!EndPoint)){
 			vRetrievedNode <- thisModule.endPointMap.get(node);	
 		}
+		
 		if(vRetrievedNode.oclIsUndefined()){
 			if(node.oclIsTypeOf(Turn!Connect)){
-				vRetrievedNode <- thisModule.connectMap.get(node);	
+				vRetrievedNode <- thisModule.connectMap.get(node);
 			}
 			else{
 				vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());
 			}
 		}
-		
-		if(not vRetrievedNode.oclIsUndefined()){
-			if(vRetrievedNode.id='36' or vRetrievedNode.id='37'){
-				--thisModule.debug('Node ' + vRetrievedNode.id + ' of type ' + vRetrievedNode.oclType() + ' retrieved here');
-				--thisModule.k.k; --randomly picked error generating case to track where events occur
-			}
-		}
-		
+
 		vRetrievedNode; --returns a single node, not a sequence
 	}
 }
@@ -237,14 +232,7 @@ rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfT
 	}
 	do{
 		thisModule.collectReferencedEnds(connectingBody.pathNodes);
-		
-		if(connectingBody.pathEnd.oclIsTypeOf(Turn!AndFork)){
-			thisModule.processAndFork(connectingBody.pathEnd, fork.oclIsTypeOf(Urn!Stub));
-			thisModule.connectForkNodes(connectingBody.pathEnd, connectingBody.pathEnd.pathbody);	
-		}
-		else{
-			thisModule.processPathEnd(connectingBody.pathEnd);
-		}
+		thisModule.processPathEnd(connectingBody.pathEnd);
 		
 		if(numberOfTerminatingNodes = 1){	
 			vFirstPathNode <- connectingBody.pathNodes -> first();
