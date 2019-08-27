@@ -29,12 +29,15 @@ rule getNodeToConnect(body: Turn!PathBody){
 rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConnection){
 	using{
 		vNodeToConnect : Turn!PathNode = thisModule.getNodeToConnect(body);
-		vEmptyPoints : Sequence(Urn!PathNode) = thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint));
 		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
-		if(nextNodeConnection.oclIsUndefined() and not vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).oclIsUndefined()){
-			nextNodeConnection <- vEmptyPoints -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).nextFreeConnection();
+		if(not nextNodeConnection.oclIsUndefined()){
+			if(nextNodeConnection.source.oclIsTypeOf(Urn!EmptyPoint) or nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
+				if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
+					nextNodeConnection.source <- thisModule.emptyPointMap.get(nextNodeConnection.source);
+				}
+			}
 		}
 		
 		if(			(vNodeToConnect.oclIsTypeOf(Urn!EndPoint) and not vNodeToConnect.pred -> isEmpty())
@@ -42,15 +45,10 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 				or 	vNodeToConnect.oclIsTypeOf(Urn!RespRef) or vNodeToConnect.oclIsTypeOf(Urn!FailurePoint)
 		){
 			vOrJoin <- thisModule.createOrJoin();
+			vOrJoin.succ <- thisModule.createNodeConnection();
 			thisModule.useConnection(vOrJoin, nextNodeConnection);
 			thisModule.useConnection(vOrJoin, (vNodeToConnect.pred -> first()).source.succ);
 			nextNodeConnection <- vOrJoin.nextFreeConnection();
-		}
-		
-		if(nextNodeConnection.source.oclIsTypeOf(Urn!EmptyPoint) or nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
-			if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
-				nextNodeConnection.source <- thisModule.emptyPointMap.get(nextNodeConnection.source);
-			}
 		}
 
 		if(not vNodeToConnect.oclIsUndefined()){
@@ -122,6 +120,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 				
 				if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
 					thisModule.useConnection(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(node).succ -> first());
+					--thisModule.debug(currentNode);
 				}
 				else{
 					thisModule.connectNode(currentNode, previousNode.nextFreeConnection());
@@ -143,8 +142,13 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 					thisModule.createNewConnection(thisModule.retrieveNode(vLastNode));
 				}
 			}
-
-			thisModule.connectEndToNextNode(pathbody, thisModule.retrieveNode(vLastNode).nextFreeConnection());
+			
+			if(thisModule.retrieveNode(vLastNode).nextFreeConnection().oclIsUndefined()){
+				thisModule.connectEndToNextNode(pathbody, thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).nextFreeConnection());
+			}
+			else{
+				thisModule.connectEndToNextNode(pathbody, thisModule.retrieveNode(vLastNode).nextFreeConnection());
+			}
 		}
 	}
 }

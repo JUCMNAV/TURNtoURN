@@ -225,37 +225,6 @@ rule retrieveNode(node: Turn!PathNode){
 	}
 }
 
-rule handleForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfTerminatingNodes: Integer){
-	using{
-		vFirstPathNode : Turn!PathNode = OclUndefined;
-		vNextNode : Turn!PathNode = fork;
-	}
-	do{
-		thisModule.collectReferencedEnds(connectingBody.pathNodes);
-		thisModule.processPathEnd(connectingBody.pathEnd);
-		
-		if(numberOfTerminatingNodes = 1){	
-			vFirstPathNode <- connectingBody.pathNodes -> first();
-			
-			if(not vFirstPathNode.oclIsUndefined() and not vFirstPathNode.oclIsTypeOf(Turn!Connect)){
-				if(not vFirstPathNode.name.oclIsUndefined()){
-					vNextNode <- thisModule.retrieveNode(vFirstPathNode);
-				}
-			}
-		}
-		else if(numberOfTerminatingNodes >= 2){
-			if(fork.oclIsTypeOf(Urn!Stub) or fork.oclIsTypeOf(Urn!OrFork)){
-				vNextNode <- thisModule.createOrJoin();
-			}
-			else if(fork.oclIsTypeOf(Urn!AndFork)){
-				vNextNode <- thisModule.createAndJoin();
-			}
-		}
-		
-		vNextNode;
-	}
-}
-
 -------------4/5 MATCHED RULES WITHOUT DO BLOCKS------------
 
 rule Actor2Actor{
