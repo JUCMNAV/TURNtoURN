@@ -184,17 +184,19 @@ public class Turn2UrnPhase2 {
 //				}
 
 				// Bind longboundelements to respective components
-				String from = "";
-				String to = "";
+				
 				ComponentRef contRef = null;
-				PathNode firstNode = null;
 				RespRef rf = null;
 				for (Object cr : map.getContRefs()) {
 					// System.out.println("check map name: "+map.eClass().getName());
 
 					ComponentRef cRef = (ComponentRef) cr;
 					if (!cRef.getMetadata().isEmpty()) {
+						String from = "";
+						String to = "";
+						
 						Iterator<Metadata> it = cRef.getMetadata().iterator();
+						
 						while (it.hasNext()) {
 							Metadata md = (Metadata) it.next();
 							if (md.getName().equals("from"))
@@ -203,43 +205,44 @@ public class Turn2UrnPhase2 {
 								to = md.getValue();
 							contRef = cRef;
 							it.remove();
+						}
 
-							List<IURNNode> elemsToAdd = new ArrayList<IURNNode>();
-							if (from != "" && to != "") {
-								for (Object node : map.getNodes()) {
-									PathNode nd = (PathNode) node;
-									if (nd.eClass().getName().equals("RespRef")) {
-										rf = (RespRef) nd;
-										if (rf.getContRef() == null && rf.getRespDef().getName().equals(from)) {
-											firstNode = rf;
-										}
-									} else if (nd.getName().equals(from))
-										firstNode = nd;
-									if (firstNode != null) {
-										nd = firstNode;
-										contRef.getNodes().add(nd);
-										while (true) {
-											if (nd.eClass().getName().equals("OrFork")
-													|| nd.eClass().getName().equals("AndFork")
-													|| nd.eClass().getName().equals("Timer")) {
-												elemsToAdd.addAll(addNodesInOrFork(nd, to));
-												break;
-											}
-											NodeConnection nc = (NodeConnection) nd.getSucc().get(0);
-											if (nc.getTarget().getContRef() == null) {
-												contRef.getNodes().add(nc.getTarget());
-											}
-											nd = (PathNode) nc.getTarget();
-											if (nd.getName().equals(to))
-												break;
-
-										}
-										contRef.getNodes().addAll(elemsToAdd);
-									}
+						List<IURNNode> elemsToAdd = new ArrayList<IURNNode>();
+						
+						if (from != "" && to != "") {
+							PathNode firstNode = null;
+							
+							for (Object node : map.getNodes()) {
+								PathNode nd = (PathNode) node;
+								
+								if(isFirstNode(nd)) {
+									firstNode = nd;
+									elemsToAdd.add(nd);
 								}
-								from = to = "";
+								
+								if (firstNode != null) {
+									nd = firstNode;
+									while (true) {
+										if (nd.eClass().getName().equals("OrFork")
+												|| nd.eClass().getName().equals("AndFork")
+												|| nd.eClass().getName().equals("Timer")) {
+											elemsToAdd.addAll(addNodesInOrFork(nd, to));
+											break;
+										}
+										NodeConnection nc = (NodeConnection) nd.getSucc().get(0);
+										if (nc.getTarget().getContRef() == null) {
+											contRef.getNodes().add(nc.getTarget());
+										}
+										nd = (PathNode) nc.getTarget();
+										if (nd.getName().equals(to))
+											break;
+
+									}
+									contRef.getNodes().addAll(elemsToAdd);
+								}
 							}
 						}
+						
 					}
 				}
 
@@ -266,6 +269,17 @@ public class Turn2UrnPhase2 {
 			e.printStackTrace();
 		}
 	}
+		
+	public boolean isFirstNode(String firstNodeName, PathNode nd) {
+		if (nd.eClass().getName().equals("RespRef")) {
+			rf = (RespRef) nd;
+			if (rf.getContRef() == null && rf.getRespDef().getName().equals(from)) {
+				firstNode = rf;
+			}
+		} else if (nd.getName().equals(from)) {
+			firstNode = nd;
+		}
+	}
 	
 	public Timer getTimer(List<IURNNode> nodes, String connectedTimerName) {
 		for (ListIterator<IURNNode> iter2 = nodes.listIterator(); iter2.hasNext();) {
@@ -288,8 +302,9 @@ public class Turn2UrnPhase2 {
 				NodeConnection nc = (NodeConnection) succ;
 				elemsToAdd.add(nc.getTarget());
 				nd = (PathNode) nc.getTarget();
-				if (nd.getName().equals(to))
+				if (nd.getName().equals(to)) {
 					return elemsToAdd;
+				}
 				if (nd.eClass().getName().equals("EndPoint") && !nd.getName().equals("to")) {
 					elemsToAdd = new ArrayList<IURNNode>();
 					break;
@@ -301,8 +316,9 @@ public class Turn2UrnPhase2 {
 					if (list.size() != 0)
 						return elemsToAdd;
 					break;
-				} else
+				} else {
 					succ = nd.getSucc().get(0);
+				}
 			}
 		}
 		// change this

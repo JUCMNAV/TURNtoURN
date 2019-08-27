@@ -397,25 +397,19 @@ rule processContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint))
 			else
 				''
 			endif;
-		uniqueTFromExists : Boolean = 
+		tFromExists : Boolean = 
 			(nodes -> select(n|n.name = tFrom) -> size() = 1)
-			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> size() = 1)
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> isEmpty())
 			and not (tFrom = '');
-		uniqueTToExists : Boolean = 
-			(nodes -> select(n|n.name = tTo) -> size() = 1)
-			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> size() = 1)
+		tToExists : Boolean = 
+			(not nodes -> select(n|n.name = tTo) -> isEmpty())
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> isEmpty())
 			and not (tTo = '');
-		vPathBetweenNodes : Sequence(Urn!PathNode) = OclUndefined;
 		vStartNode : Urn!PathNode = OclUndefined;
 		vEndNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		if(not tMetadata -> isEmpty()){
-			--thisModule.debug(tMetadata -> collect(md|md.value));
-			--thisModule.debug(nodes);
-		}
-		
-		if(uniqueTFromExists and uniqueTToExists){ --unidirectional, tFrom must be before tTo
+		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
 			vStartNode <- nodes -> any(n|n.name = tFrom);
 
 			if(vStartNode.oclIsUndefined()){
@@ -433,9 +427,16 @@ rule processContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint))
 	}
 }
 
+-- TODO: implement
 rule findPathBetweenNodes(startNode: Urn!PathNode, endNode: Urn!PathNode){
+	using{
+		vPath : Sequence(Urn!PathNode) = Sequence{startNode};	
+	}
 	do{
-		thisModule.debug(startNode);
+		vPath <- vPath.including(endNode);
+		--thisModule.debug(vPath);
+		
+		--vPath;
 		OclUndefined;
 	}
 }
