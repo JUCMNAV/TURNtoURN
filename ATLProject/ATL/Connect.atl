@@ -84,12 +84,7 @@ rule connectNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnect
 	}
 	do{
 		if(currentNode.oclIsTypeOf(Turn!Connect)){
-			if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-				thisModule.createAsynchEmptyPointConnect(currentNode);
-			}
-			else{
-				thisModule.createEmptyPointConnect(currentNode);
-			}
+			thisModule.createEmptyPointConnect(currentNode);
 			vNode <- thisModule.retrieveNode(currentNode.connectsTo);
 		}
 		else if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){

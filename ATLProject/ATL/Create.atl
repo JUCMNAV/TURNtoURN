@@ -30,19 +30,27 @@ rule connectWithCondition(fromNode: Urn!PathNode, toNode: Urn!PathNode, conditio
 }
 
 rule createEmptyPointConnect(currentNode: Turn!PathNode){
-	to
-		tConnect: Urn!Connect(
-			id <- thisModule.nextId().toString(),
-			name <- 'Connect' + tConnect.id,
-			diagram <- thisModule.tUCMmap
-		),
-		tEmptyPt: Urn!EmptyPoint(
-			id <- thisModule.nextId().toString(),
-			name <- 'EmptyPoint' + tEmptyPt.id,
-			diagram <- thisModule.tUCMmap
-		)
+	do{
+		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
+			thisModule.createAsynchEmptyPointConnect(currentNode);
+		}
+		else if(currentNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
+			thisModule.createWaitingPlaceEmptyPointConnect(currentNode);
+		}
+		else{
+			thisModule.createStartPointEmptyPointConnect(currentNode);
+		}	
+	}
+}
+
+rule createStartPointEmptyPointConnect(currentNode: Turn!PathNode){
+	using{
+		tConnect: Urn!Connect = thisModule.createConnect();
+		tEmptyPt: Urn!EmptyPoint = thisModule.createEmptyPoint();
+	}
 	do{
 		thisModule.connect(tConnect, thisModule.retrieveNode(currentNode.connectsTo));
+		thisModule.useConnection(tEmptyPt, thisModule.retrieveNode(currentNode.connectsTo).nextFreeConnection());
 		
 		thisModule.connect(tEmptyPt, tConnect);
 		
@@ -50,24 +58,37 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode){
 
 		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode, tEmptyPt);
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
+		
+		tEmptyPt;
+	}
+}
+
+rule createWaitingPlaceEmptyPointConnect(currentNode: Turn!PathNode){
+	using{
+		tConnect: Urn!Connect = thisModule.createConnect();
+		tEmptyPt: Urn!EmptyPoint = thisModule.createEmptyPoint();
+	}
+	do{
+		thisModule.connect(tConnect, thisModule.retrieveNode(currentNode.connectsTo));
+		--thisModule.useConnection(tEmptyPt, thisModule.retrieveNode(currentNode.connectsTo).nextFreeConnection());
+		
+		thisModule.connect(tEmptyPt, tConnect);
+		
+		thisModule.createNewConnection(tEmptyPt);
+
+		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode, tEmptyPt);
+		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
+		
+		tEmptyPt;
 	}
 }
 
 rule createAsynchEmptyPointConnect(currentNode: Turn!PathNode){
 	using{
 		tTimer : Urn!Timer = thisModule.resolveTemp(currentNode.connectsTo, 'tTimer');
+		tConnect: Urn!Connect = thisModule.createConnect();
+		tEmptyPt: Urn!EmptyPoint = thisModule.createAsynchronousEmptyPoint(currentNode.connectsTo.name);
 	}
-	to
-		tConnect: Urn!Connect(
-			id <- thisModule.nextId().toString(),
-			name <- 'Connect' + tConnect.id,
-			diagram <- thisModule.tUCMmap
-		),
-		tEmptyPt: Urn!EmptyPoint(
-			id <- thisModule.nextId().toString(),
-			name <- 'AsynchConnectTimer#' + currentNode.connectsTo.name,
-			diagram <- thisModule.tUCMmap
-		)
 	do{
 		thisModule.connect(tConnect, tTimer);
 		thisModule.connect(tEmptyPt, tConnect);
@@ -77,6 +98,8 @@ rule createAsynchEmptyPointConnect(currentNode: Turn!PathNode){
 		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(tTimer, tEmptyPt);
 		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(tEmptyPt, tTimer);
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
+		
+		tEmptyPt;
 	}
 }
 
@@ -130,15 +153,25 @@ rule createCondition(sourceExpression: String){
 
 rule createConnect(){
 	to
-		tNodeConnection: Urn!NodeConnection(),
 		tConnect: Urn!Connect(
 			id <- thisModule.nextId().toString(),
 			name <- 'Connect' + tConnect.id,
-			succ <- tNodeConnection,
 			diagram <- thisModule.tUCMmap
 		)
 	do{
 		tConnect;	
+	}
+}
+
+rule createAsynchronousEmptyPoint(name: String){
+	to
+		tEmptyPt: Urn!EmptyPoint(
+			id <- thisModule.nextId().toString(),
+			name <- 'AsynchConnectTimer#' + name,
+			diagram <- thisModule.tUCMmap
+		)
+	do{
+		tEmptyPt;
 	}
 }
 
@@ -238,5 +271,21 @@ rule createResponsibility(s: Turn!RespRef){
 		)
 	do{
 		tResp;
+	}
+}
+
+rule createStartPoint(){
+	to
+		tNodeConn: Urn!NodeConnection(),
+		tNodeLabel: Urn!NodeLabel(),
+		tStartPoint: Urn!StartPoint (
+			id <- thisModule.nextId().toString(),
+			name <- 'StartPoint' + tStartPoint.id,
+			succ <- tNodeConn,
+			label <- tNodeLabel
+		)
+	do{
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tStartPoint);
+		tStartPoint;
 	}
 }
