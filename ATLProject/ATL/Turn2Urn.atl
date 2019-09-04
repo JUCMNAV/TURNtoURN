@@ -26,8 +26,6 @@ helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
 
 helper def: emptyPointMap : Map(Turn!Connect, Urn!EmptyPoint) = Map{};
 
-helper def: orForkNodeConnCounter : Integer = 1;
-
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
 
 --------------2/5 HELPERS---------------------

@@ -26,6 +26,27 @@ rule getNodeToConnect(body: Turn!PathBody){
 	}
 }
 
+rule connectForkNodes(pathend: Turn!PathEnd, pathbodies: Sequence(Turn!PathBody)){
+	using{
+		vFork : Urn!PathNode = thisModule.retrieveNode(pathend);
+		vCurrentPosition : Integer = 0;
+	}
+	do{
+		for(pathbody in pathbodies){
+			vCurrentPosition <- pathbodies.indexOf(pathbody);
+			if(pathbody.referencedEnd.oclIsTypeOf(Turn!AndJoin) or pathbody.referencedEnd.oclIsTypeOf(Turn!OrJoin)){
+				thisModule.useConnection(thisModule.retrieveNode(pathbody.referencedEnd), vFork.succ -> at(vCurrentPosition));
+			}
+			else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and vFork.oclIsTypeOf(Urn!AndFork)){
+				thisModule.useConnection(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vFork.succ -> at(vCurrentPosition));
+			}
+			else if(not pathbody.pathNodes -> isEmpty()){
+				thisModule.connectNodes(pathbody, pathend, thisModule.retrieveNode(pathend));
+			}
+		}
+	}
+}
+
 rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConnection){
 	using{
 		vNodeToConnect : Turn!PathNode = thisModule.getNodeToConnect(body);
@@ -57,54 +78,10 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 	}
 }
 
-rule connectForkNodes(pathend: Turn!PathEnd, pathbodies: Sequence(Turn!PathBody)){
-	using{
-		vFork : Urn!PathNode = thisModule.retrieveNode(pathend);
-		vCurrentPosition : Integer = 0;
-	}
-	do{
-		for(pathbody in pathbodies){
-			vCurrentPosition <- pathbodies.indexOf(pathbody);
-			if(pathbody.referencedEnd.oclIsTypeOf(Turn!AndJoin) or pathbody.referencedEnd.oclIsTypeOf(Turn!OrJoin)){
-				thisModule.useConnection(thisModule.retrieveNode(pathbody.referencedEnd), vFork.succ -> at(vCurrentPosition));
-			}
-			else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and vFork.oclIsTypeOf(Urn!AndFork)){
-				thisModule.useConnection(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vFork.succ -> at(vCurrentPosition));
-			}
-			else if(not pathbody.pathNodes -> isEmpty()){
-				thisModule.connectNodes(pathbody, pathend, thisModule.retrieveNode(pathend));
-			}
-		}
-	}
-}
-	
-rule connectNode(currentNode: Turn!PathNode, nextNodeConnection: Urn!NodeConnection){
-	using{
-		vNode : Urn!PathNode = thisModule.retrieveNode(currentNode);
-	}
-	do{
-		if(currentNode.oclIsTypeOf(Turn!Connect)){
-			thisModule.createEmptyPointConnect(currentNode);
-			vNode <- thisModule.retrieveNode(currentNode.connectsTo);
-		}
-		else if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
-			if(not currentNode.connect.oclIsUndefined()){
-				vNode <- thisModule.emptyPointMap.get(currentNode.connect);
-			}
-		}
-		else if(currentNode.oclIsTypeOf(Turn!Timer)){
-			if(not thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer')).oclIsUndefined()){
-				vNode <- thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer'));
-			}
-		}
-
-		thisModule.useConnection(vNode, nextNodeConnection);
-	}
-}
-
 rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
 	using{
 		vLastNode : Turn!PathNode = pathbody.pathNodes -> last();
+		vNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(not pathbody.pathNodes -> isEmpty()){
@@ -117,7 +94,33 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 					thisModule.useConnection(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(node).succ -> first());
 				}
 				else{
-					thisModule.connectNode(currentNode, previousNode.nextFreeConnection());
+					vNode <- thisModule.retrieveNode(currentNode);
+					
+					if(currentNode.oclIsTypeOf(Turn!Connect) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
+						if(currentNode.oclIsTypeOf(Turn!Connect)){
+							thisModule.createEmptyPointConnect(currentNode);
+							vNode <- thisModule.retrieveNode(currentNode.connectsTo);
+						}
+						else if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
+							if(not currentNode.connect.oclIsUndefined()){
+								vNode <- thisModule.emptyPointMap.get(currentNode.connect);
+							}
+							else{
+							--	thisModule.debug('oha');	
+							}
+						}
+						else if(currentNode.oclIsTypeOf(Turn!Timer)){
+							if(not thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer')).oclIsUndefined()){
+								vNode <- thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer'));
+							}
+							else{
+							--	thisModule.debug('oh');	
+							}
+						}
+					}
+					
+					
+					thisModule.useConnection(vNode, previousNode.nextFreeConnection());
 				}
 				
 				if(currentNode.oclIsTypeOf(Turn!Connect)){
