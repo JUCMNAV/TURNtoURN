@@ -232,7 +232,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		thisModule.collectReferencedEnds(vPathbodies -> collect(pb|pb.pathNodes));
 		
 		if(sOrFork.body.oclIsUndefined()){
-			thisModule.connectWithCondition(tOrFork, thisModule.createEndPoint(sOrFork), thisModule.createCondition('!' + sOrFork.condition.expression.asString()));
+			thisModule.connectWithCondition(tOrFork, thisModule.createEndPointUsingNode(sOrFork), thisModule.createCondition('!' + sOrFork.condition.expression.asString()));
 			vNextNode <- thisModule.handleForkJoin(tOrFork, sOrFork.connectingOrBody, vNumberOfTerminatingNodes);
 			thisModule.connectWithCondition(tOrFork, thisModule.getNodeToConnect(sOrFork.connectingOrBody), thisModule.resolveTemp(sOrFork.condition, 'tCondition'));
 			thisModule.connectNodes(sOrFork.connectingOrBody, sOrFork, vNextNode);
@@ -267,7 +267,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 				}
 				
 				if(vPathbodies -> size() = 1){
-					thisModule.connectWithCondition(tOrFork, thisModule.createEndPoint(sOrFork), thisModule.createCondition('!' + vPathbodies.first().orFork.condition.expression.asString()));
+					thisModule.connectWithCondition(tOrFork, thisModule.createEndPointUsingNode(sOrFork), thisModule.createCondition('!' + vPathbodies.first().orFork.condition.expression.asString()));
 				}
 				
 				vConditions <- vPathbodies -> select(pb|pb.pathEnd.oclIsUndefined()) -> collect(pb|pb.orFork.condition);
@@ -386,8 +386,11 @@ rule processStub(sStub:Turn!Stub){
 rule processPathEnd(pathend: Turn!PathNode){
 	do{
 		if(pathend.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(thisModule.retrieveNode(pathend.regularEnd).oclIsUndefined()){
-				thisModule.processEndPoint(pathend.regularEnd, thisModule.createEndPoint(pathend.regularEnd));
+			if(pathend.regularEnd.oclIsUndefined()){
+				thisModule.createEndPoint();
+			}
+			else if(thisModule.retrieveNode(pathend.regularEnd).oclIsUndefined()){
+				thisModule.processEndPoint(pathend.regularEnd, thisModule.createEndPointUsingNode(pathend.regularEnd));
 			}
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
@@ -427,18 +430,12 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			
 			if(path.pathBody.pathNodes -> isEmpty()){
 				if(path.startPoint.oclIsUndefined()){
-					vEmptyPoint <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EmptyPoint) and not n.nextFreeConnection().oclIsUndefined());
-					
-					if(vEmptyPoint.oclIsUndefined()){
-						vEmptyPoint <- thisModule.createEmptyPoint();
-						thisModule.useConnection(vEmptyPoint, vStartPoint.nextFreeConnection());
-						thisModule.connect(vEmptyPoint, thisModule.getNodeToConnect(path.pathBody));
-					}
-					else{
-						thisModule.connectEndToNextNode(path.pathBody, vEmptyPoint.nextFreeConnection());
-					}
+					vEmptyPoint <- thisModule.createEmptyPoint();
+					thisModule.useConnection(vEmptyPoint, vStartPoint.nextFreeConnection());
+					thisModule.connect(vEmptyPoint, thisModule.getNodeToConnect(path.pathBody));
 				}
 				else if(path.startPoint.connect.oclIsUndefined()){
+				--	thisModule.debug(path.pathBody.pathEnd);
 					thisModule.connectEndToNextNode(path.pathBody, vStartPoint.nextFreeConnection());
 				}
 			}

@@ -194,11 +194,8 @@ rule retrieveNode(node: Turn!PathNode){
 		-- I'm not sure how inefficient this approach is; if the system is running slowly, it may be worth looking at a different
 		-- implementation of this rule.
 		
-		if(node.oclIsTypeOf(Turn!EndpointWithConnect)){
-			node <- node.regularEnd;	
-		}
-		
 		vRetrievedNode <- Sequence{};
+		
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tWtPlace'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tFailPt'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tRespRef'));
@@ -206,10 +203,21 @@ rule retrieveNode(node: Turn!PathNode){
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tAndFork'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tOrFork'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tStub'));
+		
 		vRetrievedNode <- vRetrievedNode -> any(e|not e.oclIsUndefined());
 		
-		if(vRetrievedNode.oclIsUndefined() and node.oclIsTypeOf(Turn!EndPoint)){
-			vRetrievedNode <- thisModule.endPointMap.get(node);	
+		if(node.oclIsTypeOf(Turn!EndPoint)){
+			vRetrievedNode <- thisModule.endPointMap.get(node);
+		}
+		
+		if(node.oclIsTypeOf(Turn!EndpointWithConnect)){
+			if(node.regularEnd.oclIsUndefined()){
+				vRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EndPoint));
+			}
+			else{
+				node <- node.regularEnd;
+				vRetrievedNode <- thisModule.retrieveNode(node);
+			}
 		}
 		
 		if(vRetrievedNode.oclIsUndefined()){

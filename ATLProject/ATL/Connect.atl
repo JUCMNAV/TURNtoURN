@@ -115,7 +115,6 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 				
 				if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
 					thisModule.useConnection(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(node).succ -> first());
-					--thisModule.debug(currentNode);
 				}
 				else{
 					thisModule.connectNode(currentNode, previousNode.nextFreeConnection());

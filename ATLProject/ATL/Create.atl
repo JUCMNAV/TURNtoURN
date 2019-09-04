@@ -187,7 +187,7 @@ rule createEmptyPoint(){
 	}
 }
 
-rule createEndPoint(node : Turn!PathNode){
+rule createEndPointUsingNode(node: Turn!PathNode){
 	to
 		tEndPoint: Urn!EndPoint (
 			id <- thisModule.nextId().toString(),
@@ -195,6 +195,19 @@ rule createEndPoint(node : Turn!PathNode){
 			label <- thisModule.createLabel(),
 			diagram <- thisModule.tUCMmap,
 			contRef <- thisModule.getUrnCompRef(node)
+		)
+	do{
+		tEndPoint;
+	}
+}
+
+rule createEndPoint(){
+	to
+		tEndPoint: Urn!EndPoint (
+			id <- thisModule.nextId().toString(),
+			name <- 'EndPoint' + tEndPoint.id,
+			label <- thisModule.createLabel(),
+			diagram <- thisModule.tUCMmap
 		)
 	do{
 		tEndPoint;
