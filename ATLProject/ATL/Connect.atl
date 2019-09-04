@@ -29,19 +29,20 @@ rule getNodeToConnect(body: Turn!PathBody){
 rule connectForkNodes(pathend: Turn!PathEnd, pathbodies: Sequence(Turn!PathBody)){
 	using{
 		vFork : Urn!PathNode = thisModule.retrieveNode(pathend);
-		vCurrentPosition : Integer = 0;
 	}
 	do{
 		for(pathbody in pathbodies){
-			vCurrentPosition <- pathbodies.indexOf(pathbody);
+			--thisModule.useConnection(thisModule.retrieveNode(pathend), thisModule.retrieveNode(pathend).nextFreeConnection());
+			--if(vFork.oclIsTypeOf(Urn!OrFork)){
+			--	thisModule.useConnection(vFork, thisModule.retrieveNode(pathend).nextFreeConnection());
+			--}
+			thisModule.connectNodes(pathbody, pathend, vFork);
+			
 			if(pathbody.referencedEnd.oclIsTypeOf(Turn!AndJoin) or pathbody.referencedEnd.oclIsTypeOf(Turn!OrJoin)){
-				thisModule.useConnection(thisModule.retrieveNode(pathbody.referencedEnd), vFork.succ -> at(vCurrentPosition));
+				thisModule.useConnection(thisModule.retrieveNode(pathbody.referencedEnd), vFork.nextFreeConnection());
 			}
 			else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and vFork.oclIsTypeOf(Urn!AndFork)){
-				thisModule.useConnection(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vFork.succ -> at(vCurrentPosition));
-			}
-			else if(not pathbody.pathNodes -> isEmpty()){
-				thisModule.connectNodes(pathbody, pathend, thisModule.retrieveNode(pathend));
+				thisModule.useConnection(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vFork.nextFreeConnection());
 			}
 		}
 	}
@@ -61,20 +62,7 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 			}
 		}
 		
-		if(			(vNodeToConnect.oclIsTypeOf(Urn!EndPoint) and not vNodeToConnect.pred -> isEmpty())
-				or 	(not body.referencedStub.oclIsUndefined() and vNodeToConnect.pred -> size() >= body.index)
-				or 	vNodeToConnect.oclIsTypeOf(Urn!RespRef) or vNodeToConnect.oclIsTypeOf(Urn!FailurePoint)
-		){
-			vOrJoin <- thisModule.createOrJoin();
-			vOrJoin.succ <- thisModule.createNodeConnection();
-			thisModule.useConnection(vOrJoin, nextNodeConnection);
-			thisModule.useConnection(vOrJoin, (vNodeToConnect.pred -> first()).source.succ);
-			nextNodeConnection <- vOrJoin.nextFreeConnection();
-		}
-
-		if(not vNodeToConnect.oclIsUndefined()){
-			thisModule.useConnection(vNodeToConnect, nextNodeConnection);
-		}
+		thisModule.handleEmptyBody(body, vNodeToConnect, nextNodeConnection);
 	}
 }
 
@@ -91,7 +79,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 				}
 				
 				if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
-					thisModule.useConnection(thisModule.retrieveNode(currentNode), thisModule.retrieveNode(node).succ -> first());
+					thisModule.useConnection(previousNode, thisModule.retrieveNode(node).nextFreeConnection());
 				}
 				else{
 					vNode <- thisModule.retrieveNode(currentNode);

@@ -51,7 +51,7 @@ rule processEndPoint(node: Turn!PathNode, tEndPoint: Turn!EndPoint){
 			thisModule.currentOrFork <- node.epConnect.pbody.orFork;
 			if(not thisModule.currentOrFork.oclIsUndefined()){
 				thisModule.condExpression <- thisModule.currentOrFork.condition.expression.asString();
-				thisModule.useConnection(tEndPoint, thisModule.retrieveNode(thisModule.currentOrFork.orBody.orFork).succ -> any(s|s.condition.expression=thisModule.condExpression));
+				thisModule.useConnection(tEndPoint, thisModule.retrieveNode(thisModule.currentOrFork.orBody.orFork).nextFreeConnection());
 			}
 			
 			--Using backlinks to connect andFork
@@ -324,11 +324,10 @@ rule processStub(sStub:Turn!Stub){
 	using{
 		vPlugins : Sequence(Turn!Stub) = OclUndefined;
 		tStub : Urn!Stub = thisModule.retrieveNode(sStub);
-		vPathEnd : Urn!PathEnd = OclUndefined;
 		vPaths : Sequence(Turn!PathBody) = OclUndefined;
 		vNextNode : Turn!PathNode = OclUndefined;
 		vPathEnds : Sequence(Turn!PathNode) = OclUndefined;
-		vCurrentPosition : Integer = 0;
+		vOutPaths : Sequence(Urn!PathBody) = OclUndefined;
 	}
 	do{
 		if(not sStub.params.oclIsUndefined()){
@@ -347,6 +346,7 @@ rule processStub(sStub:Turn!Stub){
 		
 		for(outPath in sStub.outPaths -> flatten()){
 			thisModule.createNewConnection(tStub);
+			
 			if(outPath.threshold <> 0){
 				tStub.nextFreeConnection().threshold <- outPath.threshold.toString();
 			}
@@ -354,31 +354,34 @@ rule processStub(sStub:Turn!Stub){
 		
 		--collecting nodes from connecting stub body
 		if(not sStub.connectingStubBody.oclIsUndefined()){
-			thisModule.outPaths <- sStub.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
-			thisModule.numberOfTerminatingStubNodes <- thisModule.outPaths -> size();
+			thisModule.collectReferencedEnds(sStub.connectingStubBody.pathNodes);
+			thisModule.processPathEnd(sStub.connectingStubBody.pathEnd);
+			
+			vOutPaths <- sStub.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
+			vNextNode <- tStub;
 			
 			if(sStub.outPaths -> isEmpty()){
 				thisModule.createNewConnection(tStub);
-				thisModule.outPathNumber <- 1;
 			}
-			
-			vNextNode <- thisModule.handleForkJoin(tStub, sStub.connectingStubBody, thisModule.numberOfTerminatingStubNodes);
-			
-			if(thisModule.numberOfTerminatingStubNodes >= 2){
+			else if(vOutPaths -> size() = 1){
+				if(not sStub.connectingStubBody.pathNodes.first().oclIsUndefined()){
+					vNextNode <- thisModule.retrieveNode(sStub.connectingStubBody.pathNodes.first());
+				}
+			}
+			else if(vOutPaths -> size() >= 2){
+				vNextNode <- thisModule.createOrJoin();
 				thisModule.createNewConnection(vNextNode);
-			}
-			
-			if(thisModule.numberOfTerminatingStubNodes = 1){
-				thisModule.outPathNumber <- thisModule.outPaths.first().index;	
-			}
-			else if(thisModule.numberOfTerminatingStubNodes >= 2){
-				thisModule.useConnection(vNextNode, tStub.succ -> at(thisModule.outPaths -> collect(op|op.index) -> at(1)));
-				thisModule.useConnection(vNextNode, tStub.succ -> at(thisModule.outPaths -> collect(op|op.index) -> at(2)));
-				thisModule.outPathNumber <- 1;
+				thisModule.useConnection(vNextNode, tStub.succ -> at(vOutPaths -> collect(op|op.index) -> at(1)));
+				thisModule.useConnection(vNextNode, tStub.succ -> at(vOutPaths -> collect(op|op.index) -> at(2)));
 			}
 			
 			if(sStub.connectingStubBody.pathNodes -> isEmpty()){
-				thisModule.handleEmptyBody(sStub.connectingStubBody, thisModule.getNodeToConnect(sStub.connectingStubBody), vNextNode.succ -> at(thisModule.outPathNumber));
+				if(vOutPaths -> size() = 1){
+					thisModule.handleEmptyBody(sStub.connectingStubBody, thisModule.getNodeToConnect(sStub.connectingStubBody), vNextNode.succ -> at(vOutPaths.first().index));
+				}
+				else{
+					thisModule.handleEmptyBody(sStub.connectingStubBody, thisModule.getNodeToConnect(sStub.connectingStubBody), vNextNode.nextFreeConnection());
+				}
 			}
 			
 			thisModule.connectNodes(sStub.connectingStubBody, sStub, thisModule.retrieveNode(sStub));
@@ -388,12 +391,11 @@ rule processStub(sStub:Turn!Stub){
 			}
 		}
 		
-		vPathEnds <- sStub.outPaths -> collect(op|op.path.pathEnd) -> flatten() -> select(pe|pe.oclIsTypeOf(Turn!EndpointWithConnect));
+		vPathEnds <- sStub.outPaths -> collect(op|op.path.pathEnd) -> select(pe|pe.oclIsTypeOf(Turn!EndpointWithConnect));
 		
 		for(pathend in vPathEnds){
-			thisModule.processPathEnd(pathend);	
-			vCurrentPosition <- vPathEnds.indexOf(pathend);
-			thisModule.useConnection(thisModule.retrieveNode(pathend.regularEnd), tStub.succ -> at(vCurrentPosition));
+			thisModule.processPathEnd(pathend);
+			thisModule.useConnection(thisModule.retrieveNode(pathend.regularEnd), tStub.nextFreeConnection());
 		}
 		
 		tStub;
