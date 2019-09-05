@@ -93,6 +93,26 @@ rule createNewConnection(node: Turn!PathNode){
 	}
 }
 
+rule connect(fromNode: Urn!PathNode, toNode: Urn!PathNode){
+	to
+		tNodeConnection: Urn!NodeConnection()
+	do{
+		fromNode.succ <- tNodeConnection;
+		toNode.pred <- tNodeConnection;
+	}
+}
+
+rule connectWithCondition(fromNode: Urn!PathNode, toNode: Urn!PathNode, condition: String){
+	to
+		tNodeConnection: Urn!NodeConnection(
+			condition <- condition	
+		)
+	do{
+		fromNode.succ <- tNodeConnection;
+		toNode.pred <- tNodeConnection;
+	}
+}
+
 rule contributionNumberToKeyword(quantitativeContribution: Integer){
 	using{
 		vContribution :	String = OclUndefined;
@@ -221,6 +241,8 @@ rule retrieveNode(node: Turn!PathNode){
 		vRetrievedNode; --returns a single node, not a sequence
 	}
 }
+
+helper def: ctr : Integer = 0;
 
 -------------4/5 MATCHED RULES WITHOUT DO BLOCKS------------
 

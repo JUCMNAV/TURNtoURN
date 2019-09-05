@@ -54,16 +54,6 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
-		if(not vNodeToConnect.oclIsUndefined()){
-			if(vNodeToConnect.name='e17'){
-				--thisModule.counter <- thisModule.counter + 1;
-				--thisModule.debug(vRetrievedNode);
-				--if(thisModule.counter = 2){
-				--	thisModule.k.i;
-				--}
-			}
-		}
-		
 		if(not nextNodeConnection.oclIsUndefined()){
 			if(nextNodeConnection.source.oclIsTypeOf(Urn!EmptyPoint) or nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
 				if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
@@ -72,7 +62,8 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 			}
 		}
 		
-		thisModule.handleEmptyBody(body, vNodeToConnect, nextNodeConnection);
+		nextNodeConnection <- thisModule.handleEmptyBody(body, nextNodeConnection);
+		thisModule.useConnection(vNodeToConnect, nextNodeConnection);
 	}
 }
 
