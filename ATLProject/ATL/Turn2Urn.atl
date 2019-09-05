@@ -145,17 +145,6 @@ rule contributionKeywordToNumber(keyword: String){
 	}
 }
 
-rule collectReferencedEnds(pathNodes: Sequence(Turn!PathNode)){
-	do{
-		pathNodes <- pathNodes -> flatten();
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(pathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
-	}
-}
-
 rule getUrnCompRef(obj: OclAny){
 	using{
 		vCompRef : Urn!ComponentRef = OclUndefined;
@@ -201,6 +190,8 @@ rule retrieveNode(node: Turn!PathNode){
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tAndFork'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tOrFork'));
 		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tStub'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tAndJoin'));
+		vRetrievedNode <- vRetrievedNode.including(thisModule.resolveTemp(node, 'tOrJoin'));
 		
 		vRetrievedNode <- vRetrievedNode -> any(e|not e.oclIsUndefined());
 		

@@ -88,25 +88,19 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 						if(currentNode.oclIsTypeOf(Turn!Connect)){
 							thisModule.createEmptyPointConnect(currentNode);
 							vNode <- thisModule.retrieveNode(currentNode.connectsTo);
+							thisModule.connect(previousNode, vNode); -- added an extra connection between the fork and the connectsTo object because this was needed in AndForkTestBranches and doesn't seem to change the appearance in AndFork
 						}
 						else if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
 							if(not currentNode.connect.oclIsUndefined()){
 								vNode <- thisModule.emptyPointMap.get(currentNode.connect);
-							}
-							else{
-							--	thisModule.debug('oha');	
 							}
 						}
 						else if(currentNode.oclIsTypeOf(Turn!Timer)){
 							if(not thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer')).oclIsUndefined()){
 								vNode <- thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer'));
 							}
-							else{
-							--	thisModule.debug('oh');	
-							}
 						}
 					}
-					
 					
 					thisModule.useConnection(vNode, previousNode.nextFreeConnection());
 				}
