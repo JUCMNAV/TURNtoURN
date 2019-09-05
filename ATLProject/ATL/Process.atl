@@ -125,7 +125,12 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		for(pathbody in sAndFork.pathbody){
 			thisModule.createNewConnection(tAndFork);
 			thisModule.processPathBody(pathbody);
-			--thisModule.debug(pathbody.pathNodes -> select(pn|pn.oclIsTypeOf(Turn!Connect)) -> collect(pn|pn.connectsTo.name));
+			
+			if(not thisModule.getNodeToConnect(pathbody).oclIsUndefined()){
+				thisModule.useConnection(thisModule.getNodeToConnect(pathbody), tAndFork.nextFreeConnection());
+			}
+			
+			thisModule.connectNodes(pathbody, sAndFork, tAndFork);
 		}
 		
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
@@ -151,15 +156,11 @@ rule processAndFork(sAndFork: Turn!AndFork){
 						thisModule.useConnection(vOrJoin, vNodeToConnect.pred.first().source.succ);
 					}
 					else{
-						thisModule.connect(vNextNode, vNodeToConnect);
+						thisModule.createNewConnection(vNextNode);
 					}
 				}
-				else{
-					if(not sAndFork.connectingAndBody.pathNodes.first().oclIsUndefined() and not sAndFork.connectingAndBody.pathNodes.first().oclIsTypeOf(Turn!Connect)){
-						vNextNode <- thisModule.retrieveNode(sAndFork.connectingAndBody.pathNodes.first());
-					}
-					thisModule.useConnection(vNodeToConnect, vNextNode.nextFreeConnection());
-				}
+				
+				thisModule.useConnection(vNodeToConnect, vNextNode.nextFreeConnection());
 			}
 			else{
 				vNextNode <- thisModule.createAndJoin();
@@ -396,7 +397,7 @@ rule processPathBody(pathbody: Turn!PathNode){
 		}
 		else if(pathend.oclIsTypeOf(Turn!AndFork)){
 			thisModule.processAndFork(pathend);
-			thisModule.connectForkNodes(pathend, pathend.pathbody);
+			--thisModule.connectForkNodes(pathend, pathend.pathbody);
 		}
 		else if(pathend.oclIsTypeOf(Turn!OrFork)){
 			thisModule.processOrFork(pathend);
@@ -447,6 +448,8 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 					thisModule.useConnection(thisModule.getNodeToConnect(path.pathBody), thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).nextFreeConnection());
 				}
 			}
+			
+			--thisModule.debug(thisModule.retrieveNode(path.startPoint).succ -> collect(s|s.target));
 		}
 		
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();	

@@ -54,6 +54,16 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
+		if(not vNodeToConnect.oclIsUndefined()){
+			if(vNodeToConnect.name='e17'){
+				--thisModule.counter <- thisModule.counter + 1;
+				--thisModule.debug(vRetrievedNode);
+				--if(thisModule.counter = 2){
+				--	thisModule.k.i;
+				--}
+			}
+		}
+		
 		if(not nextNodeConnection.oclIsUndefined()){
 			if(nextNodeConnection.source.oclIsTypeOf(Urn!EmptyPoint) or nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
 				if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
@@ -88,7 +98,7 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 						if(currentNode.oclIsTypeOf(Turn!Connect)){
 							thisModule.createEmptyPointConnect(currentNode);
 							vNode <- thisModule.retrieveNode(currentNode.connectsTo);
-							thisModule.connect(previousNode, vNode); -- added an extra connection between the fork and the connectsTo object because this was needed in AndForkTestBranches and doesn't seem to change the appearance in AndFork
+						--	thisModule.connect(previousNode, vNode); -- added an extra connection between the fork and the connectsTo object because this was needed in AndForkTestBranches and doesn't seem to change the appearance in AndFork
 						}
 						else if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
 							if(not currentNode.connect.oclIsUndefined()){
