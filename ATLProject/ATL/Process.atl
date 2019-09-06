@@ -427,10 +427,24 @@ rule processPathBody(pathbody: Turn!PathNode){
 	}
 }
 
+rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!StartPoint, pathEnd: Urn!PathNode){
+	using{
+		vEmptyPoint : Urn!EmptyPoint = OclUndefined;
+	}
+	do{
+		if(not sStartPoint.oclIsUndefined()){
+			if(not sStartPoint.connect.oclIsUndefined()){
+				tStartPoint <- thisModule.emptyPointMap.get(sStartPoint);
+			}
+		}
+
+		thisModule.connect(tStartPoint, pathEnd);
+	}
+}
+
 rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	using{
 		vStartPoint : Urn!StartPoint = OclUndefined;
-		vEmptyPoint : Urn!EmptyPoint = OclUndefined;
 		vEndPoint : Urn!EndPoint = OclUndefined;
 	}
 	do{
@@ -447,17 +461,7 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			}
 			
 			if(path.pathBody.pathNodes -> isEmpty()){
-				if(path.startPoint.oclIsUndefined()){
-					vEmptyPoint <- thisModule.createEmptyPoint();
-					thisModule.connect(vStartPoint, vEmptyPoint);
-					thisModule.connect(vEmptyPoint, thisModule.getPathEnd(path.pathBody));
-				}
-				else if(path.startPoint.connect.oclIsUndefined()){
-					thisModule.connect(vStartPoint, thisModule.getPathEnd(path.pathBody));
-				}
-				else{
-					thisModule.connect(thisModule.emptyPointMap.get(path.startPoint), thisModule.getPathEnd(path.pathBody));
-				}
+				thisModule.connectStartPointToPathEnd(path.startPoint, vStartPoint, thisModule.getPathEnd(path.pathBody));
 			}
 			else{
 				thisModule.createNewConnection(vStartPoint);
