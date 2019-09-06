@@ -86,28 +86,6 @@ rule processTimer(sTimer: Turn!Timer){
 	}
 }
 
-rule handleEmptyBodyNode(body: Urn!PathBody, nextNode: Urn!PathNode){
-	using{
-		vOrJoin : Urn!OrJoin = OclUndefined;
-		nodeToConnect : Urn!PathNode = thisModule.getPathEnd(body);
-	}
-	do{
-		if((nodeToConnect.oclIsTypeOf(Urn!EndPoint) and not nodeToConnect.pred -> isEmpty())
-				or (not body.referencedStub.oclIsUndefined() and nodeToConnect.pred -> size() >= body.index)
-				or (nodeToConnect.oclIsTypeOf(Urn!RespRef) or nodeToConnect.oclIsTypeOf(Urn!FailurePoint))
-			){
-			
-			vOrJoin <- thisModule.createOrJoin();
-			thisModule.createNewConnection(vOrJoin);
-			thisModule.connect(nextNode, vOrJoin);
-			thisModule.useConnection(vOrJoin, nodeToConnect.pred.first().source.succ);
-			nextNode <- vOrJoin;
-		}
-		
-		nextNode;
-	}
-}
-
 rule handleEmptyBody(body: Urn!PathBody, nextConnection: Urn!NodeConnection){
 	using{
 		vOrJoin : Urn!OrJoin = OclUndefined;
