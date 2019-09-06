@@ -717,19 +717,19 @@ rule Responsibility2Responsibility{
 
 rule Timer2Timer{
 	from
-		timerObj: Turn!Timer
+		sTimer: Turn!Timer
 	to
 		tTimer: Urn!Timer(
 			id <- thisModule.nextId().toString(),
-			name <- timerObj.turnGetLongestName(),
+			name <- sTimer.turnGetLongestName(),
 			succ <- tNodeConn,
 			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
-			waitType <- timerObj.kind.toString().capitalize(),
-			contRef <- thisModule.getUrnCompRef(timerObj)
+			waitType <- sTimer.kind.toString().capitalize(),
+			contRef <- thisModule.getUrnCompRef(sTimer)
 		),
 		tNodeConn: Urn!NodeConnection(
-			condition <- timerObj.condition
+			condition <- sTimer.condition
 		),
 		tNodeLabel: Urn!NodeLabel()
 }

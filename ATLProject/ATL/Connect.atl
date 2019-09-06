@@ -7,7 +7,7 @@ create OUT : Urn from IN : Turn;
 -- rules in the "Process.atl" file. Ideally, this behavior should
 -- be limited to only rules in this file.
 
-rule getNodeToConnect(body: Turn!PathBody){
+rule getPathEnd(body: Turn!PathBody){
 	using{
 		vNodeToConnect : Turn!PathNode = OclUndefined;
 	}
@@ -26,88 +26,75 @@ rule getNodeToConnect(body: Turn!PathBody){
 	}
 }
 
-rule connectForkNodes(pathend: Turn!PathEnd, pathbodies: Sequence(Turn!PathBody)){
-	using{
-		vFork : Urn!PathNode = thisModule.retrieveNode(pathend);
-	}
-	do{
-		for(pathbody in pathbodies){
-			--thisModule.useConnection(thisModule.retrieveNode(pathend), thisModule.retrieveNode(pathend).nextFreeConnection());
-			--if(vFork.oclIsTypeOf(Urn!OrFork)){
-			--	thisModule.useConnection(vFork, thisModule.retrieveNode(pathend).nextFreeConnection());
-			--}
-			thisModule.connectNodes(pathbody, pathend, vFork);
-			
-			if(pathbody.referencedEnd.oclIsTypeOf(Turn!AndJoin) or pathbody.referencedEnd.oclIsTypeOf(Turn!OrJoin)){
-				thisModule.useConnection(thisModule.retrieveNode(pathbody.referencedEnd), vFork.nextFreeConnection());
-			}
-			else if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect) and vFork.oclIsTypeOf(Urn!AndFork)){
-				thisModule.useConnection(thisModule.retrieveNode(pathbody.pathEnd.regularEnd), vFork.nextFreeConnection());
-			}
+rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
+	do{	
+		thisModule.connectBodyNodes(pathbody.pathNodes, node, previousNode);
+		
+		if(not pathbody.pathNodes -> isEmpty()){
+			thisModule.connectLastNodeToPathEnd(pathbody, pathbody.pathNodes.last());
 		}
 	}
 }
 
-rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConnection){
+rule connectBodyNodes(pathNodes: Sequence(Turn!PathBodyNode), node: Turn!PathNode, previousNode: Urn!PathNode){
 	using{
-		vNodeToConnect : Turn!PathNode = thisModule.getNodeToConnect(body);
-		vOrJoin : Urn!OrJoin = OclUndefined;	
-	}
-	do{
-		nextNodeConnection <- thisModule.handleEmptyBody(body, nextNodeConnection);
-		thisModule.useConnection(vNodeToConnect, nextNodeConnection);
-	}
-}
-
-rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
-	using{
-		vLastNode : Turn!PathNode = pathbody.pathNodes -> last();
 		vNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		if(not pathbody.pathNodes -> isEmpty()){
-			for(currentNode in pathbody.pathNodes){
-				if(currentNode.oclIsTypeOf(Turn!Timer)){
-					thisModule.processTimer(currentNode);
-				}
-				
-				if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
-					thisModule.useConnection(previousNode, thisModule.retrieveNode(node).nextFreeConnection());
-				}
-				else{
-					vNode <- thisModule.retrieveNode(currentNode);
-					
-					if(currentNode.oclIsTypeOf(Turn!Connect) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
-						if(currentNode.oclIsTypeOf(Turn!Connect)){
-							thisModule.createEmptyPointConnect(currentNode);
-							vNode <- thisModule.retrieveNode(currentNode.connectsTo);
-						}
-						else if(currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
-							if(not thisModule.emptyPointMap.get(currentNode).oclIsUndefined()){
-								vNode <- thisModule.emptyPointMap.get(currentNode);
-							}
-						}
-					}
-					
-					thisModule.useConnection(vNode, previousNode.nextFreeConnection());
-				}
-				
-				if(currentNode.oclIsTypeOf(Turn!Connect)){
-					currentNode <- currentNode.connectsTo;
-				}
-
-				previousNode <- thisModule.retrieveNode(currentNode);
-			}
-		
-			if(vLastNode.oclIsTypeOf(Turn!Connect)){
-				vLastNode <- vLastNode.connectsTo;
-				
-				if(vLastNode.oclIsTypeOf(Turn!StartPoint) and pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-					thisModule.createNewConnection(thisModule.retrieveNode(vLastNode));
-				}
+		for(currentNode in pathNodes){
+			if(currentNode.oclIsTypeOf(Turn!Timer)){
+				thisModule.processTimer(currentNode);
 			}
 			
-			thisModule.connectEndToNextNode(pathbody, thisModule.retrieveNode(vLastNode).nextFreeConnection());
+			if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
+				thisModule.useConnection(previousNode, thisModule.retrieveNode(node).nextFreeConnection());
+			}
+			else{
+				vNode <- thisModule.retrieveNode(currentNode);
+				
+				if(currentNode.oclIsTypeOf(Turn!Connect) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
+					if(currentNode.oclIsTypeOf(Turn!Connect)){
+						thisModule.createEmptyPointConnect(currentNode);
+						vNode <- thisModule.retrieveNode(currentNode.connectsTo);
+					}
+					else if(currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
+						if(not thisModule.emptyPointMap.get(currentNode).oclIsUndefined()){
+							vNode <- thisModule.emptyPointMap.get(currentNode);
+						}
+					}
+				}
+				
+				thisModule.useConnection(vNode, previousNode.nextFreeConnection());
+			}
+			
+			if(currentNode.oclIsTypeOf(Turn!Connect)){
+				currentNode <- currentNode.connectsTo;
+			}
+
+			previousNode <- thisModule.retrieveNode(currentNode);
 		}
+	}
+}
+
+rule connectLastNodeToPathEnd(pathbody: Sequence(Turn!PathBody), lastNode: Turn!PathNode){
+	do{
+		if(lastNode.oclIsTypeOf(Turn!Connect)){
+			lastNode <- lastNode.connectsTo;
+			
+			if(lastNode.oclIsTypeOf(Turn!StartPoint) and pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				thisModule.createNewConnection(thisModule.retrieveNode(lastNode));
+			}
+		}
+		
+		-- connect last node with pathEnd
+		thisModule.useConnection(thisModule.getPathEnd(pathbody), thisModule.handleEmptyBody(pathbody, thisModule.retrieveNode(lastNode).nextFreeConnection()));
+		
+		if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			if(thisModule.getPathEnd(pathbody).succ -> isEmpty()){
+				if(not thisModule.emptyPointMap.get(pathbody.pathNodes.first()).oclIsUndefined()){
+					thisModule.connect(thisModule.emptyPointMap.get(pathbody.pathNodes.first()), thisModule.getPathEnd(pathbody));
+				}
+			}
+		}	
 	}
 }
