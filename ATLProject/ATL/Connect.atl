@@ -54,14 +54,6 @@ rule connectEndToNextNode(body: Turn!PathBody, nextNodeConnection: Turn!NodeConn
 		vOrJoin : Urn!OrJoin = OclUndefined;	
 	}
 	do{
-		if(not nextNodeConnection.oclIsUndefined()){
-			if(nextNodeConnection.source.oclIsTypeOf(Urn!EmptyPoint) or nextNodeConnection.source.oclIsTypeOf(Urn!Timer)){
-				if(not thisModule.emptyPointMap.get(nextNodeConnection.source).oclIsUndefined()){
-					nextNodeConnection.source <- thisModule.emptyPointMap.get(nextNodeConnection.source);
-				}
-			}
-		}
-		
 		nextNodeConnection <- thisModule.handleEmptyBody(body, nextNodeConnection);
 		thisModule.useConnection(vNodeToConnect, nextNodeConnection);
 	}
