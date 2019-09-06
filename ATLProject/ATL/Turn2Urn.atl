@@ -56,10 +56,10 @@ helper context OclAny def : turnGetLongestName() : String =
 helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclAny =
 	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
 
-helper context OclAny def : nextFreeConnection() : OclAny =
+helper context Urn!PathNode def : nextFreeConnection() : Urn!NodeConnection =
 	self.succ -> any(s|s.target.oclIsUndefined());
 
-helper context OclAny def : mostRecentUnusedConnection() : OclAny =
+helper context Urn!PathNode def : mostRecentUnusedConnection() : Urn!NodeConnection =
 	self.succ -> select(s|s.target.oclIsUndefined()) -> last();
 
 helper context Urn!RespRef def : getRespName() : String =
