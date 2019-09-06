@@ -39,22 +39,22 @@ rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 	}
 }
 
-rule processEndPoint(node: Turn!PathNode, tEndPoint: Turn!EndPoint){
+rule processEndPoint(sEndPoint: Turn!EndPoint, tEndPoint: Turn!EndPoint){
 	using{
-		pathbody : Turn!PathBody = node.epConnect.pbody;	
+		sPathBody : Turn!PathBody = sEndPoint.epConnect.pbody;	
 	}
 	do{
-		tEndPoint.postcondition <- node.condition;
-		tEndPoint.name <- node.turnGetLongestName();
+		tEndPoint.postcondition <- sEndPoint.condition;
+		tEndPoint.name <- sEndPoint.turnGetLongestName();
 		
-		thisModule.endPointMap <- thisModule.endPointMap.including(node, tEndPoint);
+		thisModule.endPointMap <- thisModule.endPointMap.including(sEndPoint, tEndPoint);
 		
-		if(pathbody.pathNodes -> isEmpty()){
-			if(not pathbody.orFork.oclIsUndefined()){
-				thisModule.connect(thisModule.retrieveNode(pathbody.orFork.orBody.orFork), tEndPoint);
+		if(sPathBody.pathNodes -> isEmpty()){
+			if(not sPathBody.orFork.oclIsUndefined()){
+				thisModule.connect(thisModule.retrieveNode(sPathBody.orFork.orBody.orFork), tEndPoint);
 			}
-			else if(not pathbody.andFork.oclIsUndefined()){
-				thisModule.connect(thisModule.retrieveNode(pathbody.andFork), tEndPoint);
+			else if(not sPathBody.andFork.oclIsUndefined()){
+				thisModule.connect(thisModule.retrieveNode(sPathBody.andFork), tEndPoint);
 			}
 		}
 		
@@ -62,47 +62,27 @@ rule processEndPoint(node: Turn!PathNode, tEndPoint: Turn!EndPoint){
 	}
 }
 
-rule processTimer(timerObj : Turn!Timer){
+rule processTimer(sTimer: Turn!Timer){
 	using{
-		tTimer : Urn!Timer = thisModule.retrieveNode(timerObj);
+		tTimer : Urn!Timer = thisModule.retrieveNode(sTimer);
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
 		
-		if(not timerObj.timeoutPath.oclIsUndefined()){
+		if(not sTimer.timeoutPath.oclIsUndefined()){
 			thisModule.createNewConnection(tTimer);
-			thisModule.processPathBody(timerObj.timeoutPath);
+			thisModule.processPathBody(sTimer.timeoutPath);
 			
-			if(not timerObj.timeoutCondition.oclIsUndefined()){
-				tTimer.succ -> at(2).condition <- thisModule.createCondition(timerObj.timeoutCondition.expression.content -> first());
+			if(not sTimer.timeoutCondition.oclIsUndefined()){
+				tTimer.succ -> at(2).condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content -> first());
 			}
 			
-			if(timerObj.timeoutPath.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				thisModule.useConnection(thisModule.getPathEnd(timerObj.timeoutPath), tTimer.succ -> at(2));
+			if(sTimer.timeoutPath.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				thisModule.useConnection(thisModule.getPathEnd(sTimer.timeoutPath), tTimer.succ -> at(2));
 			}
 		}
 		
 		tTimer;
-	}
-}
-
-rule handleOrForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfTerminatingNodes: Integer){
-	using{
-		vFirstPathNode : Turn!PathNode = connectingBody.pathNodes -> first();
-		vNextNode : Turn!PathNode = fork;
-	}
-	do{
-		if(numberOfTerminatingNodes = 1){
-			if(not vFirstPathNode.oclIsUndefined() and not vFirstPathNode.oclIsTypeOf(Turn!Connect)){
-				vNextNode <- thisModule.retrieveNode(vFirstPathNode);
-			}
-		}
-		else if(numberOfTerminatingNodes >= 2){
-			vNextNode <- thisModule.createOrJoin();
-			thisModule.connectWithEmptyPoint(fork, vNextNode);
-		}
-		
-		vNextNode;
 	}
 }
 
@@ -226,6 +206,26 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		}
 		
 		tAndFork;	
+	}
+}
+
+rule handleOrForkJoin(fork: Urn!PathNode, connectingBody: Turn!PathBody, numberOfTerminatingNodes: Integer){
+	using{
+		vFirstPathNode : Turn!PathNode = connectingBody.pathNodes -> first();
+		vNextNode : Turn!PathNode = fork;
+	}
+	do{
+		if(numberOfTerminatingNodes = 1){
+			if(not vFirstPathNode.oclIsUndefined() and not vFirstPathNode.oclIsTypeOf(Turn!Connect)){
+				vNextNode <- thisModule.retrieveNode(vFirstPathNode);
+			}
+		}
+		else if(numberOfTerminatingNodes >= 2){
+			vNextNode <- thisModule.createOrJoin();
+			thisModule.connectWithEmptyPoint(fork, vNextNode);
+		}
+		
+		vNextNode;
 	}
 }
 
