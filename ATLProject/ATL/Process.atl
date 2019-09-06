@@ -109,10 +109,12 @@ rule processAndFork(sAndFork: Turn!AndFork){
 	using{
 		tAndFork : Urn!AndFork = thisModule.retrieveNode(sAndFork);
 		tPathEnd : Urn!PathBodyNode = OclUndefined;
-		tNextNode : Turn!PathNode = OclUndefined;
+		tAndJoin : Urn!AndJoin = OclUndefined;
+		tLastNode : Urn!PathNode = OclUndefined;
 		tOrJoin : Urn!OrJoin = OclUndefined;
-		sFirstNode : Turn!PathNode = OclUndefined;
-		tFirstNode : Urn!PathNode = OclUndefined;
+	tPreviousNode : Urn!PathNode = OclUndefined;
+		tPathNode : Urn!PathNode = OclUndefined;
+		sLastPathNode : Turn!PathNode = OclUndefined;
 	}
 	do{
 		for(pathbody in sAndFork.pathbody){
@@ -122,57 +124,62 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
 			thisModule.processPathBody(sAndFork.connectingAndBody);
 
-			tNextNode <- tAndFork;
+			tLastNode <- tAndFork;
 			tPathEnd <- thisModule.getPathEnd(sAndFork.connectingAndBody);
 			
 			if(sAndFork.connectingAndBody.pathNodes -> isEmpty()){		
 				if(sAndFork.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size() >= 2){
-					tNextNode <- thisModule.createAndJoin();
-					thisModule.connectWithEmptyPoint(tAndFork, tNextNode);
-					thisModule.createNewConnection(tNextNode);
+					tAndJoin <- thisModule.createAndJoin();
+					thisModule.connectWithEmptyPoint(tAndFork, tAndJoin);
+					thisModule.createNewConnection(tAndJoin);
+					tLastNode <- tAndJoin;
 					
-					-- TODO: figure out a cleaner way to do this
 					if(sAndFork.connectingAndBody.meetsOrJoinConditions(tPathEnd)){
-					
 						tOrJoin <- thisModule.createOrJoin();
-						thisModule.connect(tNextNode, tOrJoin);
+						thisModule.connect(tLastNode, tOrJoin);
 
 						if(not tPathEnd.pred -> isEmpty()){
 							tPathEnd.pred.first().target <- tOrJoin;
 						}
 						
-						tNextNode <- tOrJoin;
+						tLastNode <- tOrJoin;
 					}
 				}
 				
-				thisModule.connect(tNextNode, tPathEnd);
+				thisModule.connect(tLastNode, tPathEnd);
 			}
 			else{
-				tNextNode <- thisModule.createAndJoin();
-				thisModule.connectWithEmptyPoint(tAndFork, tNextNode);
+				tAndJoin <- thisModule.createAndJoin();
+				thisModule.connectWithEmptyPoint(tAndFork, tAndJoin);
+				tPreviousNode <- tAndJoin;
 				
-				thisModule.processPathBody(sAndFork.connectingAndBody);
-				
-				sFirstNode <- sAndFork.connectingAndBody.pathNodes.first();
-				
-				if(sFirstNode.oclIsTypeOf(Turn!Connect)){
-					thisModule.createEmptyPointConnect(sFirstNode);
-					tFirstNode <- thisModule.retrieveNode(sFirstNode.connectsTo);
+				for(sPathNode in sAndFork.connectingAndBody.pathNodes){
+					if(sPathNode.oclIsTypeOf(Turn!Timer)){
+						thisModule.processTimer(sPathNode);
+					}
+					
+					if(sPathNode.oclIsTypeOf(Turn!Connect)){
+						thisModule.processConnect(sPathNode);
+						sPathNode <- sPathNode.connectsTo;
+					}
+	
+					tPathNode <- thisModule.retrieveNode(sPathNode);
+					thisModule.connect(tPreviousNode, tPathNode);
+					
+					tPreviousNode <- tPathNode;
 				}
-				else{
-					tFirstNode <- thisModule.retrieveNode(sFirstNode);
-				}
-
-				if(thisModule.retrieveNode(sFirstNode).oclIsTypeOf(Urn!Timer)){
-					thisModule.processTimer(sFirstNode);
-				}
 				
-				thisModule.connect(tNextNode, tFirstNode);
-				thisModule.connect(tFirstNode, tPathEnd);
+				thisModule.connect(tPreviousNode, tPathEnd);
 			}
 		}
 		
 		tAndFork;	
+	}
+}
+
+rule processConnect(sConnect: Turn!Connect){
+	do{
+		thisModule.createEmptyPointConnect(sConnect);
 	}
 }
 
