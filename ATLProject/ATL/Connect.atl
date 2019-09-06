@@ -7,27 +7,8 @@ create OUT : Urn from IN : Turn;
 -- rules in the "Process.atl" file. Ideally, this behavior should
 -- be limited to only rules in this file.
 
-rule getPathEnd(body: Turn!PathBody){
-	using{
-		vNodeToConnect : Turn!PathNode = OclUndefined;
-	}
-	do{
-		if(not body.pathEnd.oclIsUndefined()){
-			vNodeToConnect <- thisModule.retrieveNode(body.pathEnd);	
-		}
-		else if(not body.referencedEnd.oclIsUndefined()){
-			vNodeToConnect <- thisModule.retrieveNode(body.referencedEnd);
-		}
-		else if(not body.referencedStub.oclIsUndefined()){
-			vNodeToConnect <- thisModule.retrieveNode(body.referencedStub);
-		}
-		
-		vNodeToConnect;
-	}
-}
-
 rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
-	do{	
+	do{
 		thisModule.connectBodyNodes(pathbody.pathNodes, node, previousNode);
 		
 		if(not pathbody.pathNodes -> isEmpty()){
@@ -96,5 +77,18 @@ rule connectLastNodeToPathEnd(pathbody: Sequence(Turn!PathBody), lastNode: Turn!
 				}
 			}
 		}	
+	}
+}
+
+rule connectWithEmptyPoint(currentNode: Turn!PathNode, nextNode: Turn!PathNode){
+	using{
+		vEmptyPt : Turn!PathNode = OclUndefined;
+	}
+	do{
+		vEmptyPt <- thisModule.createEmptyPoint();
+		thisModule.useConnection(vEmptyPt, currentNode.nextFreeConnection());  -- currentNode -> vEmptyPt
+		thisModule.connect(vEmptyPt, nextNode);                                -- vEmptyPt    -> nextNode
+		thisModule.useConnection(nextNode, currentNode.nextFreeConnection());  -- currentNode -> nextNode
+		vEmptyPt;
 	}
 }

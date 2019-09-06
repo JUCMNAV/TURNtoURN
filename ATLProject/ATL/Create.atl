@@ -22,7 +22,7 @@ rule createEmptyPointConnect(currentNode: Turn!PathNode){
 		thisModule.connect(tConnect, thisModule.retrieveNode(currentNode.connectsTo));
 		
 		if(currentNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
-			thisModule.useConnection(tEmptyPt, thisModule.retrieveNode(currentNode.connectsTo).nextFreeConnection());
+			thisModule.connect(thisModule.retrieveNode(currentNode.connectsTo), tEmptyPt);
 		}
 		
 		thisModule.connect(tEmptyPt, tConnect);
@@ -164,12 +164,12 @@ rule createMetadata(name: String, value: String){
 	}
 }
 
-rule createNodeConnection(){
+rule createNewConnection(node: Turn!PathNode){
 	to
-	 	tNodeConnection: Urn!NodeConnection()
+		tNodeConnection: Urn!NodeConnection()
 	do{
-		tNodeConnection;
-	}		
+		node.succ <- node.succ.including(tNodeConnection);
+	}
 }
 
 rule createOrJoin(){
@@ -207,12 +207,10 @@ rule createResponsibility(s: Turn!RespRef){
 
 rule createStartPoint(){
 	to
-		tNodeConn: Urn!NodeConnection(),
 		tNodeLabel: Urn!NodeLabel(),
 		tStartPoint: Urn!StartPoint (
 			id <- thisModule.nextId().toString(),
 			name <- 'StartPoint' + tStartPoint.id,
-			succ <- tNodeConn,
 			label <- tNodeLabel
 		)
 	do{

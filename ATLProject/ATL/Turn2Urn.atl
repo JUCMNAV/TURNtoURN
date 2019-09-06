@@ -87,12 +87,6 @@ rule useConnection(node: Turn!PathNode, predecessor: OclAny){
 	}
 }
 
-rule createNewConnection(node: Turn!PathNode){
-	do{
-		node.succ <- node.succ.including(thisModule.createNodeConnection());
-	}
-}
-
 rule connect(fromNode: Urn!PathNode, toNode: Urn!PathNode){
 	to
 		tNodeConnection: Urn!NodeConnection()
@@ -186,6 +180,25 @@ rule getUrnCompRef(obj: OclAny){
 	}
 }
 
+rule getPathEnd(body: Turn!PathBody){
+	using{
+		vNodeToConnect : Turn!PathNode = OclUndefined;
+	}
+	do{
+		if(not body.pathEnd.oclIsUndefined()){
+			vNodeToConnect <- thisModule.retrieveNode(body.pathEnd);	
+		}
+		else if(not body.referencedEnd.oclIsUndefined()){
+			vNodeToConnect <- thisModule.retrieveNode(body.referencedEnd);
+		}
+		else if(not body.referencedStub.oclIsUndefined()){
+			vNodeToConnect <- thisModule.retrieveNode(body.referencedStub);
+		}
+		
+		vNodeToConnect;
+	}
+}
+
 rule getResponsibility(responsibilityName: String){
 	do{
 		Urn!Responsibility.allInstances() -> any(n|n.name=responsibilityName);	
@@ -241,8 +254,6 @@ rule retrieveNode(node: Turn!PathNode){
 		vRetrievedNode; --returns a single node, not a sequence
 	}
 }
-
-helper def: testCtr : Integer = 0;
 
 -------------4/5 MATCHED RULES WITHOUT DO BLOCKS------------
 
@@ -591,12 +602,10 @@ rule StartPoint2StartPoint{
 			endif;
 	}
 	to
-		tNodeConn: Urn!NodeConnection(),
 		tNodeLabel: Urn!NodeLabel(),
 		tStartPoint: Urn!StartPoint (
 			id <- thisModule.nextId().toString(),
 			name <- s.turnGetLongestName(),
-			succ <- tNodeConn,
 			label <- tNodeLabel,
 			precondition <- vPrecondition,
 			contRef <- thisModule.getUrnCompRef(s),
