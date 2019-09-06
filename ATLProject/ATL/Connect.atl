@@ -1,4 +1,4 @@
-module ConnectNodes;
+module Connect;
 
 create OUT : Urn from IN : Turn;
 
@@ -7,7 +7,32 @@ create OUT : Urn from IN : Turn;
 -- rules in the "Process.atl" file. Ideally, this behavior should
 -- be limited to only rules in this file.
 
-rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
+
+rule connectPath(path: Turn!Path){
+	using{
+		tStartPoint : Urn!StartPoint = OclUndefined;	
+	}
+	do{
+		thisModule.processPathBody(path.pathBody);
+			
+		if(path.startPoint.oclIsUndefined()){
+			tStartPoint <- thisModule.createStartPoint();
+		}
+		else{
+			tStartPoint <- thisModule.retrieveNode(path.startPoint);
+		}
+		
+		if(path.pathBody.pathNodes -> isEmpty()){
+			thisModule.connectStartPointToPathEnd(path.startPoint, tStartPoint, thisModule.getPathEnd(path.pathBody));
+		}
+		else{
+			thisModule.createNewConnection(tStartPoint);
+			thisModule.connectPathBody(path.pathBody, path.startPoint, tStartPoint);
+		}	
+	}
+}
+
+rule connectPathBody(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
 	do{
 		thisModule.connectBodyNodes(pathbody.pathNodes, node, previousNode);
 		
@@ -28,7 +53,7 @@ rule connectBodyNodes(pathNodes: Sequence(Turn!PathBodyNode), node: Turn!PathNod
 			}
 			
 			if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
-				thisModule.useConnection(previousNode, thisModule.retrieveNode(node).nextFreeConnection());
+				thisModule.connect(thisModule.retrieveNode(node), previousNode);
 			}
 			else{
 				vNode <- thisModule.retrieveNode(currentNode);
@@ -45,7 +70,7 @@ rule connectBodyNodes(pathNodes: Sequence(Turn!PathBodyNode), node: Turn!PathNod
 					}
 				}
 				
-				thisModule.useConnection(vNode, previousNode.nextFreeConnection());
+				thisModule.connect(previousNode, vNode);
 			}
 			
 			if(currentNode.oclIsTypeOf(Turn!Connect)){
@@ -54,6 +79,21 @@ rule connectBodyNodes(pathNodes: Sequence(Turn!PathBodyNode), node: Turn!PathNod
 
 			previousNode <- thisModule.retrieveNode(currentNode);
 		}
+	}
+}
+
+rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!StartPoint, pathEnd: Urn!PathNode){
+	using{
+		vEmptyPoint : Urn!EmptyPoint = OclUndefined;
+	}
+	do{
+		if(not sStartPoint.oclIsUndefined()){
+			if(not sStartPoint.connect.oclIsUndefined()){
+				tStartPoint <- thisModule.emptyPointMap.get(sStartPoint);
+			}
+		}
+
+		thisModule.connect(tStartPoint, pathEnd);
 	}
 }
 
@@ -86,9 +126,9 @@ rule connectWithEmptyPoint(currentNode: Turn!PathNode, nextNode: Turn!PathNode){
 	}
 	do{
 		vEmptyPt <- thisModule.createEmptyPoint();
-		thisModule.useConnection(vEmptyPt, currentNode.nextFreeConnection());  -- currentNode -> vEmptyPt
-		thisModule.connect(vEmptyPt, nextNode);                                -- vEmptyPt    -> nextNode
-		thisModule.useConnection(nextNode, currentNode.nextFreeConnection());  -- currentNode -> nextNode
+		thisModule.connect(currentNode, vEmptyPt);  -- currentNode -> vEmptyPt
+		thisModule.connect(vEmptyPt, nextNode);     -- vEmptyPt    -> nextNode
+		thisModule.connect(currentNode, nextNode);  -- currentNode -> nextNode
 		vEmptyPt;
 	}
 }

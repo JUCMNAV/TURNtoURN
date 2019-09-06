@@ -65,7 +65,6 @@ helper context OclAny def : mostRecentUnusedConnection() : OclAny =
 helper context Urn!RespRef def : getRespName() : String =
 	self.respDef.name;
 
-
 -----------------------3/5 CALLED RULES-----------------------------
 ------------(sorry, spirit of declarative programming)--------------
 
@@ -88,11 +87,14 @@ rule useConnection(node: Turn!PathNode, predecessor: OclAny){
 }
 
 rule connect(fromNode: Urn!PathNode, toNode: Urn!PathNode){
-	to
-		tNodeConnection: Urn!NodeConnection()
 	do{
-		fromNode.succ <- tNodeConnection;
-		toNode.pred <- tNodeConnection;
+		if(not (fromNode.oclIsUndefined() or toNode.oclIsUndefined())){
+			if(fromNode.nextFreeConnection().oclIsUndefined()){
+				thisModule.createNewConnection(fromNode);
+			}
+			
+			thisModule.useConnection(toNode, fromNode.nextFreeConnection());
+		}
 	}
 }
 
