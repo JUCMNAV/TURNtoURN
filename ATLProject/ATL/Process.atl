@@ -9,31 +9,31 @@ create OUT : Urn from IN : Turn;
 
 rule processBinding(s: Turn!Binding, tBinding: Urn!Binding){
 	using{
-		vBoundTerm : Turn!Binding = OclUndefined;
-		vStubItem : Turn!Stub = OclUndefined;
-		vStub: Urn!Stub = OclUndefined;
+		boundTerm : Turn!Binding = OclUndefined;
+		sStub : Turn!Stub = OclUndefined;
+		tStub: Urn!Stub = OclUndefined;
 	}
 	do{
 		if(not s.binding.oclIsUndefined()){
-			vBoundTerm <- s.binding;
+			boundTerm <- s.binding;
 		}
 		else if(not s.bindings.oclIsUndefined()){
-			vBoundTerm <- s.bindings;
+			boundTerm <- s.bindings;
 		}
 		
-		if(not vBoundTerm.stubParam.stubDec.oclIsUndefined()){
-			vStubItem <- vBoundTerm.stubParam.stubDec.stub;
+		if(not boundTerm.stubParam.stubDec.oclIsUndefined()){
+			sStub <- boundTerm.stubParam.stubDec.stub;
 		}
-		else if(not vBoundTerm.stubParam.stub.oclIsUndefined()){
-			vStubItem <- vBoundTerm.stubParam.stub;
+		else if(not boundTerm.stubParam.stub.oclIsUndefined()){
+			sStub <- boundTerm.stubParam.stub;
 		}
 		
-		if(not vStubItem.oclIsUndefined() and not thisModule.retrieveNode(vStubItem).pred -> isEmpty()){
+		if(not sStub.oclIsUndefined() and not thisModule.retrieveNode(sStub).pred -> isEmpty()){
 			if(s.oclIsTypeOf(Turn!InBinding)){
-				tBinding.stubEntry <- thisModule.retrieveNode(vStubItem).pred -> at(s.index);
+				tBinding.stubEntry <- thisModule.retrieveNode(sStub).pred -> at(s.index);
 			}
 			else if(s.oclIsTypeOf(Turn!OutBinding)){
-				tBinding.stubExit <- thisModule.retrieveNode(vStubItem).succ -> at(s.index);
+				tBinding.stubExit <- thisModule.retrieveNode(sStub).succ -> at(s.index);
 			}
 		}	
 	}
