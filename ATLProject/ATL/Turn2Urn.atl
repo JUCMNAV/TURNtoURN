@@ -53,6 +53,12 @@ helper context OclAny def : turnGetLongestName() : String =
 		self.name	
 	endif;
 
+helper context Turn!PathBody def : meetsOrJoinConditions(pathend: Urn!PathBodyNode) : Boolean =
+	(pathend.oclIsTypeOf(Urn!EndPoint) and not pathend.pred -> isEmpty())
+		or (not self.referencedStub.oclIsUndefined() and pathend.pred -> size() >= self.index)
+		or pathend.oclIsTypeOf(Urn!FailurePoint)
+		or pathend.oclIsTypeOf(Urn!RespRef);
+
 helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclAny =
 	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
 
