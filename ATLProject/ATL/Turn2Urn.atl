@@ -237,12 +237,12 @@ rule retrieveNode(node: Turn!PathNode){
 				vRetrievedNode <- thisModule.tUCMmap.getNode(node.turnGetLongestName());
 			}
 		}
-
+		
 		vRetrievedNode; --returns a single node, not a sequence
 	}
 }
 
-helper def: ctr : Integer = 0;
+helper def: testCtr : Integer = 0;
 
 -------------4/5 MATCHED RULES WITHOUT DO BLOCKS------------
 

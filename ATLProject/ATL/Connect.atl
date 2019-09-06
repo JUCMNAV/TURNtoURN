@@ -89,16 +89,10 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 						if(currentNode.oclIsTypeOf(Turn!Connect)){
 							thisModule.createEmptyPointConnect(currentNode);
 							vNode <- thisModule.retrieveNode(currentNode.connectsTo);
-						--	thisModule.connect(previousNode, vNode); -- added an extra connection between the fork and the connectsTo object because this was needed in AndForkTestBranches and doesn't seem to change the appearance in AndFork
 						}
-						else if(currentNode.oclIsTypeOf(Turn!WaitingPlace)){
-							if(not currentNode.connect.oclIsUndefined()){
-								vNode <- thisModule.emptyPointMap.get(currentNode.connect);
-							}
-						}
-						else if(currentNode.oclIsTypeOf(Turn!Timer)){
-							if(not thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer')).oclIsUndefined()){
-								vNode <- thisModule.emptyPointMap.get(thisModule.resolveTemp(currentNode, 'tTimer'));
+						else if(currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
+							if(not thisModule.emptyPointMap.get(currentNode).oclIsUndefined()){
+								vNode <- thisModule.emptyPointMap.get(currentNode);
 							}
 						}
 					}
@@ -114,21 +108,14 @@ rule connectNodes(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previo
 			}
 		
 			if(vLastNode.oclIsTypeOf(Turn!Connect)){
-				if(not vLastNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-					vLastNode <- vLastNode.connectsTo;
-				}
+				vLastNode <- vLastNode.connectsTo;
 				
 				if(vLastNode.oclIsTypeOf(Turn!StartPoint) and pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 					thisModule.createNewConnection(thisModule.retrieveNode(vLastNode));
 				}
 			}
 			
-			if(thisModule.retrieveNode(vLastNode).nextFreeConnection().oclIsUndefined()){
-				thisModule.connectEndToNextNode(pathbody, thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!EmptyPoint)) -> any(ep|not ep.nextFreeConnection().oclIsUndefined()).nextFreeConnection());
-			}
-			else{
-				thisModule.connectEndToNextNode(pathbody, thisModule.retrieveNode(vLastNode).nextFreeConnection());
-			}
+			thisModule.connectEndToNextNode(pathbody, thisModule.retrieveNode(vLastNode).nextFreeConnection());
 		}
 	}
 }

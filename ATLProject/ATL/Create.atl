@@ -10,73 +10,23 @@ create OUT : Urn from IN : Turn;
 ------------1/2 RULES WITH DO LOGIC--------------
 
 rule createEmptyPointConnect(currentNode: Turn!PathNode){
+	using{
+		tConnect: Urn!Connect = thisModule.createConnect();
+		tEmptyPt: Urn!EmptyPoint = thisModule.createEmptyPoint();	
+	}
 	do{
 		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-			thisModule.createAsynchEmptyPointConnect(currentNode);
+			tEmptyPt.name <- 'AsynchConnectTimer#' + currentNode.connectsTo.name;
 		}
-		else if(currentNode.connectsTo.oclIsTypeOf(Turn!WaitingPlace)){
-			thisModule.createWaitingPlaceEmptyPointConnect(currentNode);
+		
+		thisModule.connect(tConnect, thisModule.retrieveNode(currentNode.connectsTo));
+		
+		if(currentNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
+			thisModule.useConnection(tEmptyPt, thisModule.retrieveNode(currentNode.connectsTo).nextFreeConnection());
 		}
-		else{
-			thisModule.createStartPointEmptyPointConnect(currentNode);
-		}	
-	}
-}
-
-rule createStartPointEmptyPointConnect(currentNode: Turn!PathNode){
-	using{
-		tConnect: Urn!Connect = thisModule.createConnect();
-		tEmptyPt: Urn!EmptyPoint = thisModule.createEmptyPoint();
-	}
-	do{
-		thisModule.connect(tConnect, thisModule.retrieveNode(currentNode.connectsTo));
-		thisModule.useConnection(tEmptyPt, thisModule.retrieveNode(currentNode.connectsTo).nextFreeConnection());
 		
 		thisModule.connect(tEmptyPt, tConnect);
-		
-		thisModule.createNewConnection(tEmptyPt);
-
-		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode, tEmptyPt);
-		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
-		
-		tEmptyPt;
-	}
-}
-
-rule createWaitingPlaceEmptyPointConnect(currentNode: Turn!PathNode){
-	using{
-		tConnect: Urn!Connect = thisModule.createConnect();
-		tEmptyPt: Urn!EmptyPoint = thisModule.createEmptyPoint();
-	}
-	do{
-		thisModule.connect(tConnect, thisModule.retrieveNode(currentNode.connectsTo));
-		--thisModule.useConnection(tEmptyPt, thisModule.retrieveNode(currentNode.connectsTo).nextFreeConnection());
-		
-		thisModule.connect(tEmptyPt, tConnect);
-		
-		thisModule.createNewConnection(tEmptyPt);
-
-		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode, tEmptyPt);
-		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
-		
-		tEmptyPt;
-	}
-}
-
-rule createAsynchEmptyPointConnect(currentNode: Turn!PathNode){
-	using{
-		tTimer : Urn!Timer = thisModule.resolveTemp(currentNode.connectsTo, 'tTimer');
-		tConnect: Urn!Connect = thisModule.createConnect();
-		tEmptyPt: Urn!EmptyPoint = thisModule.createAsynchronousEmptyPoint(currentNode.connectsTo.name);
-	}
-	do{
-		thisModule.connect(tConnect, tTimer);
-		thisModule.connect(tEmptyPt, tConnect);
-		
-		tEmptyPt.succ <- thisModule.createNodeConnection();
-
-		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(tTimer, tEmptyPt);
-		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(tEmptyPt, tTimer);
+		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode.connectsTo, tEmptyPt);
 		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
 		
 		tEmptyPt;
@@ -140,18 +90,6 @@ rule createConnect(){
 		)
 	do{
 		tConnect;	
-	}
-}
-
-rule createAsynchronousEmptyPoint(name: String){
-	to
-		tEmptyPt: Urn!EmptyPoint(
-			id <- thisModule.nextId().toString(),
-			name <- 'AsynchConnectTimer#' + name,
-			diagram <- thisModule.tUCMmap
-		)
-	do{
-		tEmptyPt;
 	}
 }
 
