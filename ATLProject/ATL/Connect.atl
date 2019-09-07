@@ -44,6 +44,7 @@ rule connectPathBody(sPathbody: Turn!PathBody, tPathStart: Urn!PathNode){
 rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!PathNode){
 	using{
 		tNode : Urn!PathNode = OclUndefined;
+		tOrJoin : Urn!OrJoin = OclUndefined;
 		tPreviousNode : Urn!PathNode = tPathStart;
 	}
 	do{
@@ -65,9 +66,17 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 				}
 			}
 			
+			if((tNode.oclIsTypeOf(Urn!RespRef) or tNode.oclIsTypeOf(Urn!FailurePoint)) and not tNode.pred -> isEmpty()){
+				tOrJoin <- thisModule.createOrJoin();
+				tNode.pred.first().target <- tOrJoin;
+				thisModule.connect(tOrJoin, tNode);
+				tNode <- tOrJoin;
+			}
+			
 			thisModule.connect(tPreviousNode, tNode);
 			tPreviousNode <- tNode;
 		}
+		
 		tPreviousNode;
 	}
 }
