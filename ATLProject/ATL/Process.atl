@@ -111,61 +111,29 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		tAndJoin : Urn!AndJoin = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
 		tOrJoin : Urn!OrJoin = OclUndefined;
-		tPreviousNode : Urn!PathNode = OclUndefined;
-		tPathNode : Urn!PathNode = OclUndefined;
-		sLastPathNode : Turn!PathNode = OclUndefined;
 	}
 	do{
 		for(pathbody in sAndFork.pathbody){
 			thisModule.processPathBody(pathbody);
+			thisModule.connectPathBody(pathbody, tAndFork);
 		}
 		
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
 			thisModule.processPathBody(sAndFork.connectingAndBody);
-
-			tLastNode <- tAndFork;
+			
 			tPathEnd <- thisModule.getPathEnd(sAndFork.connectingAndBody);
+			tLastNode <- tAndFork;
 			
 			if(sAndFork.pathbody -> select(pb|pb.pathEnd.oclIsUndefined()) -> size() >= 2){
-				if(sAndFork.connectingAndBody.pathNodes -> isEmpty()){
-					tAndJoin <- thisModule.createAndJoin();
-					thisModule.connectWithEmptyPoint(tAndFork, tAndJoin);
-					tLastNode <- tAndJoin;
-					
-					if(sAndFork.connectingAndBody.meetsOrJoinConditions(tPathEnd)){
-						tOrJoin <- thisModule.createOrJoin();
-						thisModule.connect(tLastNode, tOrJoin);
-
-						if(not tPathEnd.pred -> isEmpty()){
-							tPathEnd.pred.first().target <- tOrJoin;
-						}
-						
-						tLastNode <- tOrJoin;
-					}
-				}
-				else{
-					tAndJoin <- thisModule.createAndJoin();
-					thisModule.connectWithEmptyPoint(tAndFork, tAndJoin);
-					tPreviousNode <- tAndJoin;
-					
-					for(sPathNode in sAndFork.connectingAndBody.pathNodes){
-						if(sPathNode.oclIsTypeOf(Turn!Timer)){
-							thisModule.processTimer(sPathNode);
-						}
-						
-						if(sPathNode.oclIsTypeOf(Turn!Connect)){
-							thisModule.processConnect(sPathNode);
-							sPathNode <- sPathNode.connectsTo;
-						}
-		
-						tPathNode <- thisModule.retrieveNode(sPathNode);
-						
-						thisModule.connect(tPreviousNode, tPathNode);
-						
-						tPreviousNode <- tPathNode;
-					}
-					
-					tLastNode <- tPreviousNode;
+				tAndJoin <- thisModule.createAndJoin();
+				thisModule.connectWithEmptyPoint(tAndFork, tAndJoin);
+				tLastNode <- thisModule.connectBodyNodes(sAndFork.connectingAndBody.pathNodes, tAndJoin);
+				
+				if(sAndFork.connectingAndBody.meetsOrJoinConditions(tPathEnd)){
+					tOrJoin <- thisModule.createOrJoin();
+					thisModule.connect(tLastNode, tOrJoin);
+					tPathEnd.pred.first().target <- tOrJoin;
+					tLastNode <- tOrJoin;
 				}
 			}
 			

@@ -59,15 +59,16 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 				sCurrentNode <- sCurrentNode.connectsTo;
 				tNode <- thisModule.retrieveNode(sCurrentNode);
 			}
-			else if(sCurrentNode.oclIsTypeOf(Turn!WaitingPlace) or sCurrentNode.oclIsTypeOf(Turn!Timer)){
+			else if(sCurrentNode.oclIsTypeOf(Turn!WaitingPlace) or sCurrentNode.oclIsTypeOf(Turn!Timer) and not tPathStart.oclIsTypeOf(Urn!OrJoin)){
 				if(not thisModule.emptyPointMap.get(sCurrentNode).oclIsUndefined()){
 					tNode <- thisModule.emptyPointMap.get(sCurrentNode);
 				}
 			}
 			
 			thisModule.connect(tPreviousNode, tNode);
-			tPreviousNode <- thisModule.retrieveNode(sCurrentNode);
+			tPreviousNode <- tNode;
 		}
+		tPreviousNode;
 	}
 }
 
