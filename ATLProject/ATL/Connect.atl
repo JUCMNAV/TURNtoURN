@@ -8,84 +8,70 @@ create OUT : Urn from IN : Turn;
 -- be limited to only rules in this file.
 
 
-rule connectPath(path: Turn!Path){
+rule connectPath(sPath: Turn!Path){
 	using{
 		tStartPoint : Urn!StartPoint = OclUndefined;	
 	}
 	do{
-		thisModule.processPathBody(path.pathBody);
+		thisModule.processPathBody(sPath.pathBody);
 			
-		if(path.startPoint.oclIsUndefined()){
+		if(sPath.startPoint.oclIsUndefined()){
 			tStartPoint <- thisModule.createStartPoint();
 		}
 		else{
-			tStartPoint <- thisModule.retrieveNode(path.startPoint);
+			tStartPoint <- thisModule.retrieveNode(sPath.startPoint);
 		}
 		
-		if(path.pathBody.pathNodes -> isEmpty()){
-			thisModule.connectStartPointToPathEnd(path.startPoint, tStartPoint, thisModule.getPathEnd(path.pathBody));
+		if(sPath.pathBody.pathNodes -> isEmpty()){
+			thisModule.connectStartPointToPathEnd(sPath.startPoint, tStartPoint, thisModule.getPathEnd(sPath.pathBody));
 		}
 		else{
-			thisModule.createNewConnection(tStartPoint);
-			thisModule.connectPathBody(path.pathBody, path.startPoint, tStartPoint);
+			thisModule.connectPathBody(sPath.pathBody, tStartPoint);
 		}	
 	}
 }
 
-rule connectPathBody(pathbody: Sequence(Turn!PathBody), node: Turn!PathNode, previousNode: Urn!PathNode){
+rule connectPathBody(sPathbody: Turn!PathBody, tPathStart: Urn!PathNode){
 	do{
-		thisModule.connectBodyNodes(pathbody.pathNodes, node, previousNode);
+		thisModule.connectBodyNodes(sPathbody.pathNodes, tPathStart);
 		
-		if(not pathbody.pathNodes -> isEmpty()){
-			thisModule.connectLastNodeToPathEnd(pathbody, pathbody.pathNodes.last());
+		if(not sPathbody.pathNodes -> isEmpty()){
+			thisModule.connectLastNodeToPathEnd(sPathbody, sPathbody.pathNodes.last());
 		}
 	}
 }
 
-rule connectBodyNodes(pathNodes: Sequence(Turn!PathBodyNode), node: Turn!PathNode, previousNode: Urn!PathNode){
+rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!PathNode){
 	using{
-		vNode : Urn!PathNode = OclUndefined;
+		tNode : Urn!PathNode = OclUndefined;
+		tPreviousNode : Urn!PathNode = tPathStart;
 	}
 	do{
-		for(currentNode in pathNodes){
-			if(currentNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.processTimer(currentNode);
-			}
-			
-			if(node.oclIsTypeOf(Turn!OrFork) and thisModule.retrieveNode(currentNode) = previousNode){
-				thisModule.connect(thisModule.retrieveNode(node), previousNode);
-			}
-			else{
-				vNode <- thisModule.retrieveNode(currentNode);
-				
-				if(currentNode.oclIsTypeOf(Turn!Connect) or currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
-					if(currentNode.oclIsTypeOf(Turn!Connect)){
-						thisModule.createEmptyPointConnect(currentNode);
-						vNode <- thisModule.retrieveNode(currentNode.connectsTo);
-					}
-					else if(currentNode.oclIsTypeOf(Turn!WaitingPlace) or currentNode.oclIsTypeOf(Turn!Timer)){
-						if(not thisModule.emptyPointMap.get(currentNode).oclIsUndefined()){
-							vNode <- thisModule.emptyPointMap.get(currentNode);
-						}
-					}
-				}
-				
-				thisModule.connect(previousNode, vNode);
-			}
-			
-			if(currentNode.oclIsTypeOf(Turn!Connect)){
-				currentNode <- currentNode.connectsTo;
+		for(sCurrentNode in sPathNodes){
+			if(sCurrentNode.oclIsTypeOf(Turn!Timer)){
+				thisModule.processTimer(sCurrentNode);
 			}
 
-			previousNode <- thisModule.retrieveNode(currentNode);
+			tNode <- thisModule.retrieveNode(sCurrentNode);
+			
+			if(sCurrentNode.oclIsTypeOf(Turn!Connect)){
+				thisModule.processConnect(sCurrentNode);
+				sCurrentNode <- sCurrentNode.connectsTo;
+				tNode <- thisModule.retrieveNode(sCurrentNode);
+			}
+			else if(sCurrentNode.oclIsTypeOf(Turn!WaitingPlace) or sCurrentNode.oclIsTypeOf(Turn!Timer)){
+				if(not thisModule.emptyPointMap.get(sCurrentNode).oclIsUndefined()){
+					tNode <- thisModule.emptyPointMap.get(sCurrentNode);
+				}
+			}
+			
+			thisModule.connect(tPreviousNode, tNode);
+			tPreviousNode <- thisModule.retrieveNode(sCurrentNode);
 		}
 	}
 }
 
-rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!StartPoint, pathEnd: Urn!PathNode){
-	using{
-		vEmptyPoint : Urn!EmptyPoint = OclUndefined;
-	}
+rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!StartPoint, tPathEnd: Urn!PathNode){
 	do{
 		if(not sStartPoint.oclIsUndefined()){
 			if(not sStartPoint.connect.oclIsUndefined()){
@@ -93,42 +79,42 @@ rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!S
 			}
 		}
 
-		thisModule.connect(tStartPoint, pathEnd);
+		thisModule.connect(tStartPoint, tPathEnd);
 	}
 }
 
-rule connectLastNodeToPathEnd(pathbody: Sequence(Turn!PathBody), lastNode: Turn!PathNode){
+rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, sLastNode: Turn!PathNode){
 	do{
-		if(lastNode.oclIsTypeOf(Turn!Connect)){
-			lastNode <- lastNode.connectsTo;
+		if(sLastNode.oclIsTypeOf(Turn!Connect)){
+			sLastNode <- sLastNode.connectsTo;
 			
-			if(lastNode.oclIsTypeOf(Turn!StartPoint) and pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				thisModule.createNewConnection(thisModule.retrieveNode(lastNode));
+			if(sLastNode.oclIsTypeOf(Turn!StartPoint) and sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				thisModule.createNewConnection(thisModule.retrieveNode(sLastNode));
 			}
 		}
 		
 		-- connect last node with pathEnd
-		thisModule.useConnection(thisModule.getPathEnd(pathbody), thisModule.handleEmptyBody(pathbody, thisModule.retrieveNode(lastNode).nextFreeConnection()));
+		thisModule.useConnection(thisModule.getPathEnd(sPathBody), thisModule.handleEmptyBody(sPathBody, thisModule.retrieveNode(sLastNode).nextFreeConnection()));
 		
-		if(pathbody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(thisModule.getPathEnd(pathbody).succ -> isEmpty()){
-				if(not thisModule.emptyPointMap.get(pathbody.pathNodes.first()).oclIsUndefined()){
-					thisModule.connect(thisModule.emptyPointMap.get(pathbody.pathNodes.first()), thisModule.getPathEnd(pathbody));
+		if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			if(thisModule.getPathEnd(sPathBody).succ -> isEmpty()){
+				if(not thisModule.emptyPointMap.get(sPathBody.pathNodes.first()).oclIsUndefined()){
+					thisModule.connect(thisModule.emptyPointMap.get(sPathBody.pathNodes.first()), thisModule.getPathEnd(sPathBody));
 				}
 			}
 		}	
 	}
 }
 
-rule connectWithEmptyPoint(currentNode: Turn!PathNode, nextNode: Turn!PathNode){
+rule connectWithEmptyPoint(tCurrentNode: Urn!PathNode, nextNode: Urn!PathNode){
 	using{
-		vEmptyPt : Turn!PathNode = OclUndefined;
+		vEmptyPoint : Urn!EmptyPoint = OclUndefined;
 	}
 	do{
-		vEmptyPt <- thisModule.createEmptyPoint();
-		thisModule.connect(currentNode, vEmptyPt);  -- currentNode -> vEmptyPt
-		thisModule.connect(vEmptyPt, nextNode);     -- vEmptyPt    -> nextNode
-		thisModule.connect(currentNode, nextNode);  -- currentNode -> nextNode
-		vEmptyPt;
+		vEmptyPoint <- thisModule.createEmptyPoint();
+		thisModule.connect(tCurrentNode, vEmptyPoint);  -- currentNode -> vEmptyPoint
+		thisModule.connect(vEmptyPoint, nextNode);      -- vEmptyPoint -> nextNode
+		thisModule.connect(tCurrentNode, nextNode);     -- currentNode -> nextNode
+		vEmptyPoint;
 	}
 }

@@ -9,27 +9,26 @@ create OUT : Urn from IN : Turn;
 
 ------------1/2 RULES WITH DO LOGIC--------------
 
-rule createEmptyPointConnect(currentNode: Turn!PathNode){
+rule createEmptyPointConnect(sCurrentNode: Turn!PathNode){
 	using{
 		tConnect: Urn!Connect = thisModule.createConnect();
-		tEmptyPt: Urn!EmptyPoint = thisModule.createEmptyPoint();	
+		tEmptyPoint: Urn!EmptyPoint = thisModule.createEmptyPoint();	
 	}
 	do{
-		if(currentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-			tEmptyPt.name <- 'AsynchConnectTimer#' + currentNode.connectsTo.name;
+		if(sCurrentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
+			tEmptyPoint.name <- 'AsynchConnectTimer#' + sCurrentNode.connectsTo.name;
 		}
 		
-		thisModule.connect(tConnect, thisModule.retrieveNode(currentNode.connectsTo));
+		thisModule.connect(tConnect, thisModule.retrieveNode(sCurrentNode.connectsTo));
 		
-		if(currentNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
-			thisModule.connect(thisModule.retrieveNode(currentNode.connectsTo), tEmptyPt);
+		if(sCurrentNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
+			thisModule.connect(thisModule.retrieveNode(sCurrentNode.connectsTo), tEmptyPoint);
 		}
 		
-		thisModule.connect(tEmptyPt, tConnect);
-		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(currentNode.connectsTo, tEmptyPt);
-		thisModule.connectMap <- thisModule.connectMap.including(currentNode, tConnect);
+		thisModule.connect(tEmptyPoint, tConnect);
+		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(sCurrentNode.connectsTo, tEmptyPoint);
 		
-		tEmptyPt;
+		tEmptyPoint;
 	}
 }
 
@@ -49,35 +48,35 @@ rule createAndJoin(){
 	}
 }
 
-rule createBeliefLink(s: Turn!ElementLink){
+rule createBeliefLink(sBeliefLink: Turn!ElementLink){
 	to
-		tBeliefLink: Urn!BeliefLink (
-			target <- thisModule.resolveTemp(s.dest, 'tIntElemRef')
+		tBeliefLink: Urn!BeliefLink(
+			target <- thisModule.resolveTemp(sBeliefLink.dest, 'tIntentionalElementRef')
 		)	
 	do{
 		tBeliefLink;
 	}
 }
 
-rule createComponent(s: Turn!ComponentRef){
+rule createComponent(sComponent: Turn!ComponentRef){
 	to
-		tComp: Urn!Component(
+		tComponent: Urn!Component(
 			id <- thisModule.nextId().toString(),
-			name <- s.turnGetLongestName()
+			name <- sComponent.turnGetLongestName()
 		)
 	do{
-		tComp;	
+		tComponent;	
 	}
 }
 
-rule createCondition(sourceExpression: String){
+rule createCondition(vSourceExpression: String){
 	to
-	 	targetCondition: Urn!Condition(
-	 		expression <- sourceExpression,
-			label <- sourceExpression
+	 	tCondition: Urn!Condition(
+	 		expression <- vSourceExpression,
+			label <- vSourceExpression
 	 	)
 	do{
-		targetCondition;
+		tCondition;
 	}		
 }
 
@@ -95,24 +94,24 @@ rule createConnect(){
 
 rule createEmptyPoint(){
 	to
-		tEmptyPt: Urn!EmptyPoint(
+		tEmptyPoint: Urn!EmptyPoint(
 			id <- thisModule.nextId().toString(),
-			name <- 'EmptyPoint' + tEmptyPt.id,
+			name <- 'EmptyPoint' + tEmptyPoint.id,
 			diagram <- thisModule.tUCMmap
 		)
 	do{
-		tEmptyPt;
+		tEmptyPoint;
 	}
 }
 
 rule createEndPointUsingNode(node: Turn!PathNode){
 	to
-		tEndPoint: Urn!EndPoint (
+		tEndPoint: Urn!EndPoint(
 			id <- thisModule.nextId().toString(),
 			name <- 'EndPoint' + tEndPoint.id,
 			label <- thisModule.createLabel(),
 			diagram <- thisModule.tUCMmap,
-			contRef <- thisModule.getUrnCompRef(node)
+			contRef <- thisModule.getUrnComponentRef(node)
 		)
 	do{
 		tEndPoint;
@@ -121,7 +120,7 @@ rule createEndPointUsingNode(node: Turn!PathNode){
 
 rule createEndPoint(){
 	to
-		tEndPoint: Urn!EndPoint (
+		tEndPoint: Urn!EndPoint(
 			id <- thisModule.nextId().toString(),
 			name <- 'EndPoint' + tEndPoint.id,
 			label <- thisModule.createLabel(),
@@ -132,15 +131,15 @@ rule createEndPoint(){
 	}
 }
 
-rule createKpiEvalValueSet(s: Turn!LinearConversion){
+rule createKPIEvalValueSet(sLinearConversion: Turn!LinearConversion){
 	to
 		tKpiEvalValueSet: Urn!KPIEvalValueSet(
-			unit <- s.unit,
-			targetValue <- s.targetValue,
-			thresholdValue <- s.thresholdValue,
-			worstValue <- s.worstValue
+			unit <- sLinearConversion.unit,
+			targetValue <- sLinearConversion.targetValue,
+			thresholdValue <- sLinearConversion.thresholdValue,
+			worstValue <- sLinearConversion.worstValue
 		)
-	do{ 
+	do{
 		tKpiEvalValueSet;
 	}
 }
@@ -153,22 +152,22 @@ rule createLabel(){
 	}
 }
 
-rule createMetadata(name: String, value: String){
+rule createMetadata(vName: String, vValue: String){
 	to 
- 		targetMetadata: Urn!Metadata(
- 			name <- name,
- 			value <- value 
+ 		tMetadata: Urn!Metadata(
+ 			name <- vName,
+ 			value <- vValue 
 		)
 	do{
-	 	targetMetadata;
+	 	tMetadata;
 	}
 }
 
-rule createNewConnection(node: Turn!PathNode){
+rule createNewConnection(tPathNode: Urn!PathNode){
 	to
 		tNodeConnection: Urn!NodeConnection()
 	do{
-		node.succ <- node.succ.including(tNodeConnection);
+		tPathNode.succ <- tPathNode.succ.including(tNodeConnection);
 	}
 }
 
@@ -184,24 +183,24 @@ rule createOrJoin(){
 	}
 }
 
-rule createQMapKpiEvalValueSet(conv: Turn!QualToQMappings){
+rule createQMapKPIEvalValueSet(conv: Turn!QualToQMappings){
 	to		
-		tQMapKpiEvalValueSet: Urn!KPIEvalValueSet(
+		tQMapKPIEvalValueSet: Urn!KPIEvalValueSet(
 			kpiConv <- conv	
 		)
 	do{
-		tQMapKpiEvalValueSet;
+		tQMapKPIEvalValueSet;
 	}
 }
 
-rule createResponsibility(s: Turn!RespRef){
+rule createResponsibility(sResponsibility: Turn!RespRef){
 	to
-		tResp: Urn!Responsibility(
+		tResponsibility: Urn!Responsibility(
 			id <- thisModule.nextId().toString(),
-			name <- s.turnGetLongestName()
+			name <- sResponsibility.turnGetLongestName()
 		)
 	do{
-		tResp;
+		tResponsibility;
 	}
 }
 

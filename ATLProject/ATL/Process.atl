@@ -74,7 +74,7 @@ rule processTimer(sTimer: Turn!Timer){
 			thisModule.processPathBody(sTimer.timeoutPath);
 			
 			if(not sTimer.timeoutCondition.oclIsUndefined()){
-				tTimer.succ -> at(2).condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content -> first());
+				tTimer.succ -> at(2).condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
 			}
 			
 			if(sTimer.timeoutPath.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
@@ -212,7 +212,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 			thisModule.createNewConnection(tOrFork);
 			tOrFork.mostRecentUnusedConnection().condition <- thisModule.resolveTemp(orFork.condition, 'tCondition');
 			thisModule.processPathBody(orFork.pathBody);
-			thisModule.connectPathBody(orFork.pathBody, sOrFork, tOrFork);
+			thisModule.connectPathBody(orFork.pathBody, tOrFork);
 		}
 		
 		tNextNode <- tOrFork;
@@ -220,7 +220,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		if(sPathBodies -> isEmpty()){
 			thisModule.connectWithCondition(tOrFork, thisModule.createEndPointUsingNode(sOrFork), thisModule.createCondition('!' + sOrFork.condition.expression.asString()));
 			thisModule.connectWithCondition(tOrFork, thisModule.getPathEnd(sOrFork.connectingOrBody), thisModule.resolveTemp(sOrFork.condition, 'tCondition'));
-			thisModule.connectPathBody(sOrFork.connectingOrBody, sOrFork, tOrFork);
+			thisModule.connectPathBody(sOrFork.connectingOrBody, tOrFork);
 		}
 		else if(not sOrFork.body.elseBody.oclIsUndefined()){
 			tOrJoin <- thisModule.createOrJoin();
@@ -235,9 +235,8 @@ rule processOrFork(sOrFork: Turn!OrFork){
 				tNextNode <- tOrJoin;
 			}
 			
-			for(condition in sPathBodies -> select(pb|pb.pathEnd.oclIsUndefined()) -> collect(pb|pb.orFork.condition)){
-				if(not (sPathBodies -> size() = 1) or (sPathBodies -> size() = 1 and sOrFork.connectingOrBody.pathNodes -> isEmpty())){
-					
+			if(sOrFork.connectingOrBody.pathNodes -> isEmpty()){
+				for(sCondition in sPathBodies -> select(pb|pb.pathEnd.oclIsUndefined()) -> collect(pb|pb.orFork.condition)){
 					if(sOrFork.connectingOrBody.meetsOrJoinConditions(thisModule.getPathEnd(sOrFork.connectingOrBody))){
 						tOrJoin <- thisModule.createOrJoin();
 						thisModule.useConnection(tOrJoin, tNextNode.nextFreeConnection());
@@ -253,7 +252,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 			if(sPathBodies -> size() = 1){
 				tEndPoint <- thisModule.createEndPointUsingNode(sOrFork);
 				thisModule.connectWithCondition(tOrFork, tEndPoint, thisModule.createCondition('!' + sPathBodies.first().orFork.condition.expression.asString()));
-				thisModule.connectPathBody(sOrFork.connectingOrBody, sOrFork, tNextNode);	
+				thisModule.connectPathBody(sOrFork.connectingOrBody, tNextNode);	
 			}
 		}
 
@@ -273,7 +272,7 @@ rule processStub(sStub: Turn!Stub){
 		tStub : Urn!Stub = thisModule.retrieveNode(sStub);
 		tNextNode : Urn!PathNode = OclUndefined;
 		tNextPred :  Urn!NodeConnection = OclUndefined;
-		tOutPaths : Sequence(Urn!PathBody) = OclUndefined;
+		tOutPaths : Sequence(Urn!StubOutPath) = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
 		tOrJoin : Urn!OrJoin = OclUndefined;
 	}
@@ -344,21 +343,10 @@ rule processStub(sStub: Turn!Stub){
 				thisModule.useConnection(tPathEnd, tNextPred);
 			}
 			
-			thisModule.connectPathBody(sStub.connectingStubBody, sStub, thisModule.retrieveNode(sStub));
+			thisModule.connectPathBody(sStub.connectingStubBody, thisModule.retrieveNode(sStub));
 		}
 		
 		tStub;
-	}
-}
-
-rule collectReferencedEnds(sPathNodes: Sequence(Turn!PathNode)){
-	do{
-		sPathNodes <- sPathNodes -> flatten();
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(r|thisModule.resolveTemp(r, 'tRespRef')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(r|thisModule.resolveTemp(r, 'tAndJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(r|thisModule.resolveTemp(r, 'tOrJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(r|thisModule.resolveTemp(r, 'tWtPlace')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(r|thisModule.resolveTemp(r, 'tFailPt')));
 	}
 }
 
@@ -410,15 +398,15 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 rule processContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
 	using{
 		tMetadata : Sequence(Urn!Metadata) = tContRef.metadata -> flatten();
-		tFrom : Urn!Metadata = 
+		tFrom : String = 
 			if tMetadata -> select(md|md.name='from') -> size() = 1 then
-				tMetadata -> select(md|md.name='from') -> first().value
+				tMetadata -> select(md|md.name='from').first().value
 			else
 				''
 			endif;
-		tTo : Urn!Metadata = 
+		tTo : String = 
 			if tMetadata -> select(md|md.name='to') -> size() = 1 then
-				tMetadata -> select(md|md.name='to') -> first().value
+				tMetadata -> select(md|md.name='to').first().value
 			else
 				''
 			endif;
