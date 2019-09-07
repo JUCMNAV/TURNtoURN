@@ -116,15 +116,20 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		for(pathbody in sAndFork.pathbody){
 			thisModule.processPathBody(pathbody);
 			
+			tPathEnd <- thisModule.getPathEnd(pathbody);
+			
 			if(pathbody.pathEnd.oclIsUndefined()){
-				tPathEnd <- thisModule.getPathEnd(pathbody);
-				
 				if(not tPathEnd.oclIsUndefined()){
 					thisModule.connect(tAndFork, tPathEnd);
 				}
 			}
 			else{
-				thisModule.connectPathBody(pathbody, tAndFork);
+				if(tPathEnd.oclIsTypeOf(Urn!OrFork) or tPathEnd.oclIsTypeOf(Urn!AndFork) or tPathEnd.oclIsTypeOf(Urn!Stub)){
+					thisModule.connect(tAndFork, tPathEnd);
+				}
+				else{
+					thisModule.connectPathBody(pathbody, tAndFork);
+				}
 			}
 		}
 		
