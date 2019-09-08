@@ -44,7 +44,9 @@ rule processEndPoint(sEndPoint: Turn!EndPoint, tEndPoint: Turn!EndPoint){
 		sPathBody : Turn!PathBody = sEndPoint.epConnect.pbody;	
 	}
 	do{
-		tEndPoint.postcondition <- sEndPoint.condition;
+		if(not sEndPoint.condition.oclIsUndefined()){
+			tEndPoint.postcondition <- thisModule.createCondition(sEndPoint.condition.expression.asString());
+		}
 		tEndPoint.name <- sEndPoint.turnGetLongestName();
 		
 		thisModule.endPointMap <- thisModule.endPointMap.including(sEndPoint, tEndPoint);
@@ -83,24 +85,6 @@ rule processTimer(sTimer: Turn!Timer){
 		}
 		
 		tTimer;
-	}
-}
-
-rule handleEmptyBody(sPathBody: Turn!PathBody, tNextConnection: Urn!NodeConnection){
-	using{
-		tOrJoin : Urn!OrJoin = OclUndefined;
-		tPathEnd : Urn!PathNode = thisModule.getPathEnd(sPathBody);
-	}
-	do{
-		if(sPathBody.meetsOrJoinConditions(tPathEnd)){
-			tOrJoin <- thisModule.createOrJoin();
-			thisModule.createNewConnection(tOrJoin);
-			thisModule.useConnection(tOrJoin, tNextConnection);
-			thisModule.useConnection(tOrJoin, tPathEnd.pred.first().source.succ);
-			tNextConnection <- tOrJoin.nextFreeConnection();
-		}
-		
-		tNextConnection;
 	}
 }
 
@@ -333,25 +317,42 @@ rule processStub(sStub: Turn!Stub){
 	}
 }
 
-rule processPathBody(sPathbody: Turn!PathNode){
+rule processPathBody(sPathBody: Turn!PathNode){
 	do{
-		thisModule.collectReferencedEnds(sPathbody.pathNodes);
+		thisModule.collectReferencedEnds(sPathBody.pathNodes);
 		
-		if(not sPathbody.pathEnd.oclIsUndefined()){
-			thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathbody.pathEnd));
-			thisModule.processPathEnd(sPathbody.pathEnd);	
+		if(not sPathBody.pathEnd.oclIsUndefined()){
+			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				if(not sPathBody.pathEnd.regularEnd.oclIsUndefined()){
+					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+				}
+			}
+			else{
+				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+			}
+			
+			thisModule.processPathEnd(sPathBody.pathEnd);	
 		}
 	}
 }
 
 rule processPathEnd(sPathEnd: Turn!PathBodyNode){
+	using{
+		tConnect : Urn!Connect = OclUndefined;	
+	}
 	do{
 		if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 			if(sPathEnd.regularEnd.oclIsUndefined()){
-				thisModule.createEndPoint();
+				thisModule.endPointMap <- thisModule.endPointMap.including(sPathEnd.regularEnd, thisModule.createEndPoint());
 			}
 			else if(thisModule.retrieveNode(sPathEnd.regularEnd).oclIsUndefined()){
 				thisModule.processEndPoint(sPathEnd.regularEnd, thisModule.createEndPointUsingNode(sPathEnd.regularEnd));
+			}
+			
+			if(not sPathEnd.connect.oclIsUndefined()){
+				tConnect <- thisModule.createConnect();
+				thisModule.connect(thisModule.retrieveNode(sPathEnd.regularEnd), tConnect);
+				thisModule.connect(tConnect, thisModule.retrieveNode(sPathEnd.connect.connectsTo));
 			}
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
@@ -369,7 +370,7 @@ rule processPathEnd(sPathEnd: Turn!PathBodyNode){
 rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	do{
 		thisModule.tUCMmap <- tUCMmap;
-		
+
 		for(path in paths){
 			thisModule.connectPath(path);
 		}

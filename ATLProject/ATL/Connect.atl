@@ -84,7 +84,7 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!StartPoint, tPathEnd: Urn!PathNode){
 	do{
 		if(not sStartPoint.oclIsUndefined()){
-			if(not sStartPoint.connect.oclIsUndefined()){
+			if(not sStartPoint.connect.oclIsUndefined() and not thisModule.emptyPointMap.get(sStartPoint).oclIsUndefined()){
 				tStartPoint <- thisModule.emptyPointMap.get(sStartPoint);
 			}
 		}
@@ -94,17 +94,33 @@ rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!S
 }
 
 rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, sLastNode: Turn!PathNode){
+	using{
+		tLastNode : Urn!PathNode = thisModule.retrieveNode(sLastNode);
+		tOrJoin : Urn!OrJoin = OclUndefined;
+		tPathEnd : Urn!PathENd = OclUndefined;
+	}
 	do{
 		if(sLastNode.oclIsTypeOf(Turn!Connect)){
 			sLastNode <- sLastNode.connectsTo;
+			tLastNode <- thisModule.retrieveNode(sLastNode);
 			
 			if(sLastNode.oclIsTypeOf(Turn!StartPoint) and sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				thisModule.createNewConnection(thisModule.retrieveNode(sLastNode));
+				thisModule.createNewConnection(tLastNode);
 			}
 		}
 		
+		tPathEnd <- thisModule.getPathEnd(sPathBody);
+		
+		if(sPathBody.meetsOrJoinConditions(tPathEnd)){
+			tOrJoin <- thisModule.createOrJoin();
+			thisModule.connect(tLastNode, tOrJoin);
+			thisModule.createNewConnection(tOrJoin);
+			tPathEnd.pred.first().target <- tOrJoin;
+			tLastNode <- tOrJoin;
+		}
+		
 		-- connect last node with pathEnd
-		thisModule.useConnection(thisModule.getPathEnd(sPathBody), thisModule.handleEmptyBody(sPathBody, thisModule.retrieveNode(sLastNode).nextFreeConnection()));
+		thisModule.useConnection(tPathEnd, tLastNode.nextFreeConnection());
 		
 		if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 			if(thisModule.getPathEnd(sPathBody).succ -> isEmpty()){
