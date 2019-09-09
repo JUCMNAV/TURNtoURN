@@ -225,7 +225,7 @@ rule processStub(sStub: Turn!Stub){
 		else{
 			vPlugins <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs -> collect(s|s.params.plugin) -> flatten();
 		}
-			
+		
 		tStub.bindings <- vPlugins -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));
 		
 		for(outPath in sStub.outPaths){
@@ -256,7 +256,7 @@ rule processStub(sStub: Turn!Stub){
 					tNextNode <- thisModule.retrieveNode(sStub.connectingStubBody.pathNodes.first());
 				}
 			}
-			else if(tOutPaths -> size() >= 2){
+			else if(tOutPaths -> size() >= 2){ -- handle connecting OutPaths
 				tOrJoin <- thisModule.createOrJoin();
 				thisModule.createNewConnection(tOrJoin);
 				thisModule.useConnection(tOrJoin, tStub.succ -> at(tOutPaths -> collect(op|op.index) -> at(1)));

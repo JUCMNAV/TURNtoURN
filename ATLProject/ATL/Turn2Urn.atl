@@ -234,6 +234,12 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 		
 		tRetrievedNode <- Sequence{};
 		
+		if(sPathNode.oclIsTypeOf(Turn!Stub)){
+			if(not sPathNode.stubRef.oclIsUndefined()){
+				sPathNode <- sPathNode.stubRef;
+			}
+		}
+		
 		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tWaitingPlace'));
 		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tFailurePoint'));
 		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tRespRef'));
@@ -657,12 +663,11 @@ rule StrategiesGroup2StrategiesGroup{
 			name <- sStrategiesGroup.turnGetLongestName(),
 			strategies <- sStrategiesGroup.evalStrategies.including(sStrategiesGroup.evalStrategy)
 		)
-	
 }
 
 rule Stub2Stub{
 	from
-		sStub: Turn!Stub
+		sStub: Turn!Stub(sStub.stubRef.oclIsUndefined())
 	using{
 		vIsBlocking : Boolean = sStub.stubType.toString() = 'blocking';
 		vIsSynchronizing : Boolean = vIsBlocking or sStub.stubType.toString() = 'synchronizing';
@@ -689,6 +694,16 @@ rule Stub2Stub{
 			dynamic <- vIsDynamic
 		),
 		tNodeLabel: Urn!NodeLabel
+}
+
+rule StubDeclaration2Stub{
+	from
+		sStubDeclaration: Turn!StubDeclaration
+	to
+		tStub: Urn!Stub(id <- thisModule.nextId().toString(),
+			name <- sStubDeclaration.turnGetLongestName(),
+			diagram <- thisModule.tUCMmap
+		)
 }
 
 rule QMapping2QMapping{
