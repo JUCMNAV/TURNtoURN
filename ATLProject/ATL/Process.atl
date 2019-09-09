@@ -178,7 +178,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 			
 			if(not thisModule.getPathEnd(orFork.pathBody).oclIsUndefined()){
 				if(thisModule.getPathEnd(orFork.pathBody).pred -> isEmpty()){
-					thisModule.connect(tOrFork, thisModule.getPathEnd(orFork.pathBody));	
+				--	thisModule.connect(tOrFork, thisModule.getPathEnd(orFork.pathBody));	
 				}
 			}
 		}
@@ -193,7 +193,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 			tEndPoint <- thisModule.createEndPointUsingNode(sOrFork);
 			thisModule.connectWithCondition(tOrFork, tEndPoint, thisModule.createCondition('!' + sOrFork.condition.expression.asString()));
 			thisModule.connectWithCondition(tOrFork, thisModule.getPathEnd(sOrFork.connectingOrBody), thisModule.resolveTemp(sOrFork.condition, 'tCondition'));
-			thisModule.connectPathBody(sOrFork.connectingOrBody, tOrFork);
+			--thisModule.connectPathBody(sOrFork.connectingOrBody, tOrFork);
 		}
 		else if(not sOrFork.body.elseBody.oclIsUndefined()){
 			tOrJoin <- thisModule.createOrJoin();
@@ -212,6 +212,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 				tOrJoin <- thisModule.createOrJoin();
 				thisModule.useConnection(tOrJoin, tNextNode.nextFreeConnection());
 				thisModule.useConnection(tOrJoin, thisModule.getPathEnd(sOrFork.connectingOrBody).pred.first().source.succ);
+				tNextNode <- tOrJoin;
 			}
 			
 			if(sPathBodies -> size() = 1){
