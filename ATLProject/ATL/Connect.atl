@@ -137,8 +137,8 @@ rule connectWithEmptyPoint(tCurrentNode: Urn!PathNode, nextNode: Urn!PathNode){
 	do{
 		vEmptyPoint <- thisModule.createEmptyPoint();
 		thisModule.connect(tCurrentNode, vEmptyPoint);  -- currentNode -> vEmptyPoint
-		thisModule.connect(vEmptyPoint, nextNode);      -- vEmptyPoint -> nextNode
 		thisModule.connect(tCurrentNode, nextNode);     -- currentNode -> nextNode
+		thisModule.connect(vEmptyPoint, nextNode);      -- vEmptyPoint -> nextNode
 		vEmptyPoint;
 	}
 }
