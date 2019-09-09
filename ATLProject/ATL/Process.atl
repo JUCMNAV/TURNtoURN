@@ -100,16 +100,6 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		for(pathbody in sAndFork.pathbody){
 			thisModule.processPathBody(pathbody);
 			--thisModule.connectPathBody(pathbody, tAndFork);
-			if(not thisModule.getPathEnd(pathbody).oclIsUndefined()){
-				if(thisModule.getPathEnd(pathbody).pred -> isEmpty()){
-					--thisModule.connect(tAndFork, thisModule.getPathEnd(pathbody));
-					--thisModule.debug(thisModule.tUCMmap);
-				}
-			}
-		}
-		
-		if(thisModule.tUCMmap.name='PluginThree'){
-			thisModule.debug('here');
 		}
 		
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
@@ -144,6 +134,10 @@ rule processConnect(sConnect: Turn!Connect){
 	}
 }
 
+helper context Urn!PathNode def : isConnectedTo(tPathNode : Urn!PathNode) : Boolean =
+	not(self.succ -> any(n|n.target=tPathNode).oclIsUndefined());
+
+
 rule processOrFork(sOrFork: Turn!OrFork){
 	using{
 		tRegularOrForkBranches : Sequence(Turn!OrFork) = 
@@ -163,6 +157,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		tOrJoin : Urn!OrJoin = OclUndefined;
 		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
 		tEndPoint : Urn!EndPoint = OclUndefined;
+		tLastNode : Urn!PathNode = OclUndefined;
 
 	}
 	do{
@@ -174,26 +169,20 @@ rule processOrFork(sOrFork: Turn!OrFork){
 			thisModule.createNewConnection(tOrFork);
 			tOrFork.mostRecentUnusedConnection().condition <- thisModule.resolveTemp(orFork.condition, 'tCondition');
 			thisModule.processPathBody(orFork.pathBody);
-			thisModule.connectBodyNodes(orFork.pathBody.pathNodes, tOrFork);
 			
-			if(not thisModule.getPathEnd(orFork.pathBody).oclIsUndefined()){
-				if(thisModule.getPathEnd(orFork.pathBody).pred -> isEmpty()){
-				--	thisModule.connect(tOrFork, thisModule.getPathEnd(orFork.pathBody));	
-				}
+			thisModule.connectBodyNodes(orFork.pathBody.pathNodes, tOrFork);
+		
+			if(not orFork.pathBody.pathNodes -> isEmpty()){
+				thisModule.connectLastNodeToPathEnd(orFork.pathBody, orFork.pathBody.pathNodes.last());
 			}
 		}
-		
-		if(thisModule.tUCMmap.name = 'PluginThree'){
-			thisModule.debug('hi');
-		}
-		
+
 		tNextNode <- tOrFork;
 		
 		if(sPathBodies -> isEmpty()){
 			tEndPoint <- thisModule.createEndPointUsingNode(sOrFork);
 			thisModule.connectWithCondition(tOrFork, tEndPoint, thisModule.createCondition('!' + sOrFork.condition.expression.asString()));
 			thisModule.connectWithCondition(tOrFork, thisModule.getPathEnd(sOrFork.connectingOrBody), thisModule.resolveTemp(sOrFork.condition, 'tCondition'));
-			--thisModule.connectPathBody(sOrFork.connectingOrBody, tOrFork);
 		}
 		else if(not sOrFork.body.elseBody.oclIsUndefined()){
 			tOrJoin <- thisModule.createOrJoin();
