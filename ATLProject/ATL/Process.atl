@@ -39,23 +39,6 @@ rule processBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 	}
 }
 
-rule processEndPoint(sEndPoint: Turn!EndPoint, tEndPoint: Turn!EndPoint){
-	using{
-		sPathBody : Turn!PathBody = sEndPoint.epConnect.pbody;	
-	}
-	do{
-		if(not sEndPoint.condition.oclIsUndefined()){
-			tEndPoint.postcondition <- thisModule.createCondition(sEndPoint.condition.expression.asString());
-		}
-		
-		tEndPoint.name <- sEndPoint.turnGetLongestName();
-		
-		thisModule.endPointMap <- thisModule.endPointMap.including(sEndPoint, tEndPoint);
-		
-		tEndPoint;
-	}
-}
-
 rule processTimer(sTimer: Turn!Timer){
 	using{
 		tTimer : Urn!Timer = thisModule.retrieveNode(sTimer);
@@ -255,15 +238,26 @@ rule processPathBody(sPathBody: Turn!PathNode){
 
 rule processPathEnd(sPathEnd: Turn!PathBodyNode){
 	using{
-		tConnect : Urn!Connect = OclUndefined;	
+		tConnect : Urn!Connect = OclUndefined;
+		tEndPoint : Urn!EndPoint = OclUndefined;
 	}
 	do{
 		if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 			if(sPathEnd.regularEnd.oclIsUndefined()){
-				thisModule.endPointMap <- thisModule.endPointMap.including(sPathEnd.regularEnd, thisModule.createEndPoint());
+				tEndPoint <- thisModule.createEndPoint();
 			}
 			else if(thisModule.retrieveNode(sPathEnd.regularEnd).oclIsUndefined()){
-				thisModule.processEndPoint(sPathEnd.regularEnd, thisModule.createEndPointUsingNode(sPathEnd.regularEnd));
+				tEndPoint <- thisModule.createEndPoint();
+				tEndPoint.name <- sPathEnd.regularEnd.turnGetLongestName();
+				tEndPoint.contRef <- thisModule.getUrnComponentRef(sPathEnd.regularEnd);
+				
+				if(not sPathEnd.regularEnd.condition.oclIsUndefined()){
+					tEndPoint.postcondition <- thisModule.createCondition(sPathEnd.regularEnd.condition.expression.asString());
+				}
+			}
+			
+			if(not tEndPoint.oclIsUndefined()){
+				thisModule.endPointMap <- thisModule.endPointMap.including(sPathEnd.regularEnd, tEndPoint);
 			}
 			
 			if(not sPathEnd.connect.oclIsUndefined()){

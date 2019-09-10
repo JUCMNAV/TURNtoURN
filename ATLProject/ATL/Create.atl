@@ -75,20 +75,6 @@ rule createEmptyPoint(){
 	}
 }
 
-rule createEndPointUsingNode(node: Turn!PathNode){
-	to
-		tEndPoint: Urn!EndPoint(
-			id <- thisModule.nextId().toString(),
-			name <- 'EndPoint' + tEndPoint.id,
-			label <- thisModule.createLabel(),
-			diagram <- thisModule.tUCMmap,
-			contRef <- thisModule.getUrnComponentRef(node)
-		)
-	do{
-		tEndPoint;
-	}
-}
-
 rule createEndPoint(){
 	to
 		tEndPoint: Urn!EndPoint(

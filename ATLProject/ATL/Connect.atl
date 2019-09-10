@@ -21,7 +21,6 @@ rule connectPath(sPath: Turn!Path){
 			tStartPoint <- thisModule.retrieveNode(sPath.startPoint);
 		}
 		
-		
 		thisModule.connectPathBody(sPath.pathBody, tStartPoint);
 	}
 }
