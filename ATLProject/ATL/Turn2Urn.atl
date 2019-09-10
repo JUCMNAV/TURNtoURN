@@ -105,6 +105,29 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 }
 
+rule newConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
+	using{
+		tOrJoin : Urn!OrJoin = OclUndefined;
+	}
+	do{
+		if(not (tFromNode.oclIsUndefined() or tToNode.oclIsUndefined())){
+			if(not tToNode.pred -> isEmpty() and not(tToNode.oclIsTypeOf(Urn!AndJoin) or tToNode.oclIsTypeOf(Urn!OrJoin))){
+				tOrJoin <- thisModule.createOrJoin();
+				tToNode.pred.first().target <- tOrJoin; --TODO: iterate over all of the pred
+				thisModule.connect(tFromNode, tOrJoin);
+				thisModule.connect(tOrJoin, tToNode);
+				tToNode <- tOrJoin;
+			}
+			
+			if(tFromNode.nextFreeConnection().oclIsUndefined()){
+				thisModule.createNewConnection(tFromNode);
+			}
+			
+			thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
+		}
+	}
+}
+
 rule connectWithCondition(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, condition: String){
 	to
 		tNodeConnection: Urn!NodeConnection(

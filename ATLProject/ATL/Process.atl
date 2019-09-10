@@ -91,15 +91,15 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		}
 		
 		for(pathbody in sAndFork.pathbody){
-			tPathEnd <- thisModule.connectBody(pathbody, tAndFork);
+			tPathEnd <- thisModule.newConnectPathBody(pathbody, tAndFork);
 
-			if(not sAndFork.connectingAndBody.oclIsUndefined()){
-				thisModule.connect(tPathEnd, tAndJoin);
+			if(not sAndFork.connectingAndBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+				thisModule.newConnect(tPathEnd, tAndJoin);
 			}
 		}
 		
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
-			thisModule.connectBody(sAndFork.connectingAndBody, tAndJoin);
+			thisModule.newConnectPathBody(sAndFork.connectingAndBody, tAndJoin);
 		}
 		
 		tAndFork;	
@@ -130,35 +130,36 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		
 		if(not sOrFork.body.oclIsUndefined()){
 			for(regularOrFork in sOrFork.body.regularBody){
-				tPathEnd <- thisModule.connectBody(regularOrFork.pathBody, tOrFork);
+				tPathEnd <- thisModule.newConnectPathBody(regularOrFork.pathBody, tOrFork);
 				tOrFork.succ.last().condition <- thisModule.resolveTemp(regularOrFork.condition, 'tCondition');
 	
-				if(not sOrFork.connectingOrBody.oclIsUndefined()){
-					thisModule.connect(tPathEnd, tOrJoin);
+				if(not sOrFork.connectingOrBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+					thisModule.newConnect(tPathEnd, tOrJoin);
 				}
 			}
 			
 			if(not sOrFork.body.elseBody.oclIsUndefined()){
-				tPathEnd <- thisModule.connectBody(sOrFork.body.elseBody, tOrFork);
+				tPathEnd <- thisModule.newConnectPathBody(sOrFork.body.elseBody, tOrFork);
 				tOrFork.succ.last().condition <- thisModule.createCondition('else');
 	
-				if(not sOrFork.connectingOrBody.oclIsUndefined()){
-					thisModule.connect(tPathEnd, tOrJoin);
+				if(not sOrFork.connectingOrBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+					thisModule.newConnect(tPathEnd, tOrJoin);
 				}
 			}
+						
+			--if(sOrFork.body.regularBody -> size() = 1 and sOrFork.connectingOrBody.oclIsUndefined()){
+			--	thisModule.debug('hi');
+			--	tEmptyPoint <- thisModule.createEmptyPoint();
+			--	thisModule.connect(tOrFork, tEmptyPoint);
+			--	thisModule.connect(tEmptyPoint, thisModule.createEndPoint());
+			--}
 		}
 		
 		if(not sOrFork.connectingOrBody.oclIsUndefined()){
-			thisModule.connectBody(sOrFork.connectingOrBody, tOrJoin);
+			thisModule.newConnectPathBody(sOrFork.connectingOrBody, tOrJoin);
 		}
 		
 		tOrFork;	
-	}
-}
-
-rule addConditionToConnectionBetween(tFirstNode: Urn!PathNode, tSecondNode: Urn!PathNode, tCondition: Urn!Condition){
-	do{
-		tFirstNode.succ -> any(n|n.target=tSecondNode).condition <- tCondition;	
 	}
 }
 

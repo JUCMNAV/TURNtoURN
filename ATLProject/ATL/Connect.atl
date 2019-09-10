@@ -44,17 +44,38 @@ rule connectPathBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
 	}
 }
 
-rule connectBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
+rule newConnectPathBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
 	using{
 		tPathEnd : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		thisModule.processPathBody(sPathBody);
-		tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tPathStart);
+		tLastNode <- thisModule.newConnectBodyNodes(sPathBody.pathNodes, tPathStart);
 		tPathEnd <- thisModule.getPathEnd(sPathBody);
-		thisModule.connect(tLastNode, tPathEnd);
+		thisModule.newConnect(tLastNode, tPathEnd);
 		tPathEnd;
+	}
+}
+
+rule newConnectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!PathNode){
+	using{
+		tNode : Urn!PathNode = OclUndefined;
+		tOrJoin : Urn!OrJoin = OclUndefined;
+		tPreviousNode : Urn!PathNode = tPathStart;
+	}
+	do{
+		for(sCurrentNode in sPathNodes){
+			if(sCurrentNode.oclIsTypeOf(Turn!Timer)){
+				thisModule.processTimer(sCurrentNode);
+			}
+
+			tNode <- thisModule.retrieveNode(sCurrentNode);
+			thisModule.newConnect(tPreviousNode, tNode);
+			tPreviousNode <- tNode;
+		}
+		
+		tPreviousNode;
 	}
 }
 
