@@ -93,10 +93,10 @@ rule useConnection(tToNode: Urn!PathNode, predecessor: Sequence(Urn!NodeConnecti
 	}
 }
 
-rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
+rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	do{
 		if(not (tFromNode.oclIsUndefined() or tToNode.oclIsUndefined())){
-			if(tFromNode.nextFreeConnection().oclIsUndefined()){
+			if(tFromNode.nextFreeConnection().oclIsUndefined() and tFromNode.succ -> any(c|c.target=tToNode).oclIsUndefined()){
 				thisModule.createNewConnection(tFromNode);
 			}
 			
@@ -105,7 +105,7 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 }
 
-rule newConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
+rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
 		tOrJoin : Urn!OrJoin = OclUndefined;
 	}
@@ -114,17 +114,12 @@ rule newConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 			if(not tToNode.pred -> isEmpty() and not(tToNode.oclIsTypeOf(Urn!AndJoin) or tToNode.oclIsTypeOf(Urn!OrJoin))){
 				tOrJoin <- thisModule.createOrJoin();
 				tToNode.pred.first().target <- tOrJoin; --TODO: iterate over all of the pred
-				thisModule.connect(tFromNode, tOrJoin);
-				thisModule.connect(tOrJoin, tToNode);
+				thisModule.directConnect(tFromNode, tOrJoin);
+				thisModule.directConnect(tOrJoin, tToNode);
 				tToNode <- tOrJoin;
 			}
 			
-			if(tFromNode.nextFreeConnection().oclIsUndefined() and tFromNode.succ -> any(c|c.target=tToNode).oclIsUndefined()){
-				thisModule.createNewConnection(tFromNode);
-			}
-			
-			
-			thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
+			thisModule.directConnect(tFromNode, tToNode);
 		}
 	}
 }

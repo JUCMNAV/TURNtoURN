@@ -75,7 +75,7 @@ rule processAndFork(sAndFork: Turn!AndFork){
 			tPathEnd <- thisModule.connectPathBody(pathbody, tAndFork);
 
 			if(not sAndFork.connectingAndBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
-				thisModule.newConnect(tPathEnd, tAndJoin);
+				thisModule.connect(tPathEnd, tAndJoin);
 			}
 		}
 		
@@ -112,7 +112,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 				tOrFork.succ.last().condition <- thisModule.resolveTemp(regularOrFork.condition, 'tCondition');
 	
 				if(not sOrFork.connectingOrBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
-					thisModule.newConnect(tPathEnd, tOrJoin);
+					thisModule.connect(tPathEnd, tOrJoin);
 				}
 			}
 			
@@ -122,7 +122,7 @@ rule processOrFork(sOrFork: Turn!OrFork){
 				tOrFork.succ.last().condition <- thisModule.createCondition('else');
 	
 				if(not sOrFork.connectingOrBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
-					thisModule.newConnect(tPathEnd, tOrJoin);
+					thisModule.connect(tPathEnd, tOrJoin);
 				}
 			}
 						
@@ -171,7 +171,7 @@ rule processStub(sStub: Turn!Stub){
 			
 			if(outPath.path.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				thisModule.processPathBody(outPath.path);
-				thisModule.newConnect(tStub, thisModule.getPathEnd(outPath.path));
+				thisModule.connect(tStub, thisModule.getPathEnd(outPath.path));
 			}
 		}
 		
@@ -210,7 +210,7 @@ rule processStub(sStub: Turn!Stub){
 				
 				if(sStub.connectingStubBody.meetsOrJoinConditions(tPathEnd)){
 					tOrJoin <- thisModule.createOrJoin();
-					thisModule.newConnect(tStub, tOrJoin);
+					thisModule.connect(tStub, tOrJoin);
 					thisModule.useConnection(tOrJoin, tNextPred);
 					thisModule.useConnection(tOrJoin, tPathEnd.pred.first().source.succ);
 					tNextNode <- tOrJoin;
@@ -273,8 +273,8 @@ rule processEndpointWithConnect(sEndpointWithConnect: Turn!EndpointWithConnect){
 		
 		if(not sEndpointWithConnect.connect.oclIsUndefined()){
 			tConnect <- thisModule.createConnect();
-			thisModule.newConnect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
-			thisModule.newConnect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
+			thisModule.connect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
+			thisModule.connect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
 		}
 		
 		tEndPoint;

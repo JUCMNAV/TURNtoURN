@@ -22,7 +22,7 @@ rule connectPath(sPath: Turn!Path){
 		thisModule.processPathBody(sPath.pathBody);
 		
 		if(sPath.pathBody.pathNodes -> isEmpty()){
-			thisModule.connect(tStartPoint, thisModule.getPathEnd(sPath.pathBody));
+			thisModule.directConnect(tStartPoint, thisModule.getPathEnd(sPath.pathBody));
 		}
 		else{
 			thisModule.connectPathBody(sPath.pathBody, tStartPoint);
@@ -38,7 +38,7 @@ rule connectPathBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
 	do{
 		tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tPathStart);
 		tPathEnd <- thisModule.getPathEnd(sPathBody);
-		thisModule.newConnect(tLastNode, tPathEnd);
+		thisModule.connect(tLastNode, tPathEnd);
 		tPathEnd;
 	}
 }
@@ -56,7 +56,7 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 			}
 			
 			tNode <- thisModule.retrieveNode(sCurrentNode);
-			thisModule.connect(tPreviousNode, tNode);
+			thisModule.directConnect(tPreviousNode, tNode);
 			tPreviousNode <- tNode;
 		}
 		
