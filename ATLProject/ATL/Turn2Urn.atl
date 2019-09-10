@@ -252,7 +252,7 @@ rule collectReferencedEnds(sPathNodes: Sequence(Turn!PathNode)){
 	}
 }
 
-rule newRetrieveNode(sPathNode: Turn!PathNode){
+rule retrieveNode(sPathNode: Turn!PathNode){
 	using{
 		tRetrievedNode : Urn!PathNode = OclUndefined;
 	}
@@ -301,59 +301,6 @@ rule newRetrieveNode(sPathNode: Turn!PathNode){
 		
 		if(tRetrievedNode.oclIsUndefined()){
 			tRetrievedNode <- thisModule.tUCMmap.getNode(sPathNode.turnGetLongestName());
-		}
-		
-		tRetrievedNode; --returns a single node, not a sequence
-	}
-}
-
-rule retrieveNode(sPathNode: Turn!PathNode){
-	using{
-		tRetrievedNode : Urn!PathNode = OclUndefined;
-	}
-	do{
-		-- This is a rather obtuse approach but was necessary as multiple conditionals in retrieveNode was causing slow build times.
-		-- I'm not sure how inefficient this approach is; if the system is running slowly, it may be worth looking at a different
-		-- implementation of this rule.
-		
-		tRetrievedNode <- Sequence{};
-		
-		if(sPathNode.oclIsTypeOf(Turn!Stub)){
-			if(not sPathNode.stubRef.oclIsUndefined()){
-				sPathNode <- sPathNode.stubRef;
-			}
-		}
-		
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tWaitingPlace'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tFailurePoint'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tRespRef'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tTimer'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tAndFork'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tOrFork'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tStub'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tAndJoin'));
-		tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tOrJoin'));
-		
-		tRetrievedNode <- tRetrievedNode -> any(e|not e.oclIsUndefined());
-		
-		if(sPathNode.oclIsTypeOf(Turn!EndPoint)){
-			tRetrievedNode <- thisModule.endPointMap.get(sPathNode);
-		}
-		
-		if(sPathNode.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(sPathNode.regularEnd.oclIsUndefined()){
-				tRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EndPoint));
-			}
-			else{
-				sPathNode <- sPathNode.regularEnd;
-				tRetrievedNode <- thisModule.retrieveNode(sPathNode);
-			}
-		}
-		
-		if(tRetrievedNode.oclIsUndefined()){
-			if(not sPathNode.oclIsTypeOf(Turn!Connect)){
-				tRetrievedNode <- thisModule.tUCMmap.getNode(sPathNode.turnGetLongestName());
-			}
 		}
 		
 		tRetrievedNode; --returns a single node, not a sequence
