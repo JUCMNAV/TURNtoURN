@@ -7,35 +7,6 @@ create OUT : Urn from IN : Turn;
 -- make some of these into matched rules (either now, if I have missed something),
 -- or in future versions of ATL.
 
-------------1/2 RULES WITH DO LOGIC--------------
-
-rule createEmptyPointConnect(sCurrentNode: Turn!PathNode){
-	using{
-		tConnect: Urn!Connect = thisModule.createConnect();
-		tEmptyPoint: Urn!EmptyPoint = thisModule.createEmptyPoint();	
-	}
-	do{
-		if(sCurrentNode.connectsTo.oclIsTypeOf(Turn!Timer)){
-			tEmptyPoint.name <- 'AsynchConnectTimer#' + sCurrentNode.connectsTo.name;
-		}
-		
-		thisModule.connect(tConnect, thisModule.retrieveNode(sCurrentNode.connectsTo));
-		
-		if(sCurrentNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
-			thisModule.connect(thisModule.retrieveNode(sCurrentNode.connectsTo), tEmptyPoint);
-		}
-		
-		thisModule.connect(tEmptyPoint, tConnect);
-		thisModule.emptyPointMap <- thisModule.emptyPointMap.including(sCurrentNode.connectsTo, tEmptyPoint);
-		
-		tEmptyPoint;
-	}
-}
-
-
-------------2/2 RULES WITHOUT DO LOGIC-----------
--- or well, where the only "do" logic is a return
-
 rule createAndJoin(){
 	to
 		tAndJoin: Urn!AndJoin(

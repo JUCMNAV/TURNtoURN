@@ -69,8 +69,7 @@ rule newConnectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Ur
 			if(sCurrentNode.oclIsTypeOf(Turn!Timer)){
 				thisModule.processTimer(sCurrentNode);
 			}
-
-			tNode <- thisModule.retrieveNode(sCurrentNode);
+			tNode <- thisModule.newRetrieveNode(sCurrentNode);
 			thisModule.newConnect(tPreviousNode, tNode);
 			tPreviousNode <- tNode;
 		}
@@ -94,7 +93,6 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 			tNode <- thisModule.retrieveNode(sCurrentNode);
 			
 			if(sCurrentNode.oclIsTypeOf(Turn!Connect)){
-				thisModule.processConnect(sCurrentNode);
 				sCurrentNode <- sCurrentNode.connectsTo;
 				tNode <- thisModule.retrieveNode(sCurrentNode);
 			}

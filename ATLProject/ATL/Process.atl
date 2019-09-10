@@ -106,12 +106,6 @@ rule processAndFork(sAndFork: Turn!AndFork){
 	}
 }
 
-rule processConnect(sConnect: Turn!Connect){
-	do{
-		thisModule.createEmptyPointConnect(sConnect);
-	}
-}
-
 helper context Urn!PathNode def : isConnectedTo(tPathNode : Urn!PathNode) : Boolean =
 	not(self.succ -> any(n|n.target=tPathNode).oclIsUndefined());
 
@@ -148,7 +142,6 @@ rule processOrFork(sOrFork: Turn!OrFork){
 			}
 						
 			--if(sOrFork.body.regularBody -> size() = 1 and sOrFork.connectingOrBody.oclIsUndefined()){
-			--	thisModule.debug('hi');
 			--	tEmptyPoint <- thisModule.createEmptyPoint();
 			--	thisModule.connect(tOrFork, tEmptyPoint);
 			--	thisModule.connect(tEmptyPoint, thisModule.createEndPoint());
