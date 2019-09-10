@@ -364,11 +364,9 @@ rule AndJoin2AndJoin{
 		tAndJoin: Urn!AndJoin(
 			id <- thisModule.nextId().toString(),
 			name <- sAndJoin.turnGetLongestName(),
-			succ <- tNodeConn,
 			label <- tNodeLabel,
 			contRef <- thisModule.getUrnComponentRef(sAndJoin)
 		),
-		tNodeConn: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 }
 
@@ -608,11 +606,9 @@ rule OrJoin2OrJoin{
 		tOrJoin: Urn!OrJoin(
 			id <- thisModule.nextId().toString(),
 			name <- sOrJoin.turnGetLongestName(),
-			succ <- tNodeConnection,
 			label <- tNodeLabel,
 			contRef <- thisModule.getUrnComponentRef(sOrJoin)
 		),
-		tNodeConnection: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 }
 
@@ -775,12 +771,10 @@ rule RespRef2Responsibility{
 		tRespRef: Urn!RespRef(
 			id <- thisModule.nextId().toString(),
 			name <- 'RespRef' + tRespRef.id,
-			succ <- tNodeConnection,
 			label <- tNodeLabel,
 			respDef <- tResponsibility,
 			contRef <- thisModule.getUrnComponentRef(sRespRef)
 		),
-		tNodeConnection: Urn!NodeConnection,
 		tNodeLabel: Urn!NodeLabel
 }
 
