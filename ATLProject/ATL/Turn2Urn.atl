@@ -225,7 +225,10 @@ rule getResponsibility(vResponsibilityName: String){
 	}
 }
 
-rule collectReferencedEnds(sPathNodes: Sequence(Turn!PathNode)){
+rule collectPathBodyNodes(sPathBody: Turn!PathBody){
+	using{
+		sPathNodes : Sequence(Turn!PathNode)	= sPathBody.pathNodes;
+	}
 	do{
 		sPathNodes <- sPathNodes -> flatten();
 		
@@ -234,6 +237,17 @@ rule collectReferencedEnds(sPathNodes: Sequence(Turn!PathNode)){
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tOrJoin')));
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tWaitingPlace')));
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tFailurePoint')));
+		
+		if(not sPathBody.pathEnd.oclIsUndefined()){
+			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				if(not sPathBody.pathEnd.regularEnd.oclIsUndefined()){
+					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+				}
+			}
+			else{
+				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+			}
+		}
 	}
 }
 
@@ -949,10 +963,10 @@ rule UCMmap2UCMmap{
 			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tNodeConn'))
 		)
 	do{
-		thisModule.processUCMmap(tUCMmap, sUCMmap.paths);
+		thisModule.connectUCMmap(tUCMmap, sUCMmap.paths);
 		
 		for(tContRef in tUCMmap.contRefs){
-			thisModule.processContRef(tContRef, tUCMmap.nodes); --iterate through them using node.succ.target until no more successors found (bc at end of a branch)
+			thisModule.initContRef(tContRef, tUCMmap.nodes); --iterate through them using node.succ.target until no more successors found (bc at end of a branch)
 		}
 	}
 }

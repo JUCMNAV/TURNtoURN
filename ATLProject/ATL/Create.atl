@@ -41,14 +41,99 @@ rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 	}
 }
 
+-- TODO: implement
+rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
+	using{
+		vPath : Sequence(Urn!PathNode) = Sequence{tStartNode};	
+	}
+	do{
+		vPath <- vPath.including(tEndNode);
+		--thisModule.debug(vPath);
+		
+		--vPath;
+		OclUndefined;
+	}
+}
+
+rule initContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
+	using{
+		tMetadata : Sequence(Urn!Metadata) = tContRef.metadata -> flatten();
+		tFrom : String = 
+			if tMetadata -> select(md|md.name='from') -> size() = 1 then
+				tMetadata -> select(md|md.name='from').first().value
+			else
+				''
+			endif;
+		tTo : String = 
+			if tMetadata -> select(md|md.name='to') -> size() = 1 then
+				tMetadata -> select(md|md.name='to').first().value
+			else
+				''
+			endif;
+		tFromExists : Boolean = 
+			(nodes -> select(n|n.name = tFrom) -> size() = 1)
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> isEmpty())
+			and not (tFrom = '');
+		tToExists : Boolean = 
+			(not nodes -> select(n|n.name = tTo) -> isEmpty())
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> isEmpty())
+			and not (tTo = '');
+		vStartNode : Urn!PathNode = OclUndefined;
+		vEndNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
+			vStartNode <- nodes -> any(n|n.name = tFrom);
+
+			if(vStartNode.oclIsUndefined()){
+				vStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
+			}
+			
+			vEndNode <- nodes -> any(n|n.name=tTo);
+			
+			if(vEndNode.oclIsUndefined()){
+				vEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tTo);
+			}
+			
+			tContRef.nodes <- thisModule.findPathBetweenNodes(vStartNode, vEndNode);	
+		}
+	}
+}
+
 rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWithConnect: Turn!EndpointWithConnect){
+	using{
+		tConnect : Urn!Connect = OclUndefined;	
+	}
 	do{
 		tEndPoint.name <- sEndpointWithConnect.regularEnd.turnGetLongestName();
 		tEndPoint.contRef <- thisModule.getUrnComponentRef(sEndpointWithConnect.regularEnd);
 		
 		if(not sEndpointWithConnect.regularEnd.condition.oclIsUndefined()){
 			tEndPoint.postcondition <- thisModule.createCondition(sEndpointWithConnect.regularEnd.condition.expression.asString());
-		}	
+		}
+		
+		if(not sEndpointWithConnect.connect.oclIsUndefined()){
+			tConnect <- thisModule.createConnect();
+			thisModule.connect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
+			thisModule.connect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
+		}
+	}
+}
+
+rule initStub(sStub: Turn!Stub){
+	using{
+		vPlugins : Sequence(Turn!Stub) = OclUndefined;
+		tStub : Urn!Stub = thisModule.retrieveNode(sStub);	
+	}
+	do{
+		if(not sStub.params.oclIsUndefined()){
+			vPlugins <- sStub.params.plugin;
+		}
+		else{
+			vPlugins <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs -> collect(s|s.params.plugin) -> flatten();
+		}
+		
+		tStub.bindings <- vPlugins -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));	
 	}
 }
 
