@@ -2,10 +2,77 @@ module Create;
 
 create OUT : Urn from IN : Turn;
 
--- Contains all rules used to instantiate model items in other parts of the code.
--- This is a good place to look for potential improvements as it may be possible to
--- make some of these into matched rules (either now, if I have missed something),
--- or in future versions of ATL.
+-- Contains initializers and all rules used to instantiate model items in other parts
+-- of the code. This is a good place to look for potential improvements as it may be
+-- possible to make some of these into matched rules (either now, if I have missed
+-- something, or in future versions of ATL).
+
+--------------1/2 INITIALIZERS-------------
+
+rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
+	using{
+		boundTerm : Turn!Binding = OclUndefined;
+		sStub : Turn!Stub = OclUndefined;
+		tStub: Urn!Stub = OclUndefined;
+	}
+	do{
+		if(not sBinding.binding.oclIsUndefined()){
+			boundTerm <- sBinding.binding;
+		}
+		else if(not sBinding.bindings.oclIsUndefined()){
+			boundTerm <- sBinding.bindings;
+		}
+		
+		if(not boundTerm.stubParam.stubDec.oclIsUndefined()){
+			sStub <- boundTerm.stubParam.stubDec.stub;
+		}
+		else if(not boundTerm.stubParam.stub.oclIsUndefined()){
+			sStub <- boundTerm.stubParam.stub;
+		}
+		
+		if(not sStub.oclIsUndefined() and not thisModule.retrieveNode(sStub).pred -> isEmpty()){
+			if(sBinding.oclIsTypeOf(Turn!InBinding)){
+				tBinding.stubEntry <- thisModule.retrieveNode(sStub).pred -> at(sBinding.index);
+			}
+			else if(sBinding.oclIsTypeOf(Turn!OutBinding)){
+				tBinding.stubExit <- thisModule.retrieveNode(sStub).succ -> at(sBinding.index);
+			}
+		}	
+	}
+}
+
+rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWithConnect: Turn!EndpointWithConnect){
+	do{
+		tEndPoint.name <- sEndpointWithConnect.regularEnd.turnGetLongestName();
+		tEndPoint.contRef <- thisModule.getUrnComponentRef(sEndpointWithConnect.regularEnd);
+		
+		if(not sEndpointWithConnect.regularEnd.condition.oclIsUndefined()){
+			tEndPoint.postcondition <- thisModule.createCondition(sEndpointWithConnect.regularEnd.condition.expression.asString());
+		}	
+	}
+}
+
+rule initTimer(sTimer: Turn!Timer){
+	using{
+		tTimer : Urn!Timer = thisModule.retrieveNode(sTimer);
+	}
+	do{
+		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
+		
+		if(not sTimer.timeoutPath.oclIsUndefined()){
+			thisModule.processPathBody(sTimer.timeoutPath);
+			thisModule.connectPathBody(sTimer.timeoutPath, tTimer);
+			
+			if(not sTimer.timeoutCondition.oclIsUndefined()){
+				tTimer.succ.last().condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
+			}
+		}
+		
+		tTimer;
+	}
+}
+
+-------------2/2 INSTANTIATORS-------------
 
 rule createAndJoin(){
 	to

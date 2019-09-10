@@ -16,7 +16,7 @@ uses Process;
 --	 4/5 MATCHED RULES WITHOUT DO BLOCKS
 --	 5/5 MATCHED RULES WITH DO BLOCKS
 
----------1/5 GLOBAL VARIABLES-----------------
+-------------1/5 GLOBAL VARIABLES-------------
 
 helper def: id : Integer = 0;
 
@@ -963,7 +963,7 @@ rule InBinding2InBinding{
 	to
 		tInBinding: Urn!InBinding
 	do{
-		thisModule.processBinding(sInBinding, tInBinding);
+		thisModule.initBinding(sInBinding, tInBinding);
 		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
 	}
 }
@@ -974,7 +974,7 @@ rule OutBinding2OutBinding{
 	to
 		tOutBinding: Urn!OutBinding
 	do{
-		thisModule.processBinding(sOutBinding, tOutBinding);
+		thisModule.initBinding(sOutBinding, tOutBinding);
 		tOutBinding.endPoint <- thisModule.retrieveNode(sOutBinding.mapEnd);
 	}
 }

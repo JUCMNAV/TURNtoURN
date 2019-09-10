@@ -52,7 +52,7 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 	do{
 		for(sCurrentNode in sPathNodes){
 			if(sCurrentNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.processTimer(sCurrentNode);
+				thisModule.initTimer(sCurrentNode);
 			}
 			
 			tNode <- thisModule.retrieveNode(sCurrentNode);

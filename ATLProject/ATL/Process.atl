@@ -7,59 +7,21 @@ create OUT : Urn from IN : Turn;
 -- to initialize the matched item. The second is in a called rule, to 
 -- initialize some object created during a different object's matching.
 
-rule processBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
+-- TODO: implement
+rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 	using{
-		boundTerm : Turn!Binding = OclUndefined;
-		sStub : Turn!Stub = OclUndefined;
-		tStub: Urn!Stub = OclUndefined;
+		vPath : Sequence(Urn!PathNode) = Sequence{tStartNode};	
 	}
 	do{
-		if(not sBinding.binding.oclIsUndefined()){
-			boundTerm <- sBinding.binding;
-		}
-		else if(not sBinding.bindings.oclIsUndefined()){
-			boundTerm <- sBinding.bindings;
-		}
+		vPath <- vPath.including(tEndNode);
+		--thisModule.debug(vPath);
 		
-		if(not boundTerm.stubParam.stubDec.oclIsUndefined()){
-			sStub <- boundTerm.stubParam.stubDec.stub;
-		}
-		else if(not boundTerm.stubParam.stub.oclIsUndefined()){
-			sStub <- boundTerm.stubParam.stub;
-		}
-		
-		if(not sStub.oclIsUndefined() and not thisModule.retrieveNode(sStub).pred -> isEmpty()){
-			if(sBinding.oclIsTypeOf(Turn!InBinding)){
-				tBinding.stubEntry <- thisModule.retrieveNode(sStub).pred -> at(sBinding.index);
-			}
-			else if(sBinding.oclIsTypeOf(Turn!OutBinding)){
-				tBinding.stubExit <- thisModule.retrieveNode(sStub).succ -> at(sBinding.index);
-			}
-		}	
+		--vPath;
+		OclUndefined;
 	}
 }
 
-rule processTimer(sTimer: Turn!Timer){
-	using{
-		tTimer : Urn!Timer = thisModule.retrieveNode(sTimer);
-	}
-	do{
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
-		
-		if(not sTimer.timeoutPath.oclIsUndefined()){
-			thisModule.processPathBody(sTimer.timeoutPath);
-			thisModule.connectPathBody(sTimer.timeoutPath, tTimer);
-			
-			if(not sTimer.timeoutCondition.oclIsUndefined()){
-				tTimer.succ.last().condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
-			}
-		}
-		
-		tTimer;
-	}
-}
-
-rule processAndFork(sAndFork: Turn!AndFork){
+rule connectAndFork(sAndFork: Turn!AndFork){
 	using{
 		tAndFork : Urn!AndFork = thisModule.retrieveNode(sAndFork);
 		tAndJoin : Urn!AndJoin = OclUndefined;
@@ -82,16 +44,86 @@ rule processAndFork(sAndFork: Turn!AndFork){
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
 			thisModule.processPathBody(sAndFork.connectingAndBody);
 			tPathEnd <- thisModule.connectPathBody(sAndFork.connectingAndBody, tAndJoin);
-		--	thisModule.debug(tPathEnd);
 		}
 		
-		tPathEnd;	
+		-- Return the final node in the AndFork path or the first node of the following path.
+		tPathEnd;
 	}
 }
 
-helper context Urn!PathNode def : isConnectedTo(tPathNode : Urn!PathNode) : Boolean =
-	not(self.succ -> any(n|n.target=tPathNode).oclIsUndefined());
+rule processContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
+	using{
+		tMetadata : Sequence(Urn!Metadata) = tContRef.metadata -> flatten();
+		tFrom : String = 
+			if tMetadata -> select(md|md.name='from') -> size() = 1 then
+				tMetadata -> select(md|md.name='from').first().value
+			else
+				''
+			endif;
+		tTo : String = 
+			if tMetadata -> select(md|md.name='to') -> size() = 1 then
+				tMetadata -> select(md|md.name='to').first().value
+			else
+				''
+			endif;
+		tFromExists : Boolean = 
+			(nodes -> select(n|n.name = tFrom) -> size() = 1)
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> isEmpty())
+			and not (tFrom = '');
+		tToExists : Boolean = 
+			(not nodes -> select(n|n.name = tTo) -> isEmpty())
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> isEmpty())
+			and not (tTo = '');
+		vStartNode : Urn!PathNode = OclUndefined;
+		vEndNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
+			vStartNode <- nodes -> any(n|n.name = tFrom);
 
+			if(vStartNode.oclIsUndefined()){
+				vStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
+			}
+			
+			vEndNode <- nodes -> any(n|n.name=tTo);
+			
+			if(vEndNode.oclIsUndefined()){
+				vEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tTo);
+			}
+			
+			tContRef.nodes <- thisModule.findPathBetweenNodes(vStartNode, vEndNode);	
+		}
+	}
+}
+
+rule connectEndpointWithConnect(sEndpointWithConnect: Turn!EndpointWithConnect){
+	using{
+		tConnect : Urn!Connect = OclUndefined;
+		tEndPoint : Urn!EndPoint = OclUndefined;
+	}
+	do{
+		if(sEndpointWithConnect.regularEnd.oclIsUndefined()){
+			tEndPoint <- thisModule.createEndPoint();
+		}
+		else if(thisModule.retrieveNode(sEndpointWithConnect.regularEnd).oclIsUndefined()){
+			tEndPoint <- thisModule.createEndPoint();
+			thisModule.initEndPointUsingEndpointWithConnect(tEndPoint, sEndpointWithConnect);
+		}
+		
+		if(not tEndPoint.oclIsUndefined()){
+			thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
+		}
+		
+		if(not sEndpointWithConnect.connect.oclIsUndefined()){
+			tConnect <- thisModule.createConnect();
+			thisModule.connect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
+			thisModule.connect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
+		}
+		
+		-- Return the Urn!EndPoint created using the Turn!EndpointWithConnect
+		tEndPoint;
+	}
+}
 
 rule processOrFork(sOrFork: Turn!OrFork){
 	using{
@@ -139,6 +171,54 @@ rule processOrFork(sOrFork: Turn!OrFork){
 		}
 		
 		tOrFork;	
+	}
+}
+
+
+rule processPathBody(sPathBody: Turn!PathNode){
+	using{
+		tPathEnd : Urn!PathEnd = OclUndefined;	
+	}
+	do{
+		thisModule.collectReferencedEnds(sPathBody.pathNodes);
+		
+		if(not sPathBody.pathEnd.oclIsUndefined()){
+			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				if(not sPathBody.pathEnd.regularEnd.oclIsUndefined()){
+					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+				}
+			}
+			else{
+				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+			}
+			
+			tPathEnd <- thisModule.processPathEnd(sPathBody.pathEnd);	
+		}
+		
+		tPathEnd;
+	}
+}
+
+
+rule processPathEnd(sPathEnd: Turn!PathBodyNode){
+	using{
+		tPathEnd : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
+			tPathEnd <- thisModule.connectAndFork(sPathEnd);
+		}
+		else if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+			tPathEnd <- thisModule.connectEndpointWithConnect(sPathEnd);
+		}
+		else if(sPathEnd.oclIsTypeOf(Turn!OrFork)){
+			tPathEnd <- thisModule.processOrFork(sPathEnd);
+		}
+		else if(sPathEnd.oclIsTypeOf(Turn!Stub)){
+			tPathEnd <- thisModule.processStub(sPathEnd);
+		}
+
+		tPathEnd;
 	}
 }
 
@@ -224,85 +304,6 @@ rule processStub(sStub: Turn!Stub){
 	}
 }
 
-rule processPathBody(sPathBody: Turn!PathNode){
-	using{
-		tPathEnd : Urn!PathEnd = OclUndefined;	
-	}
-	do{
-		thisModule.collectReferencedEnds(sPathBody.pathNodes);
-		
-		if(not sPathBody.pathEnd.oclIsUndefined()){
-			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				if(not sPathBody.pathEnd.regularEnd.oclIsUndefined()){
-					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
-				}
-			}
-			else{
-				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
-			}
-			
-			tPathEnd <- thisModule.processPathEnd(sPathBody.pathEnd);	
-		}
-		
-		tPathEnd;
-	}
-}
-
-rule processEndpointWithConnect(sEndpointWithConnect: Turn!EndpointWithConnect){
-	using{
-		tConnect : Urn!Connect = OclUndefined;
-		tEndPoint : Urn!EndPoint = OclUndefined;
-	}
-	do{
-		if(sEndpointWithConnect.regularEnd.oclIsUndefined()){
-			tEndPoint <- thisModule.createEndPoint();
-		}
-		else if(thisModule.retrieveNode(sEndpointWithConnect.regularEnd).oclIsUndefined()){
-			tEndPoint <- thisModule.createEndPoint();
-			tEndPoint.name <- sEndpointWithConnect.regularEnd.turnGetLongestName();
-			tEndPoint.contRef <- thisModule.getUrnComponentRef(sEndpointWithConnect.regularEnd);
-			
-			if(not sEndpointWithConnect.regularEnd.condition.oclIsUndefined()){
-				tEndPoint.postcondition <- thisModule.createCondition(sEndpointWithConnect.regularEnd.condition.expression.asString());
-			}
-		}
-		
-		if(not tEndPoint.oclIsUndefined()){
-			thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
-		}
-		
-		if(not sEndpointWithConnect.connect.oclIsUndefined()){
-			tConnect <- thisModule.createConnect();
-			thisModule.connect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
-			thisModule.connect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
-		}
-		
-		tEndPoint;
-	}
-}
-
-rule processPathEnd(sPathEnd: Turn!PathBodyNode){
-	using{
-		tPathEnd : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
-			tPathEnd <- thisModule.processAndFork(sPathEnd);
-		}
-		else if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			tPathEnd <- thisModule.processEndpointWithConnect(sPathEnd);
-		}
-		else if(sPathEnd.oclIsTypeOf(Turn!OrFork)){
-			tPathEnd <- thisModule.processOrFork(sPathEnd);
-		}
-		else if(sPathEnd.oclIsTypeOf(Turn!Stub)){
-			tPathEnd <- thisModule.processStub(sPathEnd);
-		}
-
-		tPathEnd;
-	}
-}
-
 rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	do{
 		thisModule.tUCMmap <- tUCMmap;
@@ -312,64 +313,5 @@ rule processUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 		}
 		
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();	
-	}
-}
-
-rule processContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
-	using{
-		tMetadata : Sequence(Urn!Metadata) = tContRef.metadata -> flatten();
-		tFrom : String = 
-			if tMetadata -> select(md|md.name='from') -> size() = 1 then
-				tMetadata -> select(md|md.name='from').first().value
-			else
-				''
-			endif;
-		tTo : String = 
-			if tMetadata -> select(md|md.name='to') -> size() = 1 then
-				tMetadata -> select(md|md.name='to').first().value
-			else
-				''
-			endif;
-		tFromExists : Boolean = 
-			(nodes -> select(n|n.name = tFrom) -> size() = 1)
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> isEmpty())
-			and not (tFrom = '');
-		tToExists : Boolean = 
-			(not nodes -> select(n|n.name = tTo) -> isEmpty())
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> isEmpty())
-			and not (tTo = '');
-		vStartNode : Urn!PathNode = OclUndefined;
-		vEndNode : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
-			vStartNode <- nodes -> any(n|n.name = tFrom);
-
-			if(vStartNode.oclIsUndefined()){
-				vStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
-			}
-			
-			vEndNode <- nodes -> any(n|n.name = tTo);
-			
-			if(vEndNode.oclIsUndefined()){
-				vEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tTo);
-			}
-			
-			tContRef.nodes <- thisModule.findPathBetweenNodes(vStartNode, vEndNode);	
-		}
-	}
-}
-
--- TODO: implement
-rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
-	using{
-		vPath : Sequence(Urn!PathNode) = Sequence{tStartNode};	
-	}
-	do{
-		vPath <- vPath.including(tEndNode);
-		--thisModule.debug(vPath);
-		
-		--vPath;
-		OclUndefined;
 	}
 }
