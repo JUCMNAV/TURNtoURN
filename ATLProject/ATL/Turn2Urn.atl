@@ -7,7 +7,6 @@ create OUT : Urn from IN : Turn;
 
 uses Connect;
 uses Create;
-uses Process;
 
 -- Contents:
 --	 1/5 GLOBAL VARIABLES
