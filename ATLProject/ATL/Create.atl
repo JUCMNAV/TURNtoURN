@@ -145,7 +145,8 @@ rule initTimer(sTimer: Turn!Timer){
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
 		
 		if(not sTimer.timeoutPath.oclIsUndefined()){
-			thisModule.processPathBody(sTimer.timeoutPath);
+			thisModule.collectPathBodyNodes(sTimer.timeoutPath);
+			thisModule.connectPathEnd(sTimer.timeoutPath.pathEnd);
 			thisModule.connectPathBody(sTimer.timeoutPath, tTimer);
 			
 			if(not sTimer.timeoutCondition.oclIsUndefined()){

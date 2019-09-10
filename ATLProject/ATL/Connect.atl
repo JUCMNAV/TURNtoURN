@@ -19,7 +19,8 @@ rule connectPath(sPath: Turn!Path){
 			tStartPoint <- thisModule.retrieveNode(sPath.startPoint);
 		}
 		
-		thisModule.processPathBody(sPath.pathBody);
+		thisModule.collectPathBodyNodes(sPath.pathBody);
+		thisModule.connectPathEnd(sPath.pathBody.pathEnd);
 		
 		if(sPath.pathBody.pathNodes -> isEmpty()){
 			thisModule.directConnect(tStartPoint, thisModule.getPathEnd(sPath.pathBody));
