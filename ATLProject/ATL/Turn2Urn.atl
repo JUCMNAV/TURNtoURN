@@ -128,17 +128,6 @@ rule newConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 }
 
-rule connectWithCondition(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, condition: String){
-	to
-		tNodeConnection: Urn!NodeConnection(
-			condition <- condition	
-		)
-	do{
-		tFromNode.succ <- tNodeConnection;
-		tToNode.pred <- tNodeConnection;
-	}
-}
-
 rule contributionNumberToKeyword(vQuantitativeContribution: Integer){
 	using{
 		vContribution :	String = OclUndefined;
