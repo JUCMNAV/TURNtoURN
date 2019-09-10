@@ -11,9 +11,7 @@ rule connectPath(sPath: Turn!Path){
 	using{
 		tStartPoint : Urn!StartPoint = OclUndefined;	
 	}
-	do{
-		thisModule.processPathBody(sPath.pathBody);
-			
+	do{	
 		if(sPath.startPoint.oclIsUndefined()){
 			tStartPoint <- thisModule.createStartPoint();
 		}
@@ -21,30 +19,23 @@ rule connectPath(sPath: Turn!Path){
 			tStartPoint <- thisModule.retrieveNode(sPath.startPoint);
 		}
 		
-		thisModule.connectPathBody(sPath.pathBody, tStartPoint);
+		thisModule.processPathBody(sPath.pathBody);
+		
+		if(sPath.pathBody.pathNodes -> isEmpty()){
+			thisModule.connect(tStartPoint, thisModule.getPathEnd(sPath.pathBody));
+		}
+		else{
+			thisModule.connectPathBody(sPath.pathBody, tStartPoint);
+		}
 	}
 }
 
 rule connectPathBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
-	do{
-		thisModule.connectBodyNodes(sPathBody.pathNodes, tPathStart);
-		
-		if(sPathBody.pathNodes -> isEmpty()){
-			thisModule.connect(tPathStart, thisModule.getPathEnd(sPathBody));
-		}
-		else{
-			thisModule.connectLastNodeToPathEnd(sPathBody, sPathBody.pathNodes.last());
-		}
-	}
-}
-
-rule newConnectPathBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
 	using{
 		tPathEnd : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		thisModule.processPathBody(sPathBody);
 		tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tPathStart);
 		tPathEnd <- thisModule.getPathEnd(sPathBody);
 		thisModule.newConnect(tLastNode, tPathEnd);
@@ -70,31 +61,5 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 		}
 		
 		tPreviousNode;
-	}
-}
-
-rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, sLastNode: Turn!PathNode){
-	using{
-		tLastNode : Urn!PathNode = thisModule.retrieveNode(sLastNode);
-		tOrJoin : Urn!OrJoin = OclUndefined;
-		tPathEnd : Urn!PathENd = OclUndefined;
-	}
-	do{
-		if(sLastNode.oclIsTypeOf(Turn!Connect)){
-			sLastNode <- sLastNode.connectsTo;
-			tLastNode <- thisModule.retrieveNode(sLastNode);
-		}
-		
-		tPathEnd <- thisModule.getPathEnd(sPathBody);
-		
-		if(sPathBody.meetsOrJoinConditions(tPathEnd)){
-			tOrJoin <- thisModule.createOrJoin();
-			thisModule.connect(tLastNode, tOrJoin);
-			thisModule.createNewConnection(tOrJoin);
-			tPathEnd.pred.first().target <- tOrJoin;
-			tLastNode <- tOrJoin;
-		}
-		
-		thisModule.connect(tLastNode, tPathEnd);
 	}
 }

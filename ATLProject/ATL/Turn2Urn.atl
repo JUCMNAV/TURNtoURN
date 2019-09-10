@@ -119,9 +119,10 @@ rule newConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 				tToNode <- tOrJoin;
 			}
 			
-			if(tFromNode.nextFreeConnection().oclIsUndefined()){
+			if(tFromNode.nextFreeConnection().oclIsUndefined() and tFromNode.succ -> any(c|c.target=tToNode).oclIsUndefined()){
 				thisModule.createNewConnection(tFromNode);
 			}
+			
 			
 			thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
 		}
