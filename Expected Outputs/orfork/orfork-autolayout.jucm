@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:ucm.map="http:///ucm/map.ecore" xmlns:urn="http:///urn.ecore" name="OrForkTest" created="June 23, 2018 4:16:26 PM EDT" modified="September 10, 2019 12:07:00 AM EDT" specVersion="6" urnVersion="1.27" nextGlobalID="247">
+<urn:URNspec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grl="http:///grl.ecore" xmlns:ucm.map="http:///ucm/map.ecore" xmlns:urn="http:///urn.ecore" name="OrForkTest" created="June 23, 2018 4:16:26 PM EDT" modified="March 11, 2019 3:25:05 PM EDT" specVersion="4" urnVersion="1.27" nextGlobalID="247">
   <ucmspec/>
   <grlspec/>
   <urndef>
     <responsibilities name="r1" id="1" respRefs="2 3 4 5"/>
     <specDiagrams xsi:type="grl:GRLGraph" name="GRLGraph11" id="214"/>
     <specDiagrams xsi:type="ucm.map:UCMmap" name="OrForkTestEndPoint" id="62">
-      <nodes xsi:type="ucm.map:StartPoint" name="s" id="11" x="175" y="-153" succ="//@urndef/@specDiagrams.1/@connections.0">
+      <nodes xsi:type="ucm.map:StartPoint" name="s" id="11" x="108" y="-41" succ="//@urndef/@specDiagrams.1/@connections.0">
         <label/>
       </nodes>
-      <nodes xsi:type="ucm.map:OrFork" name="OrFork59" id="59" x="175" y="-85" succ="//@urndef/@specDiagrams.1/@connections.1 //@urndef/@specDiagrams.1/@connections.2" pred="//@urndef/@specDiagrams.1/@connections.0"/>
-      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint60" id="60" x="108" y="-16" pred="//@urndef/@specDiagrams.1/@connections.2">
+      <nodes xsi:type="ucm.map:OrFork" name="OrFork59" id="59" x="260" y="-41" succ="//@urndef/@specDiagrams.1/@connections.1 //@urndef/@specDiagrams.1/@connections.2" pred="//@urndef/@specDiagrams.1/@connections.0"/>
+      <nodes xsi:type="ucm.map:EndPoint" name="EndPoint60" id="60" x="412" y="-67" pred="//@urndef/@specDiagrams.1/@connections.2">
         <label/>
       </nodes>
-      <nodes xsi:type="ucm.map:EndPoint" name="e" id="61" x="242" y="-16" pred="//@urndef/@specDiagrams.1/@connections.1">
+      <nodes xsi:type="ucm.map:EndPoint" name="e" id="61" x="412" y="-16" pred="//@urndef/@specDiagrams.1/@connections.1">
         <label/>
       </nodes>
       <connections xsi:type="ucm.map:NodeConnection" source="11" target="59"/>
@@ -228,7 +228,7 @@
       <connections xsi:type="ucm.map:NodeConnection" source="21" target="95"/>
       <connections xsi:type="ucm.map:NodeConnection" source="22" target="57"/>
       <connections xsi:type="ucm.map:NodeConnection" source="95" target="57">
-        <condition deltaX="173" deltaY="-9" label="condition" expression="condition"/>
+        <condition deltaX="-84" deltaY="6" label="condition" expression="condition"/>
       </connections>
       <connections xsi:type="ucm.map:NodeConnection" source="95" target="96">
         <condition deltaX="110" deltaY="31" label="!condition" expression="!condition"/>
