@@ -7,7 +7,6 @@ create OUT : Urn from IN : Turn;
 -- rules in the "Process.atl" file. Ideally, this behavior should
 -- be limited to only rules in this file.
 
-
 rule connectPath(sPath: Turn!Path){
 	using{
 		tStartPoint : Urn!StartPoint = OclUndefined;	
@@ -22,12 +21,8 @@ rule connectPath(sPath: Turn!Path){
 			tStartPoint <- thisModule.retrieveNode(sPath.startPoint);
 		}
 		
-		if(sPath.pathBody.pathNodes -> isEmpty()){
-			thisModule.connectStartPointToPathEnd(sPath.startPoint, tStartPoint, thisModule.getPathEnd(sPath.pathBody));
-		}
-		else{
-			thisModule.connectPathBody(sPath.pathBody, tStartPoint);
-		}	
+		
+		thisModule.connectPathBody(sPath.pathBody, tStartPoint);
 	}
 }
 
@@ -79,18 +74,6 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 	}
 }
 
-rule connectStartPointToPathEnd(sStartPoint: Turn!StartPoint, tStartPoint: Urn!StartPoint, tPathEnd: Urn!PathNode){
-	do{
-		if(not sStartPoint.oclIsUndefined()){
-			if(not sStartPoint.connect.oclIsUndefined() and not thisModule.emptyPointMap.get(sStartPoint).oclIsUndefined()){
-				tStartPoint <- thisModule.emptyPointMap.get(sStartPoint);
-			}
-		}
-
-		thisModule.connect(tStartPoint, tPathEnd);
-	}
-}
-
 rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, sLastNode: Turn!PathNode){
 	using{
 		tLastNode : Urn!PathNode = thisModule.retrieveNode(sLastNode);
@@ -113,27 +96,6 @@ rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, sLastNode: Turn!PathNode
 			tLastNode <- tOrJoin;
 		}
 		
-		if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(thisModule.getPathEnd(sPathBody).succ -> isEmpty()){
-				if(not thisModule.emptyPointMap.get(sPathBody.pathNodes.first()).oclIsUndefined()){
-					tLastNode <- thisModule.emptyPointMap.get(sPathBody.pathNodes.first());
-				}
-			}
-		}
-		
 		thisModule.connect(tLastNode, tPathEnd);
-	}
-}
-
-rule connectWithEmptyPoint(tCurrentNode: Urn!PathNode, nextNode: Urn!PathNode){
-	using{
-		vEmptyPoint : Urn!EmptyPoint = OclUndefined;
-	}
-	do{
-		vEmptyPoint <- thisModule.createEmptyPoint();
-		thisModule.connect(tCurrentNode, vEmptyPoint);  -- currentNode -> vEmptyPoint
-		thisModule.connect(tCurrentNode, nextNode);     -- currentNode -> nextNode
-		thisModule.connect(vEmptyPoint, nextNode);      -- vEmptyPoint -> nextNode
-		vEmptyPoint;
 	}
 }

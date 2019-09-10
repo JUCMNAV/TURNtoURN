@@ -47,6 +47,7 @@ rule processEndPoint(sEndPoint: Turn!EndPoint, tEndPoint: Turn!EndPoint){
 		if(not sEndPoint.condition.oclIsUndefined()){
 			tEndPoint.postcondition <- thisModule.createCondition(sEndPoint.condition.expression.asString());
 		}
+		
 		tEndPoint.name <- sEndPoint.turnGetLongestName();
 		
 		thisModule.endPointMap <- thisModule.endPointMap.including(sEndPoint, tEndPoint);
@@ -63,15 +64,10 @@ rule processTimer(sTimer: Turn!Timer){
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
 		
 		if(not sTimer.timeoutPath.oclIsUndefined()){
-			thisModule.createNewConnection(tTimer);
-			thisModule.processPathBody(sTimer.timeoutPath);
+			thisModule.newConnectPathBody(sTimer.timeoutPath, tTimer);
 			
 			if(not sTimer.timeoutCondition.oclIsUndefined()){
-				tTimer.succ -> at(2).condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
-			}
-			
-			if(sTimer.timeoutPath.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				thisModule.useConnection(thisModule.getPathEnd(sTimer.timeoutPath), tTimer.succ -> at(2));
+				tTimer.succ.last().condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
 			}
 		}
 		
