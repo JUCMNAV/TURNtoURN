@@ -44,6 +44,20 @@ rule connectPathBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
 	}
 }
 
+rule connectBody(sPathBody: Turn!PathBody, tPathStart: Urn!PathNode){
+	using{
+		tPathEnd : Urn!PathNode = OclUndefined;
+		tLastNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		thisModule.processPathBody(sPathBody);
+		tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tPathStart);
+		tPathEnd <- thisModule.getPathEnd(sPathBody);
+		thisModule.connect(tLastNode, tPathEnd);
+		tPathEnd;
+	}
+}
+
 rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!PathNode){
 	using{
 		tNode : Urn!PathNode = OclUndefined;

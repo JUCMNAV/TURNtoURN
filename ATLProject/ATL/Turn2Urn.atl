@@ -87,6 +87,9 @@ rule useConnection(tToNode: Urn!PathNode, predecessor: Sequence(Urn!NodeConnecti
 		else{
 			tToNode.pred <- tToNode.pred.including(predecessor);	
 		}
+		
+		-- Return the new connection
+		tToNode.pred -> last();
 	}
 }
 
@@ -199,6 +202,9 @@ rule getPathEnd(sPathBody: Turn!PathBody){
 		}
 		else if(not sPathBody.referencedStub.oclIsUndefined()){
 			vNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedStub);
+		}
+		else{
+			vNodeToConnect <- thisModule.createEmptyPoint();
 		}
 		
 		vNodeToConnect;
