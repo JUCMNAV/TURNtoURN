@@ -10,17 +10,27 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 	using{
 		tAndFork : Urn!AndFork = thisModule.retrieveNode(sAndFork);
 		tAndJoin : Urn!AndJoin = OclUndefined;
-		tPathEnd : Urn!PathBodyNode = OclUndefined;
+		tPathEnd : Urn!PathNode = OclUndefined;
+		tLastNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
 			tAndJoin <- thisModule.createAndJoin();
 		}
 		
-		for(pathbody in sAndFork.pathbody){
-			tPathEnd <- thisModule.connectPathBody(pathbody, tAndFork);
+		for(pathbody in sAndFork.pathbody){			
+			thisModule.collectPathBodyNodes(pathbody);
+			tPathEnd <- thisModule.connectPathEnd(pathbody.pathEnd);
+			
+			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
+				thisModule.connect(tPathEnd, tAndJoin);
+			}
+			
+			tLastNode <- thisModule.connectBodyNodes(pathbody.pathNodes, tAndFork);
+			tPathEnd <- thisModule.getPathEnd(pathbody);
+			thisModule.connect(tLastNode, tPathEnd);
 
-			if(not sAndFork.connectingAndBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
 				thisModule.connect(tPathEnd, tAndJoin);
 			}
 		}
@@ -84,7 +94,7 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 		tOrFork : Urn!OrFork = thisModule.retrieveNode(sOrFork);
 		tOrJoin : Urn!OrJoin = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
-
+		tLastNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(not sOrFork.connectingOrBody.oclIsUndefined()){
@@ -93,10 +103,19 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 		
 		if(not sOrFork.body.oclIsUndefined()){
 			for(regularOrFork in sOrFork.body.regularBody){
-				tPathEnd <- thisModule.connectPathBody(regularOrFork.pathBody, tOrFork);
+				thisModule.collectPathBodyNodes(regularOrFork.pathBody);
+				tPathEnd <- thisModule.connectPathEnd(regularOrFork.pathBody.pathEnd);
+				
+				if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
+					thisModule.connect(tPathEnd, tOrJoin);
+				}
+				
+				tLastNode <- thisModule.connectBodyNodes(regularOrFork.pathBody.pathNodes, tOrFork);
+				tPathEnd <- thisModule.getPathEnd(regularOrFork.pathBody);
+				thisModule.connect(tLastNode, tPathEnd);
 				tOrFork.succ.last().condition <- thisModule.resolveTemp(regularOrFork.condition, 'tCondition');
 	
-				if(not sOrFork.connectingOrBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+				if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
 					thisModule.connect(tPathEnd, tOrJoin);
 				}
 			}
@@ -105,7 +124,7 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 				tPathEnd <- thisModule.connectPathBody(sOrFork.body.elseBody, tOrFork);
 				tOrFork.succ.last().condition <- thisModule.createCondition('else');
 	
-				if(not sOrFork.connectingOrBody.oclIsUndefined() and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+				if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
 					thisModule.connect(tPathEnd, tOrJoin);
 				}
 			}
@@ -161,7 +180,7 @@ rule connectPathEnd(sPathEnd: Turn!PathBodyNode){
 		else{
 			-- PathEnd is undefined
 		}
-		
+
 		tPathEnd;
 	}
 }
