@@ -122,18 +122,18 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 
 rule initStub(sStub: Turn!Stub){
 	using{
-		vPlugins : Sequence(Turn!Stub) = OclUndefined;
+		tPlugins : Sequence(Turn!Stub) = OclUndefined;
 		tStub : Urn!Stub = thisModule.retrieveNode(sStub);	
 	}
 	do{
 		if(not sStub.params.oclIsUndefined()){
-			vPlugins <- sStub.params.plugin;
+			tPlugins <- sStub.params.plugin;
 		}
 		else{
-			vPlugins <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs -> collect(s|s.params.plugin) -> flatten();
+			tPlugins <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs -> collect(s|s.params.plugin) -> flatten();
 		}
 		
-		tStub.bindings <- vPlugins -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));	
+		tStub.bindings <- tPlugins -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));	
 	}
 }
 

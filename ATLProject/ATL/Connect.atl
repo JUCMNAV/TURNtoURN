@@ -29,7 +29,7 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 			tLastNode <- thisModule.connectBodyNodes(pathbody.pathNodes, tAndFork);
 			tPathEnd <- thisModule.getPathEnd(pathbody);
 			thisModule.connect(tLastNode, tPathEnd);
-
+			
 			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
 				thisModule.connect(tPathEnd, tAndJoin);
 			}

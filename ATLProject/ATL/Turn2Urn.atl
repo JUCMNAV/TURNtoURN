@@ -198,23 +198,23 @@ rule getUrnComponentRef(sObject: OclAny){
 
 rule getPathEnd(sPathBody: Turn!PathBody){
 	using{
-		vNodeToConnect : Urn!PathNode = OclUndefined;
+		tNodeToConnect : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(not sPathBody.pathEnd.oclIsUndefined()){
-			vNodeToConnect <- thisModule.retrieveNode(sPathBody.pathEnd);	
+			tNodeToConnect <- thisModule.retrieveNode(sPathBody.pathEnd);	
 		}
 		else if(not sPathBody.referencedEnd.oclIsUndefined()){
-			vNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedEnd);
+			tNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedEnd);
 		}
 		else if(not sPathBody.referencedStub.oclIsUndefined()){
-			vNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedStub);
+			tNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedStub);
 		}
 		else{
-			vNodeToConnect <- thisModule.createEmptyPoint();
+			tNodeToConnect <- thisModule.createEmptyPoint();
 		}
 		
-		vNodeToConnect;
+		tNodeToConnect;
 	}
 }
 
