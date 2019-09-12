@@ -11,33 +11,40 @@ create OUT : Urn from IN : Turn;
 
 rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 	using{
-		boundTerm : Turn!Binding = OclUndefined;
-		sStub : Turn!Stub = OclUndefined;
-		tStub: Urn!Stub = OclUndefined;
+		sBoundTerm : Turn!Binding =
+			if(sBinding.bindings.oclIsUndefined()) then
+				sBinding.binding
+			else
+				sBinding.bindings
+			endif;
+		tStub : Urn!Stub = 
+			if(not sBoundTerm.stubParam.stub.oclIsUndefined()) then
+				thisModule.retrieveNode(sBoundTerm.stubParam.stub)
+			else
+				thisModule.retrieveNode(sBoundTerm.stubParam.stubDec.stub)
+			endif;	
 	}
 	do{
-		if(not sBinding.binding.oclIsUndefined()){
-			boundTerm <- sBinding.binding;
+		if(sBinding.oclIsTypeOf(Turn!InBinding)){
+			thisModule.initInBinding(sBinding, tBinding, tStub);
 		}
-		else if(not sBinding.bindings.oclIsUndefined()){
-			boundTerm <- sBinding.bindings;
+		else{
+			thisModule.initOutBinding(sBinding, tBinding, tStub);
 		}
-		
-		if(not boundTerm.stubParam.stubDec.oclIsUndefined()){
-			sStub <- boundTerm.stubParam.stubDec.stub;
-		}
-		else if(not boundTerm.stubParam.stub.oclIsUndefined()){
-			sStub <- boundTerm.stubParam.stub;
-		}
-		
-		if(not sStub.oclIsUndefined() and not thisModule.retrieveNode(sStub).pred -> isEmpty()){
-			if(sBinding.oclIsTypeOf(Turn!InBinding)){
-				tBinding.stubEntry <- thisModule.retrieveNode(sStub).pred -> at(sBinding.index);
-			}
-			else if(sBinding.oclIsTypeOf(Turn!OutBinding)){
-				tBinding.stubExit <- thisModule.retrieveNode(sStub).succ -> at(sBinding.index);
-			}
-		}	
+	}
+}
+
+rule initInBinding(sInBinding: Turn!InBinding, tInBinding: Urn!InBinding, tStub: Urn!Stub){
+	do{
+		tInBinding.stubEntry <- tStub.pred -> at(sInBinding.index);
+		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
+	}
+}
+
+rule initOutBinding(sOutBinding: Turn!OutBinding, tOutBinding: Urn!OutBinding, tStub: Urn!Stub){
+	do{
+		tOutBinding.stubExit <- tStub.succ -> at(sOutBinding.index);
+		tOutBinding.endPoint <- thisModule.retrieveNode(sOutBinding.mapEnd);
 	}
 }
 

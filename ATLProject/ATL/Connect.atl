@@ -29,7 +29,7 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 			tLastNode <- thisModule.connectBodyNodes(pathbody.pathNodes, tAndFork);
 			tPathEnd <- thisModule.getPathEnd(pathbody);
 			thisModule.connect(tLastNode, tPathEnd);
-			
+
 			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
 				thisModule.connect(tPathEnd, tAndJoin);
 			}
@@ -188,76 +188,51 @@ rule connectPathEnd(sPathEnd: Turn!PathBodyNode){
 rule connectStub(sStub: Turn!Stub){
 	using{
 		tStub : Urn!Stub = thisModule.retrieveNode(sStub);
-		tNextNode : Urn!PathNode = OclUndefined;
-		tNextPred :  Urn!NodeConnection = OclUndefined;
 		tOutPaths : Sequence(Urn!StubOutPath) = OclUndefined;
-		tPathEnd : Urn!PathNode = OclUndefined;
 		tOrJoin : Urn!OrJoin = OclUndefined;
+		tPathEnd : Urn!PathNode = OclUndefined;
+		tLastNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		thisModule.initStub(sStub);
 		
-		for(outPath in sStub.outPaths){
-			thisModule.createNewConnection(tStub);
-			
-			if(outPath.threshold <> 0){
-				tStub.nextFreeConnection().threshold <- outPath.threshold.toString();
-			}
-			
-			if(outPath.path.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				thisModule.connectPathBody(outPath.path, tStub);
-			}
-		}
-		
-		--collecting nodes from connecting stub body
 		if(not sStub.connectingStubBody.oclIsUndefined()){
-			thisModule.collectPathBodyNodes(sStub.connectingStubBody);
-			thisModule.connectPathEnd(sStub.connectingStubBody.pathEnd);
-			
-			tOutPaths <- sStub.outPaths -> select(op|op.path.pathEnd.oclIsUndefined());
-			tNextNode <- tStub;
-			
-			if(sStub.outPaths -> isEmpty()){
-			--	thisModule.createNewConnection(tStub);
-			}
-			else if(tOutPaths -> size() = 1){
-				if(not sStub.connectingStubBody.pathNodes.first().oclIsUndefined()){
-					tNextNode <- thisModule.retrieveNode(sStub.connectingStubBody.pathNodes.first());
-				}
-			}
-			else if(tOutPaths -> size() >= 2){ -- handle connecting OutPaths
-				tOrJoin <- thisModule.createOrJoin();
-				thisModule.createNewConnection(tOrJoin);
-				thisModule.useConnection(tOrJoin, tStub.succ -> at(tOutPaths -> collect(op|op.index) -> at(1)));
-				thisModule.useConnection(tOrJoin, tStub.succ -> at(tOutPaths -> collect(op|op.index) -> at(2)));
-				tNextNode <- tOrJoin;
-			}
-			
-			if(sStub.connectingStubBody.pathNodes -> isEmpty()){
-				tPathEnd <- thisModule.getPathEnd(sStub.connectingStubBody);
-				
-				if(tOutPaths -> size() = 1){
-					tNextPred <- tNextNode.succ -> at(tOutPaths.first().index);
-				}
-				else{
-					tNextPred <- tNextNode.nextFreeConnection();
-				}
-				
-				if(sStub.connectingStubBody.meetsOrJoinConditions(tPathEnd)){
-					tOrJoin <- thisModule.createOrJoin();
-					thisModule.connect(tStub, tOrJoin);
-					thisModule.useConnection(tOrJoin, tNextPred);
-					thisModule.useConnection(tOrJoin, tPathEnd.pred.first().source.succ);
-					tNextNode <- tOrJoin;
-				}
-			}
-			
-			tNextNode <- thisModule.connectBodyNodes(sStub.connectingStubBody.pathNodes, tNextNode);
-			tPathEnd <- thisModule.getPathEnd(sStub.connectingStubBody);
-			thisModule.connect(tNextNode, tPathEnd);
+			tOrJoin <- thisModule.createOrJoin();
 		}
 		
-		tPathEnd;
+		for(sOutPath in sStub.outPaths){
+			thisModule.collectPathBodyNodes(sOutPath.path);
+			tPathEnd <- thisModule.connectPathEnd(sOutPath.path.pathEnd);
+			
+			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
+				thisModule.connect(tPathEnd, tOrJoin);
+			}
+			
+			tLastNode <- thisModule.connectBodyNodes(sOutPath.path.pathNodes, tStub);
+			tPathEnd <- thisModule.getPathEnd(sOutPath.path);
+			thisModule.connect(tLastNode, tPathEnd);
+			
+			if(sOutPath.threshold <> 0){
+				tStub.succ.last().threshold <- sOutPath.threshold.toString();
+			}
+			
+			if(not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+				thisModule.connect(tPathEnd, tOrJoin);
+			}
+		}
+
+		if(not sStub.connectingStubBody.oclIsUndefined()){
+			if(sStub.outPaths -> isEmpty()){
+				tLastNode <- thisModule.createEmptyPoint();
+				thisModule.connect(tStub, tLastNode);
+				thisModule.connect(tLastNode, tOrJoin);
+			}
+			
+			tPathEnd <- thisModule.connectPathBody(sStub.connectingStubBody, tOrJoin);
+		}
+		
+		-- Return the final node in the OrFork path or the first node of the following path.
+		tPathEnd;	
 	}
 }
 

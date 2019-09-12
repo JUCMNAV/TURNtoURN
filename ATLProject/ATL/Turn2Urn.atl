@@ -980,7 +980,6 @@ rule InBinding2InBinding{
 		tInBinding: Urn!InBinding
 	do{
 		thisModule.initBinding(sInBinding, tInBinding);
-		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
 	}
 }
 
@@ -991,7 +990,6 @@ rule OutBinding2OutBinding{
 		tOutBinding: Urn!OutBinding
 	do{
 		thisModule.initBinding(sOutBinding, tOutBinding);
-		tOutBinding.endPoint <- thisModule.retrieveNode(sOutBinding.mapEnd);
 	}
 }
 
