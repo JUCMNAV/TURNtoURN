@@ -10,6 +10,8 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 	using{
 		tAndFork : Urn!AndFork = thisModule.retrieveNode(sAndFork);
 		tAndJoin : Urn!AndJoin = OclUndefined;
+		tOrJoin : Urn!OrJoin = OclUndefined;
+		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
 	}
@@ -28,6 +30,21 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 			
 			tLastNode <- thisModule.connectBodyNodes(pathbody.pathNodes, tAndFork);
 			tPathEnd <- thisModule.getPathEnd(pathbody);
+			
+			if(not tLastNode.succ -> any(s|s.target=tPathEnd).oclIsUndefined()){
+				tOrJoin <- thisModule.createOrJoin();
+				
+				tEmptyPoint <- thisModule.createEmptyPoint();
+				tLastNode.succ -> any(s|s.target=tPathEnd).target <- tEmptyPoint;
+				thisModule.directConnect(tEmptyPoint, tOrJoin);
+				
+				tEmptyPoint <- thisModule.createEmptyPoint();
+				thisModule.directConnect(tLastNode, tEmptyPoint);
+				thisModule.directConnect(tEmptyPoint, tOrJoin);
+				
+				tLastNode <- tOrJoin;
+			}
+			
 			thisModule.connect(tLastNode, tPathEnd);
 
 			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
@@ -93,6 +110,8 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 	using{
 		tOrFork : Urn!OrFork = thisModule.retrieveNode(sOrFork);
 		tOrJoin : Urn!OrJoin = OclUndefined;
+		tSecondOrJoin : Urn!OrJoin = OclUndefined;
+		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
 	}
@@ -112,7 +131,23 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 				
 				tLastNode <- thisModule.connectBodyNodes(regularOrFork.pathBody.pathNodes, tOrFork);
 				tPathEnd <- thisModule.getPathEnd(regularOrFork.pathBody);
+				
+				if(not tLastNode.succ -> any(s|s.target=tPathEnd).oclIsUndefined()){
+					tSecondOrJoin <- thisModule.createOrJoin();
+					
+					tEmptyPoint <- thisModule.createEmptyPoint();
+					tLastNode.succ -> any(s|s.target=tPathEnd).target <- tEmptyPoint;
+					thisModule.directConnect(tEmptyPoint, tSecondOrJoin);
+					
+					tEmptyPoint <- thisModule.createEmptyPoint();
+					thisModule.directConnect(tLastNode, tEmptyPoint);
+					thisModule.directConnect(tEmptyPoint, tSecondOrJoin);
+					
+					tLastNode <- tSecondOrJoin;
+				}
+
 				thisModule.connect(tLastNode, tPathEnd);
+					
 				tOrFork.succ.last().condition <- thisModule.resolveTemp(regularOrFork.condition, 'tCondition');
 	
 				if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
