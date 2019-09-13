@@ -168,21 +168,8 @@ rule doConnect(sPathBodies : Sequence(Urn!PathBody), tStartNode : Urn!PathNode, 
 			
 			tPathEnd <- thisModule.getPathEnd(sPathBody);
 			
-			if(sPathBody.pathNodes -> isEmpty() and not tStartNode.succ -> any(s|s.target=tPathEnd).oclIsUndefined()){
-				tOrJoin <- thisModule.createOrJoin();
-				
-				tEmptyPoint <- thisModule.createEmptyPoint();
-				tStartNode.succ -> any(s|s.target=tPathEnd).target <- tEmptyPoint;
-				thisModule.directConnect(tEmptyPoint, tOrJoin);
-				
-				tEmptyPoint <- thisModule.createEmptyPoint();
-				thisModule.directConnect(tStartNode, tEmptyPoint);
-				thisModule.directConnect(tEmptyPoint, tOrJoin);
-				
-				tLastNode <- tOrJoin;
-			}
-
 			thisModule.connect(tLastNode, tPathEnd);
+
 			
 			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
 				thisModule.connect(tPathEnd, tEnd);
