@@ -114,7 +114,6 @@ rule connectStub(sStub: Turn!Stub){
 		tStub : Urn!Stub = thisModule.retrieveNode(sStub);
 		tOrJoin : Urn!OrJoin = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
-		tLastNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		thisModule.initStub(sStub);
@@ -141,10 +140,7 @@ rule connectStub(sStub: Turn!Stub){
 rule doConnect(sPathBodies : Sequence(Urn!PathBody), tStartNode : Urn!PathNode, tEnd : Urn!OrJoin){
 	using{
 		tPathEnd : Urn!PathNode = OclUndefined;
-		tOrJoin : Urn!OrJoin = OclUndefined;
-		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
-		tNodeConnection : Urn!NodeConnection = OclUndefined;
 	}
 	do{
 		if(sPathBodies -> isEmpty()){

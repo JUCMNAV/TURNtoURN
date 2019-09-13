@@ -21,7 +21,7 @@ helper def: id : Integer = 0;
 
 helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
 
-helper def: stubIndexMap : Map(Turn!Connect, Urn!EmptyPoint) = Map{};
+helper def: stubIndexMap : Map(Integer, Sequence(Urn!PathNode)) = Map{};
 
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
 
