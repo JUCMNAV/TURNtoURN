@@ -21,7 +21,7 @@ helper def: id : Integer = 0;
 
 helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
 
-helper def: emptyPointMap : Map(Turn!Connect, Urn!EmptyPoint) = Map{};
+helper def: stubIndexMap : Map(Turn!Connect, Urn!EmptyPoint) = Map{};
 
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
 
@@ -99,6 +99,7 @@ rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 				thisModule.createNewConnection(tFromNode);
 			}
 			
+			thisModule.tUCMmap.connections <- thisModule.tUCMmap.connections.including(tFromNode.nextFreeConnection());
 			thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
 		}
 	}

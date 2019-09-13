@@ -78,7 +78,6 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 		tOrFork : Urn!OrFork = thisModule.retrieveNode(sOrFork);
 		tOrJoin : Urn!OrJoin = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
-		vCounter : Integer = 1;
 	}
 	do{
 		if(not sOrFork.connectingOrBody.oclIsUndefined()){
@@ -88,14 +87,8 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 		if(not sOrFork.body.oclIsUndefined()){
 			thisModule.doConnect(sOrFork.body.regularBody -> collect(rb|rb.pathBody), tOrFork, tOrJoin);
 			
-			for(regularOrFork in sOrFork.body.regularBody){
-				tOrFork.succ -> at(vCounter).condition <- thisModule.resolveTemp(regularOrFork.condition, 'tCondition');
-				vCounter <- vCounter + 1;
-			}
-			
 			if(not sOrFork.body.elseBody.oclIsUndefined()){
 				thisModule.doConnect(Sequence { sOrFork.body.elseBody }, tOrFork, tOrJoin);
-				tOrFork.succ.last().condition <- thisModule.createCondition('else');
 			}
 		}
 		
@@ -114,7 +107,6 @@ rule connectStub(sStub: Turn!Stub){
 		tOrJoin : Urn!OrJoin = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
-		vCounter : Integer = 1;
 	}
 	do{
 		thisModule.initStub(sStub);
@@ -124,14 +116,6 @@ rule connectStub(sStub: Turn!Stub){
 		}
 		
 		thisModule.doConnect(sStub.outPaths -> collect(op|op.path), tStub, tOrJoin);
-		
-		for(sOutPath in sStub.outPaths){
-			if(sOutPath.threshold <> 0){
-				tStub.succ.last().threshold <- sOutPath.threshold.toString();
-			}
-			
-			vCounter <- vCounter + 1;
-		}
 
 		if(not sStub.connectingStubBody.oclIsUndefined()){
 			if(sStub.outPaths -> isEmpty()){
@@ -141,7 +125,6 @@ rule connectStub(sStub: Turn!Stub){
 			}
 			
 			tPathEnd <- thisModule.doConnect(Sequence { sStub.connectingStubBody }, tOrJoin, OclUndefined);
-			thisModule.debug(tPathEnd);
 		}
 		
 		-- Return the final node in the OrFork path or the first node of the following path.
@@ -155,6 +138,7 @@ rule doConnect(sPathBodies : Sequence(Urn!PathBody), tStartNode : Urn!PathNode, 
 		tOrJoin : Urn!OrJoin = OclUndefined;
 		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
+		tNodeConnection : Urn!NodeConnection = OclUndefined;
 	}
 	do{
 		for(sPathBody in sPathBodies){
@@ -168,8 +152,13 @@ rule doConnect(sPathBodies : Sequence(Urn!PathBody), tStartNode : Urn!PathNode, 
 			}
 			
 			tPathEnd <- thisModule.getPathEnd(sPathBody);
-
-			thisModule.connect(tLastNode, tPathEnd);
+			
+			if(sPathBody.index > tPathEnd.pred -> size()){
+				thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
+			}
+			else{
+				thisModule.connect(tLastNode, tPathEnd);
+			}
 			
 			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
 				thisModule.connect(tPathEnd, tEnd);
@@ -205,9 +194,91 @@ rule connectPathEnd(sPathEnd: Turn!PathBodyNode){
 	}
 }
 
+-- Connects paths for all the stubs with indeces. These are added to stubIndexMap at an earlier
+-- stage of the code and left there to be considered last.
+rule connectPathBodiesWithIndexes(){
+	using{
+		tStub : Urn!Stub = OclUndefined;
+		tLastNode : Urn!PathNode = OclUndefined;
+		tOrJoin : Urn!OrJoin = OclUndefined;
+	}
+	do{
+		for(vIndex in thisModule.stubIndexMap.keySet()){
+			tLastNode <- thisModule.stubIndexMap.get(vIndex).first();
+			tStub <- thisModule.stubIndexMap.get(vIndex).last();
+
+			if(vIndex <= tStub.pred -> size()){
+				tOrJoin <- thisModule.createOrJoin();
+				tStub.pred -> at(vIndex).target <- tOrJoin; --TODO: iterate over all of the pred
+				thisModule.directConnect(tLastNode, tOrJoin);
+				thisModule.directConnect(tOrJoin, tStub);
+			}
+			else{
+				thisModule.directConnect(tLastNode, tStub);
+			}
+		}
+		
+		thisModule.stubIndexMap <- Map{};
+	}
+}
+
+-- Sets orFork node conditions. Called after connectPathBodiesWithIndexes so that all connections are in place when this is done.
+-- Is rather inefficient as it calls allInstances(); this approach can potentially be improved upon.
+rule setOrForkConditions(){
+	using{
+		vCounter : Integer = 1;
+		sOrFork : Turn!OrFork = OclUndefined;
+	}
+	do{
+		for(tOrFork in thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!OrFork))){
+			sOrFork <- Turn!OrFork.allInstances() -> any(n|thisModule.resolveTemp(n, 'tOrFork')=tOrFork);
+			
+			if(not sOrFork.body.oclIsUndefined()){
+				for(sRegularOrFork in sOrFork.body.regularBody){
+					tOrFork.succ -> at(vCounter).condition <- thisModule.resolveTemp(sRegularOrFork.condition, 'tCondition');
+					vCounter <- vCounter + 1;
+				}
+				
+				if(not sOrFork.body.elseBody.oclIsUndefined()){
+					tOrFork.succ.last().condition <- thisModule.createCondition('else');
+				}
+			}
+			
+			vCounter <- 1;
+		}
+	}
+}
+
+-- Sets stub connection thresholds. Called after connectPathBodiesWithIndexes so that all connections are in place when this is done.
+-- Is rather inefficient as it calls allInstances(); this approach can potentially be improved upon.
+rule setStubThresholds(){
+	using{
+		vCounter : Integer = 1;
+		sStub : Turn!Stub = OclUndefined;
+	}
+	do{
+		for(tStub in thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!Stub))){
+			sStub <- Turn!Stub.allInstances() -> any(n|thisModule.resolveTemp(n, 'tStub')=tStub);
+			
+			if(sStub.oclIsUndefined()){
+				-- Declared using StubDeclaration, no outPaths
+			}
+			else{
+				for(sOutPath in sStub.outPaths){
+					if(sOutPath.threshold <> 0){
+						tStub.succ.last().threshold <- sOutPath.threshold.toString();
+					}
+					
+					vCounter <- vCounter + 1;
+				}
+			}
+		}
+	}
+}
+
 rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	using{
-		tStartPoint : Urn!StartPoint = OclUndefined;	
+		tStartPoint : Urn!StartPoint = OclUndefined;
 	}
 	do{
 		thisModule.tUCMmap <- tUCMmap;
@@ -223,6 +294,14 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			thisModule.doConnect(Sequence { sPath.pathBody }, tStartPoint, OclUndefined);
 		}
 		
-		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();	
+		-- I don't like the below approach. The reason I have to do it as such is because
+		-- Stubs need to be processed last so that all other elements in the path have been
+		-- handled once they are considered (due to the fact stubs have indexes referencing)
+		-- specific connections). There is probably a cleaner way to do this.
+		thisModule.connectPathBodiesWithIndexes();
+		thisModule.setOrForkConditions();
+		thisModule.setStubThresholds();
+		
+		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
 	}
 }
