@@ -154,7 +154,7 @@ rule initTimer(sTimer: Turn!Timer){
 		if(not sTimer.timeoutPath.oclIsUndefined()){
 			thisModule.collectPathBodyNodes(sTimer.timeoutPath);
 			thisModule.connectPathEnd(sTimer.timeoutPath.pathEnd);
-			thisModule.connectPathBody(sTimer.timeoutPath, tTimer);
+			thisModule.doConnect(Sequence { sTimer.timeoutPath }, tTimer, OclUndefined);
 			
 			if(not sTimer.timeoutCondition.oclIsUndefined()){
 				tTimer.succ.last().condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
