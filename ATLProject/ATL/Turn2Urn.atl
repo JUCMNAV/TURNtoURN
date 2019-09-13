@@ -107,30 +107,35 @@ rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 
 rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
-		tOrJoin : Urn!OrJoin = OclUndefined;
+		tJoin : Urn!OrJoin = OclUndefined;
 		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
 	}
 	do{
 		if(not (tFromNode.oclIsUndefined() or tToNode.oclIsUndefined())){
 			if(not tFromNode.succ -> any(s|s.target=tToNode).oclIsUndefined()){
-				tOrJoin <- thisModule.createOrJoin();
-				
-				tEmptyPoint <- thisModule.createEmptyPoint();
-				tFromNode.succ -> any(s|s.target=tToNode).target <- tEmptyPoint;
-				thisModule.directConnect(tEmptyPoint, tOrJoin);
-				
-				tEmptyPoint <- thisModule.createEmptyPoint();
-				thisModule.directConnect(tFromNode, tEmptyPoint);
-				thisModule.directConnect(tEmptyPoint, tOrJoin);
-				
-				tFromNode <- tOrJoin;
+				if(tToNode.oclIsTypeOf(Urn!OrJoin) or tToNode.oclIsTypeOf(Urn!AndJoin)){
+					tEmptyPoint <- thisModule.createEmptyPoint();
+					thisModule.directConnect(tFromNode, tEmptyPoint);
+					tFromNode <- tEmptyPoint;
+				}
+				else{
+					tJoin <- thisModule.createOrJoin();
+					
+					tFromNode.succ -> any(s|s.target=tToNode).target <- tJoin;
+					
+					tEmptyPoint <- thisModule.createEmptyPoint();
+					thisModule.directConnect(tFromNode, tEmptyPoint);
+					thisModule.directConnect(tEmptyPoint, tJoin);
+					
+					tFromNode <- tJoin;
+				}
 			}
 			else if(not tToNode.pred -> isEmpty() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not(tToNode.oclIsTypeOf(Urn!AndJoin) or tToNode.oclIsTypeOf(Urn!OrJoin))){
-				tOrJoin <- thisModule.createOrJoin();
-				tToNode.pred.first().target <- tOrJoin; --TODO: iterate over all of the pred
-				thisModule.directConnect(tFromNode, tOrJoin);
-				thisModule.directConnect(tOrJoin, tToNode);
-				tToNode <- tOrJoin;
+				tJoin <- thisModule.createOrJoin();
+				tToNode.pred.first().target <- tJoin; --TODO: iterate over all of the pred
+				thisModule.directConnect(tFromNode, tJoin);
+				thisModule.directConnect(tJoin, tToNode);
+				tToNode <- tJoin;
 			}
 			
 			thisModule.directConnect(tFromNode, tToNode);
@@ -226,7 +231,7 @@ rule getPathEnd(sPathBody: Turn!PathBody){
 			tNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedStub);
 		}
 		else{
-			tNodeToConnect <- thisModule.createEmptyPoint();
+		--	tNodeToConnect <- thisModule.createEmptyPoint();
 		}
 		
 		tNodeToConnect;

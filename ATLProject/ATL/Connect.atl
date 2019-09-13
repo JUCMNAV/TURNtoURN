@@ -66,6 +66,10 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 		
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
 			tPathEnd <- thisModule.doConnect(Sequence { sAndFork.connectingAndBody }, tAndJoin, OclUndefined);
+			
+			if(tPathEnd.oclIsUndefined()){
+				tPathEnd <- tAndJoin;	
+			}
 		}
 		
 		-- Return the final node in the AndFork path or the first node of the following path.
@@ -86,7 +90,7 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 		
 		if(not sOrFork.body.oclIsUndefined()){
 			thisModule.doConnect(sOrFork.body.regularBody -> collect(rb|rb.pathBody), tOrFork, tOrJoin);
-			
+
 			if(not sOrFork.body.elseBody.oclIsUndefined()){
 				thisModule.doConnect(Sequence { sOrFork.body.elseBody }, tOrFork, tOrJoin);
 			}
@@ -94,6 +98,10 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 		
 		if(not sOrFork.connectingOrBody.oclIsUndefined()){
 			tPathEnd <- thisModule.doConnect(Sequence { sOrFork.connectingOrBody }, tOrJoin, OclUndefined);
+			
+			if(tPathEnd.oclIsUndefined()){
+				tPathEnd <- tOrJoin;	
+			}
 		}
 		
 		-- Return the final node in the OrFork path or the first node of the following path.
@@ -118,13 +126,11 @@ rule connectStub(sStub: Turn!Stub){
 		thisModule.doConnect(sStub.outPaths -> collect(op|op.path), tStub, tOrJoin);
 
 		if(not sStub.connectingStubBody.oclIsUndefined()){
-			if(sStub.outPaths -> isEmpty()){
-				tLastNode <- thisModule.createEmptyPoint();
-				thisModule.connect(tStub, tLastNode);
-				thisModule.connect(tLastNode, tOrJoin);
-			}
-			
 			tPathEnd <- thisModule.doConnect(Sequence { sStub.connectingStubBody }, tOrJoin, OclUndefined);
+			
+			if(tPathEnd.oclIsUndefined()){
+				tPathEnd <- tOrJoin;	
+			}
 		}
 		
 		-- Return the final node in the OrFork path or the first node of the following path.
@@ -141,27 +147,34 @@ rule doConnect(sPathBodies : Sequence(Urn!PathBody), tStartNode : Urn!PathNode, 
 		tNodeConnection : Urn!NodeConnection = OclUndefined;
 	}
 	do{
-		for(sPathBody in sPathBodies){
-			thisModule.collectPathBodyNodes(sPathBody);
-			
-			tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
-			tPathEnd <- thisModule.connectPathEnd(sPathBody.pathEnd);
-			
-			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
-				thisModule.connect(tPathEnd, tEnd);
-			}
-			
-			tPathEnd <- thisModule.getPathEnd(sPathBody);
-			
-			if(sPathBody.index > tPathEnd.pred -> size()){
-				thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
-			}
-			else{
-				thisModule.connect(tLastNode, tPathEnd);
-			}
-			
-			if(tPathEnd.oclIsTypeOf(Urn!EmptyPoint)){
-				thisModule.connect(tPathEnd, tEnd);
+		if(sPathBodies -> isEmpty()){
+			thisModule.connect(tStartNode, tEnd);
+		}
+		else{
+			for(sPathBody in sPathBodies){
+				thisModule.collectPathBodyNodes(sPathBody);
+				
+				tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
+				tPathEnd <- thisModule.connectPathEnd(sPathBody.pathEnd);
+				
+				if(tLastNode=tStartNode and not tPathEnd.oclIsTypeOf(Urn!EndPoint)){
+					thisModule.connect(tPathEnd, tEnd);	
+				}
+				
+				tPathEnd <- thisModule.getPathEnd(sPathBody);
+				
+				if(tPathEnd.oclIsUndefined()){
+					tPathEnd <- tEnd;
+				}
+				
+				if(not tPathEnd.oclIsUndefined()){
+					if(sPathBody.index > tPathEnd.pred -> size()){
+						thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
+					}
+					else{
+						thisModule.connect(tLastNode, tPathEnd);
+					}
+				}
 			}
 		}
 		
