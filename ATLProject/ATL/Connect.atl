@@ -26,6 +26,7 @@ rule connectComponentRefLongBoundElement(tFrom: String, tTo: String, tComponentR
 			if(tStartNode.oclIsUndefined()){
 				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
 			}
+			
 			tEndNode <- nodes -> any(n|n.name=tTo);
 			
 			if(tEndNode.oclIsUndefined()){

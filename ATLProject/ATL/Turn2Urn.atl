@@ -195,23 +195,36 @@ rule contributionKeywordToNumber(vKeyword: String){
 	}
 }
 
+rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
+	using{
+		tResult : Sequence(Urn!PathNode) = Sequence{};
+	}
+	do{
+		if(tStartNode=tEndNode){
+			tResult <- tResult.including(tStartNode);
+		}
+		else if(tStartNode.succ -> isEmpty()){
+			-- Node not found in this path
+		}
+		else{
+			for(tCurrentNode in tStartNode.succ -> collect(s|s.target)){
+				tResult <- tResult.union(thisModule.findPathBetweenNodes(tCurrentNode, tEndNode));
+			}
+		}
+		
+		if(not(tResult -> isEmpty() or tStartNode=tEndNode)){
+			tResult <- tResult.including(tStartNode);
+		}
+		
+		tResult;
+	}
+}
+
 rule getUrnComponentRef(sObject: OclAny){
 	using{
 		tComponentRef : Urn!ComponentRef = OclUndefined;
 	}
 	do{
-		if(not sObject.boundTo.oclIsUndefined()){
-			if(not sObject.boundTo.comp.oclIsUndefined()){
-				tComponentRef <- thisModule.resolveTemp(sObject.boundTo.comp, 'tComponentRef');
-			}
-			else{
-				tComponentRef <- thisModule.resolveTemp(sObject.boundTo.comp2, 'tComponentRef');
-			}
-		}
-		else{
-			tComponentRef <- OclUndefined;	
-		}
-		
 		tComponentRef;
 	}
 }
@@ -938,10 +951,6 @@ rule UCMmap2UCMmap{
 		)
 	do{
 		thisModule.connectUCMmap(tUCMmap, sUCMmap.paths);
-		
-		for(tComponentRef in tUCMmap.contRefs){
-		--	thisModule.connectComponentRef(tComponentRef, tUCMmap.nodes);	
-		}
 	}
 }
 
@@ -956,7 +965,7 @@ rule ComponentRef2ComponentRef {
 			else
 				tExistingComponent
 			endif;
-		--tNodes : Sequence(Urn!PathNode) = OclUndefined;
+		tPathNode : Urn!PathNode = OclUndefined;
 	}
 	to
 		tComponentRef: Urn!ComponentRef(
@@ -970,39 +979,24 @@ rule ComponentRef2ComponentRef {
 		tComponentLabel: Urn!ComponentLabel
 	do{
 		thisModule.initComponentRef(sComponentRef, tComponentRef);
-
+		
+		thisModule.tUCMmap <- tComponentRef.diagram;
+		
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
 			thisModule.connectComponentRefLongBoundElement(elem.from, elem.to, tComponentRef, tComponentRef.diagram.nodes);
 		}
 
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
-			--tComponentRef.metadata <- tComponentRef.metadata.including(thisModule.createMetadata('elem', elem.elem.name));
-		}
-	}
-}
-
-rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
-	using{
-		tResult : Sequence(Urn!PathNode) = Sequence{};
-	}
-	do{
-		if(tStartNode=tEndNode){
-			tResult <- tResult.including(tStartNode);
-		}
-		else if(tStartNode.succ -> isEmpty()){
-			-- Node not found in this path
-		}
-		else{
-			for(tCurrentNode in tStartNode.succ -> collect(s|s.target)){
-				tResult <- tResult.union(thisModule.findPathBetweenNodes(tCurrentNode, tEndNode));
+			tPathNode <- thisModule.retrieveNode(elem.elem);
+			
+			if(tPathNode.oclIsUndefined()){
+				tPathNode <- thisModule.resolveTemp(elem.elem, 'tComponentRef');
+				tComponentRef.children <- tComponentRef.children.including(tPathNode);
+			}
+			else if(tPathNode.contRef.oclIsUndefined()){
+				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
 			}
 		}
-		
-		if(not(tResult -> isEmpty() or tStartNode=tEndNode)){
-			tResult <- tResult.including(tStartNode);
-		}
-		
-		tResult;
 	}
 }
 
