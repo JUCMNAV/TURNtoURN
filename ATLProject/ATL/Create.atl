@@ -34,6 +34,28 @@ rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 	}
 }
 
+rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
+	do{
+		if(not sComponentRef.kind.oclIsUndefined() and sComponentRef.kind.toString() <> 'parent'){
+			tComponentRef.contDef.kind <- sComponentRef.kind.toString().capitalize();
+		}
+		else if(sComponentRef.kind <> 'parent'){
+			tComponentRef.contDef.kind <- 'Team';
+		}
+		
+		if(not sComponentRef.boundTo.oclIsUndefined()){
+			if(not sComponentRef.boundTo.comp.oclIsUndefined()){
+				tComponentRef.parent <- Urn!Component.allInstances() -> any(n|sComponentRef.boundTo.comp.name=n.name).contRefs -> any(r|r.diagram = sComponentRef.map);
+			}
+			else{
+				tComponentRef.parent <- Urn!Component.allInstances() -> any(n|sComponentRef.boundTo.comp2.name=n.name).contRefs -> any(r|r.diagram = sComponentRef.map);
+			}
+		}
+		
+		tComponentRef.contDef.protected <- sComponentRef.protected;
+	}
+}
+
 rule initInBinding(sInBinding: Turn!InBinding, tInBinding: Urn!InBinding, tStub: Urn!Stub){
 	do{
 		tInBinding.stubEntry <- tStub.pred -> at(sInBinding.index);
@@ -45,65 +67,6 @@ rule initOutBinding(sOutBinding: Turn!OutBinding, tOutBinding: Urn!OutBinding, t
 	do{
 		tOutBinding.stubExit <- tStub.succ -> at(sOutBinding.index);
 		tOutBinding.endPoint <- thisModule.retrieveNode(sOutBinding.mapEnd);
-	}
-}
-
--- TODO: implement
-rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
-	using{
-		vPath : Sequence(Urn!PathNode) = Sequence{tStartNode};	
-	}
-	do{
-		vPath <- vPath.including(tEndNode);
-		--thisModule.debug(vPath);
-		
-		--vPath;
-		OclUndefined;
-	}
-}
-
-rule initContRef(tContRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
-	using{
-		tMetadata : Sequence(Urn!Metadata) = tContRef.metadata -> flatten();
-		tFrom : String = 
-			if tMetadata -> select(md|md.name='from') -> size() = 1 then
-				tMetadata -> select(md|md.name='from').first().value
-			else
-				''
-			endif;
-		tTo : String = 
-			if tMetadata -> select(md|md.name='to') -> size() = 1 then
-				tMetadata -> select(md|md.name='to').first().value
-			else
-				''
-			endif;
-		tFromExists : Boolean = 
-			(nodes -> select(n|n.name = tFrom) -> size() = 1)
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> isEmpty())
-			and not (tFrom = '');
-		tToExists : Boolean = 
-			(not nodes -> select(n|n.name = tTo) -> isEmpty())
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> isEmpty())
-			and not (tTo = '');
-		vStartNode : Urn!PathNode = OclUndefined;
-		vEndNode : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
-			vStartNode <- nodes -> any(n|n.name = tFrom);
-
-			if(vStartNode.oclIsUndefined()){
-				vStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
-			}
-			
-			vEndNode <- nodes -> any(n|n.name=tTo);
-			
-			if(vEndNode.oclIsUndefined()){
-				vEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tTo);
-			}
-			
-			tContRef.nodes <- thisModule.findPathBetweenNodes(vStartNode, vEndNode);	
-		}
 	}
 }
 
@@ -220,7 +183,7 @@ rule createConnect(){
 		)
 	do{
 		tConnect;	
-	}
+	}--
 }
 
 rule createEmptyPoint(){

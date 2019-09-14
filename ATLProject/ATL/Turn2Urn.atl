@@ -848,54 +848,6 @@ rule WaitingPlace2WaitingPlace{
 
 ----------5/5 MATCHED RULES WITH DO BLOCKS----------------
 
-rule ComponentRef2ComponentRef {
-	from 
-		sComponentRef: Turn!ComponentRef
-	using{
-		vExistingComponent : Urn!Component = Urn!Component.allInstances() -> any(c|c.name=sComponentRef.name);
-		vRetrievedComponent : Urn!Component =
-			if(vExistingComponent.oclIsUndefined()) then
-				thisModule.createComponent(sComponentRef)
-			else
-				vExistingComponent
-			endif;
-	}
-	to
-		tComponentRef: Urn!ComponentRef(
-			id <- thisModule.nextId().toString(),
-			name <- 'ComponentRef' + tComponentRef.id,
-			label <- tComponentLabel,
-			diagram <- sComponentRef.map,
-			contDef <- vRetrievedComponent,
-			parent <- thisModule.getUrnComponentRef(sComponentRef)
-		),
-		tComponentLabel: Urn!ComponentLabel
-	do{
-		if(not sComponentRef.kind.oclIsUndefined() and sComponentRef.kind.toString() <> 'parent'){
-			tComponentRef.contDef.kind <- sComponentRef.kind.toString().capitalize();
-		}
-		else if(sComponentRef.kind <> 'parent'){
-			tComponentRef.contDef.kind <- 'Team';
-		}
-		
-		if(not sComponentRef.boundTo.oclIsUndefined()){
-			if(not sComponentRef.boundTo.comp.oclIsUndefined()){
-				tComponentRef.parent <- Urn!Component.allInstances() -> any(n|sComponentRef.boundTo.comp.name=n.name).contRefs -> any(r|r.diagram = sComponentRef.map);
-			}
-			else{
-				tComponentRef.parent <- Urn!Component.allInstances() -> any(n|sComponentRef.boundTo.comp2.name=n.name).contRefs -> any(r|r.diagram = sComponentRef.map);
-			}
-		}
-		
-		tComponentRef.contDef.protected <- sComponentRef.protected;
-		
-		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
-			tComponentRef.metadata <- tComponentRef.metadata.including(thisModule.createMetadata('from', elem.from));
-			tComponentRef.metadata <- tComponentRef.metadata.including(thisModule.createMetadata('to', elem.to));
-		}
-	}
-}
-
 rule IntentionalElement2Belief{
 	from
 		sIntentionalElement: Turn!IntentionalElement(sIntentionalElement.type.toString() = 'belief')
@@ -987,9 +939,70 @@ rule UCMmap2UCMmap{
 	do{
 		thisModule.connectUCMmap(tUCMmap, sUCMmap.paths);
 		
-		for(tContRef in tUCMmap.contRefs){
-			thisModule.initContRef(tContRef, tUCMmap.nodes); --iterate through them using node.succ.target until no more successors found (bc at end of a branch)
+		for(tComponentRef in tUCMmap.contRefs){
+		--	thisModule.connectComponentRef(tComponentRef, tUCMmap.nodes);	
 		}
+	}
+}
+
+rule ComponentRef2ComponentRef {
+	from 
+		sComponentRef: Turn!ComponentRef
+	using{
+		tExistingComponent : Urn!Component = Urn!Component.allInstances() -> any(c|c.name=sComponentRef.name);
+		tRetrievedComponent : Urn!Component =
+			if(tExistingComponent.oclIsUndefined()) then
+				thisModule.createComponent(sComponentRef)
+			else
+				tExistingComponent
+			endif;
+		--tNodes : Sequence(Urn!PathNode) = OclUndefined;
+	}
+	to
+		tComponentRef: Urn!ComponentRef(
+			id <- thisModule.nextId().toString(),
+			name <- 'ComponentRef' + tComponentRef.id,
+			label <- tComponentLabel,
+			diagram <- sComponentRef.map,
+			contDef <- tRetrievedComponent,
+			parent <- thisModule.getUrnComponentRef(sComponentRef)
+		),
+		tComponentLabel: Urn!ComponentLabel
+	do{
+		thisModule.initComponentRef(sComponentRef, tComponentRef);
+
+		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
+			thisModule.connectComponentRefLongBoundElement(elem.from, elem.to, tComponentRef, tComponentRef.diagram.nodes);
+		}
+
+		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
+			--tComponentRef.metadata <- tComponentRef.metadata.including(thisModule.createMetadata('elem', elem.elem.name));
+		}
+	}
+}
+
+rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
+	using{
+		tResult : Sequence(Urn!PathNode) = Sequence{};
+	}
+	do{
+		if(tStartNode=tEndNode){
+			tResult <- tResult.including(tStartNode);
+		}
+		else if(tStartNode.succ -> isEmpty()){
+			-- Node not found in this path
+		}
+		else{
+			for(tCurrentNode in tStartNode.succ -> collect(s|s.target)){
+				tResult <- tResult.union(thisModule.findPathBetweenNodes(tCurrentNode, tEndNode));
+			}
+		}
+		
+		if(not(tResult -> isEmpty() or tStartNode=tEndNode)){
+			tResult <- tResult.including(tStartNode);
+		}
+		
+		tResult;
 	}
 }
 

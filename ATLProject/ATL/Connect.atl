@@ -6,6 +6,37 @@ create OUT : Urn from IN : Turn;
 -- Handles exploration of nodes to find PathBodies and connect 
 -- the appropriate parts.
 
+rule connectComponentRefLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
+	using{
+		tFromExists : Boolean = 
+			(not nodes -> any(n|n.name = tFrom).oclIsUndefined())
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> isEmpty())
+			and not (tFrom = '');
+		tToExists : Boolean = 
+			(not nodes -> any(n|n.name = tTo).oclIsUndefined())
+			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> isEmpty())
+			and not (tTo = '');
+		tStartNode : Urn!PathNode = OclUndefined;
+		tEndNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
+			tStartNode <- nodes -> any(n|n.name = tFrom);
+
+			if(tStartNode.oclIsUndefined()){
+				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
+			}
+			tEndNode <- nodes -> any(n|n.name=tTo);
+			
+			if(tEndNode.oclIsUndefined()){
+				tEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tTo);
+			}
+			
+			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
+		}
+	}
+}
+
 rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!PathNode){
 	using{
 		tNode : Urn!PathNode = OclUndefined;
@@ -303,9 +334,9 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			thisModule.doConnect(Sequence { sPath.pathBody }, tStartPoint, OclUndefined);
 		}
 		
-		-- I don't like the below approach. The reason I have to do it as such is because
-		-- Stubs need to be processed last so that all other elements in the path have been
-		-- handled once they are considered (due to the fact stubs have indexes referencing)
+		-- I don't like the approach I've used below. The reason I have to do it as such is
+		-- because Stubs need to be processed last so that all other elements in the path have
+		-- been handled once they are considered (due to the fact stubs have indexes referencing)
 		-- specific connections). There is probably a cleaner way to do this.
 		thisModule.connectPathBodiesWithIndexes();
 		thisModule.setOrForkConditions();
