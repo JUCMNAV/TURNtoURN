@@ -980,13 +980,11 @@ rule ComponentRef2ComponentRef {
 			name <- 'ComponentRef' + tComponentRef.id,
 			label <- tComponentLabel,
 			diagram <- sComponentRef.map,
-			contDef <- tRetrievedComponent,
-			parent <- thisModule.getUrnComponentRef(sComponentRef)
+			contDef <- tRetrievedComponent
 		),
 		tComponentLabel: Urn!ComponentLabel
 	do{
 		thisModule.initComponentRef(sComponentRef, tComponentRef);
-		
 		thisModule.tUCMmap <- tComponentRef.diagram;
 		
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
@@ -1001,6 +999,9 @@ rule ComponentRef2ComponentRef {
 				tComponentRef.children <- tComponentRef.children.including(tPathNode);
 			}
 			else if(tPathNode.contRef.oclIsUndefined()){
+				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
+			}
+			else if(tPathNode.contRef=tComponentRef.parent){
 				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
 			}
 		}
