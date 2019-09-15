@@ -198,6 +198,7 @@ rule contributionKeywordToNumber(vKeyword: String){
 rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 	using{
 		tResult : Sequence(Urn!PathNode) = Sequence{};
+		tConnect : Urn!Connect = OclUndefined;
 	}
 	do{
 		if(tStartNode=tEndNode){
@@ -214,6 +215,12 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 		
 		if(not(tResult -> isEmpty() or tStartNode=tEndNode)){
 			tResult <- tResult.including(tStartNode);
+			tConnect <- tStartNode.pred -> collect(p|p.source) -> any(s|s.oclIsTypeOf(Urn!Connect));
+			
+			if(not tConnect.oclIsUndefined()){
+				tResult <- tResult.including(tConnect);
+				tResult <- tResult.union(tConnect.pred -> collect(p|p.source));
+			}
 		}
 		
 		tResult;

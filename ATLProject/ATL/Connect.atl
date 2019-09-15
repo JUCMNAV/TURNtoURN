@@ -88,6 +88,7 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 		tAndFork : Urn!AndFork = thisModule.retrieveNode(sAndFork);
 		tAndJoin : Urn!AndJoin = OclUndefined;
 		tPathEnd : Urn!PathNode = OclUndefined;
+		vNumberOfPathsToConnect : Integer = 0;
 	}
 	do{
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
@@ -98,7 +99,6 @@ rule connectAndFork(sAndFork: Turn!AndFork){
 		
 		if(not sAndFork.connectingAndBody.oclIsUndefined()){
 			tPathEnd <- thisModule.doConnect(Sequence { sAndFork.connectingAndBody }, tAndJoin, OclUndefined);
-			
 			if(tPathEnd.oclIsUndefined()){
 				tPathEnd <- tAndJoin;	
 			}
@@ -137,7 +137,7 @@ rule connectOrFork(sOrFork: Turn!OrFork){
 		}
 		
 		-- Return the final node in the OrFork path or the first node of the following path.
-		tPathEnd;	
+		tPathEnd;
 	}
 }
 
@@ -165,7 +165,7 @@ rule connectStub(sStub: Turn!Stub){
 		}
 		
 		-- Return the final node in the OrFork path or the first node of the following path.
-		tPathEnd;	
+		tPathEnd;
 	}
 }
 

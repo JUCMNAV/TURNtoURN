@@ -84,8 +84,8 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 		
 		if(not sEndpointWithConnect.connect.oclIsUndefined()){
 			tConnect <- thisModule.createConnect();
-			thisModule.connect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
-			thisModule.connect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
+			thisModule.directConnect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
+			thisModule.directConnect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
 		}
 	}
 }
