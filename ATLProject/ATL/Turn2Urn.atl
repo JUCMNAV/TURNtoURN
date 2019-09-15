@@ -560,7 +560,7 @@ rule Evaluation2Evaluation{
 				thisModule.createQMapKpiEvalValueSet(sEvaluation.conversion)
 			else
 				if(sEvaluation.conversion.oclIsTypeOf(Turn!LinearConversion)) then
-					thisModule.createKpiEvalValueSet(sEvaluation.conversion)
+					thisModule.createKPIEvalValueSet(sEvaluation.conversion)
 				else
 					OclUndefined
 				endif
@@ -569,7 +569,7 @@ rule Evaluation2Evaluation{
  	to 
 		tEvaluation: Urn!Evaluation(
 		 	exceeds <- sEvaluation.exceeds,
-		 	intElement <- sEvaluation.intElement,
+		 	intElement <- thisModule.resolveTemp(sEvaluation.intElement, 'tIntentionalElement'),
 			evaluation <- sEvaluation.evaluation,
 			qualitativeEvaluation <- sEvaluation.qualitativeEvaluation.toString().capitalize(),
 			kpiEvalValueSet <- vKPIEvalValueSet
