@@ -116,8 +116,8 @@ rule initTimer(sTimer: Turn!Timer){
 		
 		if(not sTimer.timeoutPath.oclIsUndefined()){
 			thisModule.collectPathBodyNodes(sTimer.timeoutPath);
-			thisModule.connectPathEnd(sTimer.timeoutPath.pathEnd);
-			thisModule.doConnect(Sequence { sTimer.timeoutPath }, tTimer, OclUndefined);
+			thisModule.newConnectPathEnd(sTimer.timeoutPath.pathEnd);
+			thisModule.newDoConnect(sTimer.timeoutPath, tTimer, OclUndefined);
 			
 			if(not sTimer.timeoutCondition.oclIsUndefined()){
 				tTimer.succ.last().condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
@@ -194,6 +194,9 @@ rule createEmptyPoint(){
 			diagram <- thisModule.tUCMmap
 		)
 	do{
+		if(tEmptyPoint.id='50'){
+		--	thisModule.k.k;	
+		}
 		tEmptyPoint;
 	}
 }
@@ -207,6 +210,9 @@ rule createEndPoint(){
 			diagram <- thisModule.tUCMmap
 		)
 	do{
+		if(tEndPoint.id='160'){
+		--	thisModule.k.k;	
+		}
 		tEndPoint;
 	}
 }

@@ -137,7 +137,9 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 				thisModule.directConnect(tJoin, tToNode);
 				tToNode <- tJoin;
 			}
-			
+			if(tToNode.id='32'){
+			--	thisModule.k.k;	
+			}
 			thisModule.directConnect(tFromNode, tToNode);
 		}
 	}
