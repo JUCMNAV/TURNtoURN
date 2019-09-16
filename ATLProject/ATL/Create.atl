@@ -138,6 +138,9 @@ rule createAndJoin(){
 			diagram <- thisModule.tUCMmap
 		)
 	do{
+		if(tAndJoin.id='39'){
+		--	thisModule.k.k;	
+		}
 		tAndJoin;
 	}
 }
@@ -194,9 +197,6 @@ rule createEmptyPoint(){
 			diagram <- thisModule.tUCMmap
 		)
 	do{
-		if(tEmptyPoint.id='50'){
-		--	thisModule.k.k;	
-		}
 		tEmptyPoint;
 	}
 }
@@ -210,9 +210,6 @@ rule createEndPoint(){
 			diagram <- thisModule.tUCMmap
 		)
 	do{
-		if(tEndPoint.id='160'){
-		--	thisModule.k.k;	
-		}
 		tEndPoint;
 	}
 }

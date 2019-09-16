@@ -78,14 +78,19 @@ rule newConnectPathEnd(sPathEnd: Turn!PathBodyNode){
 			}
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
-			thisModule.newConnectAndFork(sPathEnd);
+			thisModule.connectPathBodies(sPathEnd, sPathEnd.pathbody, sPathEnd.connectingAndBody);
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!OrFork)){
-			thisModule.newConnectOrFork(sPathEnd);
+			if(sPathEnd.body.oclIsUndefined()){
+				thisModule.connectPathBodies(sPathEnd, Sequence { }, sPathEnd.connectingOrBody);
+			}
+			else{
+				thisModule.connectPathBodies(sPathEnd, sPathEnd.body.regularBody -> collect(rb|rb.pathBody) -> including(sPathEnd.body.elseBody), sPathEnd.connectingOrBody);
+			}
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!Stub)){
 			thisModule.initStub(sPathEnd);
-			thisModule.newConnectStub(sPathEnd);
+			thisModule.connectPathBodies(sPathEnd, sPathEnd.outPaths -> collect(op|op.path), sPathEnd.connectingStubBody);
 		}
 		else{
 			-- PathEnd is undefined
@@ -95,137 +100,78 @@ rule newConnectPathEnd(sPathEnd: Turn!PathBodyNode){
 	}
 }
 
-rule newDoConnect(sPathBody: Urn!PathBody, tStartNode : Urn!PathNode, tAlternatePathEnd : Urn!PathNode){
+rule newDoConnect(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
 	using{
 		tPathEnd : Urn!PathNode = tAlternatePathEnd;
-		sPathEnd : Turn!PathBodyNode = sPathBody.pathEnd;
+		sPathEnd : Turn!PathBodyNode = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		thisModule.collectPathBodyNodes(sPathBody);
-		
-		tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
-		tPathEnd <- thisModule.newConnectPathEnd(sPathBody.pathEnd);
-		
-		if(tPathEnd.oclIsUndefined()){
-			tPathEnd <- thisModule.getPathEnd(sPathBody);
+		if(not sPathBody.oclIsUndefined()){
+			sPathEnd <- sPathBody.pathEnd;
 			
-			if(tLastNode=tStartNode){
-				thisModule.connect(tPathEnd, tAlternatePathEnd);
-			}
+			thisModule.collectPathBodyNodes(sPathBody);
+			
+			tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
+			tPathEnd <- thisModule.newConnectPathEnd(sPathBody.pathEnd);
 			
 			if(tPathEnd.oclIsUndefined()){
-				tPathEnd <- tAlternatePathEnd;
-			}
-			
-			if(not tPathEnd.oclIsUndefined()){
-				if(sPathBody.index > tPathEnd.pred -> size()){
+				tPathEnd <- thisModule.getPathEnd(sPathBody);
+	
+				if(tLastNode=tStartNode){
+					thisModule.connect(tPathEnd, tAlternatePathEnd);
+				}
+				
+				if(tPathEnd.oclIsUndefined()){
+					tPathEnd <- tAlternatePathEnd;
+				}
+				
+				if(tPathEnd.oclIsUndefined()){
+					--caused by nested calls to connectPathEnd
+					tPathEnd <- tLastNode;
+				}
+				else if(sPathBody.index > tPathEnd.pred -> size()){
 					thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
 				}
 				else{
 					thisModule.connect(tLastNode, tPathEnd);
 				}
 			}
+			else{
+				thisModule.connect(tLastNode, tPathEnd);
+			}
+		}
+		
+		tPathEnd;
+	}
+}
+
+rule connectPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody){
+	using{
+		tNode: Urn!PathNode = thisModule.retrieveNode(sNode);
+		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|not pb.oclIsUndefined()) -> select(pb|not thisModule.getPathEnd(pb).oclIsTypeOf(Urn!EndPoint)) -> size();
+		tJoin : Urn!PathNode = 
+			if(sConnectingBody.oclIsUndefined() or vNumberOfNonTerminatingNodes < 2) then
+				OclUndefined
+			else
+				if(sNode.oclIsTypeOf(Turn!AndFork)) then
+					thisModule.createAndJoin()
+				else
+					thisModule.createOrJoin()
+				endif
+			endif;
+	}
+	do{
+		for(sPathBody in sPathBodies){
+			thisModule.newDoConnect(sPathBody, tNode, tJoin);
+		}
+		
+		if(tJoin.oclIsUndefined()){
+			thisModule.newDoConnect(sConnectingBody, tNode, OclUndefined);
 		}
 		else{
-			thisModule.connect(tLastNode, tPathEnd);
-		}		
-	}
-}
-
-rule newConnectAndFork(sAndFork: Turn!AndFork){
-	using{
-		tAndFork : Urn!AndFork = thisModule.retrieveNode(sAndFork);
-		vNumberOfNonTerminatingNodes : Integer = sAndFork.pathbody -> select(pb|not thisModule.getPathEnd(pb).oclIsTypeOf(Urn!EndPoint)) -> size();
-		tAndJoin : Urn!AndJoin = 
-			if(sAndFork.connectingAndBody.oclIsUndefined() or vNumberOfNonTerminatingNodes < 2) then
-				OclUndefined
-			else
-				thisModule.createAndJoin()
-			endif;
-		tPathEnd : Urn!PathNode = OclUndefined;
-		tLastNode : Urn!PathNode = OclUndefined;
-	}
-	do{
-		for(sPathBody in sAndFork.pathbody){
-			thisModule.newDoConnect(sPathBody, tAndFork, tAndJoin);
-		}
-		
-		if(not sAndFork.connectingAndBody.oclIsUndefined()){
-			if(tAndJoin.oclIsUndefined()){
-				thisModule.newDoConnect(sAndFork.connectingAndBody, tAndFork, OclUndefined);
-			}
-			else{
-				thisModule.newDoConnect(sAndFork.connectingAndBody, tAndJoin, OclUndefined);
-			}
-		}
-	}
-}
-
-rule newConnectOrFork(sOrFork: Turn!OrFork){
-	using{
-		tOrFork : Urn!OrFork = thisModule.retrieveNode(sOrFork);
-		vNumberOfNonTerminatingNodes : Integer = 
-			if(sOrFork.body.oclIsUndefined()) then
-				0
-			else 
-				sOrFork.body.regularBody -> select(rb|not thisModule.getPathEnd(rb.pathBody).oclIsTypeOf(Urn!EndPoint)) -> size()
-			endif;
-		tOrJoin : Urn!OrJoin = 
-			if(sOrFork.connectingOrBody.oclIsUndefined() or vNumberOfNonTerminatingNodes < 2) then
-				OclUndefined
-			else
-				 thisModule.createOrJoin()
-			endif;
-		tPathEnd : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(not sOrFork.body.oclIsUndefined()){
-			for(sPathBody in sOrFork.body.regularBody -> collect(rb|rb.pathBody)){
-				thisModule.newDoConnect(sPathBody, tOrFork, tOrJoin);
-			}
-			
-			if(not sOrFork.body.elseBody.oclIsUndefined()){
-				thisModule.newDoConnect(sOrFork.body.elseBody, tOrFork, tOrJoin);
-			}
-		}
-		
-		if(not sOrFork.connectingOrBody.oclIsUndefined()){
-			if(tOrJoin.oclIsUndefined()){
-				thisModule.newDoConnect(sOrFork.connectingOrBody, tOrFork, OclUndefined);
-			}
-			else{
-				thisModule.newDoConnect(sOrFork.connectingOrBody, tOrJoin, OclUndefined);
-			}
-		}
-	}
-}
-
-rule newConnectStub(sStub: Turn!Stub){
-	using{
-		tStub : Urn!Stub = thisModule.retrieveNode(sStub);
-		vNumberOfNonTerminatingNodes : Integer = sStub.outPaths -> collect(op|op.path) -> select(p|not thisModule.getPathEnd(p).oclIsTypeOf(Urn!EndPoint)) -> size();
-		tOrJoin : Urn!OrJoin = 
-			if(sStub.connectingStubBody.oclIsUndefined() or vNumberOfNonTerminatingNodes < 2) then
-				OclUndefined
-			else
-				thisModule.createOrJoin()
-			endif;
-		tPathEnd : Urn!PathNode = OclUndefined;
-	}
-	do{
-		for(sPathBody in sStub.outPaths -> collect(op|op.path)){
-			thisModule.newDoConnect(sPathBody, tStub, tOrJoin);
-		}
-
-		if(not sStub.connectingStubBody.oclIsUndefined()){
-			if(tOrJoin.oclIsUndefined()){
-				thisModule.newDoConnect(sStub.connectingStubBody, tStub, OclUndefined);
-			}
-			else{
-				thisModule.newDoConnect(sStub.connectingStubBody, tOrJoin, OclUndefined);
-			}
-		}
+			thisModule.newDoConnect(sConnectingBody, tJoin, OclUndefined);
+		}	
 	}
 }
 
