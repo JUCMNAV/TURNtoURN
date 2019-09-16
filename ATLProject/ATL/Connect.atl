@@ -6,38 +6,6 @@ create OUT : Urn from IN : Turn;
 -- Handles exploration of nodes to find PathBodies and connect 
 -- the appropriate parts.
 
-rule connectComponentRefLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
-	using{
-		tFromExists : Boolean = 
-			(not nodes -> any(n|n.name = tFrom).oclIsUndefined())
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tFrom) -> isEmpty())
-			and not (tFrom = '');
-		tToExists : Boolean = 
-			(not nodes -> any(n|n.name = tTo).oclIsUndefined())
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.getRespName()=tTo) -> isEmpty())
-			and not (tTo = '');
-		tStartNode : Urn!PathNode = OclUndefined;
-		tEndNode : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
-			tStartNode <- nodes -> any(n|n.name = tFrom);
-
-			if(tStartNode.oclIsUndefined()){
-				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tFrom);
-			}
-			
-			tEndNode <- nodes -> any(n|n.name=tTo);
-			
-			if(tEndNode.oclIsUndefined()){
-				tEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.getRespName()=tTo);
-			}
-			
-			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
-		}
-	}
-}
-
 rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!PathNode){
 	using{
 		tNode : Urn!PathNode = OclUndefined;
@@ -58,7 +26,7 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 	}
 }
 
-rule newConnectPathEnd(sPathEnd: Turn!PathBodyNode){
+rule processPathEnd(sPathEnd: Turn!PathBodyNode){
 	using{
 		tPathEnd : Urn!PathNode = OclUndefined;
 	}
@@ -78,19 +46,19 @@ rule newConnectPathEnd(sPathEnd: Turn!PathBodyNode){
 			}
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
-			thisModule.connectPathBodies(sPathEnd, sPathEnd.pathbody, sPathEnd.connectingAndBody);
+			thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.pathbody, sPathEnd.connectingAndBody);
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!OrFork)){
 			if(sPathEnd.body.oclIsUndefined()){
-				thisModule.connectPathBodies(sPathEnd, Sequence { }, sPathEnd.connectingOrBody);
+				thisModule.connectPathEndPathBodies(sPathEnd, Sequence { }, sPathEnd.connectingOrBody);
 			}
 			else{
-				thisModule.connectPathBodies(sPathEnd, sPathEnd.body.regularBody -> collect(rb|rb.pathBody) -> including(sPathEnd.body.elseBody), sPathEnd.connectingOrBody);
+				thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.body.regularBody -> collect(rb|rb.pathBody) -> including(sPathEnd.body.elseBody), sPathEnd.connectingOrBody);
 			}
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!Stub)){
 			thisModule.initStub(sPathEnd);
-			thisModule.connectPathBodies(sPathEnd, sPathEnd.outPaths -> collect(op|op.path), sPathEnd.connectingStubBody);
+			thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.outPaths -> collect(op|op.path), sPathEnd.connectingStubBody);
 		}
 		else{
 			-- PathEnd is undefined
@@ -100,53 +68,57 @@ rule newConnectPathEnd(sPathEnd: Turn!PathBodyNode){
 	}
 }
 
-rule newDoConnect(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
-	using{
-		tPathEnd : Urn!PathNode = tAlternatePathEnd;
-		sPathEnd : Turn!PathBodyNode = OclUndefined;
-		tLastNode : Urn!PathNode = OclUndefined;
-	}
+rule connectToPathEnd(sPathBody: Urn!PathBody, tLastNode: Urn!PathNode, tPathEnd: Urn!PathNode, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
 	do{
-		if(not sPathBody.oclIsUndefined()){
-			sPathEnd <- sPathBody.pathEnd;
-			
-			thisModule.collectPathBodyNodes(sPathBody);
-			
-			tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
-			tPathEnd <- thisModule.newConnectPathEnd(sPathBody.pathEnd);
+		if(tPathEnd.oclIsUndefined()){
+			tPathEnd <- thisModule.getPathEnd(sPathBody);
+
+			if(tLastNode=tStartNode){
+				thisModule.connect(tPathEnd, tAlternatePathEnd);
+			}
 			
 			if(tPathEnd.oclIsUndefined()){
-				tPathEnd <- thisModule.getPathEnd(sPathBody);
-	
-				if(tLastNode=tStartNode){
-					thisModule.connect(tPathEnd, tAlternatePathEnd);
-				}
-				
-				if(tPathEnd.oclIsUndefined()){
-					tPathEnd <- tAlternatePathEnd;
-				}
-				
-				if(tPathEnd.oclIsUndefined()){
-					--caused by nested calls to connectPathEnd
-					tPathEnd <- tLastNode;
-				}
-				else if(sPathBody.index > tPathEnd.pred -> size()){
-					thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
-				}
-				else{
-					thisModule.connect(tLastNode, tPathEnd);
-				}
+				tPathEnd <- tAlternatePathEnd;
+			}
+			
+			if(tPathEnd.oclIsUndefined()){
+				--caused by nested calls to connectPathEnd
+				tPathEnd <- tLastNode;
+			}
+			else if(sPathBody.index > tPathEnd.pred -> size()){
+				thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
 			}
 			else{
 				thisModule.connect(tLastNode, tPathEnd);
 			}
+		}
+		else{
+			thisModule.connect(tLastNode, tPathEnd);
 		}
 		
 		tPathEnd;
 	}
 }
 
-rule connectPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody){
+rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
+	using{
+		tLastNode : Urn!PathNode = OclUndefined;
+		tPathEnd : Urn!PathNode = tAlternatePathEnd;
+	}
+	do{
+		if(not sPathBody.oclIsUndefined()){
+			thisModule.collectPathBodyNodes(sPathBody);
+			
+			tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
+			tPathEnd <- thisModule.processPathEnd(sPathBody.pathEnd);
+			tPathEnd <- thisModule.connectToPathEnd(sPathBody, tLastNode, tPathEnd, tStartNode, tAlternatePathEnd);
+		}
+		
+		tPathEnd;
+	}
+}
+
+rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody){
 	using{
 		tNode: Urn!PathNode = thisModule.retrieveNode(sNode);
 		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|not pb.oclIsUndefined()) -> select(pb|not thisModule.getPathEnd(pb).oclIsTypeOf(Urn!EndPoint)) -> size();
@@ -163,21 +135,21 @@ rule connectPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!Path
 	}
 	do{
 		for(sPathBody in sPathBodies){
-			thisModule.newDoConnect(sPathBody, tNode, tJoin);
+			thisModule.connectPathBody(sPathBody, tNode, tJoin);
 		}
 		
 		if(tJoin.oclIsUndefined()){
-			thisModule.newDoConnect(sConnectingBody, tNode, OclUndefined);
+			thisModule.connectPathBody(sConnectingBody, tNode, OclUndefined);
 		}
 		else{
-			thisModule.newDoConnect(sConnectingBody, tJoin, OclUndefined);
+			thisModule.connectPathBody(sConnectingBody, tJoin, OclUndefined);
 		}	
 	}
 }
 
 -- Connects paths for all the stubs with indeces. These are added to stubIndexMap at an earlier
 -- stage of the code and left there to be considered last.
-rule connectPathBodiesWithIndexes(){
+rule connectIndexedPathBodies(){
 	using{
 		tStub : Urn!Stub = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
@@ -272,14 +244,14 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 				tStartPoint <- thisModule.retrieveNode(sPath.startPoint);
 			}
 			
-			thisModule.newDoConnect(sPath.pathBody, tStartPoint, OclUndefined);
+			thisModule.connectPathBody(sPath.pathBody, tStartPoint, OclUndefined);
 		}
 		
 		-- I don't like the approach I've used below. The reason I have to do it as such is
 		-- because Stubs need to be processed last so that all other elements in the path have
 		-- been handled once they are considered (due to the fact stubs have indexes referencing)
 		-- specific connections). There is probably a cleaner way to do this.
-		thisModule.connectPathBodiesWithIndexes();
+		thisModule.connectIndexedPathBodies();
 		thisModule.setOrForkConditions();
 		thisModule.setStubThresholds();
 		

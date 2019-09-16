@@ -229,15 +229,6 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 	}
 }
 
-rule getUrnComponentRef(sObject: OclAny){
-	using{
-		tComponentRef : Urn!ComponentRef = OclUndefined;
-	}
-	do{
-		tComponentRef;
-	}
-}
-
 rule getPathEnd(sPathBody: Turn!PathBody){
 	using{
 		tNodeToConnect : Urn!PathNode = OclUndefined;
@@ -395,8 +386,7 @@ rule AndFork2AndFork{
 			id <- vId,
 			name <- vName,
 			label <- vLabel,
-			diagram <- thisModule.tUCMmap,
-			contRef <- thisModule.getUrnComponentRef(sAndFork)
+			diagram <- thisModule.tUCMmap
 		)
 }
 
@@ -407,8 +397,7 @@ rule AndJoin2AndJoin{
 		tAndJoin: Urn!AndJoin(
 			id <- thisModule.nextId().toString(),
 			name <- sAndJoin.turnGetLongestName(),
-			label <- tNodeLabel,
-			contRef <- thisModule.getUrnComponentRef(sAndJoin)
+			label <- tNodeLabel
 		),
 		tNodeLabel: Urn!NodeLabel
 }
@@ -637,8 +626,7 @@ rule OrFork2OrFork{
 			id <- vId,
 			name <- vName,
 			label <- vLabel,
-			diagram <- thisModule.tUCMmap,
-			contRef <- thisModule.getUrnComponentRef(sOrFork)
+			diagram <- thisModule.tUCMmap
 		)
 }
 
@@ -649,8 +637,7 @@ rule OrJoin2OrJoin{
 		tOrJoin: Urn!OrJoin(
 			id <- thisModule.nextId().toString(),
 			name <- sOrJoin.turnGetLongestName(),
-			label <- tNodeLabel,
-			contRef <- thisModule.getUrnComponentRef(sOrJoin)
+			label <- tNodeLabel
 		),
 		tNodeLabel: Urn!NodeLabel
 }
@@ -697,7 +684,6 @@ rule StartPoint2StartPoint{
 			name <- sStartPoint.turnGetLongestName(),
 			label <- tNodeLabel,
 			precondition <- vPrecondition,
-			contRef <- thisModule.getUrnComponentRef(sStartPoint),
 			failureKind <- vFailureKind
 		),
 		tNodeLabel: Urn!NodeLabel
@@ -760,7 +746,6 @@ rule Stub2Stub{
 			label <- tNodeLabel,
 			blocking <- vIsBlocking,
 			synchronization <- vIsSynchronizing,
-			contRef <- thisModule.getUrnComponentRef(sStub),
 			dynamic <- vIsDynamic
 		),
 		tNodeLabel: Urn!NodeLabel
@@ -817,8 +802,7 @@ rule RespRef2Responsibility{
 			id <- thisModule.nextId().toString(),
 			name <- 'RespRef' + tRespRef.id,
 			label <- tNodeLabel,
-			respDef <- tResponsibility,
-			contRef <- thisModule.getUrnComponentRef(sRespRef)
+			respDef <- tResponsibility
 		),
 		tNodeLabel: Urn!NodeLabel
 }
@@ -833,8 +817,7 @@ rule Timer2Timer{
 			succ <- tNodeConn,
 			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
-			waitType <- sTimer.kind.toString().capitalize(),
-			contRef <- thisModule.getUrnComponentRef(sTimer)
+			waitType <- sTimer.kind.toString().capitalize()
 		),
 		tNodeConn: Urn!NodeConnection(
 			condition <- sTimer.condition
@@ -992,7 +975,7 @@ rule ComponentRef2ComponentRef {
 		thisModule.tUCMmap <- tComponentRef.diagram;
 		
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
-			thisModule.connectComponentRefLongBoundElement(elem.from, elem.to, tComponentRef, tComponentRef.diagram.nodes);
+			thisModule.updateComponentRefUsingLongBoundElement(elem.from, elem.to, tComponentRef, tComponentRef.diagram.nodes);
 		}
 
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
