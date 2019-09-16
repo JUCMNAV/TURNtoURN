@@ -26,24 +26,35 @@ rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!P
 	}
 }
 
+rule getOrCreatePathEnd(sEndpointWithConnect: Turn!EndpointWithConnect){
+	using{
+		tPathEnd : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(sEndpointWithConnect.regularEnd.oclIsUndefined()){
+			tPathEnd <- thisModule.createEndPoint();
+			thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
+		}
+		else if(thisModule.retrieveNode(sEndpointWithConnect.regularEnd).oclIsUndefined()){
+			tPathEnd <- thisModule.createEndPoint();
+			thisModule.initEndPointUsingEndpointWithConnect(tPathEnd, sEndpointWithConnect);
+			thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
+		}
+		else{
+			tPathEnd <- thisModule.retrieveNode(sEndpointWithConnect.regularEnd);
+		}
+		
+		tPathEnd;
+	}
+}
+
 rule processPathEnd(sPathEnd: Turn!PathBodyNode){
 	using{
 		tPathEnd : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(sPathEnd.regularEnd.oclIsUndefined()){
-				tPathEnd <- thisModule.createEndPoint();
-				thisModule.endPointMap <- thisModule.endPointMap.including(sPathEnd.regularEnd, tPathEnd);
-			}
-			else if(thisModule.retrieveNode(sPathEnd.regularEnd).oclIsUndefined()){
-				tPathEnd <- thisModule.createEndPoint();
-				thisModule.initEndPointUsingEndpointWithConnect(tPathEnd, sPathEnd);
-				thisModule.endPointMap <- thisModule.endPointMap.including(sPathEnd.regularEnd, tPathEnd);
-			}
-			else{
-				tPathEnd <- thisModule.retrieveNode(sPathEnd.regularEnd);
-			}
+			tPathEnd <- thisModule.getOrCreatePathEnd(sPathEnd);
 		}
 		else if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
 			thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.pathbody, sPathEnd.connectingAndBody);
@@ -82,8 +93,7 @@ rule connectToPathEnd(sPathBody: Urn!PathBody, tLastNode: Urn!PathNode, tPathEnd
 			}
 			
 			if(tPathEnd.oclIsUndefined()){
-				--caused by nested calls to connectPathEnd
-				tPathEnd <- tLastNode;
+				tPathEnd <- tLastNode; --caused by nested calls to connectPathEnd
 			}
 			else if(sPathBody.index > tPathEnd.pred -> size()){
 				thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
