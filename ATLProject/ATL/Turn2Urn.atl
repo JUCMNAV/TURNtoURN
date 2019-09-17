@@ -253,7 +253,7 @@ rule getPathEnd(sPathBody: Turn!PathBody){
 
 rule getResponsibility(vResponsibilityName: String){
 	do{
-		Urn!Responsibility.allInstances() -> any(n|n.name=vResponsibilityName);	
+		Urn!Responsibility.allInstances() -> any(n|n.name=vResponsibilityName);
 	}
 }
 
