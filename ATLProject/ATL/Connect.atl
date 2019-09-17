@@ -38,18 +38,34 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 
 rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
 	using{
-		tLastNode : Urn!PathNode = OclUndefined;
+		tCurrentNode : Urn!PathNode = OclUndefined;
+		tLastNode : Urn!PathNode = tStartNode;
+		sPathEnd : Urn!PathEnd = OclUndefined;
 		tPathEnd : Urn!PathNode = tAlternatePathEnd;
 	}
 	do{
 		if(not sPathBody.oclIsUndefined()){
 			thisModule.collectPathBodyNodes(sPathBody);
 			
-			tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
-			thisModule.processPathEnd(sPathBody.pathEnd);
+			for(sCurrentNode in sPathBody.pathNodes){
+				if(sCurrentNode.oclIsTypeOf(Turn!Timer)){
+					thisModule.initTimer(sCurrentNode);
+				}
+				
+				tCurrentNode <- thisModule.retrieveNode(sCurrentNode);
+				thisModule.directConnect(tLastNode, tCurrentNode);
+				tLastNode <- tCurrentNode;
+			}
 			
-			tPathEnd <- thisModule.getPathEnd(sPathBody);
-
+			sPathEnd <- sPathBody.pathEnd;
+			
+			if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				tPathEnd <- thisModule.getOrCreatePathEnd(sPathEnd);
+			}
+			else{
+				tPathEnd <- thisModule.getPathEnd(sPathBody);
+			}
+				
 			if(tPathEnd.oclIsUndefined()){
 				tPathEnd <- tAlternatePathEnd;
 			}
@@ -58,66 +74,32 @@ rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlterna
 				tPathEnd <- tLastNode; -- No path end found - occurs for ending of nested and/or joins. Will be connected with parent's join.
 			}
 			else if(sPathBody.index > tPathEnd.pred -> size()){
-				thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
-				tPathEnd <- OclUndefined;
+				thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); -- This approach won't work if an index is used more than once!
 			}
 			else{
 				thisModule.connect(tLastNode, tPathEnd);
-				tPathEnd <- OclUndefined;
-			}
-		}
-		
-		tPathEnd;
-	}
-}
-
-rule connectBodyNodes(sPathNodes: Sequence(Turn!PathBodyNode), tPathStart: Urn!PathNode){
-	using{
-		tNode : Urn!PathNode = OclUndefined;
-		tPreviousNode : Urn!PathNode = tPathStart;
-	}
-	do{
-		for(sCurrentNode in sPathNodes){
-			if(sCurrentNode.oclIsTypeOf(Turn!Timer)){
-				thisModule.initTimer(sCurrentNode);
 			}
 			
-			tNode <- thisModule.retrieveNode(sCurrentNode);
-			thisModule.directConnect(tPreviousNode, tNode);
-			tPreviousNode <- tNode;
-		}
-		
-		tPreviousNode;
-	}
-}
-
-rule processPathEnd(sPathEnd: Turn!PathBodyNode){
-	using{
-		tPathEnd : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-			tPathEnd <- thisModule.getOrCreatePathEnd(sPathEnd);
-		}
-		else if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
-			thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.pathbody, sPathEnd.connectingAndBody);
-		}
-		else if(sPathEnd.oclIsTypeOf(Turn!OrFork)){
-			if(sPathEnd.body.oclIsUndefined()){
-				thisModule.connectPathEndPathBodies(sPathEnd, Sequence { }, sPathEnd.connectingOrBody);
+			if(sPathEnd.oclIsTypeOf(Turn!AndFork)){
+				thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.pathbody, sPathEnd.connectingAndBody, tAlternatePathEnd);
+			}
+			else if(sPathEnd.oclIsTypeOf(Turn!OrFork)){
+				if(sPathEnd.body.oclIsUndefined()){
+					thisModule.connectPathEndPathBodies(sPathEnd, Sequence { }, sPathEnd.connectingOrBody, tAlternatePathEnd);
+				}
+				else{
+					thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.body.regularBody -> collect(rb|rb.pathBody) -> including(sPathEnd.body.elseBody), sPathEnd.connectingOrBody, tAlternatePathEnd);
+				}
+			}
+			else if(sPathEnd.oclIsTypeOf(Turn!Stub)){
+				thisModule.initStub(sPathEnd);
+				thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.outPaths -> collect(op|op.path), sPathEnd.connectingStubBody, tAlternatePathEnd);
 			}
 			else{
-				thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.body.regularBody -> collect(rb|rb.pathBody) -> including(sPathEnd.body.elseBody), sPathEnd.connectingOrBody);
+				-- PathEnd is undefined
 			}
 		}
-		else if(sPathEnd.oclIsTypeOf(Turn!Stub)){
-			thisModule.initStub(sPathEnd);
-			thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.outPaths -> collect(op|op.path), sPathEnd.connectingStubBody);
-		}
-		else{
-			-- PathEnd is undefined
-		}
-
+		
 		tPathEnd;
 	}
 }
@@ -144,11 +126,11 @@ rule getOrCreatePathEnd(sEndpointWithConnect: Turn!EndpointWithConnect){
 	}
 }
 
-rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody){
+rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody, tNextConnectingNode : Urn!PathNode){
 	using{
 		tNode: Urn!PathNode = thisModule.retrieveNode(sNode);
 		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|not pb.oclIsUndefined()) -> select(pb|not thisModule.getPathEnd(pb).oclIsTypeOf(Urn!EndPoint)) -> size();
-		tJoin : Urn!PathNode = 
+		tLastNode : Urn!PathNode = 
 			if(sConnectingBody.oclIsUndefined() or vNumberOfNonTerminatingNodes < 2) then
 				OclUndefined
 			else
@@ -158,23 +140,17 @@ rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Tu
 					thisModule.createOrJoin()
 				endif
 			endif;
-		tPathEnd : Urn!Pathnode = OclUndefined;
 	}
 	do{
-		for(sPathBody in sPathBodies){
-			tPathEnd <- thisModule.connectPathBody(sPathBody, tNode, tJoin);
-			
-			--if(not tPathEnd.oclIsUndefined()){
-			--	thisModule.connect(tPathEnd, tJoin);
-			--}
+		for(sPathBody in sPathBodies -> select(pb|not pb.oclIsUndefined())){
+			thisModule.connectPathBody(sPathBody, tNode, tLastNode);
 		}
 		
-		if(tJoin.oclIsUndefined()){
-			thisModule.connectPathBody(sConnectingBody, tNode, OclUndefined);
+		if(tLastNode.oclIsUndefined()){
+			tLastNode <- tNode;
 		}
-		else{
-			thisModule.connectPathBody(sConnectingBody, tJoin, OclUndefined);
-		}	
+		
+		thisModule.connectPathBody(sConnectingBody, tLastNode, tNextConnectingNode);
 	}
 }
 
