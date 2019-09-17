@@ -47,35 +47,23 @@ rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlterna
 			
 			tLastNode <- thisModule.connectBodyNodes(sPathBody.pathNodes, tStartNode);
 			thisModule.processPathEnd(sPathBody.pathEnd);
-			tPathEnd <- thisModule.getPathEnd(sPathBody);
 			
-			if(tPathEnd.oclIsTypeOf(Urn!EndPoint)){
-				thisModule.connect(tLastNode, tPathEnd);
+			tPathEnd <- thisModule.getPathEnd(sPathBody);
+
+			if(tPathEnd.oclIsUndefined()){
+				tPathEnd <- tAlternatePathEnd;
+			}
+			
+			if(tPathEnd.oclIsUndefined()){
+				tPathEnd <- tLastNode; -- No path end found - occurs for ending of nested and/or joins. Will be connected with parent's join.
+			}
+			else if(sPathBody.index > tPathEnd.pred -> size()){
+				thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
+				tPathEnd <- OclUndefined;
 			}
 			else{
-				tPathEnd <- thisModule.getPathEnd(sPathBody);
-				
-				if(tPathEnd.oclIsTypeOf(Urn!EndPoint)){
-					thisModule.debug(tPathEnd);	
-				}
-				
-				if(tLastNode=tStartNode){
-					thisModule.connect(tPathEnd, tAlternatePathEnd);
-				}
-				
-				if(tPathEnd.oclIsUndefined()){
-					tPathEnd <- tAlternatePathEnd;
-				}
-				
-				if(tPathEnd.oclIsUndefined()){
-					tPathEnd <- tLastNode; --caused by nested calls to connectPathEnd
-				}
-				else if(sPathBody.index > tPathEnd.pred -> size()){
-					thisModule.stubIndexMap <- thisModule.stubIndexMap.including(sPathBody.index, Sequence{tLastNode, tPathEnd}); --this approach won't work if an index is used more than once!
-				}
-				else{
-					thisModule.connect(tLastNode, tPathEnd);
-				}
+				thisModule.connect(tLastNode, tPathEnd);
+				tPathEnd <- OclUndefined;
 			}
 		}
 		
@@ -170,10 +158,15 @@ rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Tu
 					thisModule.createOrJoin()
 				endif
 			endif;
+		tPathEnd : Urn!Pathnode = OclUndefined;
 	}
 	do{
 		for(sPathBody in sPathBodies){
-			thisModule.connectPathBody(sPathBody, tNode, tJoin);
+			tPathEnd <- thisModule.connectPathBody(sPathBody, tNode, tJoin);
+			
+			--if(not tPathEnd.oclIsUndefined()){
+			--	thisModule.connect(tPathEnd, tJoin);
+			--}
 		}
 		
 		if(tJoin.oclIsUndefined()){
