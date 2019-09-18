@@ -222,6 +222,15 @@ rule joinAllPreds(tSuccNode: Urn!PathNode){
 	}
 }
 
+rule connectWithEmptyPoint(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
+	using{
+		tEmptyPoint : Urn!EmptyPoint = thisModule.createEmptyPoint();
+	}
+	do{
+		thisModule.chainDirectConnect(Sequence { tFromNode, tEmptyPoint, tToNode });
+	}
+}
+
 -- Connects two nodes, handling various special cases.
 rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
@@ -230,21 +239,7 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 	do{
 		if(tFromNode.isDefined() and tToNode.isDefined()){
-			if(tFromNode.isAlreadyConnectedTo(tToNode)){
-				if(tToNode.isJoin()){
-					tEmptyPoint <- thisModule.createEmptyPoint();
-					thisModule.chainDirectConnect(Sequence { tFromNode, tEmptyPoint, tToNode });
-				}
-				else{
-					tJoin <- thisModule.createOrJoin();
-					
-					tFromNode.connectionWith(tToNode).target <- tJoin;
-					
-					tEmptyPoint <- thisModule.createEmptyPoint();
-					thisModule.chainDirectConnect(Sequence { tFromNode, tEmptyPoint, tJoin, tToNode });
-				}
-			}
-			else if(tToNode.hasPredecessors() and not tToNode.isJoin() and not tFromNode.oclIsTypeOf(Urn!StartPoint)){
+			if(tToNode.hasPredecessors() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not tFromNode.oclIsTypeOf(Urn!Connect) and not tToNode.isJoin()){
 				-- If two nodes enter the same target, and that target is not a join, then we create an OrJoin
 				-- as the target for all these connections and have this OrJoin enter that target instead.
 				
@@ -310,16 +305,21 @@ rule contributionKeywordToNumber(vKeyword: String){
 	}
 }
 
--- Directly connects two nodes, without attempting to handle any special connection logic cases.
+-- Connects two nodes, creating a connection with an empty point in between if the connection already exists.
 rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	do{
 		if(tFromNode.isDefined() and tToNode.isDefined()){
-			if(not tFromNode.hasFreeConnection() and not tFromNode.connectionWith(tToNode).isDefined()){
-				thisModule.createNewConnection(tFromNode);
+			if(tFromNode.connectionWith(tToNode).isDefined()){
+				thisModule.connectWithEmptyPoint(tFromNode, tToNode);	
 			}
-			
-			thisModule.tUCMmap.connections <- thisModule.tUCMmap.connections.including(tFromNode.nextFreeConnection());
-			thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
+			else{
+				if(not tFromNode.hasFreeConnection() and not tFromNode.connectionWith(tToNode).isDefined()){
+					thisModule.createNewConnection(tFromNode);
+				}
+				
+				thisModule.tUCMmap.connections <- thisModule.tUCMmap.connections.including(tFromNode.nextFreeConnection());
+				thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
+			}
 		}
 	}
 }

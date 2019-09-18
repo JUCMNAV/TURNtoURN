@@ -161,8 +161,8 @@ rule connectIndexedPathBodies(){
 				if(vIndex <= tStub.pred -> size()){
 					tOrJoin <- thisModule.createOrJoin();
 					tStub.pred -> at(vIndex).target <- tOrJoin;
-					thisModule.directConnect(tLastNode, tOrJoin);
-					thisModule.directConnect(tOrJoin, tStub);
+					thisModule.connect(tLastNode, tOrJoin);
+					thisModule.connect(tOrJoin, tStub);
 				}
 				else{
 					thisModule.directConnect(tLastNode, tStub);

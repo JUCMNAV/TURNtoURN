@@ -76,8 +76,8 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 		
 		if(sEndpointWithConnect.connect.isDefined()){
 			tConnect <- thisModule.createConnect();
-			thisModule.directConnect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
-			thisModule.directConnect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
+			thisModule.connect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
+			thisModule.connect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
 		}
 	}
 }
