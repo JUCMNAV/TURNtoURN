@@ -53,6 +53,13 @@ helper context OclAny def : turnGetLongestName() : String =
 helper context Urn!PathNode def : nextFreeConnection() : Urn!NodeConnection =
 	self.succ -> any(s|s.target.oclIsUndefined());
 
+helper context Urn!PathNode def : isAlreadyConnectedTo(tPathNode: Urn!PathNode) : Boolean =
+	not self.succ -> any(s|s.target=tPathNode).oclIsUndefined();
+
+helper context Urn!PathNode def : isJoin() : Boolean =
+	self.oclIsTypeOf(Urn!OrJoin) or self.oclIsTypeOf(Urn!AndJoin);
+	
+
 -----------------------3/5 CALLED RULES-----------------------------
 
 rule nextId(){
@@ -62,20 +69,16 @@ rule nextId(){
 	}
 }
 
-rule useConnection(tToNode: Urn!PathNode, predecessor: Sequence(Urn!NodeConnection)){
+rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeConnection){
 	do{
-		if(predecessor.oclIsKindOf(Sequence(Urn!NodeConnection))){
-			tToNode.pred <- tToNode.pred.union(predecessor);
-		}
-		else{
-			tToNode.pred <- tToNode.pred.including(predecessor);	
-		}
+		tToNode.pred <- tToNode.pred.including(tConnectionFromPreviousNode);
 		
-		-- Return the new connection
+		 -- Return the new node connection.
 		tToNode.pred -> last();
 	}
 }
 
+-- Directly connects two nodes, without attempting to handle any special connection logic cases.
 rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	do{
 		if(not (tFromNode.oclIsUndefined() or tToNode.oclIsUndefined())){
@@ -89,6 +92,7 @@ rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 }
 
+-- Connects two nodes, handling various special cases.
 rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
 		tJoin : Urn!OrJoin = OclUndefined;
@@ -96,8 +100,8 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 	do{
 		if(not (tFromNode.oclIsUndefined() or tToNode.oclIsUndefined())){
-			if(not tFromNode.succ -> any(s|s.target=tToNode).oclIsUndefined()){
-				if(tToNode.oclIsTypeOf(Urn!OrJoin) or tToNode.oclIsTypeOf(Urn!AndJoin)){
+			if(tFromNode.isAlreadyConnectedTo(tToNode)){
+				if(tToNode.isJoin()){
 					tEmptyPoint <- thisModule.createEmptyPoint();
 					thisModule.directConnect(tFromNode, tEmptyPoint);
 					tFromNode <- tEmptyPoint;
@@ -114,7 +118,7 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 					tFromNode <- tJoin;
 				}
 			}
-			else if(not tToNode.pred -> isEmpty() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not(tToNode.oclIsTypeOf(Urn!AndJoin) or tToNode.oclIsTypeOf(Urn!OrJoin))){
+			else if(not tToNode.pred -> isEmpty() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not tToNode.isJoin()){
 				tJoin <- thisModule.createOrJoin();
 				tToNode.pred.first().target <- tJoin; --TODO: iterate over all of the pred
 				thisModule.directConnect(tFromNode, tJoin);
