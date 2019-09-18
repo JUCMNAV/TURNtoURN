@@ -184,6 +184,44 @@ rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 	}
 }
 
+-- Connects two or more nodes in the order of the input sequence.
+rule chainDirectConnect(tNodesToConnect: Sequence(Urn!PathNode)){
+	using{
+		tFromNode: Urn!PathNode = OclUndefined;
+	}
+	do{
+		for(tToNode in tNodesToConnect){
+			if(tFromNode.isDefined()){
+				thisModule.directConnect(tFromNode, tToNode);
+			}
+			
+			tFromNode <- tToNode;
+		}
+	}
+}
+
+rule joinAllPreds(tSuccNode: Urn!PathNode){
+	using{
+		tJoin : Urn!OrJoin = thisModule.createOrJoin();
+		
+		-- Used to copy preds in case of an or join to iterate over them without causing concurrent modification exception.
+		tPreds : Sequence(Urn!NodeConnection) = Sequence{};
+	}
+	do{
+		-- Add to tPreds so that we're not directly iterating over the preds; 
+		-- Trying to modify the pred list while iterating on it directly raises an error.
+		for(tPred in tSuccNode.pred){
+			tPreds <- tPreds.including(tPred);	
+		}
+		
+		for(tPred in tPreds){
+			tPred.target <- tJoin;
+		}
+		
+		tJoin;
+	}
+}
+
 -- Connects two nodes, handling various special cases.
 rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
@@ -195,8 +233,7 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 			if(tFromNode.isAlreadyConnectedTo(tToNode)){
 				if(tToNode.isJoin()){
 					tEmptyPoint <- thisModule.createEmptyPoint();
-					thisModule.directConnect(tFromNode, tEmptyPoint);
-					tFromNode <- tEmptyPoint;
+					thisModule.chainDirectConnect(Sequence { tFromNode, tEmptyPoint, tToNode });
 				}
 				else{
 					tJoin <- thisModule.createOrJoin();
@@ -204,21 +241,19 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 					tFromNode.connectionWith(tToNode).target <- tJoin;
 					
 					tEmptyPoint <- thisModule.createEmptyPoint();
-					thisModule.directConnect(tFromNode, tEmptyPoint);
-					thisModule.directConnect(tEmptyPoint, tJoin);
-					
-					tFromNode <- tJoin;
+					thisModule.chainDirectConnect(Sequence { tFromNode, tEmptyPoint, tJoin, tToNode });
 				}
 			}
-			else if(tToNode.hasPredecessors() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not tToNode.isJoin()){
-				tJoin <- thisModule.createOrJoin();
-				tToNode.pred.first().target <- tJoin; --TODO: iterate over all of the pred
-				thisModule.directConnect(tFromNode, tJoin);
-				thisModule.directConnect(tJoin, tToNode);
-				tToNode <- tJoin;
+			else if(tToNode.hasPredecessors() and not tToNode.isJoin() and not tFromNode.oclIsTypeOf(Urn!StartPoint)){
+				-- If two nodes enter the same target, and that target is not a join, then we create an OrJoin
+				-- as the target for all these connections and have this OrJoin enter that target instead.
+				
+				tJoin <- thisModule.joinAllPreds(tToNode);
+				thisModule.chainDirectConnect(Sequence { tFromNode, tJoin, tToNode });
 			}
-			
-			thisModule.directConnect(tFromNode, tToNode);
+			else{
+				thisModule.directConnect(tFromNode, tToNode);
+			}
 		}
 	}
 }

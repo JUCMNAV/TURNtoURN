@@ -47,7 +47,7 @@ rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlterna
 		thisModule.collectPathBodyNodesAndEnds(sPathBody);
 		tLastNode <- thisModule.connectPathBodyNodes(tStartNode, sPathBody.pathNodes);
 		thisModule.connectLastNodeToPathEnd(tLastNode, sPathBody, tAlternatePathEnd);			
-		thisModule.doConnectForPathEnd(sPathBody.pathEnd, tAlternatePathEnd);
+		thisModule.connectPathEnd(sPathBody.pathEnd, tAlternatePathEnd);
 		
 		tPathEnd;
 	}
@@ -98,7 +98,7 @@ rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody,
 	}
 }
 
-rule doConnectForPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd){
+rule connectPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd){
 	using{
 		sPathBodies : Sequence(Turn!PathBodyNode) = Sequence {};
 		sConnectingBody : Turn!PathBody = OclUndefined;
@@ -160,7 +160,7 @@ rule connectIndexedPathBodies(){
 	
 				if(vIndex <= tStub.pred -> size()){
 					tOrJoin <- thisModule.createOrJoin();
-					tStub.pred -> at(vIndex).target <- tOrJoin; --TODO: iterate over all of the pred
+					tStub.pred -> at(vIndex).target <- tOrJoin;
 					thisModule.directConnect(tLastNode, tOrJoin);
 					thisModule.directConnect(tOrJoin, tStub);
 				}
