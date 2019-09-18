@@ -252,16 +252,19 @@ rule getResponsibility(vResponsibilityName: String){
 
 rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 	using{
+		vTypesOfNodeToAdd : Sequence(String) = 
+			Sequence { 
+				'tRespRef', 'tAndJoin', 'tOrJoin', 
+				'tWaitingPlace', 'tFailurePoint' 
+			};
 		sPathNodes : Sequence(Turn!PathNode) = sPathBody.pathNodes;
 	}
 	do{
 		sPathNodes <- sPathNodes -> flatten();
 		
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tRespRef')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tAndJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tOrJoin')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tWaitingPlace')));
-		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, 'tFailurePoint')));
+		for(vTypeOfNodeToAdd in vTypesOfNodeToAdd){
+			thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, vTypeOfNodeToAdd)));
+		}
 		
 		if(not sPathBody.pathEnd.oclIsUndefined()){
 			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
@@ -278,45 +281,41 @@ rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 
 rule retrieveNode(sPathNode: Turn!PathNode){
 	using{
+		vPathNodeTypes : Sequence(String) = 
+			Sequence {
+				'tWaitingPlace', 'tFailurePoint', 'tRespRef',
+				'tTimer', 'tAndFork', 'tOrFork', 'tStub',
+				'tAndJoin', 'tOrJoin'
+			};
 		tRetrievedNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(not sPathNode.oclIsUndefined()){
-			tRetrievedNode <- Sequence{};
-			
 			if(sPathNode.oclIsTypeOf(Turn!Stub)){
 				if(not sPathNode.stubRef.oclIsUndefined()){
 					sPathNode <- sPathNode.stubRef;
 				}
 			}
-			
-			if(sPathNode.oclIsTypeOf(Turn!Connect)){
+			else if(sPathNode.oclIsTypeOf(Turn!Connect)){
 				sPathNode <- sPathNode.connectsTo;
 			}
-			
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tWaitingPlace'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tFailurePoint'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tRespRef'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tTimer'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tAndFork'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tOrFork'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tStub'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tAndJoin'));
-			tRetrievedNode <- tRetrievedNode.including(thisModule.resolveTemp(sPathNode, 'tOrJoin'));
-			
-			tRetrievedNode <- tRetrievedNode -> any(e|not e.oclIsUndefined());
-			
-			if(sPathNode.oclIsTypeOf(Turn!EndPoint)){
-				tRetrievedNode <- thisModule.endPointMap.get(sPathNode);
-			}
-			
-			if(sPathNode.oclIsTypeOf(Turn!EndpointWithConnect)){
+			else if(sPathNode.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(sPathNode.regularEnd.oclIsUndefined()){
 					tRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EndPoint));
 				}
 				else{
 					sPathNode <- sPathNode.regularEnd;
-					tRetrievedNode <- thisModule.retrieveNode(sPathNode);
+				}
+			}
+			
+			if(sPathNode.oclIsTypeOf(Turn!EndPoint)){
+				tRetrievedNode <- thisModule.endPointMap.get(sPathNode);
+			}
+			else{
+				for(vPathNodeType in vPathNodeTypes){
+					if(tRetrievedNode.oclIsUndefined()){
+						tRetrievedNode <- thisModule.resolveTemp(sPathNode, vPathNodeType);	
+					}
 				}
 			}
 			
