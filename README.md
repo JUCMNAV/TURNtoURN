@@ -24,6 +24,7 @@
 
 ## TODO
 * Remove debug & TODO statements
+* Make getter helpers more explicitly return either a TURN or URN object
 * Refactor for increased readability
 	* Rules to improve:
 		* Connect

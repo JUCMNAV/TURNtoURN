@@ -181,6 +181,20 @@ helper context Turn!EvaluationStrategy def : getAuthor() : String =
 		OclUndefined
 	endif;
 
+helper context Turn!Binding def : getBinding() : Turn!Binding =
+	if(self.bindings.isDefined()) then
+		self.bindings
+	else
+		self.binding
+	endif;
+
+helper context Turn!Binding def : getStub() : Urn!Stub =
+	if(self.getBinding().stubParam.stub.isDefined()) then
+		thisModule.getTargetNode(self.getBinding().stubParam.stub)
+	else
+		thisModule.getTargetNode(self.getBinding().stubParam.stubDec.stub)
+	endif;
+
 helper context Turn!URNspec def : getElements() : Sequence(Turn!IntentionalElement) =
 	self.actors -> collect(actor|actor.elems) -> flatten();
 
@@ -372,8 +386,7 @@ rule connectAtTargetIndex(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vPredI
 			
 			tOrJoin <- thisModule.createOrJoin();
 			tToNode.pred -> at(vPredIndex).target <- tOrJoin;
-			thisModule.connect(tFromNode, tOrJoin);
-			thisModule.connect(tOrJoin, tToNode);
+			thisModule.chainDirectConnect(Sequence { tFromNode, tOrJoin, tToNode });
 		}	
 	}
 }
@@ -508,7 +521,7 @@ rule joinAllPreds(tSuccNode: Urn!PathNode){
 		tPreds : Sequence(Urn!NodeConnection) = Sequence{};
 	}
 	do{
-		-- Add to tPreds so that we're not directly iterating over the preds; 
+		-- Add all items to be modified to tPreds so that we're not directly iterating over the preds; 
 		-- Trying to modify the pred list while iterating on it directly raises an error.
 		for(tPred in tSuccNode.pred){
 			tPreds <- tPreds.including(tPred);	
@@ -1066,7 +1079,8 @@ rule InBinding2InBinding{
 	to
 		tInBinding: Urn!InBinding
 	do{
-		thisModule.initBinding(sInBinding, tInBinding);
+		tInBinding.stubEntry <- sInBinding.getStub().pred -> at(sInBinding.index);
+		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
 	}
 }
 
@@ -1076,7 +1090,8 @@ rule OutBinding2OutBinding{
 	to
 		tOutBinding: Urn!OutBinding
 	do{
-		thisModule.initBinding(sOutBinding, tOutBinding);
+		tOutBinding.stubExit <- sOutBinding.getStub().succ -> at(sOutBinding.index);
+		tOutBinding.endPoint <- thisModule.getTargetNode(sOutBinding.mapEnd);
 	}
 }
 

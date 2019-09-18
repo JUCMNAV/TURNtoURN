@@ -14,33 +14,6 @@ create OUT : Urn from IN : Turn;
 
 --------------1/3 INITIALIZERS-------------
 
-rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
-	using{
-		sBoundTerm : Turn!Binding =
-			if(sBinding.bindings.isDefined()) then
-				sBinding.bindings
-			else
-				sBinding.binding
-			endif;
-		tStub : Urn!Stub = 
-			if(sBoundTerm.stubParam.stub.isDefined()) then
-				thisModule.getTargetNode(sBoundTerm.stubParam.stub)
-			else
-				thisModule.getTargetNode(sBoundTerm.stubParam.stubDec.stub)
-			endif;	
-	}
-	do{
-		if(sBinding.oclIsTypeOf(Turn!InBinding)){
-			tBinding.stubEntry <- tStub.pred -> at(sBinding.index);
-			tBinding.startPoint <- thisModule.resolveTemp(sBinding.mapStart, 'tStartPoint');
-		}
-		else if(sBinding.oclIsTypeOf(Turn!OutBinding)){
-			tBinding.stubExit <- tStub.succ -> at(sBinding.index);
-			tBinding.endPoint <- thisModule.getTargetNode(sBinding.mapEnd);
-		}
-	}
-}
-
 rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
 	do{
 		if(sComponentRef.kind.isDefined() and sComponentRef.kind.toString() <> 'parent'){
