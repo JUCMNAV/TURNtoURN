@@ -16,50 +16,15 @@
   
 **Turn2UrnPhase2.java -** Phase 2 of transformation 
 
-## ACTIVE TASK
-I am currently troubleshooting the code to look for issues that cause either incorrect outputs or runtime errors.
-
-### Progress
-* Belief.tucm = belief.tucm ?
-	* Mostly. Two lines are different. These warrant discussion with Ruchika.
-
-## ISSUES
-1. The test StartPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means a StartPoint must exist.
-2. The test EndPointTestNoName causes an error in UCMmap2UCMmap. This is because the way UCMmap2UCMmap is currently written means all PathEnds must have a RegularEnd in them. The specific line in endpoint.xml reads:
-	```
-	<pathBody xsi:type="turn:PathBodyNodes">
-		<pathEnd xsi:type="turn:EndpointWithConnect"/>
-	</pathBody>
-	```
-After noting the above, I looked at startpoint.xml as a point of reference. In that, no StartPoint is created at all. This actually causes the first bug, listed above. That brings three cases to mind:
-* EndPointTestNoName should have no EndPointWithConnect to match the behavior shown in StartPointTestNoName
-* StartPointTestNoName should have a StartPoint with a RegularEnd with some default name, and so EndPointTestNoName should have the same.
-* The EndPointWithConnect without a RegularEnd should be handled somewhere in the code, and StartPointNoName should create a StartPoint with no RegularEnd which is also handled somewhere else in the code.
-3. In the rules InBinding2InBinding and OutBinding2OutBinding, there is an attempt to retrieve an item from the stubMap which is not in the stubMap. This causes an issue with executing the tests for stub.xml, component.xml, and responsibility.xml; I have not yet pinpointed the source of this issue beyond what lines it occurs in.	
-
 ## TODO
-* Remove debug statements
-* Verify functionality (first priority)
-	* Look at all uses of -> including and -> union to see if they are behaving correctly
-		* Look to see if any other places should have -> including or -> union called instead of simple assignments
-		* I may have been wrong with regards to this behavior; I need to revisit this later.
-	* Make sure all typings are correct; I'm worried that sometimes we pass in a sequence to a method that takes in a single value as an argument (e.g., collectRegularEnds)
-	* Go over all matched rules to make sure assignments are from Urn object to Urn object (i.e., that resolveTemps are used where appropriate)
-	* Make sure that no issues are occurring because tUCMmap is only updated in UCMmap2UCMmap; this seems highly likely to cause issues with tUCMmap.getNode() calls 
-	* Verify ordering of operations that add nodes to tUCMmap in create called rules (e.g., createTimer) is correct
-* Refactor for better coding practice (second priority)
-	* Verify the lifetime of variables to make sure they aren't sitting around eternally
-	* Determine why we pass along tUCMmap rather than storing it in a global variable like OrForkMap, AndForkMap; pick one convention to stick to
-	* Look to see if there is a way to remove any or all map global objects
+* Remove debug & TODO statements
 * Refactor for increased readability
+	* Make approach to adding / removing items to sequences and maps more consistent
 	* Rearrange methods so that their order feels more natural.
-	* Change names of variables that are single letters (in particular, haven't handled this in the case of parameters for called rules)
 	* Make variable name orderings in method arguments consistent
 	* Rename methods and variables so that their names better describe their behavior and contents respectively
 	* Rename variable names in 'using' blocks with a better convention
 	* Write down the return type for each called rule
-	* Rename any Urn object variable names to start with a 't' for consistency and clarity and Turn object variable names with an 's'
-	* Make all "using" variables start with v, all argument variables with a, source object with s, target object with t
 * Refactor for increased consistency
 	* All if and else loops, including single line ones, should have braces
 	* Need consistency with whether empty from / to items have () or not
@@ -75,12 +40,13 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* LongName.longname
 			* Softgoal
 		* Why is failLabel an object with failure as a property rather than just a string failLabel?
+
 * New TODO (will be categorized later):
 	* Determine which attributes are not being tested (e.g., author in tStrategies)
-	* Find a way to remove the maps
+	* Find a way to remove the maps used in the transform
 	* Write comments describing what rules do
 
-* Conventions followed:
+## Style
 	* Variable naming:
 		* Prefixes:
 			* v = primitive data type
@@ -89,4 +55,6 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 		* Name:
 			* Depending on the context, write either a descriptive name for the element or otherwise use the full name of the model item 
 				* (e.g., sEndPoint says that an element is a Turn!EndPoint)
+	* Conditionals:
+		* All if and else loops, including single line ones, should have braces
     
