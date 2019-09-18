@@ -104,30 +104,6 @@ rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody,
 	}
 }
 
-rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
-	using{
-		tPathEnd : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(sEndpointWithConnect.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(sEndpointWithConnect.regularEnd.oclIsUndefined()){ -- TODO: this logic seems prone to fault
-				tPathEnd <- thisModule.createEndPoint();
-				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
-			}
-			else if(thisModule.retrieveNode(sEndpointWithConnect.regularEnd).oclIsUndefined()){
-				tPathEnd <- thisModule.createEndPoint();
-				thisModule.initEndPointUsingEndpointWithConnect(tPathEnd, sEndpointWithConnect);
-				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
-			}
-			else{
-				tPathEnd <- thisModule.retrieveNode(sEndpointWithConnect.regularEnd);
-			}
-		}
-		
-		tPathEnd;
-	}
-}
-
 
 rule doConnectForPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd){
 	using{

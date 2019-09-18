@@ -64,7 +64,51 @@ helper context Urn!PathNode def : hasPredecessors() : Boolean =
 
 helper context Urn!PathNode def : connectionWith(tPathNode: Urn!PathNode) : Urn!NodeConnection =
 	self.succ -> any(s|s.target=tPathNode);
+
+helper context Turn!Stub def : isBlocking() : Boolean = 
+	self.stubType.toString() = 'blocking';
+
+helper context Turn!Stub def : isSynchronizing() : Boolean = 
+	self.stubType.toString() = 'blocking' or self.stubType.toString() = 'synchronizing';
+
+helper context Turn!Stub def : isDynamic() : Boolean = 
+	if(self.isSynchronizing()) then
+		self.isSynchronizing()
+	else
+		if(not self.params.oclIsUndefined()) then
+			self.params.plugin -> flatten() -> size() >= 2
+		else
+			false
+		endif
+	endif;
+
+helper context Turn!StartPoint def : getFailKind() :String =
+	if(not self.failKind.oclIsUndefined()) then
+		self.failKind.toString().capitalize()
+	else
+		OclUndefined
+	endif;
 	
+helper context Turn!FailurePoint def : getFailExpression() : String =
+	if(not self.failLabel.oclIsUndefined()) then
+		self.failLabel.failure
+	else
+		OclUndefined
+	endif;
+
+helper context Turn!IntentionalElement def : getImportance() : String =
+	if(self.importance.toString().toLower().equals('none')) then
+		OclUndefined
+	else
+		self.importance.toString().capitalize()
+	endif;
+
+helper context Turn!IntentionalElement def : getType() : String =
+	if(self.type.toString() = 'resource') then
+		'Ressource'
+	else
+		self.type.toString().capitalize()
+	endif;
 
 -----------------------3/5 CALLED RULES-----------------------------
 
@@ -279,6 +323,7 @@ rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 	}
 }
 
+-- Gets the Urn counterpart for a Turn node.
 rule retrieveNode(sPathNode: Turn!PathNode){
 	using{
 		vPathNodeTypes : Sequence(String) = 
@@ -293,6 +338,7 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 		if(not sPathNode.oclIsUndefined()){
 			if(sPathNode.oclIsTypeOf(Turn!Stub)){
 				if(not sPathNode.stubRef.oclIsUndefined()){
+					-- Stub was created Using a stub declaration, so we need to find that.
 					sPathNode <- sPathNode.stubRef;
 				}
 			}
@@ -301,11 +347,14 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 			}
 			else if(sPathNode.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(sPathNode.regularEnd.oclIsUndefined()){
+					-- If the regularEnd isn't defined, just get the first EndPoint.
+					-- This won't work correctly if there's more than one unnamed EndPoint.
+					-- TODO: fix this to make it work more generally.
+					
 					tRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EndPoint));
 				}
-				else{
-					sPathNode <- sPathNode.regularEnd;
-				}
+				
+				sPathNode <- sPathNode.regularEnd;
 			}
 			
 			if(sPathNode.oclIsTypeOf(Turn!EndPoint)){
@@ -324,7 +373,7 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 			}
 		}
 		
-		tRetrievedNode; --returns a single node, not a sequence
+		tRetrievedNode;
 	}
 }
 
@@ -557,21 +606,13 @@ rule Evaluation2Evaluation{
 rule FailurePoint2FailurePoint{
 	from		
 		sFailurePoint: Turn!FailurePoint
-	using{
-		vExpression : String = 
-			if(not sFailurePoint.failLabel.oclIsUndefined()) then
-				sFailurePoint.failLabel.failure
-			else
-				OclUndefined
-			endif;
-	}
 	to
 		tFailurePoint: Urn!FailurePoint (
 			id <- thisModule.nextId().toString(),
 			name <- sFailurePoint.turnGetLongestName(),
 			succ <- tNodeConnection,
 			label <- tNodeLabel,
-			expression <- vExpression
+			expression <- sFailurePoint.getFailExpression()
 		),
 		tNodeConnection: Urn!NodeConnection(
 			condition <- sFailurePoint.condition
@@ -671,12 +712,7 @@ rule RespRef2Responsibility{
 	from
 		sRespRef: Turn!RespRef
 	using{
-		tResponsibility : Urn!Responsibility = 	
-			if(thisModule.getResponsibility(sRespRef.turnGetLongestName()).oclIsUndefined()) then
-				thisModule.createResponsibility(sRespRef)
-			else
-				thisModule.getResponsibility(sRespRef.turnGetLongestName())
-			endif;
+		tResponsibility : Urn!Responsibility = thisModule.getOrCreateReferencedResponsibility(sRespRef);
 	}
 	to
 		tRespRef: Urn!RespRef(
@@ -692,13 +728,7 @@ rule StartPoint2StartPoint{
 	from
 		sStartPoint: Turn!StartPoint
 	using{
-		vFailureKind : String =
-			if(not sStartPoint.failKind.oclIsUndefined()) then
-				sStartPoint.failKind.toString().capitalize()
-			else
-				OclUndefined
-			endif;
-		vPrecondition : Urn!Condition =
+		tPrecondition : Urn!Condition =
 			if(sStartPoint.failKind.oclIsUndefined()) then
 				sStartPoint.precondition
 			else
@@ -714,8 +744,8 @@ rule StartPoint2StartPoint{
 			id <- thisModule.nextId().toString(),
 			name <- sStartPoint.turnGetLongestName(),
 			label <- tNodeLabel,
-			precondition <- vPrecondition,
-			failureKind <- vFailureKind
+			precondition <- tPrecondition,
+			failureKind <- sStartPoint.getFailKind()
 		),
 		tNodeLabel: Urn!NodeLabel
 }
@@ -755,29 +785,15 @@ rule StrategiesGroup2StrategiesGroup{
 rule Stub2Stub{
 	from
 		sStub: Turn!Stub(sStub.stubRef.oclIsUndefined())
-	using{
-		vIsBlocking : Boolean = sStub.stubType.toString() = 'blocking';
-		vIsSynchronizing : Boolean = vIsBlocking or sStub.stubType.toString() = 'synchronizing';
-		vIsDynamic : Boolean = 
-			if(vIsSynchronizing) then
-				true
-			else
-				if(not sStub.params.oclIsUndefined()) then
-					sStub.params.plugin -> flatten() -> size() >= 2
-				else
-					OclUndefined
-				endif
-			endif;
-	}
 	to
 		tStub: Urn!Stub(
 			id <- thisModule.nextId().toString(),
 			name <- sStub.turnGetLongestName(),
 			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
-			blocking <- vIsBlocking,
-			synchronization <- vIsSynchronizing,
-			dynamic <- vIsDynamic
+			blocking <- sStub.isBlocking(),
+			synchronization <- sStub.isSynchronizing(),
+			dynamic <- sStub.isDynamic()
 		),
 		tNodeLabel: Urn!NodeLabel
 }
@@ -852,11 +868,9 @@ rule IntentionalElement2Belief{
 			description <- sIntentionalElement.name
 	 	)
 	do{
-		if(not sIntentionalElement.linksSrc -> isEmpty()){
-			for(sLink in sIntentionalElement.linksSrc){
-				tBelief.succ <- thisModule.createBeliefLink(sLink);
-		 	}
-		}
+		for(sLink in sIntentionalElement.linksSrc){
+			tBelief.succ <- thisModule.createBeliefLink(sLink);
+	 	}
 	}
 }
 
@@ -864,18 +878,12 @@ rule IntentionalElement2IntentionalElement{
 	from 
 		sIntentionalElement: Turn!IntentionalElement(sIntentionalElement.type.toString() <> 'belief')
 	using{
-		vDecomposition : Turn!Decomposition = Turn!Decomposition -> allInstances() -> any(d|d.dest=sIntentionalElement);
+		sDecomposition : Turn!Decomposition = Turn!Decomposition -> allInstances() -> any(d|d.dest=sIntentionalElement);
 		vDecompositionType : String = 
-			if(not vDecomposition.oclIsUndefined()) then
-				vDecomposition.decompositionType.toString().capitalize()
+			if(not sDecomposition.oclIsUndefined()) then
+				sDecomposition.decompositionType.toString().capitalize()
 			else
 				OclUndefined
-			endif;
-		vImportance : String =
-			if(sIntentionalElement.importance.toString().toLower().equals('none')) then
-				OclUndefined
-			else
-				sIntentionalElement.importance.toString().capitalize()
 			endif;
 	}
 	to 
@@ -890,8 +898,9 @@ rule IntentionalElement2IntentionalElement{
 			name <- sIntentionalElement.turnGetLongestName(),
 			linksSrc <- sIntentionalElement.linksSrc,
 			decompositionType <- vDecompositionType,
+			type <- sIntentionalElement.getType(),
 			importanceQuantitative <- sIntentionalElement.importanceQuantitative,
-			importance <- vImportance,
+			importance <- sIntentionalElement.getImportance(),
 			metadata <- thisModule.createMetadata('TURN-URN-NAME', sIntentionalElement.name)
 		)
 	do{
@@ -899,17 +908,6 @@ rule IntentionalElement2IntentionalElement{
 			tIntentionalElementRef.name <- 'IntentionalElementRef' + tIntentionalElementRef.id;
 		}
 		
-		if(Turn!Decomposition -> allInstances() -> select(d|d.dest=sIntentionalElement) -> size() > 0){
-			tIntentionalElement.decompositionType <-Turn!Decomposition -> allInstances() -> select(d|d.dest=sIntentionalElement) -> collect(a|a.decompositionType.toString().capitalize())-> first();
-		}
-		if(sIntentionalElement.type.toString() = 'resource'){
-			tIntentionalElement.type <- 'Ressource';
-		}
-		else{
-			tIntentionalElement.type <- sIntentionalElement.type.toString().capitalize();
-		}
-		 
-		 --Added because the default value in enum is considered always.
 		if(sIntentionalElement.importance.toString().equals('high') and sIntentionalElement.importanceQuantitative <> 0){
 			tIntentionalElement.importanceQuantitative <- sIntentionalElement.importanceQuantitative;
 		}
