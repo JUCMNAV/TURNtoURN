@@ -17,13 +17,13 @@ create OUT : Urn from IN : Turn;
 rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 	using{
 		sBoundTerm : Turn!Binding =
-			if(sBinding.bindings.oclIsUndefined()) then
-				sBinding.binding
-			else
+			if(sBinding.bindings.isDefined()) then
 				sBinding.bindings
+			else
+				sBinding.binding
 			endif;
 		tStub : Urn!Stub = 
-			if(not sBoundTerm.stubParam.stub.oclIsUndefined()) then
+			if(sBoundTerm.stubParam.stub.isDefined()) then
 				thisModule.retrieveNode(sBoundTerm.stubParam.stub)
 			else
 				thisModule.retrieveNode(sBoundTerm.stubParam.stubDec.stub)
@@ -41,15 +41,15 @@ rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 
 rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
 	do{
-		if(not sComponentRef.kind.oclIsUndefined() and sComponentRef.kind.toString() <> 'parent'){
+		if(sComponentRef.kind.isDefined() and sComponentRef.kind.toString() <> 'parent'){
 			tComponentRef.contDef.kind <- sComponentRef.kind.toString().capitalize();
 		}
 		else if(sComponentRef.kind <> 'parent'){
 			tComponentRef.contDef.kind <- 'Team';
 		}
 		
-		if(not sComponentRef.boundTo.oclIsUndefined()){
-			if(not sComponentRef.boundTo.comp.oclIsUndefined()){
+		if(sComponentRef.boundTo.isDefined()){
+			if(sComponentRef.boundTo.comp.isDefined()){
 				tComponentRef.parent <- Urn!Component.allInstances() -> any(n|sComponentRef.boundTo.comp.name=n.name).contRefs -> any(r|r.diagram = sComponentRef.map);
 			}
 			else{
@@ -65,11 +65,11 @@ rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!Compo
 rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
 	using{
 		tFromExists : Boolean = 
-			(not nodes -> any(n|n.name = tFrom).oclIsUndefined())
+			(nodes -> any(n|n.name = tFrom).isDefined())
 			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tFrom) -> isEmpty())
 			and not (tFrom = '');
 		tToExists : Boolean = 
-			(not nodes -> any(n|n.name = tTo).oclIsUndefined())
+			(nodes -> any(n|n.name = tTo).isDefined())
 			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tTo) -> isEmpty())
 			and not (tTo = '');
 		tStartNode : Urn!PathNode = OclUndefined;
@@ -79,13 +79,13 @@ rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tCompon
 		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
 			tStartNode <- nodes -> any(n|n.name=tFrom);
 
-			if(tStartNode.oclIsUndefined()){
+			if(not tStartNode.isDefined()){
 				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tFrom);
 			}
 			
 			tEndNode <- nodes -> any(n|n.name=tTo);
 			
-			if(tEndNode.oclIsUndefined()){
+			if(not tEndNode.isDefined()){
 				tEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tTo);
 			}
 			
@@ -115,11 +115,11 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 	do{
 		tEndPoint.name <- sEndpointWithConnect.regularEnd.turnGetLongestName();
 		
-		if(not sEndpointWithConnect.regularEnd.condition.oclIsUndefined()){
+		if(sEndpointWithConnect.regularEnd.condition.isDefined()){
 			tEndPoint.postcondition <- thisModule.createCondition(sEndpointWithConnect.regularEnd.condition.expression.asString());
 		}
 		
-		if(not sEndpointWithConnect.connect.oclIsUndefined()){
+		if(sEndpointWithConnect.connect.isDefined()){
 			tConnect <- thisModule.createConnect();
 			thisModule.directConnect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
 			thisModule.directConnect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
@@ -133,7 +133,7 @@ rule initStub(sStub: Turn!Stub){
 		tStub : Urn!Stub = thisModule.retrieveNode(sStub);	
 	}
 	do{
-		if(not sStub.params.oclIsUndefined()){
+		if(sStub.params.isDefined()){
 			tPlugins <- sStub.params.plugin;
 		}
 		else{
@@ -151,10 +151,10 @@ rule initTimer(sTimer: Turn!Timer){
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
 		
-		if(not sTimer.timeoutPath.oclIsUndefined()){
+		if(sTimer.timeoutPath.isDefined()){
 			thisModule.connectPathBody(sTimer.timeoutPath, tTimer, OclUndefined);
 			
-			if(not sTimer.timeoutCondition.oclIsUndefined()){
+			if(sTimer.timeoutCondition.isDefined()){
 				tTimer.succ.last().condition <- thisModule.createCondition(sTimer.timeoutCondition.expression.content.first());
 			}
 		}
@@ -171,11 +171,11 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 	}
 	do{
 		if(sEndpointWithConnect.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(sEndpointWithConnect.regularEnd.oclIsUndefined()){ -- TODO: this logic seems prone to fault
+			if(not sEndpointWithConnect.regularEnd.isDefined()){ -- TODO: this logic seems prone to fault
 				tEndPoint <- thisModule.createEndPoint();
 				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
 			}
-			else if(thisModule.retrieveNode(sEndpointWithConnect.regularEnd).oclIsUndefined()){
+			else if(not thisModule.retrieveNode(sEndpointWithConnect.regularEnd).isDefined()){
 				tEndPoint <- thisModule.createEndPoint();
 				thisModule.initEndPointUsingEndpointWithConnect(tEndPoint, sEndpointWithConnect);
 				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
@@ -194,11 +194,11 @@ rule getOrCreateReferencedResponsibility(sRespRef: Turn!RespRef){
 		tResponsibility : Urn!Responsibility = OclUndefined;	
 	}
 	do{
-		if(thisModule.getResponsibility(sRespRef.turnGetLongestName()).oclIsUndefined()){
-			tResponsibility <- thisModule.createResponsibility(sRespRef);
+		if(thisModule.getResponsibility(sRespRef.turnGetLongestName()).isDefined()){
+			tResponsibility <- thisModule.getResponsibility(sRespRef.turnGetLongestName());
 		}
 		else{
-			tResponsibility <- thisModule.getResponsibility(sRespRef.turnGetLongestName());
+			tResponsibility <- thisModule.createResponsibility(sRespRef);
 		}
 		
 		tResponsibility;
@@ -215,9 +215,6 @@ rule createAndJoin(){
 			diagram <- thisModule.tUCMmap
 		)
 	do{
-		if(tAndJoin.id='39'){
-		--	thisModule.k.k;	
-		}
 		tAndJoin;
 	}
 }
