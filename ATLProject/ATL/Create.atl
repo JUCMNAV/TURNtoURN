@@ -24,9 +24,9 @@ rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 			endif;
 		tStub : Urn!Stub = 
 			if(sBoundTerm.stubParam.stub.isDefined()) then
-				thisModule.retrieveNode(sBoundTerm.stubParam.stub)
+				thisModule.getTargetNode(sBoundTerm.stubParam.stub)
 			else
-				thisModule.retrieveNode(sBoundTerm.stubParam.stubDec.stub)
+				thisModule.getTargetNode(sBoundTerm.stubParam.stubDec.stub)
 			endif;	
 	}
 	do{
@@ -36,7 +36,7 @@ rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 		}
 		else if(sBinding.oclIsTypeOf(Turn!OutBinding)){
 			tBinding.stubExit <- tStub.succ -> at(sBinding.index);
-			tBinding.endPoint <- thisModule.retrieveNode(sBinding.mapEnd);
+			tBinding.endPoint <- thisModule.getTargetNode(sBinding.mapEnd);
 		}
 	}
 }
@@ -76,15 +76,15 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 		
 		if(sEndpointWithConnect.connect.isDefined()){
 			tConnect <- thisModule.createConnect();
-			thisModule.connect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
-			thisModule.connect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
+			thisModule.connect(thisModule.getTargetNode(sEndpointWithConnect.regularEnd), tConnect);
+			thisModule.connect(tConnect, thisModule.getTargetNode(sEndpointWithConnect.connect));
 		}
 	}
 }
 
 rule initTimer(sTimer: Turn!Timer){
 	using{
-		tTimer : Urn!Timer = thisModule.retrieveNode(sTimer);
+		tTimer : Urn!Timer = thisModule.getTargetNode(sTimer);
 	}
 	do{
 		thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(tTimer);
@@ -109,7 +109,7 @@ rule getOrCreateStartPoint(sStartPoint: Turn!StartPoint){
 	}
 	do{
 		if(sStartPoint.isDefined()){
-			tStartPoint <- thisModule.retrieveNode(sStartPoint);
+			tStartPoint <- thisModule.getTargetNode(sStartPoint);
 		}
 		else{
 			tStartPoint <- thisModule.createStartPoint();
@@ -129,13 +129,13 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 				tEndPoint <- thisModule.createEndPoint();
 				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
 			}
-			else if(not thisModule.retrieveNode(sEndpointWithConnect.regularEnd).isDefined()){
+			else if(not thisModule.getTargetNode(sEndpointWithConnect.regularEnd).isDefined()){
 				tEndPoint <- thisModule.createEndPoint();
 				thisModule.initEndPointUsingEndpointWithConnect(tEndPoint, sEndpointWithConnect);
 				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
 			}
 			else{
-				tEndPoint <- thisModule.retrieveNode(sEndpointWithConnect.regularEnd);
+				tEndPoint <- thisModule.getTargetNode(sEndpointWithConnect.regularEnd);
 			}
 		}
 		
@@ -167,14 +167,14 @@ rule getOrCreatePathEnd(sPathBody: Turn!PathBody){
 				tPathEnd <- thisModule.getOrCreateEndPoint(sPathBody.pathEnd);
 			}
 			else{
-				tPathEnd <- thisModule.retrieveNode(sPathBody.pathEnd);
+				tPathEnd <- thisModule.getTargetNode(sPathBody.pathEnd);
 			}
 		}
 		else if(sPathBody.referencedEnd.isDefined()){
-			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedEnd);
+			tPathEnd <- thisModule.getTargetNode(sPathBody.referencedEnd);
 		}
 		else if(sPathBody.referencedStub.isDefined()){
-			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedStub);
+			tPathEnd <- thisModule.getTargetNode(sPathBody.referencedStub);
 		}
 		else{
 			--	PathBody has no PathEnd.

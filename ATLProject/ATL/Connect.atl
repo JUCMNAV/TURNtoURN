@@ -59,7 +59,7 @@ rule connectPathBodyNodes(tStartNode : Urn!PathNode, sPathNodes : Sequence(Turn!
 				thisModule.initTimer(sCurrentNode);
 			}
 			
-			tCurrentNode <- thisModule.retrieveNode(sCurrentNode);
+			tCurrentNode <- thisModule.getTargetNode(sCurrentNode);
 			thisModule.directConnect(tLastNode, tCurrentNode);
 			tLastNode <- tCurrentNode;
 		}
@@ -111,7 +111,7 @@ rule connectPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd){
 
 rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody, tNextConnectingNode : Urn!PathNode){
 	using{
-		tNode: Urn!PathNode = thisModule.retrieveNode(sNode);
+		tNode: Urn!PathNode = thisModule.getTargetNode(sNode);
 		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|pb.isDefined()) -> select(pb|not thisModule.getOrCreatePathEnd(pb).oclIsTypeOf(Urn!EndPoint)) -> size();
 		tLastNode : Urn!PathNode = 
 			if(not sConnectingBody.isDefined() or vNumberOfNonTerminatingNodes < 2) then
@@ -236,7 +236,7 @@ rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!Co
 		}
 
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
-			tPathNode <- thisModule.retrieveNode(elem.elem);
+			tPathNode <- thisModule.getTargetNode(elem.elem);
 			
 			if(not tPathNode.isDefined()){
 				tPathNode <- thisModule.resolveTemp(elem.elem, 'tComponentRef');

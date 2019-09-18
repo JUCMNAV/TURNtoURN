@@ -208,14 +208,17 @@ helper context Turn!URNspec def : getTargetLinks() : Sequence(Urn!ElementLink) =
 helper context Turn!URNspec def : getTargetLinkRefs() : Sequence(Urn!LinkRef) =
 	self.getLinks() -> collect(m| thisModule.resolveTemp(m, 'tLinkRef'));
 
-helper context Turn!URNspec def : getTargetBeliefs() : Sequence(Urn!LinkRef) =
+helper context Turn!URNspec def : getTargetBeliefs() : Sequence(Urn!Belief) =
 	self.getElements() -> select(e|e.type.toString() = 'belief') -> collect(b| thisModule.resolveTemp(b, 'tBelief'));
 
-helper context Turn!PluginBinding def : getInBindings() : Sequence(Turn!InBinding) =
+helper context Turn!PluginBinding def : getInBindings() : Sequence(Urn!InBinding) =
 	self.bindings -> collect(b|thisModule.resolveTemp(b, 'tInBinding')).including(thisModule.resolveTemp(self.binding, 'tInBinding'));
 
-helper context Turn!PluginBinding def : getOutBindings() : Sequence(Turn!OutBinding) =
+helper context Turn!PluginBinding def : getOutBindings() : Sequence(Urn!OutBinding) =
 	self.bindings -> collect(b|thisModule.resolveTemp(b, 'tOutBinding')).including(thisModule.resolveTemp(self.binding, 'tOutBinding'));
+
+helper context Turn!Actor def : getNodes() : Sequence(Turn!GRLNode) =
+	self.elems -> collect(e|thisModule.resolveTemp(e, 'tIntentionalElementRef')).union(self.elems -> collect(e|thisModule.resolveTemp(e, 'tBelief')));
 
 -----------------------3/6 DICTIONARIES-----------------------------
 
@@ -301,11 +304,11 @@ rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 		if(sPathBody.pathEnd.isDefined()){
 			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(sPathBody.pathEnd.regularEnd.isDefined()){
-					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.getTargetNode(sPathBody.pathEnd));
 				}
 			}
 			else{
-				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.getTargetNode(sPathBody.pathEnd));
 			}
 		}
 	}
@@ -442,38 +445,8 @@ rule getResponsibility(vResponsibilityName: String){
 	}
 }
 
--- Join all the preds of tSuccNode using an OrJoin and return the OrJoin.
-rule joinAllPreds(tSuccNode: Urn!PathNode){
-	using{
-		tJoin : Urn!OrJoin = thisModule.createOrJoin();
-		
-		-- Used to copy preds in case of an or join to iterate over them without causing concurrent modification exception.
-		tPreds : Sequence(Urn!NodeConnection) = Sequence{};
-	}
-	do{
-		-- Add to tPreds so that we're not directly iterating over the preds; 
-		-- Trying to modify the pred list while iterating on it directly raises an error.
-		for(tPred in tSuccNode.pred){
-			tPreds <- tPreds.including(tPred);	
-		}
-		
-		for(tPred in tPreds){
-			tPred.target <- tJoin;
-		}
-		
-		tJoin;
-	}
-}
-
-rule nextId(){
-	do{
-		thisModule.id <- thisModule.id.inc();
-		thisModule.id;
-	}
-}
-
 -- Gets the Urn counterpart for a Turn node.
-rule retrieveNode(sPathNode: Turn!PathNode){
+rule getTargetNode(sPathNode: Turn!PathNode){
 	using{
 		vPathNodeTypes : Sequence(String) = 
 			Sequence {
@@ -523,6 +496,36 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 		}
 		
 		tRetrievedNode;
+	}
+}
+
+-- Join all the preds of tSuccNode using an OrJoin and return the OrJoin.
+rule joinAllPreds(tSuccNode: Urn!PathNode){
+	using{
+		tJoin : Urn!OrJoin = thisModule.createOrJoin();
+		
+		-- Used to copy preds in case of an or join to iterate over them without causing concurrent modification exception.
+		tPreds : Sequence(Urn!NodeConnection) = Sequence{};
+	}
+	do{
+		-- Add to tPreds so that we're not directly iterating over the preds; 
+		-- Trying to modify the pred list while iterating on it directly raises an error.
+		for(tPred in tSuccNode.pred){
+			tPreds <- tPreds.including(tPred);	
+		}
+		
+		for(tPred in tPreds){
+			tPred.target <- tJoin;
+		}
+		
+		tJoin;
+	}
+}
+
+rule nextId(){
+	do{
+		thisModule.id <- thisModule.id.inc();
+		thisModule.id;
 	}
 }
 
@@ -579,7 +582,7 @@ rule Actor2Actor{
 			id <- thisModule.nextId().toString(),
 			name <- 'ActorRef' + tActorRef.id,
 			contDef <- tActor,
-			nodes <- sActor.elems -> collect(e|thisModule.resolveTemp(e, 'tIntentionalElementRef')).union(sActor.elems -> collect(e|thisModule.resolveTemp(e, 'tBelief'))),
+			nodes <- sActor.getNodes(),
 			label <- tCompLabel
 		),
 		tCompLabel: Urn!ComponentLabel
