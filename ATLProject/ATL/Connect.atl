@@ -6,6 +6,7 @@ create OUT : Urn from IN : Turn;
 -- Handles exploration of nodes to find PathBodies and connect 
 -- the appropriate parts.
 
+-- connectUCMmap is the main entry point for all node connection.
 rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	using{
 		tStartPoint : Urn!StartPoint = OclUndefined;
@@ -220,6 +221,29 @@ rule setStubThresholds(){
 			}
 			else{
 				-- Declared using StubDeclaration, no outPaths
+			}
+		}
+	}
+}
+
+rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
+	using{
+		tPathNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
+			thisModule.updateComponentRefUsingLongBoundElement(elem.from, elem.to, tComponentRef, tComponentRef.diagram.nodes);
+		}
+
+		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
+			tPathNode <- thisModule.retrieveNode(elem.elem);
+			
+			if(not tPathNode.isDefined()){
+				tPathNode <- thisModule.resolveTemp(elem.elem, 'tComponentRef');
+				tComponentRef.children <- tComponentRef.children.including(tPathNode);
+			}
+			else if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
+				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
 			}
 		}
 	}

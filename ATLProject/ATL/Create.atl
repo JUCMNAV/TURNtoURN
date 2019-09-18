@@ -184,6 +184,41 @@ rule getOrCreatePathEnd(sPathBody: Turn!PathBody){
 	}
 }
 
+rule getOrCreateStartPointPrecondition(sStartPoint: Turn!StartPoint){
+	using{
+		tPrecondition : Urn!Condition = OclUndefined;	
+	}
+	do{
+		if(sStartPoint.failKind.isDefined()){
+			if(sStartPoint.catches.isDefined()){
+				tPrecondition <- thisModule.createCondition(sStartPoint.catches);
+			}
+		}
+		else{
+			tPrecondition <- sStartPoint.precondition;
+		}
+		
+		tPrecondition;
+	}
+}
+
+rule getOrCreateReferencedComponent(sComponentRef: Turn!ComponentRef){
+	using{
+		tExistingComponent : Urn!Component = Urn!Component.allInstances() -> any(c|c.name=sComponentRef.name);
+		tComponent: Urn!Component = OclUndefined;
+	}
+	do{
+		if(tExistingComponent.isDefined()){
+				tComponent <- tExistingComponent;
+		}
+		else{
+			tComponent <- thisModule.createComponent(sComponentRef);
+		}
+		
+		tComponent;
+	}
+}
+
 rule getOrCreateReferencedResponsibility(sRespRef: Turn!RespRef){
 	using{
 		tResponsibility : Urn!Responsibility = OclUndefined;	
@@ -301,17 +336,6 @@ rule createLabel(){
 		tNodeLabel: Urn!NodeLabel()
 	do{
 		tNodeLabel;
-	}
-}
-
-rule createMetadata(vName: String, vValue: String){
-	to 
- 		tMetadata: Urn!Metadata(
- 			name <- vName,
- 			value <- vValue 
-		)
-	do{
-	 	tMetadata;
 	}
 }
 
