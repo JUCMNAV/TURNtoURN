@@ -143,6 +143,20 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 	}
 }
 
+rule getOrCreateKPIEvalValueSet(sEvaluation: Turn!IndicatorConversion){
+	using{
+		vKPIEvalValueSet : Urn!KPIEvalValueSet = OclUndefined;	
+	}
+	do{
+		if(sEvaluation.conversion.oclIsTypeOf(Turn!QualToQMappings)){
+			thisModule.createQMapKPIEvalValueSet(sEvaluation.conversion);
+		}
+		else if(sEvaluation.conversion.oclIsTypeOf(Turn!LinearConversion)){
+			thisModule.createKPIEvalValueSet(sEvaluation.conversion);
+		}
+	}
+}
+
 rule getOrCreatePathEnd(sPathBody: Turn!PathBody){
 	using{
 		tPathEnd : Urn!PathNode = OclUndefined;
@@ -271,14 +285,14 @@ rule createEndPoint(){
 
 rule createKPIEvalValueSet(sLinearConversion: Turn!LinearConversion){
 	to
-		tKpiEvalValueSet: Urn!KPIEvalValueSet(
+		tKPIEvalValueSet: Urn!KPIEvalValueSet(
 			unit <- sLinearConversion.unit,
 			targetValue <- sLinearConversion.targetValue,
 			thresholdValue <- sLinearConversion.thresholdValue,
 			worstValue <- sLinearConversion.worstValue
 		)
 	do{
-		tKpiEvalValueSet;
+		tKPIEvalValueSet;
 	}
 }
 
@@ -323,10 +337,10 @@ rule createOrJoin(){
 	}
 }
 
-rule createQMapKPIEvalValueSet(conv: Turn!QualToQMappings){
+rule createQMapKPIEvalValueSet(sConversion: Turn!QualToQMappings){
 	to		
 		tQMapKPIEvalValueSet: Urn!KPIEvalValueSet(
-			kpiConv <- conv	
+			kpiConv <- sConversion	
 		)
 	do{
 		tQMapKPIEvalValueSet;

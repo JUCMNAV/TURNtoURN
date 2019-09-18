@@ -142,9 +142,79 @@ helper context Turn!OrFork def : getConnectingBody() : Urn!PathBody =
 helper context Turn!Stub def : getConnectingBody() : Urn!PathBody = 
 	self.connectingStubBody;
 
+helper context Turn!Contribution def : getContributionType() : String =
+	if(self.contribution.toString() = 'undefined') then
+		thisModule.dictContributionNumberToKeyword(self.quantitativeContribution)
+	else
+		self.contribution.toString().capitalize()
+	endif;
+
+helper context Turn!Contribution def : getQuantitativeContribution() : Integer =
+	thisModule.dictContributionKeywordToNumber(self.getContributionType());
+
+helper context Turn!ContributionChange def : getNewContribution() : String =
+	if(self.newContribution.toString() = 'undefined') then
+		OclUndefined
+	else
+		self.newContribution.toString().capitalize()
+	endif;
 
 
------------------------3/5 CALLED RULES-----------------------------
+-----------------------3/6 DICTIONARIES-----------------------------
+
+rule dictContributionNumberToKeyword(vQuantitativeContribution: Integer){
+	using{
+		vContribution :	String = OclUndefined;
+	}
+	do{
+		-- Dictionary. Had to use called rule as elseif is not supported in helpers
+		
+		if(vQuantitativeContribution <= -1)
+			vContribution <- 'Hurt';
+		else if(vQuantitativeContribution < -49)
+			vContribution <- 'SomeNegative';
+		else if(vQuantitativeContribution = -100)
+			vContribution <- 'Break';
+		else if(vQuantitativeContribution = 0)
+			vContribution <- 'Unknown';
+		else if(vQuantitativeContribution < 50)
+			vContribution <- 'Help';
+		else if(vQuantitativeContribution <= 99)
+			vContribution <- 'SomePositive';
+		else if(vQuantitativeContribution = 100)
+			vContribution <- 'Make';
+		else
+			vContribution <- OclUndefined;
+		
+		vContribution;
+	}
+}
+
+rule dictContributionKeywordToNumber(vKeyword: String){
+	using{
+		vQuantitativeContribution : Integer = OclUndefined;	
+	}
+	do{
+		if(vKeyword.equals('Make'))
+			vQuantitativeContribution <- 100;
+		else if(vKeyword.equals('Hurt'))
+			vQuantitativeContribution <- -25;
+		else if(vKeyword.equals('Break'))
+			vQuantitativeContribution <- -100;
+		else if(vKeyword.equals('SomePositive'))
+			vQuantitativeContribution <- 50;
+		else if(vKeyword.equals('SomeNegative'))
+			vQuantitativeContribution <- -50;
+		else if(vKeyword.equals('Help'))
+			vQuantitativeContribution <- 25;
+		else
+			vQuantitativeContribution <- OclUndefined;
+		
+		vQuantitativeContribution;
+	}
+}
+
+-----------------------4/6 CALLED RULES-----------------------------
 
 rule addConnectionToStubIndexMap(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vIndex: Integer){
 	do{
@@ -200,37 +270,6 @@ rule chainDirectConnect(tNodesToConnect: Sequence(Urn!PathNode)){
 	}
 }
 
-rule joinAllPreds(tSuccNode: Urn!PathNode){
-	using{
-		tJoin : Urn!OrJoin = thisModule.createOrJoin();
-		
-		-- Used to copy preds in case of an or join to iterate over them without causing concurrent modification exception.
-		tPreds : Sequence(Urn!NodeConnection) = Sequence{};
-	}
-	do{
-		-- Add to tPreds so that we're not directly iterating over the preds; 
-		-- Trying to modify the pred list while iterating on it directly raises an error.
-		for(tPred in tSuccNode.pred){
-			tPreds <- tPreds.including(tPred);	
-		}
-		
-		for(tPred in tPreds){
-			tPred.target <- tJoin;
-		}
-		
-		tJoin;
-	}
-}
-
-rule connectWithEmptyPoint(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
-	using{
-		tEmptyPoint : Urn!EmptyPoint = thisModule.createEmptyPoint();
-	}
-	do{
-		thisModule.chainDirectConnect(Sequence { tFromNode, tEmptyPoint, tToNode });
-	}
-}
-
 -- Connects two nodes, handling various special cases.
 rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
@@ -279,55 +318,13 @@ rule connectAtTargetIndex(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vPredI
 	}
 }
 
-rule contributionNumberToKeyword(vQuantitativeContribution: Integer){
+--Connect two nodes, adding an empty point in between them.
+rule connectWithEmptyPoint(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
-		vContribution :	String = OclUndefined;
+		tEmptyPoint : Urn!EmptyPoint = thisModule.createEmptyPoint();
 	}
 	do{
-		-- Dictionary. Had to use called rule as elseif is not supported in helpers
-		
-		if(vQuantitativeContribution <= -1)
-			vContribution <- 'Hurt';
-		else if(vQuantitativeContribution < -49)
-			vContribution <- 'SomeNegative';
-		else if(vQuantitativeContribution = -100)
-			vContribution <- 'Break';
-		else if(vQuantitativeContribution = 0)
-			vContribution <- 'Unknown';
-		else if(vQuantitativeContribution < 50)
-			vContribution <- 'Help';
-		else if(vQuantitativeContribution <= 99)
-			vContribution <- 'SomePositive';
-		else if(vQuantitativeContribution = 100)
-			vContribution <- 'Make';
-		else
-			vContribution <- OclUndefined;
-		
-		vContribution;
-	}
-}
-
-rule contributionKeywordToNumber(vKeyword: String){
-	using{
-		vQuantitativeContribution : Integer = OclUndefined;	
-	}
-	do{
-		if(vKeyword.equals('Make'))
-			vQuantitativeContribution <- 100;
-		else if(vKeyword.equals('Hurt'))
-			vQuantitativeContribution <- -25;
-		else if(vKeyword.equals('Break'))
-			vQuantitativeContribution <- -100;
-		else if(vKeyword.equals('SomePositive'))
-			vQuantitativeContribution <- 50;
-		else if(vKeyword.equals('SomeNegative'))
-			vQuantitativeContribution <- -50;
-		else if(vKeyword.equals('Help'))
-			vQuantitativeContribution <- 25;
-		else
-			vQuantitativeContribution <- OclUndefined;
-		
-		vQuantitativeContribution;
+		thisModule.chainDirectConnect(Sequence { tFromNode, tEmptyPoint, tToNode });
 	}
 }
 
@@ -386,6 +383,29 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 rule getResponsibility(vResponsibilityName: String){
 	do{
 		Urn!Responsibility.allInstances() -> any(n|n.name=vResponsibilityName);
+	}
+}
+
+-- Join all the preds of tSuccNode using an OrJoin and return the OrJoin.
+rule joinAllPreds(tSuccNode: Urn!PathNode){
+	using{
+		tJoin : Urn!OrJoin = thisModule.createOrJoin();
+		
+		-- Used to copy preds in case of an or join to iterate over them without causing concurrent modification exception.
+		tPreds : Sequence(Urn!NodeConnection) = Sequence{};
+	}
+	do{
+		-- Add to tPreds so that we're not directly iterating over the preds; 
+		-- Trying to modify the pred list while iterating on it directly raises an error.
+		for(tPred in tSuccNode.pred){
+			tPreds <- tPreds.including(tPred);	
+		}
+		
+		for(tPred in tPreds){
+			tPred.target <- tJoin;
+		}
+		
+		tJoin;
 	}
 }
 
@@ -587,18 +607,6 @@ rule Condition2Condition{
 rule Contribution2Contribution{
 	from 
 		sContribution: Turn!Contribution(sContribution.link.type.toString() <> 'belief')
-	using{
-		vHasNoContributionType : Boolean = sContribution.contribution.toString().equals('undefined');
-	
-		vContribution : String =
-			if(vHasNoContributionType) then
-				thisModule.contributionNumberToKeyword(sContribution.quantitativeContribution)
-			else
-				sContribution.contribution.toString().capitalize()
-			endif;
-
-		vQuantitativeContribution : Integer = thisModule.contributionKeywordToNumber(vContribution);
-	}
 	to 
 		tContribution: Urn!Contribution(
 			id <- thisModule.nextId().toString(),
@@ -606,8 +614,8 @@ rule Contribution2Contribution{
 		 	dest <- thisModule.resolveTemp(sContribution.dest, 'tIntentionalElement'),
 			refs <- tLinkRef,
 	 		correlation <- sContribution.correlation,
-			contribution <- vContribution,
-			quantitativeContribution <- vQuantitativeContribution
+			contribution <- sContribution.getContributionType(),
+			quantitativeContribution <- sContribution.getQuantitativeContribution()
 		),
 		tLinkRef: Urn!LinkRef(
 			link <- tContribution,
@@ -618,19 +626,11 @@ rule Contribution2Contribution{
 rule ContributionChange2ContributionChange{
 	from
 		sContributionChange: Turn!ContributionChange
-	using{
-		vNewContribution : String = 
-			if(sContributionChange.newContribution.toString() = 'undefined') then
-				OclUndefined
-			else
-				sContributionChange.newContribution.toString().capitalize()
-			endif;		
-	}
 	to
 		tContributionChange: Urn!ContributionChange(
 			contribution <- sContributionChange.contribution,
 			newQuantitativeContribution <- sContributionChange.newQuantitativeContribution,
-			newContribution <- vNewContribution
+			newContribution <- sContributionChange.getNewContribution()
 		)
 }
 
@@ -692,25 +692,13 @@ rule Dependency2Dependency{
 rule Evaluation2Evaluation{
 	from
 		sEvaluation: Turn!Evaluation
-	using{
-		vKPIEvalValueSet : Urn!KPIEvalValueSet =
-			if(sEvaluation.conversion.oclIsTypeOf(Turn!QualToQMappings)) then
-				thisModule.createQMapKpiEvalValueSet(sEvaluation.conversion)
-			else
-				if(sEvaluation.conversion.oclIsTypeOf(Turn!LinearConversion)) then
-					thisModule.createKPIEvalValueSet(sEvaluation.conversion)
-				else
-					OclUndefined
-				endif
-			endif;
-	}
  	to 
 		tEvaluation: Urn!Evaluation(
 		 	exceeds <- sEvaluation.exceeds,
 		 	intElement <- thisModule.resolveTemp(sEvaluation.intElement, 'tIntentionalElement'),
 			evaluation <- sEvaluation.evaluation,
 			qualitativeEvaluation <- sEvaluation.qualitativeEvaluation.toString().capitalize(),
-			kpiEvalValueSet <- vKPIEvalValueSet
+			kpiEvalValueSet <- thisModule.getOrCreateKPIEvalValueSet(sEvaluation.conversion)
 		)
 }
 
