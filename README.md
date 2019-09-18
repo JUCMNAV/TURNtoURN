@@ -62,16 +62,12 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 	* Make all "using" variables start with v, all argument variables with a, source object with s, target object with t
 * Refactor for increased consistency
 	* All if and else loops, including single line ones, should have braces
-	* Decide on a naming convention for source and target model elements. Either stick to s and t or have the names be descriptive.
 	* Need consistency with whether empty from / to items have () or not
-	* Decide if all conditionals should have an else loop that explicitly states the else case should not be entered in valid method calls
-		* Determine if error messages can be sent out by ATL in these cases
-	* Make all caps variable names into camel case (all caps was for refactoring purposes to make variable names easier to find)
 	* Make sure all select(n.name='') are consistent in (Turn2Urn remains)
 	* Files
 		* Update names of .turn input files in TURNTestInput to match with new xml file names
 		* Update names of files and test cases to be consistent with names of turn/urn items (e.g., Endpoint to EndPoint)
-		* Create a "test" folder to contain Input, Output, LaunchConfiguration, previousOutput (or find some other way to structures the directory better than its current more arbitrary state)
+		* Create a "test" folder to contain Input, Output, LaunchConfiguration, previousOutput (or find some other way to structure the directory better than its current more arbitrary state)
 		* Describe in this README how to use the launch configurations that have been added to the project
 	* TURN
 		* Check if it is acceptable to rename some TURN variables for more consistency in naming
@@ -80,51 +76,17 @@ After noting the above, I looked at startpoint.xml as a point of reference. In t
 			* Softgoal
 		* Why is failLabel an object with failure as a property rather than just a string failLabel?
 * New TODO (will be categorized later):
-	* Test case issues:
-		* ConnectTestEndPointAgain has 2 'e's instead of an e3
-		* resource should be ressource
 	* Determine which attributes are not being tested (e.g., author in tStrategies)
-	* Figure out if it is possible to make an implementation that uses matched rules for OrFork, AndFork, etc.
 	* Find a way to remove the maps
-	* Ensure nextGlobalId is correct
 	* Write comments describing what rules do
-	* Verify variable declaration typings are correct
-	* Major issues in output produced by new code:
-		* AndForkTestMergedBranches.jucm
-			* Null pointer error when running phase 2
-		* OrForkTestMergedBranches.jucm
-			* Null pointer error when running phase 2
-		* OrForkTestBranches.jucm
-			* Missing an OrJoin and its corresponding NodeConnection (id=73 in expected output)
-			* Lots of nodes are missing connections
-			* Lots of incorrect connections
-	* Remaining for more careful validation (some have minor issues):
-		* AndFork.jucm
-		* AndJoin.jucm
-		* Belief.jucm
-		* Component.jucm
-			* Definite minor issues
-		* Connect.jucm
-		* FailurePoint.jucm
-		* Goal.jucm
-		* Indicator.jucm
-		* OrFork.jucm
-			* Elsebody case is not being handled in my version of the code
-		* OrJoin.jucm
-		* Resource.jucm
-		* Responsibility.jucm
-			* Missing an OutBinding (476 current, 474 original)
-			* Current version of output has an extra EmptyPoint on line 136
-			* Differences in how binding logic is handled (lines 491-502, ResponsibilityTestReferencedStubInpath2)
-		* SoftGoal.jucm
-		* Stub.jucm
-			* Compare result of phase 2 with "stub.jucm" of the Expected Output folder rather than stub-autolayout.jucm in that folder
-		* Task.jucm
-		* Timer.jucm
-		* WaitingPlace.jucm
-	* Untested cases:
-		* StartPoint.xml
-		* EndPoint.xml
-		* Remaining test cases.xml
-		* Telecom example
+
+* Conventions followed:
+	* Variable naming:
+		* Prefixes:
+			* v = primitive data type
+			* s = source MM data type
+			* t = target MM data type
+		* Name:
+			* Depending on the context, write either a descriptive name for the element or otherwise use the full name of the model item 
+				* (e.g., sEndPoint says that an element is a Turn!EndPoint)
     

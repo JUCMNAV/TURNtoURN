@@ -1,8 +1,6 @@
-/ATLProject/Output/
-/ATLProject/previousOutput/
+/ATLProject/test/Output/
+/ATLProject/test/PreviousOutputs/
 .classpath
 .project
 /bin
-/PreviousOutputs
 /testOutputsMatch.txt
-/Turn2UrnPhase2.java

@@ -40,8 +40,8 @@
 <mapEntry key="OUT" value="Urn"/>
 </mapAttribute>
 <mapAttribute key="Path">
-<mapEntry key="IN" value="/ATLProject/Input/Stub.xml"/>
-<mapEntry key="OUT" value="/ATLProject/Output/Stub.jucm"/>
+<mapEntry key="IN" value="/ATLProject/Test/Input/Resource.xml"/>
+<mapEntry key="OUT" value="/ATLProject/Test/Output/Resource.jucm"/>
 <mapEntry key="Turn" value="/ATLProject/Metamodels/Turn.ecore"/>
 <mapEntry key="Urn" value="uri:http:///urn.ecore"/>
 </mapAttribute>
