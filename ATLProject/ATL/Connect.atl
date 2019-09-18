@@ -45,7 +45,7 @@ rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlterna
 	}
 	do{
 		if(not sPathBody.oclIsUndefined()){
-			thisModule.collectPathBodyNodes(sPathBody);
+			thisModule.collectPathBodyNodesAndEnds(sPathBody);
 			tLastNode <- thisModule.connectPathBodyNodes(tStartNode, sPathBody.pathNodes);
 			thisModule.connectLastNodeToPathEnd(tLastNode, sPathBody, tAlternatePathEnd);			
 			thisModule.doConnectForPathEnd(sPathBody.pathEnd, tAlternatePathEnd);

@@ -24,6 +24,8 @@
 ## TODO
 * Remove debug & TODO statements
 * Refactor for increased readability
+	* Rules to improve:
+		* Connect
 	* Make approach to adding / removing items to sequences and maps more consistent
 	* Rearrange methods so that their order feels more natural.
 	* Make variable name orderings in method arguments consistent
@@ -62,4 +64,4 @@
 				* (e.g., sEndPoint says that an element is a Turn!EndPoint)
 	* Conditionals:
 		* All if and else loops, including single line ones, should have braces
-    
+    * Variable declaration - spacing, use of parentheses - TODO: make this match the ATL user guide

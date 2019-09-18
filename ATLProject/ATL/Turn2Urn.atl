@@ -35,9 +35,6 @@ helper context String def : capitalize(): String =
 
 helper context Integer def : inc() : Integer = self + 1;
 
-helper context Urn!UCMmap def : getNode(turnNodeName: String) : OclAny = 
-	self.nodes -> any(n|n.name=turnNodeName);
-
 --This should only be called on TURN objects; I haven't been able to determine how to express that restriction using OCL, though.
 helper context OclAny def : turnGetLongestName() : String = 
 	if(not self.longName.oclIsUndefined()) then
@@ -58,6 +55,15 @@ helper context Urn!PathNode def : isAlreadyConnectedTo(tPathNode: Urn!PathNode) 
 
 helper context Urn!PathNode def : isJoin() : Boolean =
 	self.oclIsTypeOf(Urn!OrJoin) or self.oclIsTypeOf(Urn!AndJoin);
+
+helper context Urn!PathNode def : hasSuccessors() : Boolean =
+	not self.succ -> isEmpty();
+
+helper context Urn!PathNode def : hasPredecessors() : Boolean =
+	not self.pred -> isEmpty();
+
+helper context Urn!PathNode def : connectionWith(tPathNode: Urn!PathNode) : Urn!NodeConnection =
+	self.succ -> any(s|s.target=tPathNode);
 	
 
 -----------------------3/5 CALLED RULES-----------------------------
@@ -109,7 +115,7 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 				else{
 					tJoin <- thisModule.createOrJoin();
 					
-					tFromNode.succ -> any(s|s.target=tToNode).target <- tJoin;
+					tFromNode.connectionWith(tToNode).target <- tJoin;
 					
 					tEmptyPoint <- thisModule.createEmptyPoint();
 					thisModule.directConnect(tFromNode, tEmptyPoint);
@@ -118,16 +124,14 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 					tFromNode <- tJoin;
 				}
 			}
-			else if(not tToNode.pred -> isEmpty() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not tToNode.isJoin()){
+			else if(tToNode.hasPredecessors() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not tToNode.isJoin()){
 				tJoin <- thisModule.createOrJoin();
 				tToNode.pred.first().target <- tJoin; --TODO: iterate over all of the pred
 				thisModule.directConnect(tFromNode, tJoin);
 				thisModule.directConnect(tJoin, tToNode);
 				tToNode <- tJoin;
 			}
-			if(tToNode.id='32'){
-			--	thisModule.k.k;	
-			}
+			
 			thisModule.directConnect(tFromNode, tToNode);
 		}
 	}
@@ -185,6 +189,7 @@ rule contributionKeywordToNumber(vKeyword: String){
 	}
 }
 
+-- Find and return the path between tStartNode and tEndNode as a sequence of PathNodes.
 rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 	using{
 		tResult : Sequence(Urn!PathNode) = Sequence{};
@@ -219,23 +224,23 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 
 rule getPathEnd(sPathBody: Turn!PathBody){
 	using{
-		tNodeToConnect : Urn!PathNode = OclUndefined;
+		tPathEnd : Urn!PathNode = OclUndefined;
 	}
 	do{
 		if(not sPathBody.pathEnd.oclIsUndefined()){
-			tNodeToConnect <- thisModule.retrieveNode(sPathBody.pathEnd);	
+			tPathEnd <- thisModule.retrieveNode(sPathBody.pathEnd);	
 		}
 		else if(not sPathBody.referencedEnd.oclIsUndefined()){
-			tNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedEnd);
+			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedEnd);
 		}
 		else if(not sPathBody.referencedStub.oclIsUndefined()){
-			tNodeToConnect <- thisModule.retrieveNode(sPathBody.referencedStub);
+			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedStub);
 		}
 		else{
-		--	tNodeToConnect <- thisModule.createEmptyPoint();
+			--	PathBody has no PathEnd.
 		}
 		
-		tNodeToConnect;
+		tPathEnd;
 	}
 }
 
@@ -245,9 +250,9 @@ rule getResponsibility(vResponsibilityName: String){
 	}
 }
 
-rule collectPathBodyNodes(sPathBody: Turn!PathBody){
+rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 	using{
-		sPathNodes : Sequence(Turn!PathNode)	= sPathBody.pathNodes;
+		sPathNodes : Sequence(Turn!PathNode) = sPathBody.pathNodes;
 	}
 	do{
 		sPathNodes <- sPathNodes -> flatten();
@@ -276,12 +281,7 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 		tRetrievedNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		-- This is a rather obtuse approach but was necessary as multiple conditionals in retrieveNode was causing slow build times.
-		-- I'm not sure how inefficient this approach is; if the system is running slowly, it may be worth looking at a different
-		-- implementation of this rule.
-		
 		if(not sPathNode.oclIsUndefined()){
-		
 			tRetrievedNode <- Sequence{};
 			
 			if(sPathNode.oclIsTypeOf(Turn!Stub)){
@@ -321,7 +321,7 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 			}
 			
 			if(tRetrievedNode.oclIsUndefined()){
-				tRetrievedNode <- thisModule.tUCMmap.getNode(sPathNode.turnGetLongestName());
+				tRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.name=sPathNode.turnGetLongestName());
 			}
 		}
 		

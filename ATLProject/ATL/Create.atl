@@ -72,7 +72,7 @@ rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tCompon
 	}
 	do{
 		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
-			tStartNode <- nodes -> any(n|n.name = tFrom);
+			tStartNode <- nodes -> any(n|n.name=tFrom);
 
 			if(tStartNode.oclIsUndefined()){
 				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tFrom);
