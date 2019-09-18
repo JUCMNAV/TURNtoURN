@@ -31,10 +31,12 @@ rule initBinding(sBinding: Turn!Binding, tBinding: Urn!Binding){
 	}
 	do{
 		if(sBinding.oclIsTypeOf(Turn!InBinding)){
-			thisModule.initInBinding(sBinding, tBinding, tStub);
+			tBinding.stubEntry <- tStub.pred -> at(sBinding.index);
+			tBinding.startPoint <- thisModule.resolveTemp(sBinding.mapStart, 'tStartPoint');
 		}
-		else{
-			thisModule.initOutBinding(sBinding, tBinding, tStub);
+		else if(sBinding.oclIsTypeOf(Turn!OutBinding)){
+			tBinding.stubExit <- tStub.succ -> at(sBinding.index);
+			tBinding.endPoint <- thisModule.retrieveNode(sBinding.mapEnd);
 		}
 	}
 }
@@ -77,20 +79,6 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 			thisModule.directConnect(thisModule.retrieveNode(sEndpointWithConnect.regularEnd), tConnect);
 			thisModule.directConnect(tConnect, thisModule.retrieveNode(sEndpointWithConnect.connect));
 		}
-	}
-}
-
-rule initInBinding(sInBinding: Turn!InBinding, tInBinding: Urn!InBinding, tStub: Urn!Stub){
-	do{
-		tInBinding.stubEntry <- tStub.pred -> at(sInBinding.index);
-		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
-	}
-}
-
-rule initOutBinding(sOutBinding: Turn!OutBinding, tOutBinding: Urn!OutBinding, tStub: Urn!Stub){
-	do{
-		tOutBinding.stubExit <- tStub.succ -> at(sOutBinding.index);
-		tOutBinding.endPoint <- thisModule.retrieveNode(sOutBinding.mapEnd);
 	}
 }
 
