@@ -397,7 +397,6 @@ rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 					thisModule.createNewConnection(tFromNode);
 				}
 				
-				thisModule.tUCMmap.connections <- thisModule.tUCMmap.connections.including(tFromNode.nextFreeConnection());
 				thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
 			}
 		}
@@ -982,12 +981,12 @@ rule Timer2Timer{
 		tTimer: Urn!Timer(
 			id <- thisModule.nextId().toString(),
 			name <- sTimer.turnGetLongestName(),
-			succ <- tNodeConn,
+			succ <- tNodeConnection,
 			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
 			waitType <- sTimer.kind.toString().capitalize()
 		),
-		tNodeConn: Urn!NodeConnection(
+		tNodeConnection: Urn!NodeConnection(
 			condition <- sTimer.condition
 		),
 		tNodeLabel: Urn!NodeLabel
@@ -1011,11 +1010,11 @@ rule WaitingPlace2WaitingPlace{
 		tWaitingPlace: Urn!WaitingPlace(
 			id <- thisModule.nextId().toString(),
 			name <- sWaitingPlace.turnGetLongestName(),
-			succ <- tNodeConn,
+			succ <- tNodeConnection,
 			label <- tNodeLabel,
 			waitType <- sWaitingPlace.kind.toString().capitalize()
 		),
-		tNodeConn: Urn!NodeConnection (
+		tNodeConnection: Urn!NodeConnection (
 			condition <- sWaitingPlace.condition
 		),
 		tNodeLabel: Urn!NodeLabel
@@ -1032,7 +1031,7 @@ rule UCMmap2UCMmap{
 			name <- sUCMmap.turnGetLongestName(),
 			contRefs <- sUCMmap.components -> collect(c|thisModule.resolveTemp(c, 'tComponentRef')),
 			nodes <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tStartPoint')),
-			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tNodeConn'))
+			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tNodeConnection'))
 		)
 	do{
 		thisModule.connectUCMmap(tUCMmap, sUCMmap.paths);
