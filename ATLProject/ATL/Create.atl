@@ -66,12 +66,12 @@ rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tCompon
 	using{
 		tFromExists : Boolean = 
 			(nodes -> any(n|n.name = tFrom).isDefined())
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tFrom) -> isEmpty())
-			and not (tFrom = '');
+			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tFrom) -> notEmpty())
+			and tFrom <> '';
 		tToExists : Boolean = 
 			(nodes -> any(n|n.name = tTo).isDefined())
-			or (not nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tTo) -> isEmpty())
-			and not (tTo = '');
+			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tTo) -> notEmpty())
+			and tTo <> '';
 		tStartNode : Urn!PathNode = OclUndefined;
 		tEndNode : Urn!PathNode = OclUndefined;
 	}

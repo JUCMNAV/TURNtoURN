@@ -57,10 +57,10 @@ helper context Urn!PathNode def : isJoin() : Boolean =
 	self.oclIsTypeOf(Urn!OrJoin) or self.oclIsTypeOf(Urn!AndJoin);
 
 helper context Urn!PathNode def : hasSuccessors() : Boolean =
-	not self.succ -> isEmpty();
+	self.succ -> notEmpty();
 
 helper context Urn!PathNode def : hasPredecessors() : Boolean =
-	not self.pred -> isEmpty();
+	self.pred -> notEmpty();
 
 helper context Urn!PathNode def : connectionWith(tPathNode: Urn!PathNode) : Urn!NodeConnection =
 	self.succ -> any(s|s.target=tPathNode);
@@ -129,9 +129,6 @@ rule nextId(){
 rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeConnection){
 	do{
 		tToNode.pred <- tToNode.pred.including(tConnectionFromPreviousNode);
-		
-		 -- Return the new node connection.
-		tToNode.pred -> last();
 	}
 }
 
@@ -259,7 +256,7 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 			}
 		}
 		
-		if(not(tResult -> isEmpty() or tStartNode=tEndNode)){
+		if(tStartNode<>tEndNode and tResult -> notEmpty()){
 			tResult <- tResult.including(tStartNode);
 			tConnect <- tStartNode.pred -> collect(p|p.source) -> any(s|s.oclIsTypeOf(Urn!Connect));
 			
@@ -516,10 +513,10 @@ rule ContributionChange2ContributionChange{
 		sContributionChange: Turn!ContributionChange
 	using{
 		vNewContribution : String = 
-			if(not sContributionChange.newContribution.toString().equals('undefined')) then
-				sContributionChange.newContribution.toString().capitalize()
-			else
+			if(sContributionChange.newContribution.toString() = 'undefined') then
 				OclUndefined
+			else
+				sContributionChange.newContribution.toString().capitalize()
 			endif;		
 	}
 	to
