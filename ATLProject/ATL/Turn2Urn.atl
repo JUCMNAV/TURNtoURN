@@ -381,6 +381,38 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 	}
 }
 
+rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
+	using{
+		tFromExists : Boolean = 
+			(nodes -> any(n|n.name = tFrom).isDefined())
+			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tFrom) -> notEmpty())
+			and tFrom <> '';
+		tToExists : Boolean = 
+			(nodes -> any(n|n.name = tTo).isDefined())
+			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tTo) -> notEmpty())
+			and tTo <> '';
+		tStartNode : Urn!PathNode = OclUndefined;
+		tEndNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
+			tStartNode <- nodes -> any(n|n.name=tFrom);
+
+			if(not tStartNode.isDefined()){
+				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tFrom);
+			}
+			
+			tEndNode <- nodes -> any(n|n.name=tTo);
+			
+			if(not tEndNode.isDefined()){
+				tEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tTo);
+			}
+			
+			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
+		}
+	}
+}
+
 -------------4/5 MATCHED RULES WITHOUT DO BLOCKS------------
 
 rule Actor2Actor{
@@ -851,7 +883,8 @@ rule Stub2Stub{
 			label <- tNodeLabel,
 			blocking <- sStub.isBlocking(),
 			synchronization <- sStub.isSynchronizing(),
-			dynamic <- sStub.isDynamic()
+			dynamic <- sStub.isDynamic(),
+			bindings <- sStub.params.plugin-> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'))
 		),
 		tNodeLabel: Urn!NodeLabel
 }
@@ -863,7 +896,8 @@ rule StubDeclaration2Stub{
 		tStub: Urn!Stub(id <- thisModule.nextId().toString(),
 			name <- sStubDeclaration.turnGetLongestName(),
 			label <- tNodeLabel,
-			diagram <- thisModule.tUCMmap
+			diagram <- thisModule.tUCMmap,
+			bindings <- sStubDeclaration.params.plugin-> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'))
 		),
 		tNodeLabel: Urn!NodeLabel
 }

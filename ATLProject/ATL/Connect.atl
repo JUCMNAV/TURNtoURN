@@ -127,8 +127,6 @@ rule doConnectForPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEn
 				sConnectingBody <- sPathEnd.connectingOrBody;
 			}
 			else if(sPathEnd.oclIsTypeOf(Turn!Stub)){
-				thisModule.initStub(sPathEnd);
-				
 				sPathBodies <- sPathEnd.outPaths -> collect(op|op.path);
 				sConnectingBody <- sPathEnd.connectingStubBody;
 			}

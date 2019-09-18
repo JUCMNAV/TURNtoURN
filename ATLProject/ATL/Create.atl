@@ -44,7 +44,7 @@ rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!Compo
 		if(sComponentRef.kind.isDefined() and sComponentRef.kind.toString() <> 'parent'){
 			tComponentRef.contDef.kind <- sComponentRef.kind.toString().capitalize();
 		}
-		else if(sComponentRef.kind <> 'parent'){
+		else if(sComponentRef.kind.toString() <> 'parent'){
 			tComponentRef.contDef.kind <- 'Team';
 		}
 		
@@ -58,53 +58,6 @@ rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!Compo
 		}
 		
 		tComponentRef.contDef.protected <- sComponentRef.protected;
-	}
-}
-
-
-rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
-	using{
-		tFromExists : Boolean = 
-			(nodes -> any(n|n.name = tFrom).isDefined())
-			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tFrom) -> notEmpty())
-			and tFrom <> '';
-		tToExists : Boolean = 
-			(nodes -> any(n|n.name = tTo).isDefined())
-			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tTo) -> notEmpty())
-			and tTo <> '';
-		tStartNode : Urn!PathNode = OclUndefined;
-		tEndNode : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
-			tStartNode <- nodes -> any(n|n.name=tFrom);
-
-			if(not tStartNode.isDefined()){
-				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tFrom);
-			}
-			
-			tEndNode <- nodes -> any(n|n.name=tTo);
-			
-			if(not tEndNode.isDefined()){
-				tEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tTo);
-			}
-			
-			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
-		}
-	}
-}
-
-rule initInBinding(sInBinding: Turn!InBinding, tInBinding: Urn!InBinding, tStub: Urn!Stub){
-	do{
-		tInBinding.stubEntry <- tStub.pred -> at(sInBinding.index);
-		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
-	}
-}
-
-rule initOutBinding(sOutBinding: Turn!OutBinding, tOutBinding: Urn!OutBinding, tStub: Urn!Stub){
-	do{
-		tOutBinding.stubExit <- tStub.succ -> at(sOutBinding.index);
-		tOutBinding.endPoint <- thisModule.retrieveNode(sOutBinding.mapEnd);
 	}
 }
 
@@ -127,20 +80,17 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 	}
 }
 
-rule initStub(sStub: Turn!Stub){
-	using{
-		tPlugins : Sequence(Turn!Stub) = OclUndefined;
-		tStub : Urn!Stub = thisModule.retrieveNode(sStub);	
-	}
+rule initInBinding(sInBinding: Turn!InBinding, tInBinding: Urn!InBinding, tStub: Urn!Stub){
 	do{
-		if(sStub.params.isDefined()){
-			tPlugins <- sStub.params.plugin;
-		}
-		else{
-			tPlugins <- Turn!UCMmap.allInstances() -> any(m|m.name=thisModule.tUCMmap.name).stubs -> collect(s|s.params.plugin) -> flatten();
-		}
-		
-		tStub.bindings <- tPlugins -> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'));	
+		tInBinding.stubEntry <- tStub.pred -> at(sInBinding.index);
+		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
+	}
+}
+
+rule initOutBinding(sOutBinding: Turn!OutBinding, tOutBinding: Urn!OutBinding, tStub: Urn!Stub){
+	do{
+		tOutBinding.stubExit <- tStub.succ -> at(sOutBinding.index);
+		tOutBinding.endPoint <- thisModule.retrieveNode(sOutBinding.mapEnd);
 	}
 }
 
@@ -322,9 +272,11 @@ rule createMetadata(vName: String, vValue: String){
 
 rule createNewConnection(tPathNode: Urn!PathNode){
 	to
-		tNodeConnection: Urn!NodeConnection()
+		tNodeConnection: Urn!NodeConnection(
+			source <- tPathNode
+		)
 	do{
-		tPathNode.succ <- tPathNode.succ.including(tNodeConnection);
+		tNodeConnection;	
 	}
 }
 
