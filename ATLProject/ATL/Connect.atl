@@ -48,7 +48,7 @@ rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlterna
 	}
 }
 
-rule connectPathBodyNodes(tStartNode : Urn!PathNode, sPathNodes : Sequence(Turn!PathNode)){
+rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!PathNode)){
 	using{
 		tCurrentNode : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = tStartNode;	
