@@ -29,7 +29,7 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 		-- been handled once they are considered (due to the fact stubs have indexes referencing)
 		-- specific connections). There is probably a cleaner way to do this.
 		thisModule.connectIndexedPathBodies();
-		thisModule.setOrForkConditions();
+		thisModule.setOrForkConditionsAndCreateAlternateBranches();
 		thisModule.setStubThresholds();
 		
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
@@ -109,17 +109,19 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 		tPathEnd : Urn!PathNode = OclUndefined;
 	}
 	do{
-		if(sEndpointWithConnect.regularEnd.oclIsUndefined()){ -- TODO: this logic seems prone to fault
-			tPathEnd <- thisModule.createEndPoint();
-			thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
-		}
-		else if(thisModule.retrieveNode(sEndpointWithConnect.regularEnd).oclIsUndefined()){
-			tPathEnd <- thisModule.createEndPoint();
-			thisModule.initEndPointUsingEndpointWithConnect(tPathEnd, sEndpointWithConnect);
-			thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
-		}
-		else{
-			tPathEnd <- thisModule.retrieveNode(sEndpointWithConnect.regularEnd);
+		if(sEndpointWithConnect.oclIsTypeOf(Turn!EndpointWithConnect)){
+			if(sEndpointWithConnect.regularEnd.oclIsUndefined()){ -- TODO: this logic seems prone to fault
+				tPathEnd <- thisModule.createEndPoint();
+				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
+			}
+			else if(thisModule.retrieveNode(sEndpointWithConnect.regularEnd).oclIsUndefined()){
+				tPathEnd <- thisModule.createEndPoint();
+				thisModule.initEndPointUsingEndpointWithConnect(tPathEnd, sEndpointWithConnect);
+				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tPathEnd);
+			}
+			else{
+				tPathEnd <- thisModule.retrieveNode(sEndpointWithConnect.regularEnd);
+			}
 		}
 		
 		tPathEnd;
@@ -163,7 +165,7 @@ rule doConnectForPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEn
 rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody, tNextConnectingNode : Urn!PathNode){
 	using{
 		tNode: Urn!PathNode = thisModule.retrieveNode(sNode);
-		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|not pb.oclIsUndefined()) -> select(pb|not thisModule.getPathEnd(pb).oclIsTypeOf(Urn!EndPoint)) -> size();
+		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|not pb.oclIsUndefined()) -> select(pb|not thisModule.getOrCreateEndPoint(pb.pathEnd).oclIsTypeOf(Urn!EndPoint)) -> size();
 		tLastNode : Urn!PathNode = 
 			if(sConnectingBody.oclIsUndefined() or vNumberOfNonTerminatingNodes < 2) then
 				OclUndefined
@@ -218,7 +220,7 @@ rule connectIndexedPathBodies(){
 
 -- Sets orFork node conditions. Called after connectPathBodiesWithIndexes so that all connections are in place when this is done.
 -- Is rather inefficient as it calls allInstances(); this approach can potentially be improved upon.
-rule setOrForkConditions(){
+rule setOrForkConditionsAndCreateAlternateBranches(){
 	using{
 		vCounter : Integer = 1;
 		sOrFork : Turn!OrFork = OclUndefined;
@@ -227,13 +229,26 @@ rule setOrForkConditions(){
 		for(tOrFork in thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!OrFork))){
 			sOrFork <- Turn!OrFork.allInstances() -> any(n|thisModule.resolveTemp(n, 'tOrFork')=tOrFork);
 			
+			if(not sOrFork.condition.oclIsUndefined()){ -- Just condition case
+				tOrFork.succ.first().condition <- thisModule.resolveTemp(sOrFork.condition, 'tCondition');
+				thisModule.connect(tOrFork, thisModule.createEndPoint());
+				tOrFork.succ -> at(2).condition <- thisModule.createCondition('!' + sOrFork.condition.expression.asString());
+				
+			}
+			
 			if(not sOrFork.body.oclIsUndefined()){
 				for(sRegularOrFork in sOrFork.body.regularBody){
 					tOrFork.succ -> at(vCounter).condition <- thisModule.resolveTemp(sRegularOrFork.condition, 'tCondition');
 					vCounter <- vCounter + 1;
 				}
 				
-				if(not sOrFork.body.elseBody.oclIsUndefined()){
+				if(sOrFork.body.elseBody.oclIsUndefined()){
+					if(sOrFork.body.regularBody -> size() = 1){
+						thisModule.connect(tOrFork, thisModule.createEndPoint());
+						tOrFork.succ -> at(2).condition <- thisModule.createCondition('!' + sOrFork.body.regularBody.first().condition.expression.asString());
+					}
+				}
+				else{
 					tOrFork.succ.last().condition <- thisModule.createCondition('else');
 				}
 			}
