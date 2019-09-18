@@ -620,6 +620,61 @@ rule FailurePoint2FailurePoint{
 		tNodeLabel: Urn!NodeLabel
 }
 
+-- IntentionalElement2Belief must come AFTER IntentionalElement2IntentionaElement!
+rule IntentionalElement2IntentionalElement{
+	from 
+		sIntentionalElement: Turn!IntentionalElement(sIntentionalElement.type.toString() <> 'belief')
+	using{
+		sDecomposition : Turn!Decomposition = Turn!Decomposition -> allInstances() -> any(d|d.dest=sIntentionalElement);
+		vId : String = thisModule.nextId().toString();
+		vDecompositionType : String = 
+			if(not sDecomposition.oclIsUndefined()) then
+				sDecomposition.decompositionType.toString().capitalize()
+			else
+				OclUndefined
+			endif;
+		vName : String = 
+			if(not sIntentionalElement.turnGetLongestName().oclIsUndefined()) then
+				sIntentionalElement.turnGetLongestName()
+			else
+				'IntentionalElementRef' + vId
+			endif;
+	}
+	to 
+		tIntentionalElementRef: Urn!IntentionalElementRef(
+			id <- vId,
+			name <- vName,
+			def <- tIntentionalElement,
+			succ <- sIntentionalElement.linksSrc -> collect(c|thisModule.resolveTemp(c, 'tLinkRef'))
+		),
+		tIntentionalElement: Urn!IntentionalElement(
+			id <- thisModule.nextId().toString(),
+			name <- sIntentionalElement.turnGetLongestName(),
+			linksSrc <- sIntentionalElement.linksSrc,
+			decompositionType <- vDecompositionType,
+			type <- sIntentionalElement.getType(),
+			importance <- sIntentionalElement.getImportance(),
+			importanceQuantitative <- sIntentionalElement.importanceQuantitative,
+			metadata <- thisModule.createMetadata('TURN-URN-NAME', sIntentionalElement.name)
+		)
+}
+
+-- IntentionalElement2Belief must come AFTER IntentionalElement2IntentionaElement!
+rule IntentionalElement2Belief{
+	from
+		sIntentionalElement: Turn!IntentionalElement(sIntentionalElement.type.toString() = 'belief')
+	using{
+		tBeliefLinks : Sequence(Urn!BeliefLink) = sIntentionalElement.linksSrc -> collect(sLink| thisModule.createBeliefLink(sLink));
+	}
+	to 
+	 	tBelief: Urn!Belief(
+	 		id <- thisModule.nextId().toString(),
+	 		name <- sIntentionalElement.name,
+			description <- sIntentionalElement.name,
+			succ <- tBeliefLinks
+	 	)
+}
+
 rule Metadata2Metadata{
 	from 
 		sMetadata: Turn!Metadata
@@ -635,7 +690,6 @@ rule OrFork2OrFork{
 	using{
 		vId : String = thisModule.nextId().toString();
 		vOrForkName : String = sOrFork.turnGetLongestName();
-		
 		vName : String = 
 			if(vOrForkName.oclIsUndefined()) then
 				'OrFork' + vId
@@ -858,65 +912,6 @@ rule WaitingPlace2WaitingPlace{
 
 ----------5/5 MATCHED RULES WITH DO BLOCKS----------------
 
-rule IntentionalElement2Belief{
-	from
-		sIntentionalElement: Turn!IntentionalElement(sIntentionalElement.type.toString() = 'belief')
-	to 
-	 	tBelief: Urn!Belief(
-	 		id <- thisModule.nextId().toString(),
-	 		name <- sIntentionalElement.name,
-			description <- sIntentionalElement.name
-	 	)
-	do{
-		for(sLink in sIntentionalElement.linksSrc){
-			tBelief.succ <- thisModule.createBeliefLink(sLink);
-	 	}
-	}
-}
-
-rule IntentionalElement2IntentionalElement{
-	from 
-		sIntentionalElement: Turn!IntentionalElement(sIntentionalElement.type.toString() <> 'belief')
-	using{
-		sDecomposition : Turn!Decomposition = Turn!Decomposition -> allInstances() -> any(d|d.dest=sIntentionalElement);
-		vDecompositionType : String = 
-			if(not sDecomposition.oclIsUndefined()) then
-				sDecomposition.decompositionType.toString().capitalize()
-			else
-				OclUndefined
-			endif;
-	}
-	to 
-		tIntentionalElementRef: Urn!IntentionalElementRef(
-			id <- thisModule.nextId().toString(),
-			name <- sIntentionalElement.turnGetLongestName(),
-			def <- tIntentionalElement,
-			succ <- sIntentionalElement.linksSrc -> collect(c|thisModule.resolveTemp(c, 'tLinkRef'))
-		),
-		tIntentionalElement: Urn!IntentionalElement(
-			id <- thisModule.nextId().toString(),
-			name <- sIntentionalElement.turnGetLongestName(),
-			linksSrc <- sIntentionalElement.linksSrc,
-			decompositionType <- vDecompositionType,
-			type <- sIntentionalElement.getType(),
-			importanceQuantitative <- sIntentionalElement.importanceQuantitative,
-			importance <- sIntentionalElement.getImportance(),
-			metadata <- thisModule.createMetadata('TURN-URN-NAME', sIntentionalElement.name)
-		)
-	do{
-		if(tIntentionalElementRef.name.oclIsUndefined()){
-			tIntentionalElementRef.name <- 'IntentionalElementRef' + tIntentionalElementRef.id;
-		}
-		
-		if(sIntentionalElement.importance.toString().equals('high') and sIntentionalElement.importanceQuantitative <> 0){
-			tIntentionalElement.importanceQuantitative <- sIntentionalElement.importanceQuantitative;
-		}
-		else{
-			tIntentionalElement.importance <- sIntentionalElement.importance.toString().capitalize();
-		}
-	}
-}
-
 rule UCMmap2UCMmap{
 	from
 		sUCMmap: Turn!UCMmap
@@ -970,10 +965,7 @@ rule ComponentRef2ComponentRef {
 				tPathNode <- thisModule.resolveTemp(elem.elem, 'tComponentRef');
 				tComponentRef.children <- tComponentRef.children.including(tPathNode);
 			}
-			else if(tPathNode.contRef.oclIsUndefined()){
-				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
-			}
-			else if(tPathNode.contRef=tComponentRef.parent){
+			else if(tPathNode.contRef.oclIsUndefined() or tPathNode.contRef=tComponentRef.parent){
 				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
 			}
 		}
