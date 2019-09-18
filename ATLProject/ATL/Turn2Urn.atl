@@ -37,8 +37,8 @@ helper context Integer def : inc() : Integer = self + 1;
 
 --This should only be called on TURN objects; I haven't been able to determine how to express that restriction using OCL, though.
 helper context OclAny def : turnGetLongestName() : String = 
-	if(not self.longName.oclIsUndefined()) then
-		if(not self.longName.longname.oclIsUndefined()) then
+	if(self.longName.isDefined()) then
+		if(self.longName.longname.isDefined()) then
 			self.longName.longname
 		else
 			self.name	
@@ -48,10 +48,10 @@ helper context OclAny def : turnGetLongestName() : String =
 	endif;
 
 helper context Urn!PathNode def : nextFreeConnection() : Urn!NodeConnection =
-	self.succ -> any(s|s.target.oclIsUndefined());
+	self.succ -> any(s|not s.target.isDefined());
 
 helper context Urn!PathNode def : isAlreadyConnectedTo(tPathNode: Urn!PathNode) : Boolean =
-	not self.succ -> any(s|s.target=tPathNode).oclIsUndefined();
+	self.succ -> any(s|s.target=tPathNode).isDefined();
 
 helper context Urn!PathNode def : isJoin() : Boolean =
 	self.oclIsTypeOf(Urn!OrJoin) or self.oclIsTypeOf(Urn!AndJoin);
@@ -75,7 +75,7 @@ helper context Turn!Stub def : isDynamic() : Boolean =
 	if(self.isSynchronizing()) then
 		self.isSynchronizing()
 	else
-		if(not self.params.oclIsUndefined()) then
+		if(self.params.isDefined()) then
 			self.params.plugin -> flatten() -> size() >= 2
 		else
 			false
@@ -83,14 +83,14 @@ helper context Turn!Stub def : isDynamic() : Boolean =
 	endif;
 
 helper context Turn!StartPoint def : getFailKind() :String =
-	if(not self.failKind.oclIsUndefined()) then
+	if(self.failKind.isDefined()) then
 		self.failKind.toString().capitalize()
 	else
 		OclUndefined
 	endif;
 	
 helper context Turn!FailurePoint def : getFailExpression() : String =
-	if(not self.failLabel.oclIsUndefined()) then
+	if(self.failLabel.isDefined()) then
 		self.failLabel.failure
 	else
 		OclUndefined
@@ -109,6 +109,13 @@ helper context Turn!IntentionalElement def : getType() : String =
 	else
 		self.type.toString().capitalize()
 	endif;
+
+helper context OclAny def : isDefined() : Boolean =
+	not self.oclIsUndefined();
+
+helper context Urn!PathNode def : hasFreeConnection() : Boolean =
+	self.nextFreeConnection().isDefined();
+
 
 -----------------------3/5 CALLED RULES-----------------------------
 
@@ -131,8 +138,8 @@ rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeC
 -- Directly connects two nodes, without attempting to handle any special connection logic cases.
 rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	do{
-		if(not (tFromNode.oclIsUndefined() or tToNode.oclIsUndefined())){
-			if(tFromNode.nextFreeConnection().oclIsUndefined() and tFromNode.succ -> any(c|c.target=tToNode).oclIsUndefined()){
+		if(tFromNode.isDefined() and tToNode.isDefined()){
+			if(not tFromNode.hasFreeConnection() and not tFromNode.connectionWith(tToNode).isDefined()){
 				thisModule.createNewConnection(tFromNode);
 			}
 			
@@ -149,7 +156,7 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
 	}
 	do{
-		if(not (tFromNode.oclIsUndefined() or tToNode.oclIsUndefined())){
+		if(tFromNode.isDefined() and tToNode.isDefined()){
 			if(tFromNode.isAlreadyConnectedTo(tToNode)){
 				if(tToNode.isJoin()){
 					tEmptyPoint <- thisModule.createEmptyPoint();
@@ -256,7 +263,7 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 			tResult <- tResult.including(tStartNode);
 			tConnect <- tStartNode.pred -> collect(p|p.source) -> any(s|s.oclIsTypeOf(Urn!Connect));
 			
-			if(not tConnect.oclIsUndefined()){
+			if(tConnect.isDefined()){
 				tResult <- tResult.including(tConnect);
 				tResult <- tResult.union(tConnect.pred -> collect(p|p.source));
 			}
@@ -271,13 +278,13 @@ rule getPathEnd(sPathBody: Turn!PathBody){
 		tPathEnd : Urn!PathNode = OclUndefined;
 	}
 	do{
-		if(not sPathBody.pathEnd.oclIsUndefined()){
+		if(sPathBody.pathEnd.isDefined()){
 			tPathEnd <- thisModule.retrieveNode(sPathBody.pathEnd);	
 		}
-		else if(not sPathBody.referencedEnd.oclIsUndefined()){
+		else if(sPathBody.referencedEnd.isDefined()){
 			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedEnd);
 		}
-		else if(not sPathBody.referencedStub.oclIsUndefined()){
+		else if(sPathBody.referencedStub.isDefined()){
 			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedStub);
 		}
 		else{
@@ -310,9 +317,9 @@ rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 			thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, vTypeOfNodeToAdd)));
 		}
 		
-		if(not sPathBody.pathEnd.oclIsUndefined()){
+		if(sPathBody.pathEnd.isDefined()){
 			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				if(not sPathBody.pathEnd.regularEnd.oclIsUndefined()){
+				if(sPathBody.pathEnd.regularEnd.isDefined()){
 					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
 				}
 			}
@@ -335,9 +342,9 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 		tRetrievedNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		if(not sPathNode.oclIsUndefined()){
+		if(sPathNode.isDefined()){
 			if(sPathNode.oclIsTypeOf(Turn!Stub)){
-				if(not sPathNode.stubRef.oclIsUndefined()){
+				if(sPathNode.stubRef.isDefined()){
 					-- Stub was created Using a stub declaration, so we need to find that.
 					sPathNode <- sPathNode.stubRef;
 				}
@@ -346,7 +353,7 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 				sPathNode <- sPathNode.connectsTo;
 			}
 			else if(sPathNode.oclIsTypeOf(Turn!EndpointWithConnect)){
-				if(sPathNode.regularEnd.oclIsUndefined()){
+				if(not sPathNode.regularEnd.isDefined()){
 					-- If the regularEnd isn't defined, just get the first EndPoint.
 					-- This won't work correctly if there's more than one unnamed EndPoint.
 					-- TODO: fix this to make it work more generally.
@@ -362,13 +369,13 @@ rule retrieveNode(sPathNode: Turn!PathNode){
 			}
 			else{
 				for(vPathNodeType in vPathNodeTypes){
-					if(tRetrievedNode.oclIsUndefined()){
+					if(not tRetrievedNode.isDefined()){
 						tRetrievedNode <- thisModule.resolveTemp(sPathNode, vPathNodeType);	
 					}
 				}
 			}
 			
-			if(tRetrievedNode.oclIsUndefined()){
+			if(not tRetrievedNode.isDefined()){
 				tRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.name=sPathNode.turnGetLongestName());
 			}
 		}
@@ -405,16 +412,16 @@ rule AndFork2AndFork{
 		vId : String = thisModule.nextId().toString();
 		vAndForkName : String = sAndFork.turnGetLongestName();
 		vName : String = 
-			if(vAndForkName.oclIsUndefined()) then
-				'AndFork' + vId
-			else
+			if(vAndForkName.isDefined()) then
 				vAndForkName
+			else
+				'AndFork' + vId
 			endif;
 		vLabel : Urn!Label =
-			if(vAndForkName.oclIsUndefined()) then
-				OclUndefined
-			else
+			if(vAndForkName.isDefined()) then
 				thisModule.createLabel()
+			else
+				OclUndefined
 			endif;
 	}
 	to
@@ -628,13 +635,13 @@ rule IntentionalElement2IntentionalElement{
 		sDecomposition : Turn!Decomposition = Turn!Decomposition -> allInstances() -> any(d|d.dest=sIntentionalElement);
 		vId : String = thisModule.nextId().toString();
 		vDecompositionType : String = 
-			if(not sDecomposition.oclIsUndefined()) then
+			if(sDecomposition.isDefined()) then
 				sDecomposition.decompositionType.toString().capitalize()
 			else
 				OclUndefined
 			endif;
 		vName : String = 
-			if(not sIntentionalElement.turnGetLongestName().oclIsUndefined()) then
+			if(sIntentionalElement.turnGetLongestName().isDefined()) then
 				sIntentionalElement.turnGetLongestName()
 			else
 				'IntentionalElementRef' + vId
@@ -691,16 +698,16 @@ rule OrFork2OrFork{
 		vId : String = thisModule.nextId().toString();
 		vOrForkName : String = sOrFork.turnGetLongestName();
 		vName : String = 
-			if(vOrForkName.oclIsUndefined()) then
-				'OrFork' + vId
-			else
+			if(vOrForkName.isDefined()) then
 				vOrForkName
+			else
+				'OrFork' + vId	
 			endif;
 		vLabel : Urn!Label =
-			if(vOrForkName.oclIsUndefined()) then
-				OclUndefined
-			else
+			if(vOrForkName.isDefined()) then
 				thisModule.createLabel()
+			else
+				OclUndefined
 			endif;		
 	}
 	to
@@ -783,14 +790,14 @@ rule StartPoint2StartPoint{
 		sStartPoint: Turn!StartPoint
 	using{
 		tPrecondition : Urn!Condition =
-			if(sStartPoint.failKind.oclIsUndefined()) then
-				sStartPoint.precondition
-			else
-				if(not sStartPoint.catches.oclIsUndefined()) then
+			if(sStartPoint.failKind.isDefined()) then
+				if(sStartPoint.catches.isDefined()) then
 					thisModule.createCondition(sStartPoint.catches)
 				else
 					OclUndefined
 				endif
+			else
+				sStartPoint.precondition
 			endif;
 	}
 	to
@@ -809,7 +816,7 @@ rule Strategies2Strategies{
 		sEvaluationStrategy: Turn!EvaluationStrategy
 	using{
 		vAuthor : String =
-			if(not sEvaluationStrategy.info.oclIsUndefined()) then
+			if(sEvaluationStrategy.info.isDefined()) then
 				sEvaluationStrategy.info.author
 			else
 				OclUndefined
@@ -838,7 +845,7 @@ rule StrategiesGroup2StrategiesGroup{
 
 rule Stub2Stub{
 	from
-		sStub: Turn!Stub(sStub.stubRef.oclIsUndefined())
+		sStub: Turn!Stub(not sStub.stubRef.isDefined())
 	to
 		tStub: Urn!Stub(
 			id <- thisModule.nextId().toString(),
@@ -934,10 +941,10 @@ rule ComponentRef2ComponentRef {
 	using{
 		tExistingComponent : Urn!Component = Urn!Component.allInstances() -> any(c|c.name=sComponentRef.name);
 		tRetrievedComponent : Urn!Component =
-			if(tExistingComponent.oclIsUndefined()) then
-				thisModule.createComponent(sComponentRef)
-			else
+			if(tExistingComponent.isDefined()) then
 				tExistingComponent
+			else
+				thisModule.createComponent(sComponentRef)
 			endif;
 		tPathNode : Urn!PathNode = OclUndefined;
 	}
@@ -961,11 +968,11 @@ rule ComponentRef2ComponentRef {
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
 			tPathNode <- thisModule.retrieveNode(elem.elem);
 			
-			if(tPathNode.oclIsUndefined()){
+			if(not tPathNode.isDefined()){
 				tPathNode <- thisModule.resolveTemp(elem.elem, 'tComponentRef');
 				tComponentRef.children <- tComponentRef.children.including(tPathNode);
 			}
-			else if(tPathNode.contRef.oclIsUndefined() or tPathNode.contRef=tComponentRef.parent){
+			else if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
 				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
 			}
 		}
@@ -1041,7 +1048,7 @@ rule URNspec2URNspec{
 		),
 		tUCMspec: Urn!UCMspec()
 	do{
-		if(not sURNspec.info.oclIsUndefined()){
+		if(sURNspec.info.isDefined()){
 			tURNspec.description <- sURNspec.info.description;
 			tURNspec.author <- sURNspec.info.author;
 			tURNspec.created <- sURNspec.info.created;
@@ -1050,7 +1057,7 @@ rule URNspec2URNspec{
 			tURNspec.urnVersion <- sURNspec.info.urnVersion; 
 		}
 		
-		if(not sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').oclIsUndefined()){
+		if(sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').isDefined()){
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 		}
 		
