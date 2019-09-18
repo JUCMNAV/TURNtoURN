@@ -103,6 +103,22 @@ rule initTimer(sTimer: Turn!Timer){
 
 ----------2/3 CONDITIONAL INSTANTIATORS-----------
 
+rule getOrCreateStartPoint(sStartPoint: Turn!StartPoint){
+	using{
+		tStartPoint : Urn!StartPoint = OclUndefined;	
+	}
+	do{
+		if(sStartPoint.isDefined()){
+			tStartPoint <- thisModule.retrieveNode(sStartPoint);
+		}
+		else{
+			tStartPoint <- thisModule.createStartPoint();
+		}
+		
+		tStartPoint;
+	}
+}
+
 rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 	using{
 		tEndPoint : Urn!PathNode = OclUndefined;

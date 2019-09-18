@@ -253,6 +253,32 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 }
 
+-- Connect at some index of the set of predecessors of tToNode. If attempting to connect
+-- at an index greater than currently available set of preds, just create a new connection.
+-- (and so increase size of pred by 1)
+rule connectAtTargetIndex(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vPredIndex: Integer){
+	using{
+		tOrJoin : Urn!OrJoin = OclUndefined;	
+	}
+	do{
+		if(vPredIndex > tToNode.pred -> size()){
+			-- If trying to connect at an index > existing predecessors, just create a new index.
+			-- Note that this will not be precise if (vPredIndex > tToNode.pred -> size() + 1) as we are
+			-- treating all indexes > currently available as simply 1 greater than the current value.
+			
+			thisModule.directConnect(tFromNode, tToNode);
+		}
+		else{
+			-- OrJoin with whatever is connected to the current index.
+			
+			tOrJoin <- thisModule.createOrJoin();
+			tToNode.pred -> at(vPredIndex).target <- tOrJoin;
+			thisModule.connect(tFromNode, tOrJoin);
+			thisModule.connect(tOrJoin, tToNode);
+		}	
+	}
+}
+
 rule contributionNumberToKeyword(vQuantitativeContribution: Integer){
 	using{
 		vContribution :	String = OclUndefined;

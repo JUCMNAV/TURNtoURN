@@ -14,13 +14,7 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 		thisModule.tUCMmap <- tUCMmap;
 
 		for(sPath in paths){
-			if(sPath.startPoint.isDefined()){
-				tStartPoint <- thisModule.retrieveNode(sPath.startPoint);
-			}
-			else{
-				tStartPoint <- thisModule.createStartPoint();
-			}
-			
+			tStartPoint <- thisModule.getOrCreateStartPoint(sPath.startPoint);
 			thisModule.connectPathBody(sPath.pathBody, tStartPoint, OclUndefined);
 		}
 		
@@ -153,20 +147,12 @@ rule connectIndexedPathBodies(){
 		tOrJoin : Urn!OrJoin = OclUndefined;
 	}
 	do{
-		for(vIndex in thisModule.stubIndexMap.keySet()){
-			for(tNodesToConnect in thisModule.stubIndexMap.get(vIndex)){
+		for(vPredIndex in thisModule.stubIndexMap.keySet()){
+			for(tNodesToConnect in thisModule.stubIndexMap.get(vPredIndex)){
 				tLastNode <- tNodesToConnect.first();
 				tStub <- tNodesToConnect.last();
-	
-				if(vIndex <= tStub.pred -> size()){
-					tOrJoin <- thisModule.createOrJoin();
-					tStub.pred -> at(vIndex).target <- tOrJoin;
-					thisModule.connect(tLastNode, tOrJoin);
-					thisModule.connect(tOrJoin, tStub);
-				}
-				else{
-					thisModule.directConnect(tLastNode, tStub);
-				}
+				
+				thisModule.connectAtTargetIndex(tLastNode, tStub, vPredIndex);
 			}
 		}
 		
@@ -226,7 +212,7 @@ rule setStubThresholds(){
 			if(sStub.isDefined()){
 				for(sOutPath in sStub.outPaths){
 					if(sOutPath.threshold <> 0){
-						tStub.succ.last().threshold <- sOutPath.threshold.toString();
+						tStub.succ.first().threshold <- sOutPath.threshold.toString();
 					}
 					
 					vCounter <- vCounter + 1;
