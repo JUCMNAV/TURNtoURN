@@ -50,26 +50,10 @@ helper context OclAny def : turnGetLongestName() : String =
 		self.name	
 	endif;
 
-helper context Turn!PathBody def : meetsOrJoinConditions(pathend: Urn!PathBodyNode) : Boolean =
-	(pathend.oclIsTypeOf(Urn!EndPoint) and not pathend.pred -> isEmpty())
-		or (not self.referencedStub.oclIsUndefined() and pathend.pred -> size() >= self.index)
-		or pathend.oclIsTypeOf(Urn!FailurePoint)
-		or pathend.oclIsTypeOf(Urn!RespRef);
-
-helper context Urn!UCMmap def : allRespDefsMatching(turnNodeName: String) : OclAny =
-	self.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(r|r.respDef.name=turnNodeName) -> flatten();
-
 helper context Urn!PathNode def : nextFreeConnection() : Urn!NodeConnection =
 	self.succ -> any(s|s.target.oclIsUndefined());
 
-helper context Urn!PathNode def : mostRecentUnusedConnection() : Urn!NodeConnection =
-	self.succ -> select(s|s.target.oclIsUndefined()) -> last();
-
-helper context Urn!RespRef def : getRespName() : String =
-	self.respDef.name;
-
 -----------------------3/5 CALLED RULES-----------------------------
-------------(sorry, spirit of declarative programming)--------------
 
 rule nextId(){
 	do{
@@ -657,6 +641,50 @@ rule PluginBinding2PluginBinding{
 		)
 }
 
+rule QMapping2QMapping{
+	from 
+		sQualToQMapping: Turn!QualToQMapping
+	to
+		tQualitativeMapping: Urn!QualitativeMapping(
+			realWorldLabel <- sQualToQMapping.realWorldLabel,
+			exceeds	<- sQualToQMapping.exceeds,
+			evaluation <- sQualToQMapping.evaluation,
+			qualitativeEvaluation <- sQualToQMapping.qualitativeEvaluation.toString().capitalize()
+		)
+}
+
+rule QMappings2QMappings{
+	from
+		sQualToQMappings: Turn!QualToQMappings
+	to
+		tQualitativeMappings: Urn!QualitativeMappings(
+			id <- thisModule.nextId().toString(),
+			name <- sQualToQMappings.turnGetLongestName(),
+			mapping <- sQualToQMappings.mappings
+		)
+}
+
+rule RespRef2Responsibility{
+	from
+		sRespRef: Turn!RespRef
+	using{
+		tResponsibility : Urn!Responsibility = 	
+			if(thisModule.getResponsibility(sRespRef.turnGetLongestName()).oclIsUndefined()) then
+				thisModule.createResponsibility(sRespRef)
+			else
+				thisModule.getResponsibility(sRespRef.turnGetLongestName())
+			endif;
+	}
+	to
+		tRespRef: Urn!RespRef(
+			id <- thisModule.nextId().toString(),
+			name <- 'RespRef' + tRespRef.id,
+			label <- tNodeLabel,
+			respDef <- tResponsibility
+		),
+		tNodeLabel: Urn!NodeLabel
+}
+
 rule StartPoint2StartPoint{
 	from
 		sStartPoint: Turn!StartPoint
@@ -759,50 +787,6 @@ rule StubDeclaration2Stub{
 			name <- sStubDeclaration.turnGetLongestName(),
 			label <- tNodeLabel,
 			diagram <- thisModule.tUCMmap
-		),
-		tNodeLabel: Urn!NodeLabel
-}
-
-rule QMapping2QMapping{
-	from 
-		sQualToQMapping: Turn!QualToQMapping
-	to
-		tQualitativeMapping: Urn!QualitativeMapping(
-			realWorldLabel <- sQualToQMapping.realWorldLabel,
-			exceeds	<- sQualToQMapping.exceeds,
-			evaluation <- sQualToQMapping.evaluation,
-			qualitativeEvaluation <- sQualToQMapping.qualitativeEvaluation.toString().capitalize()
-		)
-}
-
-rule QMappings2QMappings{
-	from
-		sQualToQMappings: Turn!QualToQMappings
-	to
-		tQualitativeMappings: Urn!QualitativeMappings(
-			id <- thisModule.nextId().toString(),
-			name <- sQualToQMappings.turnGetLongestName(),
-			mapping <- sQualToQMappings.mappings
-		)
-}
-
-rule RespRef2Responsibility{
-	from
-		sRespRef: Turn!RespRef
-	using{
-		tResponsibility : Urn!Responsibility = 	
-			if(thisModule.getResponsibility(sRespRef.turnGetLongestName()).oclIsUndefined()) then
-				thisModule.createResponsibility(sRespRef)
-			else
-				thisModule.getResponsibility(sRespRef.turnGetLongestName())
-			endif;
-	}
-	to
-		tRespRef: Urn!RespRef(
-			id <- thisModule.nextId().toString(),
-			name <- 'RespRef' + tRespRef.id,
-			label <- tNodeLabel,
-			respDef <- tResponsibility
 		),
 		tNodeLabel: Urn!NodeLabel
 }
