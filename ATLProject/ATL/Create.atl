@@ -127,6 +127,33 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 	}
 }
 
+rule getOrCreatePathEnd(sPathBody: Turn!PathBody){
+	using{
+		tPathEnd : Urn!PathNode = OclUndefined;
+	}
+	do{
+		if(sPathBody.pathEnd.isDefined()){
+			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				tPathEnd <- thisModule.getOrCreateEndPoint(sPathBody.pathEnd);
+			}
+			else{
+				tPathEnd <- thisModule.retrieveNode(sPathBody.pathEnd);
+			}
+		}
+		else if(sPathBody.referencedEnd.isDefined()){
+			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedEnd);
+		}
+		else if(sPathBody.referencedStub.isDefined()){
+			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedStub);
+		}
+		else{
+			--	PathBody has no PathEnd.
+		}
+		
+		tPathEnd;
+	}
+}
+
 rule getOrCreateReferencedResponsibility(sRespRef: Turn!RespRef){
 	using{
 		tResponsibility : Urn!Responsibility = OclUndefined;	

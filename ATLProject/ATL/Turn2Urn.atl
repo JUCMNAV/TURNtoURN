@@ -21,7 +21,7 @@ helper def: id : Integer = 0;
 
 helper def: endPointMap : Map(Turn!EndPoint, Urn!EndPoint) = Map{};
 
-helper def: stubIndexMap : Map(Integer, Sequence(Urn!PathNode)) = Map{};
+helper def: stubIndexMap : Map(Integer, Sequence(Sequence(Urn!PathNode))) = Map{};
 
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
 
@@ -116,32 +116,70 @@ helper context OclAny def : isDefined() : Boolean =
 helper context Urn!PathNode def : hasFreeConnection() : Boolean =
 	self.nextFreeConnection().isDefined();
 
+helper context Turn!AndFork def : getPathBodies() : Sequence(Urn!PathBody) = 
+	self.pathbody;
+
+helper context Turn!OrFork def : getPathBodies() : Sequence(Urn!PathBody) = 
+	if(self.body.isDefined()) then
+		if(self.body.elseBody.isDefined()) then
+			self.body.regularBody -> collect(rb|rb.pathBody) -> including(self.body.elseBody)
+		else
+			self.body.regularBody -> collect(rb|rb.pathBody)
+		endif
+	else
+		Sequence {}
+	endif;
+
+helper context Turn!Stub def : getPathBodies() : Sequence(Urn!PathBody) = 
+	self.outPaths -> collect(op|op.path);
+
+helper context Turn!AndFork def : getConnectingBody() : Urn!PathBody = 
+	self.connectingAndBody;
+
+helper context Turn!OrFork def : getConnectingBody() : Urn!PathBody = 
+	self.connectingOrBody;
+
+helper context Turn!Stub def : getConnectingBody() : Urn!PathBody = 
+	self.connectingStubBody;
+
+
 
 -----------------------3/5 CALLED RULES-----------------------------
 
-rule nextId(){
+rule addConnectionToStubIndexMap(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vIndex: Integer){
 	do{
-		thisModule.id <- thisModule.id.inc();
-		thisModule.id;
+		if(not thisModule.stubIndexMap.get(vIndex).isDefined()){
+			thisModule.stubIndexMap <- thisModule.stubIndexMap.including(vIndex, Sequence{});
+		}
+		thisModule.stubIndexMap <- thisModule.stubIndexMap.including(vIndex, thisModule.stubIndexMap.get(vIndex).including(Sequence{tFromNode, tToNode}));
 	}
 }
 
-rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeConnection){
-	do{
-		tToNode.pred <- tToNode.pred.including(tConnectionFromPreviousNode);
+rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
+	using{
+		vTypesOfNodeToAdd : Sequence(String) = 
+			Sequence { 
+				'tRespRef', 'tAndJoin', 'tOrJoin', 
+				'tWaitingPlace', 'tFailurePoint' 
+			};
+		sPathNodes : Sequence(Turn!PathNode) = sPathBody.pathNodes;
 	}
-}
-
--- Directly connects two nodes, without attempting to handle any special connection logic cases.
-rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	do{
-		if(tFromNode.isDefined() and tToNode.isDefined()){
-			if(not tFromNode.hasFreeConnection() and not tFromNode.connectionWith(tToNode).isDefined()){
-				thisModule.createNewConnection(tFromNode);
+		sPathNodes <- sPathNodes -> flatten();
+		
+		for(vTypeOfNodeToAdd in vTypesOfNodeToAdd){
+			thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, vTypeOfNodeToAdd)));
+		}
+		
+		if(sPathBody.pathEnd.isDefined()){
+			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
+				if(sPathBody.pathEnd.regularEnd.isDefined()){
+					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+				}
 			}
-			
-			thisModule.tUCMmap.connections <- thisModule.tUCMmap.connections.including(tFromNode.nextFreeConnection());
-			thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
+			else{
+				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
+			}
 		}
 	}
 }
@@ -237,6 +275,20 @@ rule contributionKeywordToNumber(vKeyword: String){
 	}
 }
 
+-- Directly connects two nodes, without attempting to handle any special connection logic cases.
+rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
+	do{
+		if(tFromNode.isDefined() and tToNode.isDefined()){
+			if(not tFromNode.hasFreeConnection() and not tFromNode.connectionWith(tToNode).isDefined()){
+				thisModule.createNewConnection(tFromNode);
+			}
+			
+			thisModule.tUCMmap.connections <- thisModule.tUCMmap.connections.including(tFromNode.nextFreeConnection());
+			thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
+		}
+	}
+}
+
 -- Find and return the path between tStartNode and tEndNode as a sequence of PathNodes.
 rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 	using{
@@ -270,60 +322,16 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 	}
 }
 
-rule getPathEnd(sPathBody: Turn!PathBody){
-	using{
-		tPathEnd : Urn!PathNode = OclUndefined;
-	}
-	do{
-		if(sPathBody.pathEnd.isDefined()){
-			tPathEnd <- thisModule.retrieveNode(sPathBody.pathEnd);	
-		}
-		else if(sPathBody.referencedEnd.isDefined()){
-			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedEnd);
-		}
-		else if(sPathBody.referencedStub.isDefined()){
-			tPathEnd <- thisModule.retrieveNode(sPathBody.referencedStub);
-		}
-		else{
-			--	PathBody has no PathEnd.
-		}
-		
-		tPathEnd;
-	}
-}
-
 rule getResponsibility(vResponsibilityName: String){
 	do{
 		Urn!Responsibility.allInstances() -> any(n|n.name=vResponsibilityName);
 	}
 }
 
-rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
-	using{
-		vTypesOfNodeToAdd : Sequence(String) = 
-			Sequence { 
-				'tRespRef', 'tAndJoin', 'tOrJoin', 
-				'tWaitingPlace', 'tFailurePoint' 
-			};
-		sPathNodes : Sequence(Turn!PathNode) = sPathBody.pathNodes;
-	}
+rule nextId(){
 	do{
-		sPathNodes <- sPathNodes -> flatten();
-		
-		for(vTypeOfNodeToAdd in vTypesOfNodeToAdd){
-			thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.union(sPathNodes -> collect(sPathNode|thisModule.resolveTemp(sPathNode, vTypeOfNodeToAdd)));
-		}
-		
-		if(sPathBody.pathEnd.isDefined()){
-			if(sPathBody.pathEnd.oclIsTypeOf(Turn!EndpointWithConnect)){
-				if(sPathBody.pathEnd.regularEnd.isDefined()){
-					thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
-				}
-			}
-			else{
-				thisModule.tUCMmap.nodes <- thisModule.tUCMmap.nodes.including(thisModule.retrieveNode(sPathBody.pathEnd));
-			}
-		}
+		thisModule.id <- thisModule.id.inc();
+		thisModule.id;
 	}
 }
 
@@ -410,6 +418,12 @@ rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tCompon
 			
 			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
 		}
+	}
+}
+
+rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeConnection){
+	do{
+		tToNode.pred <- tToNode.pred.including(tConnectionFromPreviousNode);
 	}
 }
 
