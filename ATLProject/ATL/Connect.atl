@@ -2,9 +2,12 @@ module Connect;
 
 create OUT : Urn from IN : Turn;
 
--- Contains all rules used to handle connections between nodes.
--- Handles exploration of nodes to find PathBodies and connect 
--- the appropriate parts.
+-- File: Connect.atl
+--
+-- Description: Contains all rules used to handle connections between nodes.
+-- Handles exploration of nodes to find PathBodies and connect their nodes.
+
+--------------------------------------------------------------------------------------------------------------------
 
 -- connectUCMmap is the main entry point for all node connection.
 rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
@@ -31,9 +34,9 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	}
 }
 
--- Connects a pathbody as such: startNode (pathNodes) pathEnd
--- If no pathEnd is found, uses the input alternate pathend
--- Lastly calls to connect the pathEnd. Returns 
+-- Connects a pathbody as such: startNode -> (pathNodes)* -> pathEnd (-> more nodes if pathEnd is not endPoint)*
+-- If no pathEnd is found, uses the input alternate pathend. Lastly calls to connect the pathEnd, extending the 
+-- total number of nodes to include those that follow the pathEnd. 
 rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
 	using{
 		tCurrentNode : Urn!PathNode = OclUndefined;
@@ -73,9 +76,8 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 	}
 }
 
--- Connects the input last node to the pathEnd of sPathBody.
--- If the pathbody has an index that requires separate handling,
--- then adds it to the stub index map to be handled later.
+-- Connects the input last node to the pathEnd of sPathBody. If the pathbody has an index that is non-zero, adds it
+-- to the stub index map to be handled later.
 rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody, tAlternatePathEnd: Urn!PathNode){
 	using{
 		sPathEnd : Turn!PathBodyNode = sPathBody.pathEnd;
@@ -89,10 +91,11 @@ rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody,
 		}
 		
 		if(not tPathEnd.isDefined()){
-			-- No path end found - occurs for ending of nested and/or joins. Will be connected with parent's join.
+			-- No path end found. Occurs for ending of nested and/or joins. Will be connected with parent's join.
 		}
 		else if(sPathBody.index > 0){
-			-- Need to handle pathbody connection using indexes, so store in the index which will be processed after the rest of the UCMmap is done.
+			-- Need to handle pathbody connection using indexes so store in the index map.
+			-- These connections will be processed after the rest of the UCMmap is done.
 			thisModule.addConnectionToStubIndexMap(tLastNode, tPathEnd, sPathBody.index);
 		}
 		else{
@@ -101,6 +104,11 @@ rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody,
 	}
 }
 
+-- Connects the nodes of the input pathEnd, resulting in the pathEnd being connected to all its pathbodies. 
+-- Results in a connection as such: inputPathEnd -> (firstPathBodyNodes)  ->   pathEndOfPathEnd
+--                                               -> (secondPathBodyNodes) ->
+--                                               -> (nthPathBodyNodes)    ->
+-- or simply as inputPathEnd -> pathEndOfPathEnd when no pathBodies.
 rule connectPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd){
 	using{
 		sPathBodies : Sequence(Turn!PathBodyNode) = Sequence {};
@@ -112,15 +120,21 @@ rule connectPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd){
 		}
 		else{
 			-- sPathEnd will be a OrFork, AndFork, or Stub
-			thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.getPathBodies(), sPathEnd.getConnectingBody(), tAlternatePathEnd);
+			thisModule.connectPathEndPathBodies(sPathEnd, sPathEnd.getPathBodies(), 
+												sPathEnd.getConnectingBody(), tAlternatePathEnd);
 		}
 	}
 }
 
-rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), sConnectingBody: Turn!PathBody, tNextConnectingNode : Urn!PathNode){
+-- This goes over the pathEnd, connecting its various pathbodies,
+-- which is equivalent to saying this connects that pathEnd.
+rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), 
+							  sConnectingBody: Turn!PathBody, tNextConnectingNode : Urn!PathNode){
 	using{
 		tNode: Urn!PathNode = thisModule.getTargetNode(sNode);
-		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|pb.isDefined()) -> select(pb|not thisModule.getOrCreatePathEnd(pb).oclIsTypeOf(Urn!EndPoint)) -> size();
+		vNumberOfNonTerminatingNodes : Integer = sPathBodies -> select(pb|pb.isDefined()) 
+															 -> select(pb|not thisModule.getOrCreatePathEnd(pb).oclIsTypeOf(Urn!EndPoint)) 
+															 -> size();
 		tLastNode : Urn!PathNode = 
 			if(not sConnectingBody.isDefined() or vNumberOfNonTerminatingNodes < 2) then
 				OclUndefined
@@ -147,8 +161,7 @@ rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Tu
 	}
 }
 
--- Connects paths for all the stubs with indeces. These are added to stubIndexMap at an earlier
--- stage of the code and left there to be considered last.
+-- Connects paths for all the pathbodies that had indexes. This only happens in the case of stubs.
 rule connectIndexedPathBodies(){
 	using{
 		tStub : Urn!Stub = OclUndefined;
@@ -156,6 +169,8 @@ rule connectIndexedPathBodies(){
 		tOrJoin : Urn!OrJoin = OclUndefined;
 	}
 	do{
+		-- StubIndexMap has node pairs to be connected and the index to connect them at.
+		-- We added these pairs to stubIndexMap in connectLastNodeToPathEnd
 		for(vPredIndex in thisModule.stubIndexMap.keySet()){
 			for(tNodesToConnect in thisModule.stubIndexMap.get(vPredIndex)){
 				tLastNode <- tNodesToConnect.first();
@@ -170,7 +185,7 @@ rule connectIndexedPathBodies(){
 }
 
 -- Sets orFork node conditions. Called after connectPathBodiesWithIndexes so that all connections are in place when this is done.
--- Is rather inefficient as it calls allInstances(); this approach can potentially be improved upon.
+-- Is rather inefficient as it calls allInstances(); I feel this approach can potentially be improved upon.
 rule setOrForkConditionsAndCreateAlternateBranches(){
 	using{
 		vCounter : Integer = 1;
@@ -198,7 +213,8 @@ rule setOrForkConditionsAndCreateAlternateBranches(){
 				}
 				else if(sOrFork.body.regularBody -> size() = 1){
 					thisModule.connect(tOrFork, thisModule.createEndPoint());
-					tOrFork.succ -> at(2).condition <- thisModule.createCondition('!' + sOrFork.body.regularBody.first().condition.expression.asString());
+					tOrFork.succ -> at(2).condition <- thisModule.createCondition('!' + 
+															sOrFork.body.regularBody.first().condition.expression.asString());
 				}
 			}
 			
@@ -208,7 +224,7 @@ rule setOrForkConditionsAndCreateAlternateBranches(){
 }
 
 -- Sets stub connection thresholds. Called after connectPathBodiesWithIndexes so that all connections are in place when this is done.
--- Is rather inefficient as it calls allInstances(); this approach can potentially be improved upon.
+-- Is rather inefficient as it calls allInstances(); I feel this approach can potentially be improved upon.
 rule setStubThresholds(){
 	using{
 		vCounter : Integer = 1;
@@ -234,6 +250,9 @@ rule setStubThresholds(){
 	}
 }
 
+-- 'Connects' a componentRef by adding references to whatever nodes belong to it.
+-- This rule is disjoint from all the other rules above, and is called after the
+-- UCMmap has all been connected.
 rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
 	using{
 		tPathNode : Urn!PathNode = OclUndefined;

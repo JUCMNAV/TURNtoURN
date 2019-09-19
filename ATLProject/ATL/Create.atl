@@ -8,7 +8,7 @@ create OUT : Urn from IN : Turn;
 -- something, or in future versions of ATL).
 
 -- Contents:
---	 1/3 INITIALIZeRS
+--	 1/3 INITIALIZERS
 --	 2/3 CONDITIONAL INSTANTIATORS
 --	 3/3 INSTANTIATORS
 
