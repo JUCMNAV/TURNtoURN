@@ -2,10 +2,22 @@ module Connect;
 
 create OUT : Urn from IN : Turn;
 
--- File: Connect.atl
+--	File: Connect.atl
 --
--- Description: Contains all rules used to handle connections between nodes.
--- Handles exploration of nodes to find PathBodies and connect their nodes.
+--	Description: 
+--  	Contains all rules used to handle connections between nodes.
+--  	Handles exploration of nodes to find PathBodies and connect their nodes.
+--
+--	Contents:
+--      * rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path))
+--      * rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode)
+--      * rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!PathNode))
+--      * rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody, tAlternatePathEnd: Urn!PathNode)
+--      * rule connectPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd)
+--      * rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), rule connectIndexedPathBodies()
+--      * rule setOrForkConditionsAndCreateAlternateBranches()
+--      * rule setStubThresholds()
+--      * rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef)
 
 --------------------------------------------------------------------------------------------------------------------
 

@@ -49,6 +49,7 @@
 			* LongName.longname
 			* Softgoal
 		* Why is failLabel an object with failure as a property rather than just a string failLabel?
+		* Why can an OrFork body be oclUndefined? Is there any way to make it so that it’s empty if there’s nothing in it rather than undefined?
 
 * New TODO (will be categorized later):
 	* Determine which attributes are not being tested (e.g., author in tStrategies)

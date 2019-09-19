@@ -2,15 +2,43 @@ module Create;
 
 create OUT : Urn from IN : Turn;
 
--- Contains initializers and all rules used to instantiate model items in other parts
--- of the code. This is a good place to look for potential improvements as it may be
--- possible to make some of these into matched rules (either now, if I have missed
--- something, or in future versions of ATL).
-
--- Contents:
---	 1/3 INITIALIZERS
---	 2/3 CONDITIONAL INSTANTIATORS
---	 3/3 INSTANTIATORS
+--	File: Create.atl
+--
+--	Description:
+--		Contains initializers and all rules used to instantiate model items in other parts
+--		of the code. This is a good place to look for potential improvements as it may be
+--		possible to make some of these into matched rules (either now, if I have missed
+--		something, or in future versions of ATL).
+--
+--	Contents:
+--		1/3 INITIALIZERS
+--      	* rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef)
+--      	* rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWithConnect: Turn!EndpointWithConnect)
+--      	* rule initTimer(sTimer: Turn!Timer)
+--		2/3 CONDITIONAL INSTANTIATORS
+--      	* rule getOrCreateStartPoint(sStartPoint: Turn!StartPoint)
+--      	* rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect)
+--      	* rule getOrCreateKPIEvalValueSet(sEvaluation: Turn!IndicatorConversion)
+--      	* rule getOrCreatePathEnd(sPathBody: Turn!PathBody)
+--      	* rule getOrCreateStartPointPrecondition(sStartPoint: Turn!StartPoint)
+--      	* rule getOrCreateReferencedComponent(sComponentRef: Turn!ComponentRef)
+--      	* rule getOrCreateReferencedResponsibility(sRespRef: Turn!RespRef)
+--		3/3 INSTANTIATORS
+--      	* rule createAndJoin()
+--      	* rule createBeliefLink(sBeliefLink: Turn!ElementLink)
+--      	* rule createComponent(sComponent: Turn!ComponentRef)
+--      	* rule createCondition(vSourceExpression: String)
+--      	* rule createConnect()
+--      	* rule createEmptyPoint()
+--      	* rule createEndPoint()
+--      	* rule createKPIEvalValueSet(sLinearConversion: Turn!LinearConversion)
+--      	* rule createLabel()
+--      	* rule createNewConnection(tPathNode: Urn!PathNode)
+--      	* rule createOrJoin()
+--      	* rule createQMapKPIEvalValueSet(sConversion: Turn!QualToQMappings)
+--      	* rule createResponsibility(sResponsibility: Turn!RespRef)
+--      	* rule createStartPoint()
+-------------------------------------------------------------------------------------------------------------------------------
 
 --------------1/3 INITIALIZERS-------------
 

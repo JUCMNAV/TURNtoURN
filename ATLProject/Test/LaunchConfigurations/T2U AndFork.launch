@@ -10,6 +10,7 @@
 <mapAttribute key="Libs">
 <mapEntry key="Connect" value="/ATLProject/ATL/Connect.asm"/>
 <mapEntry key="Create" value="/ATLProject/ATL/Create.asm"/>
+<mapEntry key="Utilities" value="/ATLProject/ATL/Utilities.asm"/>
 </mapAttribute>
 <mapAttribute key="Model Handler">
 <mapEntry key="Turn" value="EMF"/>
