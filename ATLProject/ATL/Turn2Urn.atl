@@ -18,7 +18,44 @@ uses Utilities;
 --	Contents:
 --		1/3 GLOBAL VARIABLES
 --		2/3 MATCHED RULES WITHOUT DO BLOCKS
+--          * rule Actor2Actor
+--          * rule AndFork2AndFork
+--          * rule AndJoin2AndJoin
+--          * rule ComponentBinding2ComponentBinding
+--          * rule Concern2Concern
+--          * rule Condition2Condition
+--          * rule Contribution2Contribution
+--          * rule ContributionChange2ContributionChange
+--          * rule ContributionContext2ContributionContext
+--          * rule ContributionContextGroup2ContributionContextGroup
+--          * rule Decomposition2Decomposition
+--          * rule Dependency2Dependency
+--          * rule Evaluation2Evaluation
+--          * rule FailurePoint2FailurePoint
+--          * rule IntentionalElement2IntentionalElement
+--          * rule IntentionalElement2Belief
+--          * rule Metadata2Metadata
+--          * rule OrFork2OrFork
+--          * rule OrJoin2OrJoin
+--          * rule PluginBinding2PluginBinding
+--          * rule QMapping2QMapping
+--          * rule QMappings2QMappings
+--          * rule RespRef2Responsibility
+--          * rule StartPoint2StartPoint
+--          * rule Strategies2Strategies
+--          * rule StrategiesGroup2StrategiesGroup
+--          * rule Stub2Stub
+--          * rule StubDeclaration2Stub
+--          * rule Timer2Timer
+--          * rule URNlink2URNlink
+--          * rule WaitingPlace2WaitingPlace
 --		3/3 MATCHED RULES WITH DO BLOCKS
+--          * rule UCMmap2UCMmap
+--          * rule ComponentRef2ComponentRef
+--          * rule InBinding2InBinding
+--          * rule OutBinding2OutBinding
+--          * rule URNspec2URNspec
+---------------------------------------------------------------------------------------
 
 -------------1/3 GLOBAL VARIABLES-------------
 

@@ -7,20 +7,20 @@
 	* *Create.atl:* contains called rules used to either instantiate or initialize Urn elements.
 	* *Connect.atl:* contains called rules used to connect the URN elements, primarily using the Turn pathbodies for information.
   
-**Test** 
-	*ExpectedOutputs:* contains the expected output .jucm files for all test cases.
-	*Input:* TURN model files saved in .xml format. This files in this directory are used by the launch configurations in LaunchConfigurations.
-	*LaunchConfigurations:* contains the launch configurations for all test cases for the system. These output their files to the /Test/Output directory, creating it if it doesn't exist.
+* **Test** 
+	* *ExpectedOutputs:* contains the expected output .jucm files for all test cases.
+	* *Input:* TURN model files saved in .xml format. This files in this directory are used by the launch configurations in LaunchConfigurations.
+	* *LaunchConfigurations:* contains the launch configurations for all test cases for the system. These output their files to the /Test/Output directory, creating it if it doesn't exist.
   
-**Metamodels** 
+* **Metamodels** 
 	* *Turn.ecore:* the metamodel for TURN. 
 
 ## Matched Rule Ordering
-	* In order to have nextGlobalId correctly be assigned to the next ID that should be used in the map, URNspec2URNspec should be the last rule called in Turn2URN.
-	* Some other matched rules in Turn2Urn which contain 'do' blocks  must be in a specific order.
-		* UCMmap2UCMmap > ComponentRef2ComponentRef, InBinding2InBinding, OutBinding2OutBinding
-	* IntentionalElement2IntentionalElement must be BEFORE IntentionalElement2Belief
-	* Other orderings do not matter and can be placed anywhere in the file, including in between the aforementioned rules.
+* In order to have nextGlobalId correctly be assigned to the next ID that should be used in the map, URNspec2URNspec should be the last rule called in Turn2URN.
+* Some other matched rules in Turn2Urn which contain 'do' blocks  must be in a specific order.
+	* UCMmap2UCMmap > ComponentRef2ComponentRef, InBinding2InBinding, OutBinding2OutBinding
+* IntentionalElement2IntentionalElement must be BEFORE IntentionalElement2Belief
+* Other orderings do not matter and can be placed anywhere in the file, including in between the aforementioned rules.
 
 ## TODO
 * Remove debug & TODO statements
@@ -57,14 +57,14 @@
 	* Write comments describing what rules do
 
 ## Style
-	* Variable naming:
-		* Prefixes:
-			* v = primitive data type
-			* s = source MM data type
-			* t = target MM data type
-		* Name:
-			* Depending on the context, write either a descriptive name for the element or otherwise use the full name of the model item 
-				* (e.g., sEndPoint says that an element is a Turn!EndPoint)
-	* Conditionals:
-		* All if and else loops, including single line ones, should have braces
-    * Variable declaration - spacing, use of parentheses - TODO: make this match the ATL user guide
+* Variable naming:
+	* Prefixes:
+		* v = primitive data type
+		* s = source MM data type
+		* t = target MM data type
+	* Name:
+		* Depending on the context, write either a descriptive name for the element or otherwise use the full name of the model item 
+			* (e.g., sEndPoint says that an element is a Turn!EndPoint)
+* Conditionals:
+	* All if and else loops, including single line ones, should have braces
+* Variable declaration - spacing, use of parentheses - TODO: make this match the ATL user guide
