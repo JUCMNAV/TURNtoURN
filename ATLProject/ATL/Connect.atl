@@ -31,12 +31,14 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	}
 }
 
+-- Connects a pathbody as such: startNode (pathNodes) pathEnd
+-- If no pathEnd is found, uses the input alternate pathend
+-- Lastly calls to connect the pathEnd. Returns 
 rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
 	using{
 		tCurrentNode : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = tStartNode;
 		sPathEnd : Urn!PathEnd = OclUndefined;
-		tPathEnd : Urn!PathNode = tAlternatePathEnd;
 	}
 	do{
 		thisModule.collectPathBodyNodesAndEnds(sPathBody);
@@ -44,10 +46,13 @@ rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlterna
 		thisModule.connectLastNodeToPathEnd(tLastNode, sPathBody, tAlternatePathEnd);			
 		thisModule.connectPathEnd(sPathBody.pathEnd, tAlternatePathEnd);
 		
-		tPathEnd;
+		tAlternatePathEnd;
 	}
 }
 
+-- Connects tStartNode to the first Urn node corresponding to nodes in sPathNodes,
+-- then connects the nodes in sPathNodes sequentially. Returns the last node in
+-- this chain (if sPathNodes is empty, this is tStartNode).
 rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!PathNode)){
 	using{
 		tCurrentNode : Urn!PathNode = OclUndefined;
@@ -68,6 +73,9 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 	}
 }
 
+-- Connects the input last node to the pathEnd of sPathBody.
+-- If the pathbody has an index that requires separate handling,
+-- then adds it to the stub index map to be handled later.
 rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody, tAlternatePathEnd: Urn!PathNode){
 	using{
 		sPathEnd : Turn!PathBodyNode = sPathBody.pathEnd;
@@ -83,7 +91,7 @@ rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody,
 		if(not tPathEnd.isDefined()){
 			-- No path end found - occurs for ending of nested and/or joins. Will be connected with parent's join.
 		}
-		else if(sPathBody.index > tPathEnd.pred -> size()){
+		else if(sPathBody.index > 0){
 			-- Need to handle pathbody connection using indexes, so store in the index which will be processed after the rest of the UCMmap is done.
 			thisModule.addConnectionToStubIndexMap(tLastNode, tPathEnd, sPathBody.index);
 		}
