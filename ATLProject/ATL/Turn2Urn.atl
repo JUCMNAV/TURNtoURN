@@ -178,8 +178,6 @@ rule Concern2Concern{
 			id <- thisModule.nextId().toString(),
 			name <- sConcern.turnGetLongestName(),
 		 	elements <- sConcern.elements,
-			--TODO: Turn!Concern has no property metadata; is this perhaps a logical error?
-			--metadata <- s.metadata,
 			condition <- sConcern.condition
 		)
 }
@@ -574,7 +572,7 @@ rule WaitingPlace2WaitingPlace{
 -- The order of InBinding2InBinding/OutBinding2OutBinding with respect
 -- to each other does not matter, but they must be after URNspec2URNspec.
 -- URNspec2URNspec must be after all the other matched rules in the
--- the section above.
+-- section above.
 ------------------------------------------------------------------------------
 
 

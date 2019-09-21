@@ -101,7 +101,7 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 	}
 	do{
 		if(sEndpointWithConnect.oclIsTypeOf(Turn!EndpointWithConnect)){
-			if(not sEndpointWithConnect.regularEnd.isDefined()){ -- TODO: this logic seems prone to fault
+			if(not sEndpointWithConnect.regularEnd.isDefined()){
 				tEndPoint <- thisModule.createEndPoint();
 				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
 			}

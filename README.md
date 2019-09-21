@@ -20,12 +20,9 @@
 * Other orderings do not matter and can be placed anywhere in the file, including in between the aforementioned rules.
 
 ## TODO
-* Remove debug & TODO statements
+* Remove TODO statements
 * Make getter helpers more explicitly return either a TURN or URN object
 * Refactor for increased readability
-	* Rules to improve:
-		* Connect
-	* Make approach to adding / removing items to sequences and maps more consistent
 	* Rearrange methods so that their order feels more natural.
 	* Make variable name orderings in method arguments consistent
 	* Rename methods and variables so that their names better describe their behavior and contents respectively
