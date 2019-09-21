@@ -12,70 +12,10 @@ create OUT : Urn from IN : Turn;
 --
 --	Contents:
 --		1/3 DICTIONARIES
---          * rule dictContributionNumberToKeyword(vQuantitativeContribution: Integer)
---          * rule dictContributionKeywordToNumber(vKeyword: String)
 --		2/3 HELPERS
---          * helper context Turn!Text	asString() : String
---          * helper context String		capitalize(): String
---          * helper context Integer	inc() : Integer
---          * helper context OclAny		turnGetLongestName() : String
---          * 							isDefined() : Boolean
---          * helper context Urn!PathNode 	nextFreeConnection() : Urn!NodeConnection
---          * 								isAlreadyConnectedTo(tPathNode: Urn!PathNode) : Boolean
---          * 								isJoin() : Boolean
---          * 								hasSuccessors() : Boolean
---          * 								hasPredecessors() : Boolean
---          * 								connectionWith(tPathNode: Urn!PathNode) : Urn!NodeConnection
---          *								hasFreeConnection() : Boolean
---          * helper context Turn!Stub	isBlocking() : Boolean
---          * 							isSynchronizing() : Boolean
---          * 							isDynamic() : Boolean
---          * helper context Turn!StartPoint	getFailKind() :String
---          * helper context Turn!FailurePoint	getFailExpression() : String
---          * helper context Turn!IntentionalElement	getImportance() : String
---          * 											getType() : String
---          * helper context Turn!AndFork	getPathBodies() : Sequence(Urn!PathBody)
---          * 								getConnectingBody() : Urn!PathBody
---          * helper context Turn!OrFork	getPathBodies() : Sequence(Urn!PathBody)
---          * 								getConnectingBody() : Urn!PathBody
---          * helper context Turn!Stub		getPathBodies() : Sequence(Urn!PathBody)
---          *								getConnectingBody() : Urn!PathBody
---          * helper context Turn!Contribution	getContributionType() : String
---          * 									getQuantitativeContribution() : Integer
---          * helper context Turn!ContributionChange	getNewContribution() : String
---          * helper context Urn!PathNode	getName(sNode: Turn!PathBodyNode) : String
---          * helper context Urn!GRLNode	getName(sNode: Turn!URNmodelElement) : String
---          * helper context Turn!EvaluationStrategy	getAuthor() : String
---          * helper context Turn!PluginBinding		getInBindings() : Sequence(Urn!InBinding)
---          * 										getOutBindings() : Sequence(Urn!OutBinding)
---          * helper context Turn!Binding	getBinding() : Turn!Binding
---          *								getStub() : Urn!Stub
---          * helper context Turn!URNspec	getElements() : Sequence(Turn!IntentionalElement)
---          * 								getLinks() : Sequence(Turn!IntentionalElement)
---          * 								getTargetIntentionalElements() : Sequence(Urn!IntentionalElement)
---          * 								getTargetIntentionalElementRefs() : Sequence(Urn!IntentionalElementRef)
---          * 								getTargetContributions() : Sequence(Urn!Contribution)
---          * 								getTargetDecompositions() : Sequence(Urn!Decomposition)
---          * 								getTargetDependencies() : Sequence(Urn!Dependency)
---          * 								getTargetLinks() : Sequence(Urn!ElementLink)
---          * 								getTargetLinkRefs() : Sequence(Urn!LinkRef)
---          * 								getTargetBeliefs() : Sequence(Urn!Belief)
---          * helper context Turn!Actor		getNodes() : Sequence(Turn!GRLNode)
 --		3/3 CALLED RULES
---          * rule addConnectionToStubIndexMap(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vIndex: Integer)
---          * rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody)
---          * rule chainDirectConnect(tNodesToConnect: Sequence(Urn!PathNode))
---          * rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode)
---          * rule connectAtTargetIndex(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vPredIndex: Integer)
---          * rule connectWithEmptyPoint(tFromNode: Urn!PathNode, tToNode: Urn!PathNode)
---          * rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode)
---          * rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode)
---          * rule getResponsibility(vResponsibilityName: String)
---          * rule getTargetNode(sPathNode: Turn!PathNode)
---          * rule joinAllPreds(tSuccNode: Urn!PathNode)
---          * rule nextId()
---          * rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes:Sequence(Urn!StartPoint))
---          * rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeConnection)
+
+--------------------------------------------------------------------------------------------------------------------
 
 -----------------------1/3 DICTIONARIES-----------------------------
 
@@ -204,6 +144,13 @@ helper context Turn!StartPoint def : getFailKind() :String =
 helper context Turn!FailurePoint def : getFailExpression() : String =
 	if(self.failLabel.isDefined()) then
 		self.failLabel.failure
+	else
+		OclUndefined
+	endif;
+
+helper context Turn!IntentionalElement def : getDecompositionType() : String =
+	if(Turn!Decomposition -> allInstances() -> any(d|d.dest=self).isDefined()) then
+		Turn!Decomposition -> allInstances() -> any(d|d.dest=self).decompositionType.toString().capitalize()
 	else
 		OclUndefined
 	endif;

@@ -12,32 +12,9 @@ create OUT : Urn from IN : Turn;
 --
 --	Contents:
 --		1/3 INITIALIZERS
---      	* rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef)
---      	* rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWithConnect: Turn!EndpointWithConnect)
---      	* rule initTimer(sTimer: Turn!Timer)
---		2/3 CONDITIONAL INSTANTIATORS
---      	* rule getOrCreateStartPoint(sStartPoint: Turn!StartPoint)
---      	* rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect)
---      	* rule getOrCreateKPIEvalValueSet(sEvaluation: Turn!IndicatorConversion)
---      	* rule getOrCreatePathEnd(sPathBody: Turn!PathBody)
---      	* rule getOrCreateStartPointPrecondition(sStartPoint: Turn!StartPoint)
---      	* rule getOrCreateReferencedComponent(sComponentRef: Turn!ComponentRef)
---      	* rule getOrCreateReferencedResponsibility(sRespRef: Turn!RespRef)
+--		2/3 CONDITIONAL INSTANTIATORS (getOrCreate)
 --		3/3 INSTANTIATORS
---      	* rule createAndJoin()
---      	* rule createBeliefLink(sBeliefLink: Turn!ElementLink)
---      	* rule createComponent(sComponent: Turn!ComponentRef)
---      	* rule createCondition(vSourceExpression: String)
---      	* rule createConnect()
---      	* rule createEmptyPoint()
---      	* rule createEndPoint()
---      	* rule createKPIEvalValueSet(sLinearConversion: Turn!LinearConversion)
---      	* rule createLabel()
---      	* rule createNewConnection(tPathNode: Urn!PathNode)
---      	* rule createOrJoin()
---      	* rule createQMapKPIEvalValueSet(sConversion: Turn!QualToQMappings)
---      	* rule createResponsibility(sResponsibility: Turn!RespRef)
---      	* rule createStartPoint()
+
 -------------------------------------------------------------------------------------------------------------------------------
 
 --------------1/3 INITIALIZERS-------------
@@ -102,7 +79,7 @@ rule initTimer(sTimer: Turn!Timer){
 	}
 }
 
-----------2/3 CONDITIONAL INSTANTIATORS-----------
+----------2/3 CONDITIONAL INSTANTIATORS (getOrCreate)-----------
 
 rule getOrCreateStartPoint(sStartPoint: Turn!StartPoint){
 	using{

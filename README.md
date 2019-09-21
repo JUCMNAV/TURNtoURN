@@ -55,6 +55,8 @@
 	* Determine which attributes are not being tested (e.g., author in tStrategies)
 	* Find a way to remove the maps used in the transform
 	* Write comments describing what rules do
+	* Write a script / create a plugin which automatically parses code to create header-like descriptions of file contents at the start of the file
+		* Something with subsections using headings which makes a list of all the rules in each subsection
 
 ## Style
 * Variable naming:
