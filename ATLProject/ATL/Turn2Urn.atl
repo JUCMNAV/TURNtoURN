@@ -17,11 +17,12 @@ uses Utilities;
 --
 --	Contents:
 --		1/3 GLOBAL VARIABLES
---		2/3 MATCHED RULES WITHOUT DO BLOCKS
+--		2/3 FREELY ORDERABLE MATCHED RULES
 --          * rule Actor2Actor
 --          * rule AndFork2AndFork
 --          * rule AndJoin2AndJoin
 --          * rule ComponentBinding2ComponentBinding
+--          * rule ComponentRef2ComponentRef
 --          * rule Concern2Concern
 --          * rule Condition2Condition
 --          * rule Contribution2Contribution
@@ -48,13 +49,12 @@ uses Utilities;
 --          * rule StubDeclaration2Stub
 --          * rule Timer2Timer
 --          * rule URNlink2URNlink
+--          * rule URNspec2URNspec
 --          * rule WaitingPlace2WaitingPlace
---		3/3 MATCHED RULES WITH DO BLOCKS
+--		3/3 STRICTLY ORDERED MATCHED RULES
 --          * rule UCMmap2UCMmap
---          * rule ComponentRef2ComponentRef
 --          * rule InBinding2InBinding
 --          * rule OutBinding2OutBinding
---          * rule URNspec2URNspec
 
 ---------------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ helper def: stubIndexMap : Map(Integer, Sequence(Sequence(Urn!PathNode))) = Map{
 
 helper def: tUCMmap : Urn!UCMmap = OclUndefined;
 
--------------2/3 MATCHED RULES WITHOUT DO BLOCKS------------
+-------------2/3 FREELY ORDERABLE MATCHED RULES------------
 
 rule Actor2Actor{
 	from 
@@ -543,7 +543,7 @@ rule WaitingPlace2WaitingPlace{
 		tNodeLabel: Urn!NodeLabel
 }
 
-----------3/3 MATCHED RULES WITH DO BLOCKS----------------
+----------3/3 STRICTLY ORDERED MATCH RULES----------------
 
 rule URNspec2URNspec{
 	from 
@@ -582,7 +582,7 @@ rule URNspec2URNspec{
 			contRefs <- sURNspec.actors -> collect(a|thisModule.resolveTemp(a, 'tActorRef')),
 			connections <- sURNspec.getTargetLinkRefs().union(sURNspec.getTargetBeliefs() -> collect(b|b.succ))
 		),
-		tUCMspec: Urn!UCMspec()
+		tUCMspec: Urn!UCMspec
 	do{
 		if(sURNspec.info.isDefined()){
 			tURNspec.description <- sURNspec.info.description;
@@ -607,11 +607,11 @@ rule URNspec2URNspec{
 		-- Handle component refs once UCMmap nodes are connected
 		for(sComponentRef in sURNspec.ucmMaps -> collect(sUCMmap|sUCMmap.components) -> flatten()){
 			tComponentRef <- thisModule.resolveTemp(sComponentRef, 'tComponentRef');
-			thisModule.tUCMmap <- tComponentRef.diagram;
 			
 			tComponentRef.contDef.kind <- sComponentRef.getKind();
 			tComponentRef.contDef.protected <- sComponentRef.protected;
 
+			thisModule.tUCMmap <- tComponentRef.diagram;
 			thisModule.connectComponentRef(sComponentRef, tComponentRef);
 		}
 		

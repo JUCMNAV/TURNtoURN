@@ -16,10 +16,7 @@
 	* *Turn.ecore:* the metamodel for TURN. 
 
 ## Matched Rule Ordering
-* In order to have nextGlobalId correctly be assigned to the next ID that should be used in the map, URNspec2URNspec should be the last rule called in Turn2URN.
-* Some other matched rules in Turn2Urn which contain 'do' blocks  must be in a specific order.
-	* UCMmap2UCMmap > ComponentRef2ComponentRef, InBinding2InBinding, OutBinding2OutBinding
-* IntentionalElement2IntentionalElement must be BEFORE IntentionalElement2Belief
+* Last 3 matched rules should be URNspec2URNspec, then InBinding2InBinding + OutBinding2OutBinding
 * Other orderings do not matter and can be placed anywhere in the file, including in between the aforementioned rules.
 
 ## TODO
