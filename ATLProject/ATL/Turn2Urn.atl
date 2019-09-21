@@ -131,6 +131,20 @@ rule ComponentBinding2ComponentBinding{
 		)
 }
 
+rule ComponentRef2ComponentRef {
+	from 
+		sComponentRef: Turn!ComponentRef
+	to
+		tComponentRef: Urn!ComponentRef(
+			id <- thisModule.nextId().toString(),
+			name <- 'ComponentRef' + tComponentRef.id,
+			label <- tComponentLabel,
+			diagram <- sComponentRef.map,
+			contDef <- thisModule.getOrCreateReferencedComponent(sComponentRef)
+		),
+		tComponentLabel: Urn!ComponentLabel
+}
+
 rule Concern2Concern{
 	from 
 		sConcern: Turn!Concern
@@ -487,6 +501,19 @@ rule Timer2Timer{
 		tNodeLabel: Urn!NodeLabel
 }
 
+rule UCMmap2UCMmap{
+	from
+		sUCMmap: Turn!UCMmap
+	to
+		tUCMmap: Urn!UCMmap(
+			id <- thisModule.nextId().toString(),
+			name <- sUCMmap.turnGetLongestName(),
+			contRefs <- sUCMmap.components -> collect(c|thisModule.resolveTemp(c, 'tComponentRef')),
+			nodes <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tStartPoint')),
+			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tNodeConnection'))
+		)
+}
+
 rule URNlink2URNlink{
 	from 
 		sURNlink: Turn!URNlink
@@ -517,66 +544,12 @@ rule WaitingPlace2WaitingPlace{
 
 ----------3/3 MATCHED RULES WITH DO BLOCKS----------------
 
-rule UCMmap2UCMmap{
-	from
-		sUCMmap: Turn!UCMmap
-	to
-		tUCMmap: Urn!UCMmap(
-			id <- thisModule.nextId().toString(),
-			name <- sUCMmap.turnGetLongestName(),
-			contRefs <- sUCMmap.components -> collect(c|thisModule.resolveTemp(c, 'tComponentRef')),
-			nodes <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tStartPoint')),
-			connections <- sUCMmap.paths -> flatten() -> collect(p|p.startPoint) -> flatten() -> collect(p|thisModule.resolveTemp(p, 'tNodeConnection'))
-		)
-	do{
-		thisModule.connectUCMmap(tUCMmap, sUCMmap.paths);
-	}
-}
-
-rule ComponentRef2ComponentRef {
-	from 
-		sComponentRef: Turn!ComponentRef
-	to
-		tComponentRef: Urn!ComponentRef(
-			id <- thisModule.nextId().toString(),
-			name <- 'ComponentRef' + tComponentRef.id,
-			label <- tComponentLabel,
-			diagram <- sComponentRef.map,
-			contDef <- thisModule.getOrCreateReferencedComponent(sComponentRef)
-		),
-		tComponentLabel: Urn!ComponentLabel
-	do{
-		thisModule.initComponentRef(sComponentRef, tComponentRef);
-		thisModule.tUCMmap <- tComponentRef.diagram;
-		thisModule.connectComponentRef(sComponentRef, tComponentRef);
-	}
-}
-
-rule InBinding2InBinding{
-	from
-		sInBinding: Turn!InBinding
-	to
-		tInBinding: Urn!InBinding
-	do{
-		tInBinding.stubEntry <- sInBinding.getStub().pred -> at(sInBinding.index);
-		tInBinding.startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint');
-	}
-}
-
-rule OutBinding2OutBinding{
-	from
-		sOutBinding: Turn!OutBinding
-	to
-		tOutBinding: Urn!OutBinding
-	do{
-		tOutBinding.stubExit <- sOutBinding.getStub().succ -> at(sOutBinding.index);
-		tOutBinding.endPoint <- thisModule.getTargetNode(sOutBinding.mapEnd);
-	}
-}
-
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
+	using{
+		tComponentRef : Urn!ComponentRef = OclUndefined;		
+	}
 	to
 		tURNspec: Urn!URNspec(
 			name <- sURNspec.name,
@@ -587,7 +560,7 @@ rule URNspec2URNspec{
 			urndef <- tURNdef
 		),
 		tURNdef: Urn!URNdefinition(
-			specDiagrams <- Sequence{tGRLSpecDiag}.union(sURNspec.ucmMaps -> collect(m|thisModule.resolveTemp(m, 'tUCMmap'))),
+			specDiagrams <- tGRLSpecDiag,
 			concerns <- sURNspec.concerns,
 			components <- Urn!Component.allInstances(),
 			responsibilities <- Urn!Responsibility.allInstances()
@@ -623,6 +596,41 @@ rule URNspec2URNspec{
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 		}
 		
+		for(sUCMmap in sURNspec.ucmMaps){
+			thisModule.tUCMmap <- thisModule.resolveTemp(sUCMmap, 'tUCMmap');
+			tURNdef.specDiagrams <- tURNdef.specDiagrams.including(thisModule.tUCMmap);
+			thisModule.connectUCMmap(thisModule.tUCMmap, sUCMmap.paths);
+		}
+		
+		for(sUCMmap in sURNspec.ucmMaps){
+			for(sComponentRef in sUCMmap.components){
+				tComponentRef <- thisModule.resolveTemp(sComponentRef, 'tComponentRef');
+				thisModule.tUCMmap <- tComponentRef.diagram;
+				thisModule.initComponentRef(sComponentRef, tComponentRef);
+				thisModule.connectComponentRef(sComponentRef, tComponentRef);
+			}
+		}
+		
 		tURNspec.nextGlobalID <- thisModule.id.toString();
 	}
+}
+
+rule InBinding2InBinding{
+	from
+		sInBinding: Turn!InBinding
+	to
+		tInBinding: Urn!InBinding(
+			startPoint <- thisModule.resolveTemp(sInBinding.mapStart, 'tStartPoint'),
+			stubEntry <- sInBinding.getStub().pred -> at(sInBinding.index)
+		)
+}
+
+rule OutBinding2OutBinding{
+	from
+		sOutBinding: Turn!OutBinding
+	to
+		tOutBinding: Urn!OutBinding(
+			endPoint <- thisModule.getTargetNode(sOutBinding.mapEnd),
+			stubExit <- sOutBinding.getStub().succ -> at(sOutBinding.index)
+		)
 }
