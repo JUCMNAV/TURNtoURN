@@ -1,27 +1,43 @@
+-------------------------------------
+-- TURN2URN
+-------------------------------------
+-- Author: Ruchika Kumar, 2016
+-------------------------------------
+-- Edited by: Saahil Hamayun, 2019
+-------------------------------------
+
 module Create;
 
 create OUT : Urn from IN : Turn;
 
+----------------------------------------------------------------------------------------------
 --	File: Create.atl
---
---	Description:
+----------------------------------------------------------------------------------------------
+--	Description
 --		Contains initializers and all rules used to instantiate model items in other parts
 --		of the code. This is a good place to look for potential improvements as it may be
 --		possible to make some of these into matched rules (either now, if I have missed
 --		something, or in future versions of ATL).
---
+----------------------------------------------------------------------------------------------
 --	Contents:
 --		1/3 INITIALIZERS
 --		2/3 CONDITIONAL INSTANTIATORS (getOrCreate)
 --		3/3 INSTANTIATORS
+----------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------------------------
 
---------------1/3 INITIALIZERS-------------
+----------------------1/3 INITIALIZERS----------------------
+-- Used to initialize objects after they are created.
+-- These are necessary because not all objects always
+-- need to be initialized immediately after creation,
+-- and sometimes they do not need initialization at all.
+------------------------------------------------------------
 
 rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWithConnect: Turn!EndpointWithConnect){
 	using{
-		tConnect : Urn!Connect = OclUndefined;	
+		tConnect : Urn!Connect = OclUndefined;
+		tNodeToConnect : Urn!PathNode = OclUndefined;
 	}
 	do{
 		tEndPoint.name <- sEndpointWithConnect.regularEnd.turnGetLongestName();
@@ -32,8 +48,8 @@ rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWith
 		
 		if(sEndpointWithConnect.connect.isDefined()){
 			tConnect <- thisModule.createConnect();
-			thisModule.connect(thisModule.getTargetNode(sEndpointWithConnect.regularEnd), tConnect);
-			thisModule.connect(tConnect, thisModule.getTargetNode(sEndpointWithConnect.connect));
+			tNodeToConnect <- thisModule.getTargetNode(sEndpointWithConnect.connect);
+			thisModule.chainDirectConnect(Sequence { tEndPoint, tConnect, tNodeToConnect });
 		}
 	}
 }
@@ -57,7 +73,11 @@ rule initTimer(sTimer: Turn!Timer){
 	}
 }
 
-----------2/3 CONDITIONAL INSTANTIATORS (getOrCreate)-----------
+-------------------------------------------------------------------------------------------------------------------------------
+
+--------------2/3 CONDITIONAL INSTANTIATORS (getOrCreate)--------------
+-- Used to get objects, or create them if they do not already exist.
+-----------------------------------------------------------------------
 
 rule getOrCreateStartPoint(sStartPoint: Turn!StartPoint){
 	using{
@@ -191,8 +211,11 @@ rule getOrCreateReferencedResponsibility(sRespRef: Turn!RespRef){
 	}
 }
 
--------------3/3 INSTANTIATORS-------------
+-------------------------------------------------------------------------------------------------------------------------------
 
+------3/3 INSTANTIATORS------
+-- Used to create objects.
+-----------------------------
 rule createAndJoin(){
 	to
 		tAndJoin: Urn!AndJoin(

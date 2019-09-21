@@ -1,27 +1,41 @@
+-------------------------------------
+-- TURN2URN
+-------------------------------------
+-- Author: Ruchika Kumar, 2016
+-------------------------------------
+-- Edited by: Saahil Hamayun, 2019
+-------------------------------------
+
 module Connect;
 
 create OUT : Urn from IN : Turn;
 
+------------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------------------------------------------
 --	File: Connect.atl
---
---	Description: 
+-------------------------------------------------------------------------------------------------------------------------------
+--	Description:
 --  	Contains all rules used to handle connections between nodes.
 --  	Handles exploration of nodes to find PathBodies and connect their nodes.
---
+-------------------------------------------------------------------------------------------------------------------------------
 --	Contents:
 --      * rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path))
 --      * rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode)
 --      * rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!PathNode))
 --      * rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody, tAlternatePathEnd: Urn!PathNode)
 --      * rule connectPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd)
---      * rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody), rule connectIndexedPathBodies()
+--      * rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody),
+--										rule connectIndexedPathBodies())
 --      * rule setOrForkConditionsAndCreateAlternateBranches()
 --      * rule setStubThresholds()
 --      * rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef)
+-------------------------------------------------------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
--- connectUCMmap is the main entry point for all node connection.
+-- All node connection is done through this rule.
+-- It is called on each UCMmap in URNspec2URNspec.
 rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 	using{
 		tStartPoint : Urn!StartPoint = OclUndefined;
@@ -106,7 +120,7 @@ rule connectLastNodeToPathEnd(tLastNode: Urn!PathNode, sPathBody: Turn!PathBody,
 			-- No path end found. Occurs for ending of nested and/or joins. Will be connected with parent's join.
 		}
 		else if(sPathBody.index > 0){
-			-- Need to handle pathbody connection using indexes so store in the index map.
+			-- To handle pathbody connection using indexes, we store in the index map for now.
 			-- These connections will be processed after the rest of the UCMmap is done.
 			thisModule.addConnectionToStubIndexMap(tLastNode, tPathEnd, sPathBody.index);
 		}

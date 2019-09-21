@@ -1,23 +1,37 @@
+-------------------------------------
+-- TURN2URN
+-------------------------------------
+-- Author: Ruchika Kumar, 2016
+-------------------------------------
+-- Edited by: Saahil Hamayun, 2019
+-------------------------------------
+
 module Utilities;
 
 create OUT : Urn from IN : Turn;
 
+------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------
 --	File: Turn2Urn.atl
---
+------------------------------------------------------------------
 --	Description:
 --		Contains all methods used by the other files that don't
---		neatly fit into their categories. This file contains 
+--		neatly fit into their categories. This file contains
 --		various dictionaries, helpers, and called rules that
 --		are used in the Turn2Urn transformation.
---
---	Contents:
+------------------------------------------------------------------
+--	Contents
 --		1/3 DICTIONARIES
 --		2/3 HELPERS
 --		3/3 CALLED RULES
+------------------------------------------------------------------
 
---------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
------------------------1/3 DICTIONARIES-----------------------------
+---------------------------1/3 DICTIONARIES---------------------------
+-- Dictionaries used to help readability of their calling methods.
+----------------------------------------------------------------------
 
 rule dictContributionNumberToKeyword(vQuantitativeContribution: Integer){
 	using{
@@ -71,7 +85,12 @@ rule dictContributionKeywordToNumber(vKeyword: String){
 	}
 }
 
------------------2/3 HELPERS------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------2/3 HELPERS----------------------------------------
+-- Various helper methods that are used to make reading logic in other rules more clear.
+-- There are likely ways to improve on these to make the rules even more readable.
+-------------------------------------------------------------------------------------------
 
 helper context Turn!Text def : asString() : String =
 	self.content -> iterate(item; condition : String = '' | condition.concat(item));
@@ -81,7 +100,7 @@ helper context String def : capitalize(): String =
 
 helper context Integer def : inc() : Integer = self + 1;
 
---This should only be called on TURN objects; I haven't been able to determine how to express that restriction using OCL, though.
+--This should only be called on TURN objects; I'm not sure how to do that using OCL.
 helper context OclAny def : turnGetLongestName() : String = 
 	if(self.longName.isDefined()) then
 		if(self.longName.longname.isDefined()) then
@@ -256,10 +275,10 @@ helper context Turn!EvaluationStrategy def : getAuthor() : String =
 	endif;
 
 helper context Turn!PluginBinding def : getInBindings() : Sequence(Urn!InBinding) =
-	self.bindings -> collect(b|thisModule.resolveTemp(b, 'tInBinding')).including(thisModule.resolveTemp(self.binding, 'tInBinding'));
+	self.bindings.including(self.binding) -> collect(b|thisModule.resolveTemp(b, 'tInBinding'));
 
 helper context Turn!PluginBinding def : getOutBindings() : Sequence(Urn!OutBinding) =
-	self.bindings -> collect(b|thisModule.resolveTemp(b, 'tOutBinding')).including(thisModule.resolveTemp(self.binding, 'tOutBinding'));
+	self.bindings.including(self.binding) -> collect(b|thisModule.resolveTemp(b, 'tOutBinding'));
 
 helper context Turn!Binding def : getBinding() : Turn!Binding =
 	if(self.bindings.isDefined()) then
@@ -308,17 +327,30 @@ helper context Turn!URNspec def : getTargetBeliefs() : Sequence(Urn!Belief) =
 helper context Turn!Actor def : getNodes() : Sequence(Turn!GRLNode) =
 	self.elems -> collect(e|thisModule.resolveTemp(e, 'tIntentionalElementRef')).union(self.elems -> collect(e|thisModule.resolveTemp(e, 'tBelief')));
 
------------------------3/3 CALLED RULES-----------------------------
+------------------------------------------------------------------------------------------------------------------------------------
 
+------------------3/3 CALLED RULES------------------
+-- Called rules used in other parts of the code.
+----------------------------------------------------
+
+-- Handles adding a connection pair to the stub index map. Required to cleanly handle the map as it is rather complex.
 rule addConnectionToStubIndexMap(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vIndex: Integer){
+	using{
+		tExistingPairsAtIndex : Sequence(Sequence(Urn!PathNode)) =
+			if(thisModule.stubIndexMap.get(vIndex).isDefined()) then
+				thisModule.stubIndexMap.get(vIndex)
+			else
+				Sequence{}
+			endif;
+		tNewPair : Sequence(Urn!PathNode) = Sequence { tFromNode, tToNode };
+	}
 	do{
-		if(not thisModule.stubIndexMap.get(vIndex).isDefined()){
-			thisModule.stubIndexMap <- thisModule.stubIndexMap.including(vIndex, Sequence{});
-		}
-		thisModule.stubIndexMap <- thisModule.stubIndexMap.including(vIndex, thisModule.stubIndexMap.get(vIndex).including(Sequence{tFromNode, tToNode}));
+		-- Map is of the form Integer -> Sequence{{fromNode1, toNode1},...}
+		thisModule.stubIndexMap <- thisModule.stubIndexMap.including(vIndex, tExistingPairsAtIndex.including(tNewPair));
 	}
 }
 
+-- Collects various nodes and adds them to the node list of the UCMmap currently being processed.
 rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 	using{
 		vTypesOfNodeToAdd : Sequence(String) = 
@@ -364,7 +396,8 @@ rule chainDirectConnect(tNodesToConnect: Sequence(Urn!PathNode)){
 	}
 }
 
--- Connects two nodes, handling various special cases.
+-- Connects two nodes, handling the special case where an OrJoin can be used
+-- to better represent the behavior being performed.
 rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	using{
 		tJoin : Urn!OrJoin = OclUndefined;
@@ -372,7 +405,11 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 	do{
 		if(tFromNode.isDefined() and tToNode.isDefined()){
-			if(tToNode.hasPredecessors() and not tFromNode.oclIsTypeOf(Urn!StartPoint) and not tFromNode.oclIsTypeOf(Urn!Connect) and not tToNode.isJoin()){
+			if(tToNode.hasPredecessors() 
+					and not tFromNode.oclIsTypeOf(Urn!StartPoint) 
+					and not tFromNode.oclIsTypeOf(Urn!Connect) 
+					and not tToNode.isJoin()
+			){
 				-- If two nodes enter the same target, and that target is not a join, then we create an OrJoin
 				-- as the target for all these connections and have this OrJoin enter that target instead.
 				
@@ -472,6 +509,7 @@ rule findPathBetweenNodes(tStartNode: Urn!PathNode, tEndNode: Urn!PathNode){
 	}
 }
 
+-- Gets a responsibility given its name.
 rule getResponsibility(vResponsibilityName: String){
 	do{
 		Urn!Responsibility.allInstances() -> any(n|n.name=vResponsibilityName);
@@ -505,6 +543,8 @@ rule getTargetNode(sPathNode: Turn!PathNode){
 					-- If the regularEnd isn't defined, just get the first EndPoint.
 					-- This won't work correctly if there's more than one unnamed EndPoint.
 					-- TODO: fix this to make it work more generally.
+					-- This will likely require a change in the produced xml input files 
+					-- rather than a change in this code.
 					
 					tRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EndPoint));
 				}
@@ -555,6 +595,7 @@ rule joinAllPreds(tSuccNode: Urn!PathNode){
 	}
 }
 
+-- Increments and returns the next global id.
 rule nextId(){
 	do{
 		thisModule.id <- thisModule.id.inc();
@@ -562,6 +603,7 @@ rule nextId(){
 	}
 }
 
+-- Adds the path between tFrom to tTo to the list of nodes for the input ComponentRef.
 rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
 	using{
 		tFromExists : Boolean = 
@@ -576,7 +618,7 @@ rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tCompon
 		tEndNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		if(tFromExists and tToExists){ --unidirectional, tFrom must be before tTo
+		if(tFromExists and tToExists){ -- unidirectional, tFrom must be before tTo
 			tStartNode <- nodes -> any(n|n.name=tFrom);
 
 			if(not tStartNode.isDefined()){
@@ -594,6 +636,7 @@ rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tCompon
 	}
 }
 
+-- Uses the input connection by adding it to the pred list of the input node.
 rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeConnection){
 	do{
 		tToNode.pred <- tToNode.pred.including(tConnectionFromPreviousNode);
