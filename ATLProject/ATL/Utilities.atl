@@ -134,7 +134,29 @@ helper context Turn!Stub def : isDynamic() : Boolean =
 		endif
 	endif;
 
-helper context Turn!StartPoint def : getFailKind() :String =
+helper context Turn!ComponentRef def : getKind() : String =
+	if(self.kind.toString() = 'parent') then
+		OclUndefined
+	else
+		if(self.kind.isDefined()) then
+			 self.kind.toString().capitalize()
+		else
+			'Team'
+		endif
+	endif;
+
+helper context Turn!ComponentRef def : getBoundTo() : Urn!Component =
+	if(self.boundTo.isDefined()) then
+		if(self.boundTo.comp.isDefined()) then
+			Urn!Component.allInstances() -> any(n|self.boundTo.comp.name=n.name).contRefs -> any(r|r.diagram = self.map)
+		else
+			Urn!Component.allInstances() -> any(n|self.boundTo.comp2.name=n.name).contRefs -> any(r|r.diagram = self.map)
+		endif
+	else
+		OclUndefined
+	endif;
+
+helper context Turn!StartPoint def : getFailKind() : String =
 	if(self.failKind.isDefined()) then
 		self.failKind.toString().capitalize()
 	else

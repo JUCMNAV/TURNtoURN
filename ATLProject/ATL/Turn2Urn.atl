@@ -140,7 +140,8 @@ rule ComponentRef2ComponentRef {
 			name <- 'ComponentRef' + tComponentRef.id,
 			label <- tComponentLabel,
 			diagram <- sComponentRef.map,
-			contDef <- thisModule.getOrCreateReferencedComponent(sComponentRef)
+			contDef <- thisModule.getOrCreateReferencedComponent(sComponentRef),
+			parent <- sComponentRef.getBoundTo()
 		),
 		tComponentLabel: Urn!ComponentLabel
 }
@@ -596,19 +597,22 @@ rule URNspec2URNspec{
 	 		thisModule.id <- sURNspec.metadata -> any(m|m.name='TURN-URN-nextGlobalID').value.toInteger();
 		}
 		
+		-- Connect all UCMmap nodes
 		for(sUCMmap in sURNspec.ucmMaps){
 			thisModule.tUCMmap <- thisModule.resolveTemp(sUCMmap, 'tUCMmap');
 			tURNdef.specDiagrams <- tURNdef.specDiagrams.including(thisModule.tUCMmap);
 			thisModule.connectUCMmap(thisModule.tUCMmap, sUCMmap.paths);
 		}
 		
-		for(sUCMmap in sURNspec.ucmMaps){
-			for(sComponentRef in sUCMmap.components){
-				tComponentRef <- thisModule.resolveTemp(sComponentRef, 'tComponentRef');
-				thisModule.tUCMmap <- tComponentRef.diagram;
-				thisModule.initComponentRef(sComponentRef, tComponentRef);
-				thisModule.connectComponentRef(sComponentRef, tComponentRef);
-			}
+		-- Handle component refs once UCMmap nodes are connected
+		for(sComponentRef in sURNspec.ucmMaps -> collect(sUCMmap|sUCMmap.components) -> flatten()){
+			tComponentRef <- thisModule.resolveTemp(sComponentRef, 'tComponentRef');
+			thisModule.tUCMmap <- tComponentRef.diagram;
+			
+			tComponentRef.contDef.kind <- sComponentRef.getKind();
+			tComponentRef.contDef.protected <- sComponentRef.protected;
+
+			thisModule.connectComponentRef(sComponentRef, tComponentRef);
 		}
 		
 		tURNspec.nextGlobalID <- thisModule.id.toString();

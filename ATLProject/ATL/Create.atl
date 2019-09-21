@@ -19,28 +19,6 @@ create OUT : Urn from IN : Turn;
 
 --------------1/3 INITIALIZERS-------------
 
-rule initComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
-	do{
-		if(sComponentRef.kind.isDefined() and sComponentRef.kind.toString() <> 'parent'){
-			tComponentRef.contDef.kind <- sComponentRef.kind.toString().capitalize();
-		}
-		else if(sComponentRef.kind.toString() <> 'parent'){
-			tComponentRef.contDef.kind <- 'Team';
-		}
-		
-		if(sComponentRef.boundTo.isDefined()){
-			if(sComponentRef.boundTo.comp.isDefined()){
-				tComponentRef.parent <- Urn!Component.allInstances() -> any(n|sComponentRef.boundTo.comp.name=n.name).contRefs -> any(r|r.diagram = sComponentRef.map);
-			}
-			else{
-				tComponentRef.parent <- Urn!Component.allInstances() -> any(n|sComponentRef.boundTo.comp2.name=n.name).contRefs -> any(r|r.diagram = sComponentRef.map);
-			}
-		}
-		
-		tComponentRef.contDef.protected <- sComponentRef.protected;
-	}
-}
-
 rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWithConnect: Turn!EndpointWithConnect){
 	using{
 		tConnect : Urn!Connect = OclUndefined;	
