@@ -294,6 +294,13 @@ helper context Turn!Binding def : getStub() : Urn!Stub =
 		thisModule.getTargetNode(self.getBinding().stubParam.stubDec.stub)
 	endif;
 
+helper context Turn!URNspec def : getAuthor() : String =
+	if(self.info.isDefined()) then
+		self.info.author
+	else
+		OclUndefined
+	endif;
+
 helper context Turn!URNspec def : getElements() : Sequence(Turn!IntentionalElement) =
 	self.actors -> collect(actor|actor.elems) -> flatten();
 
