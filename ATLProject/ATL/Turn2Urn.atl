@@ -128,8 +128,7 @@ rule AndFork2AndFork{
 		tAndFork: Urn!AndFork (
 			id <- thisModule.nextId().toString(),
 			name <- tAndFork.getName(sAndFork),
-			label <- vLabel,
-			diagram <- thisModule.tUCMmap
+			label <- vLabel
 		)
 }
 
@@ -370,8 +369,7 @@ rule OrFork2OrFork{
 		tOrFork: Urn!OrFork(
 			id <- thisModule.nextId().toString(),
 			name <- tOrFork.getName(sOrFork),
-			label <- vLabel,
-			diagram <- thisModule.tUCMmap
+			label <- vLabel
 		)
 }
 
@@ -483,7 +481,6 @@ rule Stub2Stub{
 		tStub: Urn!Stub(
 			id <- thisModule.nextId().toString(),
 			name <- sStub.turnGetLongestName(),
-			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
 			blocking <- sStub.isBlocking(),
 			synchronization <- sStub.isSynchronizing(),
@@ -500,7 +497,6 @@ rule StubDeclaration2Stub{
 		tStub: Urn!Stub(id <- thisModule.nextId().toString(),
 			name <- sStubDeclaration.turnGetLongestName(),
 			label <- tNodeLabel,
-			diagram <- thisModule.tUCMmap,
 			bindings <- sStubDeclaration.params.plugin-> collect(p|thisModule.resolveTemp(p, 'tPluginBinding'))
 		),
 		tNodeLabel: Urn!NodeLabel
@@ -514,7 +510,6 @@ rule Timer2Timer{
 			id <- thisModule.nextId().toString(),
 			name <- sTimer.turnGetLongestName(),
 			succ <- tNodeConnection,
-			diagram <- thisModule.tUCMmap,
 			label <- tNodeLabel,
 			waitType <- sTimer.kind.toString().capitalize()
 		),
