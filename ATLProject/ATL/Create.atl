@@ -175,7 +175,7 @@ rule getOrCreatePathEnd(sPathBody: Turn!PathBody){
 			tPathEnd <- thisModule.getTargetNode(sPathBody.referencedStub);
 		}
 		else{
-			--	PathBody has no PathEnd.
+			-- PathBody has no PathEnd.
 		}
 		
 		tPathEnd;
@@ -207,7 +207,7 @@ rule getOrCreateReferencedComponent(sComponentRef: Turn!ComponentRef){
 	}
 	do{
 		if(tExistingComponent.isDefined()){
-				tComponent <- tExistingComponent;
+			tComponent <- tExistingComponent;
 		}
 		else{
 			tComponent <- thisModule.createComponent(sComponentRef);
@@ -291,7 +291,7 @@ rule createConnect(){
 		)
 	do{
 		tConnect;	
-	}--
+	}
 }
 
 rule createEmptyPoint(){
