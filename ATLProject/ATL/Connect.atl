@@ -133,10 +133,6 @@ rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, tLastNode: Urn!PathNode,
 --                                               -> (nthPathBodyNodes)    ->
 -- or simply as inputPathEnd -> pathEndOfPathEnd when no pathBodies.
 rule connectPathEnd(sPathEnd: Turn!PathEnd, tAlternatePathEnd: Urn!PathEnd){
-	using{
-		sPathBodies : Sequence(Turn!PathBodyNode) = Sequence {};
-		sConnectingBody : Turn!PathBody = OclUndefined;
-	}
 	do{
 		if(sPathEnd.oclIsTypeOf(Turn!EndpointWithConnect) or not sPathEnd.isDefined()){
 			-- Do nothing as we do not need to connect this PathEnd.
