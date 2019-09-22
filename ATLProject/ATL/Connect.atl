@@ -174,14 +174,20 @@ rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Tu
 	}
 	do{
 		for(sPathBody in sPathBodies -> select(pb|pb.isDefined())){
+			-- Connect tNode to each sPathBody in sPathBodies, and connect the end of
+			-- each sPathBody to tLastNode.
 			thisModule.connectPathBody(sPathBody, tNode, tLastNode);
 		}
 		
 		if(not tLastNode.isDefined()){
+			-- If tLastNode isn't defined, we're in a case where we didn't need a join.
+			-- Then, our LastNode is actually still our first node, which is tNode.
 			tLastNode <- tNode;
 		}
 		
 		if(sConnectingBody.isDefined()){
+			-- Connect our LastNode to the pathbody of sConnectingBody, and connect the
+			-- last node of sConnectingBody to tNextConnectingNode.
 			thisModule.connectPathBody(sConnectingBody, tLastNode, tNextConnectingNode);
 		}
 	}
@@ -196,7 +202,7 @@ rule connectIndexedPathBodies(){
 	}
 	do{
 		-- StubIndexMap has node pairs to be connected and the index to connect them at.
-		-- We added these pairs to stubIndexMap in connectLastNodeToPathEnd
+		-- We added these pairs to stubIndexMap in connectLastNodeToPathEnd.
 		for(vPredIndex in thisModule.stubIndexMap.keySet()){
 			for(tNodesToConnect in thisModule.stubIndexMap.get(vPredIndex)){
 				tLastNode <- tNodesToConnect.first();
@@ -211,7 +217,7 @@ rule connectIndexedPathBodies(){
 }
 
 -- Sets orFork node conditions. Called after connectPathBodiesWithIndexes so that all connections are in place when this is done.
--- Is rather inefficient as it calls allInstances(); I feel this approach can potentially be improved upon.
+-- This is rather inefficient as it calls allInstances(); I feel this approach can potentially be improved upon.
 rule setOrForkConditionsAndCreateAlternateBranches(){
 	using{
 		vCounter : Integer = 1;
@@ -221,7 +227,8 @@ rule setOrForkConditionsAndCreateAlternateBranches(){
 		for(tOrFork in thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!OrFork))){
 			sOrFork <- Turn!OrFork.allInstances() -> any(n|thisModule.resolveTemp(n, 'tOrFork')=tOrFork);
 			
-			if(sOrFork.condition.isDefined()){ -- Just condition case
+			-- Only happens in cases where only a condition is provided.
+			if(sOrFork.condition.isDefined()){
 				tOrFork.succ.first().condition <- thisModule.resolveTemp(sOrFork.condition, 'tCondition');
 				thisModule.connect(tOrFork, thisModule.createEndPoint());
 				tOrFork.succ -> at(2).condition <- thisModule.createCondition('!' + sOrFork.condition.expression.asString());
@@ -230,6 +237,8 @@ rule setOrForkConditionsAndCreateAlternateBranches(){
 			
 			if(sOrFork.body.isDefined()){
 				for(sRegularOrFork in sOrFork.body.regularBody){
+					-- As we created the connections sequentially with respect to their order in the regularBody, 
+					-- setting their conditions with respect to the order in the regularBody is fine.
 					tOrFork.succ -> at(vCounter).condition <- thisModule.resolveTemp(sRegularOrFork.condition, 'tCondition');
 					vCounter <- vCounter + 1;
 				}
@@ -238,6 +247,8 @@ rule setOrForkConditionsAndCreateAlternateBranches(){
 					tOrFork.succ.last().condition <- thisModule.createCondition('else');
 				}
 				else if(sOrFork.body.regularBody -> size() = 1){
+					-- If the body only had one connection, we create a second EndPoint equivalent to the 'not' of the condition of that
+					-- element to more clearly show the control flow.
 					thisModule.connect(tOrFork, thisModule.createEndPoint());
 					tOrFork.succ -> at(2).condition <- thisModule.createCondition('!' + 
 															sOrFork.body.regularBody.first().condition.expression.asString());
@@ -250,7 +261,7 @@ rule setOrForkConditionsAndCreateAlternateBranches(){
 }
 
 -- Sets stub connection thresholds. Called after connectPathBodiesWithIndexes so that all connections are in place when this is done.
--- Is rather inefficient as it calls allInstances(); I feel this approach can potentially be improved upon.
+-- This is rather inefficient as it calls allInstances(); I feel this approach can potentially be improved upon.
 rule setStubThresholds(){
 	using{
 		vCounter : Integer = 1;
@@ -276,23 +287,23 @@ rule setStubThresholds(){
 	}
 }
 
--- 'Connects' a componentRef by adding references to whatever nodes belong to it.
--- This rule is disjoint from all the other rules above, and is called after the
--- UCMmap has all been connected.
+-- Adds references to the nodes of a ComponentRef. Also sets its children.
 rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
 	using{
 		tPathNode : Urn!PathNode = OclUndefined;
 	}
 	do{
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
-			thisModule.updateComponentRefUsingLongBoundElement(elem.from, elem.to, tComponentRef, tComponentRef.diagram.nodes);
+			thisModule.updateComponentRefUsingLongBoundElement(elem.from, elem.to, tComponentRef);
 		}
 
-		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
-			tPathNode <- thisModule.getTargetNode(elem.elem);
+		for(sElem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
+			tPathNode <- thisModule.getTargetNode(sElem.elem);
 			
 			if(not tPathNode.isDefined()){
-				tPathNode <- thisModule.resolveTemp(elem.elem, 'tComponentRef');
+				-- Undefined case here means that sElem.elem is a ComponentRef, as getTargetNode doesn't return ComponentRefs.
+				-- As such, the node is a ComponentRef, and as it is in the list of elements belonging to sComponentRef, it is a child.
+				tPathNode <- thisModule.resolveTemp(sElem.elem, 'tComponentRef');
 				tComponentRef.children <- tComponentRef.children.including(tPathNode);
 			}
 			else if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
