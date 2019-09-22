@@ -104,7 +104,6 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 -- to the stub index map to be handled later.
 rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, tLastNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
 	using{
-		sPathEnd : Turn!PathBodyNode = sPathBody.pathEnd;
 		tPathEnd : Urn!PathNode = OclUndefined;
 	}
 	do{
