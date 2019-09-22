@@ -65,9 +65,7 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 -- total number of nodes to include those that follow the pathEnd. 
 rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode){
 	using{
-		tCurrentNode : Urn!PathNode = OclUndefined;
 		tLastNode : Urn!PathNode = tStartNode;
-		sPathEnd : Urn!PathEnd = OclUndefined;
 	}
 	do{
 		thisModule.collectPathBodyNodesAndEnds(sPathBody);
