@@ -294,7 +294,7 @@ rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!Co
 	}
 	do{
 		for(elem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
-			thisModule.updateComponentRefUsingLongBoundElement(elem.from, elem.to, tComponentRef);
+			thisModule.addLongBoundElementNodesToComponentRef(elem.from, elem.to, tComponentRef);
 		}
 
 		for(sElem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){

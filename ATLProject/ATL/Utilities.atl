@@ -350,6 +350,19 @@ rule addConnectionToStubIndexMap(tFromNode: Urn!PathNode, tToNode: Urn!PathNode,
 	}
 }
 
+-- Adds the path between tFrom to tTo to the list of nodes for the input ComponentRef.
+rule addLongBoundElementNodesToComponentRef(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef){
+	using{
+		tStartNode : Urn!PathNode = thisModule.getTargetNodeByName(tFrom);
+		tEndNode : Urn!PathNode = thisModule.getTargetNodeByName(tTo);
+	}
+	do{
+		if(tStartNode.isDefined() and tEndNode.isDefined()){ -- unidirectional, tFrom must be before tTo
+			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
+		}
+	}
+}
+
 -- Collects various nodes and adds them to the node list of the UCMmap currently being processed.
 rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 	using{
@@ -615,19 +628,6 @@ rule nextId(){
 	do{
 		thisModule.id <- thisModule.id.inc();
 		thisModule.id;
-	}
-}
-
--- Adds the path between tFrom to tTo to the list of nodes for the input ComponentRef.
-rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!PathNode)){
-	using{
-		tStartNode : Urn!PathNode = thisModule.getTargetNodeByName(tFrom);
-		tEndNode : Urn!PathNode = thisModule.getTargetNodeByName(tTo);
-	}
-	do{
-		if(tStartNode.isDefined() and tEndNode.isDefined()){ -- unidirectional, tFrom must be before tTo
-			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
-		}
 	}
 }
 
