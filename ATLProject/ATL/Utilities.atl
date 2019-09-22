@@ -572,6 +572,21 @@ rule getTargetNode(sPathNode: Turn!PathNode){
 	}
 }
 
+rule getTargetNodeByName(vName: String){
+	using{
+		tNode : Urn!PathNode = OclUndefined;	
+	}
+	do{
+		tNode <- thisModule.tUCMmap.nodes -> any(n|n.name=vName);
+
+		if(not tNode.isDefined()){
+			tNode <- thisModule.tUCMmap.nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=vName);
+		}
+		
+		tNode;
+	}
+}
+
 -- Join all the preds of tSuccNode using an OrJoin and return the OrJoin.
 rule joinAllPreds(tSuccNode: Urn!PathNode){
 	using{
@@ -604,33 +619,13 @@ rule nextId(){
 }
 
 -- Adds the path between tFrom to tTo to the list of nodes for the input ComponentRef.
-rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!StartPoint)){
+rule updateComponentRefUsingLongBoundElement(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef, nodes: Sequence(Urn!PathNode)){
 	using{
-		tFromExists : Boolean = 
-			(nodes -> any(n|n.name = tFrom).isDefined())
-			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tFrom) -> notEmpty())
-			and tFrom <> '';
-		tToExists : Boolean = 
-			(nodes -> any(n|n.name = tTo).isDefined())
-			or (nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> select(rr|rr.respDef.name=tTo) -> notEmpty())
-			and tTo <> '';
-		tStartNode : Urn!PathNode = OclUndefined;
-		tEndNode : Urn!PathNode = OclUndefined;
+		tStartNode : Urn!PathNode = thisModule.getTargetNodeByName(tFrom);
+		tEndNode : Urn!PathNode = thisModule.getTargetNodeByName(tTo);
 	}
 	do{
-		if(tFromExists and tToExists){ -- unidirectional, tFrom must be before tTo
-			tStartNode <- nodes -> any(n|n.name=tFrom);
-
-			if(not tStartNode.isDefined()){
-				tStartNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tFrom);
-			}
-			
-			tEndNode <- nodes -> any(n|n.name=tTo);
-			
-			if(not tEndNode.isDefined()){
-				tEndNode <- nodes -> select(n|n.oclIsTypeOf(Urn!RespRef)) -> any(rr|rr.respDef.name=tTo);
-			}
-			
+		if(tStartNode.isDefined() and tEndNode.isDefined()){ -- unidirectional, tFrom must be before tTo
 			tComponentRef.nodes <- thisModule.findPathBetweenNodes(tStartNode, tEndNode);
 		}
 	}
