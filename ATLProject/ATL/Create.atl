@@ -141,15 +141,17 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 
 rule getOrCreateKPIEvalValueSet(sEvaluation: Turn!IndicatorConversion){
 	using{
-		vKPIEvalValueSet : Urn!KPIEvalValueSet = OclUndefined;	
+		tKPIEvalValueSet : Urn!KPIEvalValueSet = OclUndefined;	
 	}
 	do{
 		if(sEvaluation.conversion.oclIsTypeOf(Turn!QualToQMappings)){
-			thisModule.createQMapKPIEvalValueSet(sEvaluation.conversion);
+			tKPIEvalValueSet <- thisModule.createQMapKPIEvalValueSet(sEvaluation.conversion);
 		}
 		else if(sEvaluation.conversion.oclIsTypeOf(Turn!LinearConversion)){
-			thisModule.createKPIEvalValueSet(sEvaluation.conversion);
+			tKPIEvalValueSet <- thisModule.createKPIEvalValueSet(sEvaluation.conversion);
 		}
+		
+		tKPIEvalValueSet;
 	}
 }
 
