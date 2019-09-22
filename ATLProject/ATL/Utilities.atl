@@ -323,6 +323,13 @@ helper context Turn!URNspec def : getModified() : String =
 		OclUndefined
 	endif;
 
+helper context Turn!URNspec def : getSpecVersion() : String =
+	if(self.info.isDefined()) then
+		self.info.specVersion
+	else
+		OclUndefined
+	endif;
+
 helper context Turn!URNspec def : getElements() : Sequence(Turn!IntentionalElement) =
 	self.actors -> collect(actor|actor.elems) -> flatten();
 
