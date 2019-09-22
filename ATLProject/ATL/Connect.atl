@@ -24,9 +24,10 @@ create OUT : Urn from IN : Turn;
 --      * rule connectPathBody(sPathBody: Urn!PathBody, tStartNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode)
 --      * rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!PathNode))
 --      * rule connectLastNodeToPathEnd(sPathBody: Turn!PathBody, tLastNode: Urn!PathNode, tAlternatePathEnd: Urn!PathNode)
---      * rule connectPathEnd(sPathEnd : Turn!PathEnd, tAlternatePathEnd : Urn!PathEnd)
+--      * rule connectPathEnd(sPathEnd: Turn!PathEnd, tAlternatePathEnd: Urn!PathEnd)
 --      * rule connectPathEndPathBodies(sNode: Turn!PathBodyNode, sPathBodies: Sequence(Turn!PathBody),
---										rule connectIndexedPathBodies())
+--										sConnectingBody: Turn!PathBody, tNextConnectingNode : Urn!PathNode)
+--		* rule connectIndexedPathBodies()
 --      * rule setOrForkConditionsAndCreateAlternateBranches()
 --      * rule setStubThresholds()
 -------------------------------------------------------------------------------------------------------------------------------
