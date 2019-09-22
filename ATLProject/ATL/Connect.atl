@@ -297,13 +297,13 @@ rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!Co
 			thisModule.addLongBoundElementNodesToComponentRef(sLongBoundElement, tComponentRef);
 		}
 
-		for(sElem in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
-			tPathNode <- thisModule.getTargetNode(sElem.elem);
+		for(sBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
+			tPathNode <- thisModule.getTargetNode(sBoundElement.elem);
 			
 			if(not tPathNode.isDefined()){
 				-- Undefined case here means that sElem.elem is a ComponentRef, as getTargetNode doesn't return ComponentRefs.
 				-- As such, the node is a ComponentRef, and as it is in the list of elements belonging to sComponentRef, it is a child.
-				tPathNode <- thisModule.resolveTemp(sElem.elem, 'tComponentRef');
+				tPathNode <- thisModule.resolveTemp(sBoundElement.elem, 'tComponentRef');
 				tComponentRef.children <- tComponentRef.children.including(tPathNode);
 			}
 			else if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
