@@ -592,7 +592,8 @@ rule URNspec2URNspec{
 			urndef <- tURNdef,
 			author <- sURNspec.getAuthor(),
 			created <- sURNspec.getCreated(),
-			description <- sURNspec.getDescription()
+			description <- sURNspec.getDescription(),
+			modified <- sURNspec.getModified()
 		),
 		tURNdef: Urn!URNdefinition(
 			specDiagrams <- tGRLSpecDiag,
@@ -619,7 +620,6 @@ rule URNspec2URNspec{
 		tUCMspec: Urn!UCMspec
 	do{
 		if(sURNspec.info.isDefined()){
-			tURNspec.modified <- sURNspec.info.modified;
 			tURNspec.specVersion <- sURNspec.info.specVersion;
 			tURNspec.urnVersion <- sURNspec.info.urnVersion; 
 		}
