@@ -503,7 +503,7 @@ rule directConnect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 					thisModule.createNewConnection(tFromNode);
 				}
 				
-				thisModule.useConnection(tToNode, tFromNode.nextFreeConnection());
+				tToNode.pred <- tToNode.pred.including(tFromNode.nextFreeConnection());
 			}
 		}
 	}
@@ -648,12 +648,5 @@ rule nextId(){
 	do{
 		thisModule.id <- thisModule.id.inc();
 		thisModule.id;
-	}
-}
-
--- Uses the input connection by adding it to the pred list of the input node.
-rule useConnection(tToNode: Urn!PathNode, tConnectionFromPreviousNode: Urn!NodeConnection){
-	do{
-		tToNode.pred <- tToNode.pred.including(tConnectionFromPreviousNode);
 	}
 }
