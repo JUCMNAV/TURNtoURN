@@ -580,9 +580,6 @@ rule WaitingPlace2WaitingPlace{
 rule URNspec2URNspec{
 	from 
 		sURNspec: Turn!URNspec
-	using{
-		tComponentRef : Urn!ComponentRef = OclUndefined;		
-	}
 	to
 		tURNspec: Urn!URNspec(
 			name <- sURNspec.name,
@@ -635,7 +632,7 @@ rule URNspec2URNspec{
 		
 		-- Handle component refs once UCMmap nodes are connected
 		for(sComponentRef in sURNspec.ucmMaps -> collect(sUCMmap|sUCMmap.components) -> flatten()){
-			thisModule.initComponentRef(sComponentRef, tComponentRef);
+			thisModule.initComponentRef(sComponentRef);
 		}
 		
 		tURNspec.nextGlobalID <- thisModule.id.toString();
