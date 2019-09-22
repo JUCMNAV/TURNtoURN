@@ -115,21 +115,24 @@ rule Actor2Actor{
 
 rule AndFork2AndFork{
 	from
-		sAndFork: Turn!AndFork
-	using{
-		vLabel : Urn!Label =
-			if(sAndFork.turnGetLongestName().isDefined()) then
-				thisModule.createLabel()
-			else
-				OclUndefined
-			endif;
-	}
+		sAndFork: Turn!AndFork(not sAndFork.turnGetLongestName().isDefined())
+	to
+		tAndFork: Urn!AndFork (
+			id <- thisModule.nextId().toString(),
+			name <- tAndFork.getName(sAndFork)
+		)
+}
+
+rule AndFork2AndForkWithLabel{
+	from
+		sAndFork: Turn!AndFork(sAndFork.turnGetLongestName().isDefined())
 	to
 		tAndFork: Urn!AndFork (
 			id <- thisModule.nextId().toString(),
 			name <- tAndFork.getName(sAndFork),
-			label <- vLabel
-		)
+			label <- tNodeLabel
+		),
+		tNodeLabel: Urn!NodeLabel
 }
 
 rule AndJoin2AndJoin{
