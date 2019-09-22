@@ -29,14 +29,12 @@
 	* Rename variable names in 'using' blocks with a better convention
 	* Write down the return type for each called rule
 * Refactor for increased consistency
-	* All if and else loops, including single line ones, should have braces
-	* Need consistency with whether empty from / to items have () or not
 	* Make sure all select(n.name='') are consistent in (Turn2Urn remains)
 	* Files
 		* Update names of .turn input files in TURNTestInput to match with new xml file names
 		* Update names of files and test cases to be consistent with names of turn/urn items (e.g., Endpoint to EndPoint)
-		* Create a "test" folder to contain Input, Output, LaunchConfiguration, previousOutput (or find some other way to structure the directory better than its current more arbitrary state)
 		* Describe in this README how to use the launch configurations that have been added to the project
+		* Describe how to verify correctness of functionalities when working on this system
 	* TURN
 		* Check if it is acceptable to rename some TURN variables for more consistency in naming
 			* EndpointWithConnect vs EndPoint
