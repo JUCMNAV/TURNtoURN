@@ -382,16 +382,18 @@ rule addBoundElementNodeToComponentRef(sBoundElement: Turn!BoundElement, tCompon
 		tPathNode : Urn!PathNode = OclUndefined;
 	}
 	do{
-		tPathNode <- thisModule.getTargetNode(sBoundElement.elem);
-		
-		if(not tPathNode.isDefined()){
+		if(sBoundElement.elem.oclIsTypeOf(Turn!ComponentRef)){
 			-- Undefined case here means that sElem.elem is a ComponentRef, as getTargetNode doesn't return ComponentRefs.
 			-- As such, the node is a ComponentRef, and as it is in the list of elements belonging to sComponentRef, it is a child.
 			tPathNode <- thisModule.resolveTemp(sBoundElement.elem, 'tComponentRef');
 			tComponentRef.children <- tComponentRef.children.including(tPathNode);
 		}
-		else if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
-			tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
+		else{
+			tPathNode <- thisModule.getTargetNode(sBoundElement.elem);
+			
+			if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
+				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
+			}
 		}
 	}
 }
