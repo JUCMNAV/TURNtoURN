@@ -191,7 +191,6 @@ rule connectIndexedPathBodies(){
 	using{
 		tStub : Urn!Stub = OclUndefined;
 		tLastNode : Urn!PathNode = OclUndefined;
-		tOrJoin : Urn!OrJoin = OclUndefined;
 	}
 	do{
 		-- StubIndexMap has node pairs to be connected and the index to connect them at.
