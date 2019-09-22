@@ -289,26 +289,13 @@ rule setStubThresholds(){
 
 -- Adds references to the nodes of a ComponentRef. Also sets its children.
 rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
-	using{
-		tPathNode : Urn!PathNode = OclUndefined;
-	}
 	do{
 		for(sLongBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
 			thisModule.addLongBoundElementNodesToComponentRef(sLongBoundElement, tComponentRef);
 		}
 
 		for(sBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
-			tPathNode <- thisModule.getTargetNode(sBoundElement.elem);
-			
-			if(not tPathNode.isDefined()){
-				-- Undefined case here means that sElem.elem is a ComponentRef, as getTargetNode doesn't return ComponentRefs.
-				-- As such, the node is a ComponentRef, and as it is in the list of elements belonging to sComponentRef, it is a child.
-				tPathNode <- thisModule.resolveTemp(sBoundElement.elem, 'tComponentRef');
-				tComponentRef.children <- tComponentRef.children.including(tPathNode);
-			}
-			else if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
-				tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
-			}
+			thisModule.addBoundElementNodeToComponentRef(sBoundElement, tComponentRef);
 		}
 	}
 }

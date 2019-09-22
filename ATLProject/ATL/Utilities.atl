@@ -333,6 +333,26 @@ helper context Turn!Actor def : getNodes() : Sequence(Turn!GRLNode) =
 -- Called rules used in other parts of the code.
 ----------------------------------------------------
 
+-- Adds thenode referenced by sBoundElement to the list of nodes for the input ComponentRef.
+rule addBoundElementNodeToComponentRef(sBoundElement: Turn!BoundElement, tComponentRef: Urn!ComponentRef){
+	using{
+		tPathNode : Urn!PathNode = OclUndefined;
+	}
+	do{
+		tPathNode <- thisModule.getTargetNode(sBoundElement.elem);
+		
+		if(not tPathNode.isDefined()){
+			-- Undefined case here means that sElem.elem is a ComponentRef, as getTargetNode doesn't return ComponentRefs.
+			-- As such, the node is a ComponentRef, and as it is in the list of elements belonging to sComponentRef, it is a child.
+			tPathNode <- thisModule.resolveTemp(sBoundElement.elem, 'tComponentRef');
+			tComponentRef.children <- tComponentRef.children.including(tPathNode);
+		}
+		else if(not tPathNode.contRef.isDefined() or tPathNode.contRef=tComponentRef.parent){
+			tComponentRef.nodes <- tComponentRef.nodes.including(tPathNode);
+		}
+	}
+}
+
 -- Handles adding a connection pair to the stub index map. Required to cleanly handle the map as it is rather complex.
 rule addConnectionToStubIndexMap(tFromNode: Urn!PathNode, tToNode: Urn!PathNode, vIndex: Integer){
 	using{
