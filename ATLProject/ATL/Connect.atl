@@ -29,7 +29,6 @@ create OUT : Urn from IN : Turn;
 --										rule connectIndexedPathBodies())
 --      * rule setOrForkConditionsAndCreateAlternateBranches()
 --      * rule setStubThresholds()
---      * rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef)
 -------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -283,19 +282,6 @@ rule setStubThresholds(){
 			else{
 				-- Declared using StubDeclaration, no outPaths
 			}
-		}
-	}
-}
-
--- Adds references to the nodes of a ComponentRef. Also sets its children.
-rule connectComponentRef(sComponentRef: Turn!ComponentRef, tComponentRef: Urn!ComponentRef){
-	do{
-		for(sLongBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
-			thisModule.addLongBoundElementNodesToComponentRef(sLongBoundElement, tComponentRef);
-		}
-
-		for(sBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
-			thisModule.addBoundElementNodeToComponentRef(sBoundElement, tComponentRef);
 		}
 	}
 }

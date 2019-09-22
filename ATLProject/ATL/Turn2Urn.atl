@@ -643,7 +643,14 @@ rule URNspec2URNspec{
 			tComponentRef.contDef.protected <- sComponentRef.protected;
 
 			thisModule.tUCMmap <- tComponentRef.diagram;
-			thisModule.connectComponentRef(sComponentRef, tComponentRef);
+			
+			for(sLongBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
+				thisModule.addLongBoundElementNodesToComponentRef(sLongBoundElement, tComponentRef);
+			}
+	
+			for(sBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
+				thisModule.addBoundElementNodeToComponentRef(sBoundElement, tComponentRef);
+			}
 		}
 		
 		tURNspec.nextGlobalID <- thisModule.id.toString();
