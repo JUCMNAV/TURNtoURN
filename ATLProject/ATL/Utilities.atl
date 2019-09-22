@@ -351,10 +351,10 @@ rule addConnectionToStubIndexMap(tFromNode: Urn!PathNode, tToNode: Urn!PathNode,
 }
 
 -- Adds the path between tFrom to tTo to the list of nodes for the input ComponentRef.
-rule addLongBoundElementNodesToComponentRef(tFrom: String, tTo: String, tComponentRef: Urn!ComponentRef){
+rule addLongBoundElementNodesToComponentRef(sLongBoundElement: Turn!LongBoundElement, tComponentRef: Urn!ComponentRef){
 	using{
-		tStartNode : Urn!PathNode = thisModule.getTargetNodeByName(tFrom);
-		tEndNode : Urn!PathNode = thisModule.getTargetNodeByName(tTo);
+		tStartNode : Urn!PathNode = thisModule.getTargetNodeByName(sLongBoundElement.from);
+		tEndNode : Urn!PathNode = thisModule.getTargetNodeByName(sLongBoundElement.to);
 	}
 	do{
 		if(tStartNode.isDefined() and tEndNode.isDefined()){ -- unidirectional, tFrom must be before tTo
