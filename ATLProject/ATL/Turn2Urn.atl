@@ -359,21 +359,24 @@ rule Metadata2Metadata{
 
 rule OrFork2OrFork{
 	from
-		sOrFork: Turn!OrFork
-	using{
-		vLabel : Urn!Label =
-			if(sOrFork.turnGetLongestName().isDefined()) then
-				thisModule.createLabel()
-			else
-				OclUndefined
-			endif;		
-	}
+		sOrFork: Turn!OrFork(not sOrFork.turnGetLongestName().isDefined())
+	to
+		tOrFork: Urn!OrFork(
+			id <- thisModule.nextId().toString(),
+			name <- tOrFork.getName(sOrFork)
+		)
+}
+
+rule OrFork2OrForkWithLabel{
+	from
+		sOrFork: Turn!OrFork(sOrFork.turnGetLongestName().isDefined())
 	to
 		tOrFork: Urn!OrFork(
 			id <- thisModule.nextId().toString(),
 			name <- tOrFork.getName(sOrFork),
-			label <- vLabel
-		)
+			label <- tNodeLabel
+		),
+		tNodeLabel: Urn!NodeLabel
 }
 
 rule OrJoin2OrJoin{
