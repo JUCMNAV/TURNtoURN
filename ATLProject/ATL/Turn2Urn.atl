@@ -637,20 +637,7 @@ rule URNspec2URNspec{
 		
 		-- Handle component refs once UCMmap nodes are connected
 		for(sComponentRef in sURNspec.ucmMaps -> collect(sUCMmap|sUCMmap.components) -> flatten()){
-			tComponentRef <- thisModule.resolveTemp(sComponentRef, 'tComponentRef');
-			
-			tComponentRef.contDef.kind <- sComponentRef.getKind();
-			tComponentRef.contDef.protected <- sComponentRef.protected;
-
-			thisModule.tUCMmap <- tComponentRef.diagram;
-			
-			for(sLongBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
-				thisModule.addLongBoundElementNodesToComponentRef(sLongBoundElement, tComponentRef);
-			}
-	
-			for(sBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
-				thisModule.addBoundElementNodeToComponentRef(sBoundElement, tComponentRef);
-			}
+			thisModule.initComponentRef(sComponentRef, tComponentRef);
 		}
 		
 		tURNspec.nextGlobalID <- thisModule.id.toString();

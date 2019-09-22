@@ -34,6 +34,26 @@ create OUT : Urn from IN : Turn;
 -- and sometimes they do not need initialization at all.
 ------------------------------------------------------------
 
+rule initComponentRef(sComponentRef: Turn!ComponentRef){
+	using{
+		tComponentRef : Urn!ComponentRef = 	thisModule.resolveTemp(sComponentRef, 'tComponentRef');
+	}
+	do{
+		tComponentRef.contDef.kind <- sComponentRef.getKind();
+		tComponentRef.contDef.protected <- sComponentRef.protected;
+
+		thisModule.tUCMmap <- tComponentRef.diagram;
+		
+		for(sLongBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!LongBoundElement))){
+			thisModule.addLongBoundElementNodesToComponentRef(sLongBoundElement, tComponentRef);
+		}
+
+		for(sBoundElement in (sComponentRef.elements.including(sComponentRef.element)) -> select(e|e.oclIsTypeOf(Turn!BoundElement))){
+			thisModule.addBoundElementNodeToComponentRef(sBoundElement, tComponentRef);
+		}	
+	}
+}
+
 rule initEndPointUsingEndpointWithConnect(tEndPoint: Urn!EndPoint, sEndpointWithConnect: Turn!EndpointWithConnect){
 	using{
 		tConnect : Urn!Connect = OclUndefined;
