@@ -48,10 +48,6 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 			thisModule.connectPathBody(sPath.pathBody, tStartPoint, OclUndefined);
 		}
 		
-		-- I don't like the approach I've used below. The reason I have to do it as such is
-		-- because Stubs need to be processed last so that all other elements in the path have
-		-- been handled once they are considered (due to the fact stubs have indexes referencing)
-		-- specific connections). There is probably a cleaner way to do this.
 		thisModule.connectIndexedPathBodies();
 		thisModule.setOrForkConditionsAndCreateAlternateBranches();
 		thisModule.setStubThresholds();
