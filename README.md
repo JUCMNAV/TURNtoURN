@@ -20,21 +20,21 @@
 * Other orderings do not matter and can be placed anywhere in the file, including in between the aforementioned rules.
 
 ## TODO
-* Remove TODO statements
 * Make getter helpers more explicitly return either a TURN or URN object
 * Refactor for increased readability
-	* Rearrange methods so that their order feels more natural.
-	* Make variable name orderings in method arguments consistent
-	* Rename methods and variables so that their names better describe their behavior and contents respectively
-	* Rename variable names in 'using' blocks with a better convention
+	* Rearrange methods so that their order feels more natural
 	* Write down the return type for each called rule
 * Refactor for increased consistency
 	* Make sure all select(n.name='') are consistent in (Turn2Urn remains)
-	* Files
-		* Update names of .turn input files in TURNTestInput to match with new xml file names
-		* Update names of files and test cases to be consistent with names of turn/urn items (e.g., Endpoint to EndPoint)
-		* Describe in this README how to use the launch configurations that have been added to the project
-		* Describe how to verify correctness of functionalities when working on this system
+* Describe in this README how to use the launch configurations that have been added to the project
+* Describe how to verify correctness of functionalities when working on this system
+	* LaunchConfigurations, comparison scripts, diffchecker, debug statements
+
+## Suggested further work
+	* Determine which attributes are not being tested (e.g., author in tStrategies)
+	* Find a way to remove the maps used in the transform
+	* Write a script / create a plugin which automatically parses code to create header-like descriptions of file contents at the start of the file
+		* Something with subsections using headings which makes a list of all the rules in each subsection
 	* TURN
 		* Check if it is acceptable to rename some TURN variables for more consistency in naming
 			* EndpointWithConnect vs EndPoint
@@ -42,13 +42,12 @@
 			* Softgoal
 		* Why is failLabel an object with failure as a property rather than just a string failLabel?
 		* Why can an OrFork body be oclUndefined? Is there any way to make it so that it’s empty if there’s nothing in it rather than undefined?
-
-* New TODO (will be categorized later):
-	* Determine which attributes are not being tested (e.g., author in tStrategies)
-	* Find a way to remove the maps used in the transform
-	* Write comments describing what rules do
-	* Write a script / create a plugin which automatically parses code to create header-like descriptions of file contents at the start of the file
-		* Something with subsections using headings which makes a list of all the rules in each subsection
+		* The input files produced currently don't have StartPoints or EndPoints for StartPoints / EndPoints without names.
+			* Having these produced would likely help clean the ATL code some.
+	* TURNTestInput
+		* Update names of .turn input files in TURNTestInput to match with new xml file names
+		* Update names of files and test cases to be consistent with names of turn/urn items (e.g., Endpoint to EndPoint)
+	
 
 ## Style
 * Variable naming:
@@ -61,4 +60,5 @@
 			* (e.g., sEndPoint says that an element is a Turn!EndPoint)
 * Conditionals:
 	* All if and else loops, including single line ones, should have braces
-* Variable declaration - spacing, use of parentheses - TODO: make this match the ATL user guide
+* Variable declaration - spacing, use of parentheses: TODO
+	* Further TODO: make this match the ATL user guide
