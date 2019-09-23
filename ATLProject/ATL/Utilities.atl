@@ -609,7 +609,7 @@ rule getTargetNode(sPathNode: Turn!PathNode){
 		if(sPathNode.isDefined()){
 			if(sPathNode.oclIsTypeOf(Turn!Stub)){
 				if(sPathNode.stubRef.isDefined()){
-					-- Stub was created Using a stub declaration, so we need to find that.
+					-- Stub was created using a stub declaration, so we need to find that.
 					sPathNode <- sPathNode.stubRef;
 				}
 			}
@@ -618,13 +618,9 @@ rule getTargetNode(sPathNode: Turn!PathNode){
 			}
 			else if(sPathNode.oclIsTypeOf(Turn!EndpointWithConnect)){
 				if(not sPathNode.regularEnd.isDefined()){
-					-- If the regularEnd isn't defined, just get the first EndPoint.
-					-- This won't work correctly if there's more than one unnamed EndPoint.
-					-- TODO: fix this to make it work more generally.
-					-- This will likely require a change in the produced xml input files 
-					-- rather than a change in this code.
-					
-					tRetrievedNode <- thisModule.tUCMmap.nodes -> any(n|n.oclIsTypeOf(Urn!EndPoint));
+					-- Get node using the EndpointWithConnect, as the EndpointWithConnect is the unique key for this unnamed node.
+					-- We used it because using sPathEnd.regularEnd, which is OclUndefined here, would have 
+					tRetrievedNode <- thisModule.endPointMap.get(sPathNode);
 				}
 				
 				sPathNode <- sPathNode.regularEnd;

@@ -123,7 +123,9 @@ rule getOrCreateEndPoint(sEndpointWithConnect: Turn!EndpointWithConnect){
 		if(sEndpointWithConnect.oclIsTypeOf(Turn!EndpointWithConnect)){
 			if(not sEndpointWithConnect.regularEnd.isDefined()){
 				tEndPoint <- thisModule.createEndPoint();
-				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect.regularEnd, tEndPoint);
+				
+				-- Store using the EndpointWithConnect as using the EndPoint, which is OclUndefined here, would be ambiguous.
+				thisModule.endPointMap <- thisModule.endPointMap.including(sEndpointWithConnect, tEndPoint);
 			}
 			else if(not thisModule.getTargetNode(sEndpointWithConnect.regularEnd).isDefined()){
 				tEndPoint <- thisModule.createEndPoint();
