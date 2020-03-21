@@ -483,11 +483,7 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 	do{
 		if(tFromNode.isDefined() and tToNode.isDefined()){
-			if(tToNode.hasPredecessors() 
-					and not tFromNode.oclIsTypeOf(Urn!StartPoint) 
-					and not tFromNode.oclIsTypeOf(Urn!Connect)
-					and not tToNode.oclIsTypeOf(Urn!Stub)
-					and not tToNode.isJoin()
+			if(tToNode.hasPredecessors() and (tToNode.oclIsTypeOf(Urn!RespRef) or tToNode.oclIsTypeOf(Urn!FailurePoint) or tToNode.oclIsTypeOf(Urn!EndPoint))
 			){
 				-- If two nodes enter the same target, and that target is not a join, then we create an OrJoin
 				-- as the target for all these connections and have this OrJoin enter that target instead.
