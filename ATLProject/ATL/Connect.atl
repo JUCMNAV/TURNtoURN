@@ -88,7 +88,7 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 			}
 			
 			tCurrentNode <- thisModule.getTargetNode(sCurrentNode);
-			thisModule.directConnect(tLastNode, tCurrentNode);
+			thisModule.connect(tLastNode, tCurrentNode);
 			tLastNode <- tCurrentNode;
 		}
 		
