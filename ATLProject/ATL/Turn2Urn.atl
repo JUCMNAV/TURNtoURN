@@ -289,7 +289,7 @@ rule Evaluation2Evaluation{
 		 	intElement <- thisModule.resolveTemp(sEvaluation.intElement, 'tIntentionalElement'),
 			evaluation <- sEvaluation.evaluation,
 			qualitativeEvaluation <- sEvaluation.qualitativeEvaluation.toString().capitalize(),
-			kpiEvalValueSet <- thisModule.getOrCreateKPIEvalValueSet(sEvaluation.conversion)
+			kpiEvalValueSet <- thisModule.getOrCreateKPIEvalValueSet(sEvaluation)
 		)
 }
 
