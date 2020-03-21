@@ -376,7 +376,7 @@ helper context Turn!Actor def : getNodes() : Sequence(Turn!GRLNode) =
 -- Called rules used in other parts of the code.
 ----------------------------------------------------
 
--- Adds thenode referenced by sBoundElement to the list of nodes for the input ComponentRef.
+-- Adds the node referenced by sBoundElement to the list of nodes for the input ComponentRef.
 rule addBoundElementNodeToComponentRef(sBoundElement: Turn!BoundElement, tComponentRef: Urn!ComponentRef){
 	using{
 		tPathNode : Urn!PathNode = OclUndefined;
@@ -483,11 +483,17 @@ rule connect(tFromNode: Urn!PathNode, tToNode: Urn!PathNode){
 	}
 	do{
 		if(tFromNode.isDefined() and tToNode.isDefined()){
-			if(tToNode.hasPredecessors() and (tToNode.oclIsTypeOf(Urn!RespRef) or tToNode.oclIsTypeOf(Urn!FailurePoint) or tToNode.oclIsTypeOf(Urn!EndPoint))
+			if(
+				tToNode.hasPredecessors()
+					and (
+						tToNode.oclIsTypeOf(Urn!RespRef)
+						or tToNode.oclIsTypeOf(Urn!FailurePoint)
+						or tToNode.oclIsTypeOf(Urn!EndPoint)
+					)
 			){
-				-- If two nodes enter the same target, and that target is not a join, then we create an OrJoin
-				-- as the target for all these connections and have this OrJoin enter that target instead.
-				
+				-- For these cases, we need to merge all paths into a new or join.
+				-- joinAllPreds will either create an or join or use an existing one
+				-- if one of the preds is an or join.
 				tJoin <- thisModule.joinAllPreds(tToNode);
 				thisModule.chainDirectConnect(Sequence { tFromNode, tJoin, tToNode });
 			}
