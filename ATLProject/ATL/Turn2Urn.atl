@@ -253,9 +253,13 @@ rule Connect2Connect{
 		sConnect: Turn!Connect
 	to
 		tConnect: Urn!Connect(
+			id <- thisModule.nextId().toString(),
+			name <- 'Connect' + tConnect.id,
 			succ <- tNodeConnection
 		),
 		tEmptyPoint: Urn!EmptyPoint(
+			id <- thisModule.nextId().toString(),
+			name <- 'EmptyPoint' + tEmptyPoint.id,
 			pred <- tNodeConnection	
 		),
 		tNodeConnection: Urn!NodeConnection
