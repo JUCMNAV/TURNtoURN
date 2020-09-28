@@ -434,7 +434,8 @@ rule collectPathBodyNodesAndEnds(sPathBody: Turn!PathBody){
 		vTypesOfNodeToAdd : Sequence(String) = 
 			Sequence { 
 				'tRespRef', 'tAndJoin', 'tOrJoin', 
-				'tWaitingPlace', 'tFailurePoint' 
+				'tWaitingPlace', 'tFailurePoint', 'tConnect',
+				'tEmptyPoint'
 			};
 		sPathNodes : Sequence(Turn!PathNode) = sPathBody.pathNodes;
 	}
