@@ -100,6 +100,10 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 					thisModule.connect(thisModule.getTargetNode(sCurrentNode.connectsTo), tEmptyPoint);
 				}
 
+				-- This EmptyPoint node will store the connections temporarily
+				-- After the UCMmap has been processed, the connections will be
+				-- traded with the connectsTo node. See the rule 'fixAsynchronousConnects'
+				-- for more details
 				tCurrentNode <- tEmptyPoint;
 			}
 			else {
@@ -114,6 +118,11 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 	}
 }
 
+
+-- Waiting & triggering for connects requires special imperative handling
+-- This is because the order in which a trigger or wait line occurs in the
+-- code may vary, and I haven't figured out how to deal with that in a
+-- declarative manner.
 rule fixAsynchronousConnects(tUCMmap : Urn!UCMmap){
 	using {
 		sConnects : Sequence(Turn!Connect) = Turn!Connect.allInstances() -> select(c|thisModule.getTargetNode(c.connectsTo).isDefined());
@@ -132,8 +141,6 @@ rule fixAsynchronousConnects(tUCMmap : Urn!UCMmap){
 		for (tConnect in tUCMmap.nodes -> select(c|c.oclIsTypeOf(Urn!Connect))) {
 			tEmptyPoint <- tConnect.pred.first().source;
 			tConnectsToNode <- tConnect.succ.first().target;
-			-- TODO: swap connections of tEmptyPoint and tConnectsToNode, excluding tConnect -> tConnectsToNode
-			
 			
 			tEmptyPointPred <- tEmptyPointPred -> append(tEmptyPoint.pred -> select(p|not (p.source=tConnect or p.source=tConnectsToNode))) -> flatten(); -- Set target for each of these to tConnectsToNode
 			tEmptyPointSucc <- tEmptyPointSucc -> append(tEmptyPoint.succ -> select(s|not (s.target=tConnect or s.target=tConnectsToNode))) -> flatten(); -- Set source for each of these to tConnectsToNode
