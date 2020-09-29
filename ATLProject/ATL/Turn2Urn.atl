@@ -255,12 +255,12 @@ rule Connect2Connect{
 		tConnect: Urn!Connect(
 			id <- thisModule.nextId().toString(),
 			name <- 'Connect' + tConnect.id,
-			succ <- tNodeConnection
+			pred <- tNodeConnection
 		),
 		tEmptyPoint: Urn!EmptyPoint(
 			id <- thisModule.nextId().toString(),
 			name <- 'EmptyPoint' + tEmptyPoint.id,
-			pred <- tNodeConnection	
+			succ <- tNodeConnection	
 		),
 		tNodeConnection: Urn!NodeConnection
 }
