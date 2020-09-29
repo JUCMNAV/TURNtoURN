@@ -51,6 +51,7 @@ rule connectUCMmap(tUCMmap: Urn!UCMmap, paths: Sequence(Turn!Path)){
 		thisModule.connectIndexedPathBodies();
 		thisModule.setOrForkConditionsAndCreateAlternateBranches();
 		thisModule.setStubThresholds();
+		thisModule.fixAsynchronousConnects(tUCMmap);
 		
 		tUCMmap.connections <- tUCMmap.nodes -> flatten() -> collect(of|of.succ) -> flatten();
 	}
@@ -92,17 +93,15 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 			if(sCurrentNode.oclIsTypeOf(Turn!Connect)){
 				tConnect <- thisModule.resolveTemp(sCurrentNode, 'tConnect');
 				thisModule.connect(tConnect, thisModule.getTargetNode(sCurrentNode.connectsTo));
-				tCurrentNode <- thisModule.getTargetNode(sCurrentNode.connectsTo);
+				
+				tEmptyPoint <- thisModule.resolveTemp(sCurrentNode, 'tEmptyPoint');
+				
+				if(sCurrentNode.connectsTo.oclIsTypeOf(Turn!StartPoint)){
+					thisModule.connect(thisModule.getTargetNode(sCurrentNode.connectsTo), tEmptyPoint);
+				}
+
+				tCurrentNode <- tEmptyPoint;
 			}
-			--else if(sCurrentNode.oclIsTypeOf(Turn!WaitingPlace) or sCurrentNode.oclIsTypeOf(Turn!Timer)) {
-			--	tCurrentNode <- thisModule.getTargetNode(sCurrentNode);
-			--	if (tCurrentNode.id = '128' or tCurrentNode.id='97') {
-			--		tConnect <- (tCurrentNode.pred -> select(pred|pred.source.oclIsTypeOf(Urn!Connect)) -> first()).source;
-			--		tEmptyPoint <- (tConnect.pred -> first()).source;
-			--		thisModule.debug(tEmptyPoint);	
-			--	}
-			--	-- TODO: handle asynchronous start points sCurrentNode.oclIsTypeOf(Turn!StartPoint)
-			--}
 			else {
 				tCurrentNode <- thisModule.getTargetNode(sCurrentNode);
 			}
@@ -114,6 +113,50 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 		tLastNode;
 	}
 }
+
+rule fixAsynchronousConnects(tUCMmap : Urn!UCMmap){
+	using {
+		sConnects : Sequence(Turn!Connect) = Turn!Connect.allInstances() -> select(c|thisModule.getTargetNode(c.connectsTo).isDefined());
+		sAsynchronousConnects : Sequence(Turn!Connect) = sConnects -> select(c| not thisModule.getTargetNode(c.connectsTo).pred -> isEmpty());
+		tEmptyPoint : Urn!EmptyPoint = OclUndefined;
+		tConnect : Urn!Connect = OclUndefined;
+		tConnectsToNode : Urn!PathNode = OclUndefined;
+		tEmptyPointPred : Sequence(Urn!NodeConnection) = Sequence{};
+		tEmptyPointSucc : Sequence(Urn!NodeConnection) = Sequence{};
+	}
+	-- Currently, the code stores the path that triggers the asynchronous node
+	-- on the empty point created alongside the connect. The path that is waiting
+	-- on this trigger is put on the node itself. These need to be inverted to
+	-- recreate the original behavior of the code, so I do that here.
+	do {
+		for (tConnect in tUCMmap.nodes -> select(c|c.oclIsTypeOf(Urn!Connect))) {
+			tEmptyPoint <- tConnect.pred.first().source;
+			tConnectsToNode <- tConnect.succ.first().target;
+			-- TODO: swap connections of tEmptyPoint and tConnectsToNode, excluding tConnect -> tConnectsToNode
+			
+			
+			tEmptyPointPred <- tEmptyPointPred -> append(tEmptyPoint.pred -> select(p|not (p.source=tConnect or p.source=tConnectsToNode))) -> flatten(); -- Set target for each of these to tConnectsToNode
+			tEmptyPointSucc <- tEmptyPointSucc -> append(tEmptyPoint.succ -> select(s|not (s.target=tConnect or s.target=tConnectsToNode))) -> flatten(); -- Set source for each of these to tConnectsToNode
+
+			for(tNodeConnection in tEmptyPointPred){
+				tNodeConnection.target <- tConnectsToNode;	
+			}
+			
+			for(tNodeConnection in tEmptyPointSucc){
+				tNodeConnection.source <- tConnectsToNode;	
+			}
+			
+			for(tNodeConnection in tConnectsToNode.pred -> select(p|not (tEmptyPointPred.includes(p) or p.source=tEmptyPoint or p.source=tConnect))){
+				tNodeConnection.target <- tEmptyPoint;	
+			}
+			
+			for(tNodeConnection in tConnectsToNode.succ -> select(s|not (tEmptyPointSucc.includes(s) or s.target=tEmptyPoint or s.target=tConnect))){
+				tNodeConnection.source <- tEmptyPoint;	
+			}
+		}
+	}
+}
+
 
 -- Connects the input last node to the pathEnd of sPathBody. If the pathbody has an index that is non-zero, adds it
 -- to the stub index map to be handled later.
