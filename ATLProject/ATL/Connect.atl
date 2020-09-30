@@ -110,6 +110,12 @@ rule connectPathBodyNodes(tStartNode: Urn!PathNode, sPathNodes: Sequence(Turn!Pa
 				tCurrentNode <- thisModule.getTargetNode(sCurrentNode);
 			}
 			
+			if(sCurrentNode.oclIsTypeOf(Turn!Connect)){
+			--	thisModule.debug(thisModule.getTargetNode(sCurrentNode.connectsTo));
+			--	thisModule.debug(tLastNode);
+			--	thisModule.debug(tCurrentNode);
+			--	thisModule.debug('');
+			}
 			thisModule.connect(tLastNode, tCurrentNode);
 			tLastNode <- tCurrentNode;
 		}
@@ -142,8 +148,8 @@ rule fixAsynchronousConnects(tUCMmap : Urn!UCMmap){
 			tEmptyPoint <- tConnect.pred.first().source;
 			tConnectsToNode <- tConnect.succ.first().target;
 			
-			tEmptyPointPred <- tEmptyPointPred -> append(tEmptyPoint.pred -> select(p|not (p.source=tConnect or p.source=tConnectsToNode))) -> flatten(); -- Set target for each of these to tConnectsToNode
-			tEmptyPointSucc <- tEmptyPointSucc -> append(tEmptyPoint.succ -> select(s|not (s.target=tConnect or s.target=tConnectsToNode))) -> flatten(); -- Set source for each of these to tConnectsToNode
+			tEmptyPointPred <- tEmptyPoint.pred -> select(p|p.source<>tConnectsToNode) -> flatten();
+			tEmptyPointSucc <- tEmptyPoint.succ -> select(s|s.target<>tConnect) -> flatten();
 
 			for(tNodeConnection in tEmptyPointPred){
 				tNodeConnection.target <- tConnectsToNode;	
@@ -153,11 +159,11 @@ rule fixAsynchronousConnects(tUCMmap : Urn!UCMmap){
 				tNodeConnection.source <- tConnectsToNode;	
 			}
 			
-			for(tNodeConnection in tConnectsToNode.pred -> select(p|not (tEmptyPointPred.includes(p) or p.source=tEmptyPoint or p.source=tConnect))){
+			for(tNodeConnection in tConnectsToNode.pred -> select(p|not (tEmptyPointPred.includes(p) or p.source=tConnect))){
 				tNodeConnection.target <- tEmptyPoint;	
 			}
 			
-			for(tNodeConnection in tConnectsToNode.succ -> select(s|not (tEmptyPointSucc.includes(s) or s.target=tEmptyPoint or s.target=tConnect))){
+			for(tNodeConnection in tConnectsToNode.succ -> select(s|not (tEmptyPointSucc.includes(s) or s.target=tEmptyPoint))){
 				tNodeConnection.source <- tEmptyPoint;	
 			}
 		}
